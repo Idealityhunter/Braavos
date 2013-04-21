@@ -1,6 +1,6 @@
 ##jQuery Jcrop - Meteor Smart Package
 
-[jQuery Jcrop](https://github.com/tapmodo/jquery-jcrop) repackaged for Meteor.
+[jQuery Jcrop](https://github.com/tapmodo/jcrop) repackaged for Meteor.
 
 ###How to install?
 
