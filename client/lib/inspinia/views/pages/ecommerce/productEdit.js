@@ -1,6 +1,6 @@
 Template.productEdit.rendered = function () {
 
-    // Initialize summernote plugin
-    $('.summernote').summernote();
+  // Initialize summernote plugin
+  $('.summernote').summernote();
 
 };

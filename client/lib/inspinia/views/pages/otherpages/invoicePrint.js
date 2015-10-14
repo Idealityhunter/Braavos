@@ -1,5 +1,5 @@
-Template.invoicePrint.rendered = function(){
+Template.invoicePrint.rendered = function () {
 
-    // Invoice print on load
-    window.print();
+  // Invoice print on load
+  window.print();
 };

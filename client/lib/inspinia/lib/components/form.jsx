@@ -34,7 +34,8 @@ BaiscForm = React.createClass({
                       <input type="password" placeholder="商家地址" className="form-control"/>
                     </div>
                     <div>
-                      <button className="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" onClick={this.submit}>
+                      <button className="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit"
+                              onClick={this.submit}>
                         <strong>提交信息</strong>
                       </button>
                       <label>

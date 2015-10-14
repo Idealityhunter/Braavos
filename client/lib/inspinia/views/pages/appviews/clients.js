@@ -1,8 +1,8 @@
-Template.clients.rendered = function(){
+Template.clients.rendered = function () {
 
-    // Add slimscroll to element
-    $('.full-height-scroll').slimscroll({
-        height: '100%'
-    })
+  // Add slimscroll to element
+  $('.full-height-scroll').slimscroll({
+    height: '100%'
+  })
 
 };

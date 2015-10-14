@@ -6,4 +6,4 @@ let test = React.createClass({
   }
 });
 
-export default test;
+export const Test = test;

@@ -1,6 +1,6 @@
-Template.productsList.rendered = function(){
+Template.productsList.rendered = function () {
 
-    // Initialize fooTable
-    $('.footable').footable();
+  // Initialize fooTable
+  $('.footable').footable();
 
 };

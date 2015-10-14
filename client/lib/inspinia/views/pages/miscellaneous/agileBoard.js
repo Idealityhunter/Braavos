@@ -1,7 +1,7 @@
-Template.agileBoard.rendered = function(){
+Template.agileBoard.rendered = function () {
 
-    // Initialize sortable
-    $(".sortable-list").sortable({
-        connectWith: ".connectList"
-    }).disableSelection();
+  // Initialize sortable
+  $(".sortable-list").sortable({
+    connectWith: ".connectList"
+  }).disableSelection();
 };
