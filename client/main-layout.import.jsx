@@ -1,21 +1,20 @@
+import {LeftSiderBar} from './dumb-components/common/left-siderbar';
+import {TopBar} from './dumb-components/common/topbar';
+
+
 let mainLayout = React.createClass({
   render() {
     return (
-      <html>
-      <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-      </head>
-      <body>
-      <div className="container todoWrapper">
-        <div className="well text-center">
-          Braavos
+      <div id="wrapper">
+        {/*左侧菜单栏*/}
+        <LeftSiderBar />
+
+        <div id="page-wrapper" className="gray-bg">
+          {/*顶部导航栏*/}
+          <TopBar />
+          {this.props.content}
         </div>
-        {this.props.content}
       </div>
-      </body>
-      </html>
     );
   }
 });

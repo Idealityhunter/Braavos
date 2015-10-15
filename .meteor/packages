@@ -18,6 +18,7 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 accounts-password
 react
+less
 kadira:react-layout
 kadira:flow-router
 aldeed:collection2
@@ -27,7 +28,8 @@ aldeed:autoform
 fortawesome:fontawesome
 momentjs:moment
 fourseven:scss
-reywood:bootstrap3-sass
+#reywood:bootstrap3-sass
+twbs:bootstrap
 meteorhacks:npm
 universe:modules
 cosmos:browserify
