@@ -18,8 +18,17 @@ FlowRouter.route('/login', {
 });
 
 FlowRouter.route('/register', {
+  triggersEnter: [function() {
+    console.log('route: entered');
+    let code = FlowRouter.current().queryParams['code'];
+    // TODO validate code
+    if (code !== '12345') {
+      console.log('invalid code, redirect to /login');
+      FlowRouter.go('/login');
+    }
+  }],
   action() {
-    console.log('register');
+    console.log('route: rendering');
     ReactLayout.render(Register);
   }
 });
