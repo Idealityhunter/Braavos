@@ -1,6 +1,7 @@
 import {MainLayout} from 'client/main-layout';
 import {Test} from 'client/dumb-components/test';
 import {Register} from 'client/dumb-components/common/register';
+import {Login} from 'client/dumb-components/common/login';
 
 FlowRouter.route('/', {
   action() {
@@ -13,7 +14,7 @@ FlowRouter.route('/', {
 FlowRouter.route('/login', {
   action() {
     console.log('login');
-    //ReactLayout.render();
+    ReactLayout.render(Login);
   }
 });
 

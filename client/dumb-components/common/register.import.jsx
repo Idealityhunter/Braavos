@@ -4,12 +4,11 @@ let register = React.createClass({
       name: '',
       email: '',
       password: '',
-      agreePolicy: false,
-      code: ''
+      agreePolicy: false
     }
   },
   componentDidMount() {
-    // Initialize i-check plugin
+    // Initialize i-check plugin and set event callback
     let self = this;
     $('.agree-policy').iCheck({
       checkboxClass: 'icheckbox_square-green',
@@ -20,22 +19,23 @@ let register = React.createClass({
       });
     });
   },
+  // remove event callback
   componentWillUnmount() {
     $('.agree-policy').iCheck('destroy');
   },
   changeName(e) {
     this.setState({
-      name: e.target.value,
+      name: e.target.value
     });
   },
   changeEmail(e) {
     this.setState({
-      email: e.target.value,
+      email: e.target.value
     });
   },
   changePassword(e) {
     this.setState({
-      password: e.target.value,
+      password: e.target.value
     });
   },
   handleRegister(e) {
@@ -43,7 +43,6 @@ let register = React.createClass({
     console.log(this.state);
   },
   render() {
-    console.log('re render');
     return (
       <div className="gray-bg">
         <div className="middle-box text-center loginscreen animated fadeInDown">
@@ -54,7 +53,7 @@ let register = React.createClass({
           <p>创建账户</p>
 
           <form className="m-t" role="form" action="#">
-            <div className="form-group" ref='xxx'>
+            <div className="form-group">
               <input type="text" className="form-control" placeholder="Name" required="" onChange={this.changeName} value={this.state.name}/>
             </div>
             <div className="form-group">
