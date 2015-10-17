@@ -34,3 +34,5 @@ meteorhacks:npm
 universe:modules
 cosmos:browserify
 npm-container
+
+yunkai-thrift-pkg
