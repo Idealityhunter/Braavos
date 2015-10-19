@@ -8,3 +8,5 @@
 packages/npm-container/*
 lib/*.js.cached
 lib/*.js.map
+
+node_modules/*
