@@ -35,4 +35,4 @@ universe:modules
 cosmos:browserify
 npm-container
 
-yunkai-thrift-pkg
+lxp:thrift-helper
