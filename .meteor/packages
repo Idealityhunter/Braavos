@@ -36,4 +36,3 @@ cosmos:browserify
 npm-container
 
 lxp:thrift-helper
-lxp:smscenter
