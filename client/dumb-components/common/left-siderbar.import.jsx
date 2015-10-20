@@ -7,6 +7,7 @@ let leftSiderBar = React.createClass({
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
           <ul className="nav metismenu" id="side-menu">
+
             {/*头像部分*/}
             <li className="nav-header">
               <div className="dropdown profile-element">
@@ -33,8 +34,49 @@ let leftSiderBar = React.createClass({
                 IN+
               </div>
             </li>
+
+            {/*首页*/}
+            <li className={ActiveRoute.path('/') ? "active" : ""}>
+              <a href="/">
+                <i class="fa fa-diamond"></i>
+                <span class="nav-label">首页</span>
+              </a>
+            </li>
+
+            {/*商品管理*/}
+            <li className={ActiveRoute.path('/product-info') ? "active" : ""}>
+              <a href="/product-info">
+                <i class="fa fa-diamond"></i>
+                <span class="nav-label">商品管理</span>
+              </a>
+            </li>
+
+            {/*订单管理*/}
+            <li className={ActiveRoute.path('/order-info') ? "active" : ""}>
+              <a href="/order-info">
+                <i class="fa fa-diamond"></i>
+                <span class="nav-label">订单管理</span>
+              </a>
+            </li>
+
+            {/*财务管理*/}
+            <li className={ActiveRoute.path('/finance-info') ? "active" : ""}>
+              <a href="/finance-info">
+                <i class="fa fa-diamond"></i>
+                <span class="nav-label">财务管理</span>
+              </a>
+            </li>
+
+            {/*账户信息*/}
+            <li className={ActiveRoute.path('/account-info') ? "active" : ""}>
+              <a href="/account-info">
+                <i class="fa fa-diamond"></i>
+                <span class="nav-label">账户信息</span>
+              </a>
+            </li>
+
             {/*Dashboards*/}
-            <li className="active">
+            <li>
               <a href="#">
                 <i className="fa fa-th-large"></i>
                 <span className="nav-label">Dashboards</span>
@@ -42,11 +84,12 @@ let leftSiderBar = React.createClass({
               </a>
               <ul className="nav nav-second-level collapse">
                 <li><a href="#">Dashboard v.1</a></li>
-                <li className="active"><a href="dashboard_2.html">Dashboard v.2</a></li>
+                <li><a href="dashboard_2.html">Dashboard v.2</a></li>
                 <li><a href="dashboard_3.html">Dashboard v.3</a></li>
                 <li><a href="dashboard_4_1.html">Dashboard v.4</a></li>
               </ul>
             </li>
+
             {/*Menu Levels*/}
             <li>
               <a href="#">
