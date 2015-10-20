@@ -36,3 +36,4 @@ cosmos:browserify
 npm-container
 
 lxp:thrift-helper
+omega:react-intl
