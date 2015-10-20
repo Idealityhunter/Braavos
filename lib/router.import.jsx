@@ -5,8 +5,10 @@ import {Login} from 'client/dumb-components/common/login';
 
 FlowRouter.route('/', {
   action() {
+    var intlData = AppDeps.IntlData.fr;
+
     ReactLayout.render(MainLayout, {
-      content: <Test />
+      content: <Test {...intlData} />
     });
   }
 });
