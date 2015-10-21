@@ -1,8 +1,14 @@
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+
 let leftSiderBar = React.createClass({
+  mixins: [IntlMixin],
+
   componentDidMount() {
     $('#side-menu').metisMenu();
   },
   render() {
+    let prefix = 'mainLayout.leftSideBar.';
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -11,7 +17,7 @@ let leftSiderBar = React.createClass({
             {/*头像部分*/}
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <span><img alt="image" className="img-circle" src="img/profile_small.jpg" /></span>
+                <span><img alt="image" className="img-circle" src="img/profile_small.jpg"/></span>
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
@@ -39,7 +45,9 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/') ? "active" : ""}>
               <a href="/">
                 <i class="fa fa-diamond"></i>
-                <span class="nav-label">首页</span>
+                <span class="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
+                </span>
               </a>
             </li>
 
@@ -47,7 +55,9 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/product-info') ? "active" : ""}>
               <a href="/product-info">
                 <i class="fa fa-diamond"></i>
-                <span class="nav-label">商品管理</span>
+                <span class="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodityMgmt')}/>
+                </span>
               </a>
             </li>
 
@@ -55,7 +65,9 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/order-info') ? "active" : ""}>
               <a href="/order-info">
                 <i class="fa fa-diamond"></i>
-                <span class="nav-label">订单管理</span>
+                <span class="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'orderMgmt')}/>
+                </span>
               </a>
             </li>
 
@@ -63,7 +75,9 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/finance-info') ? "active" : ""}>
               <a href="/finance-info">
                 <i class="fa fa-diamond"></i>
-                <span class="nav-label">财务管理</span>
+                <span class="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'financeMgmt')}/>
+                </span>
               </a>
             </li>
 
@@ -71,7 +85,9 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/account-info') ? "active" : ""}>
               <a href="/account-info">
                 <i class="fa fa-diamond"></i>
-                <span class="nav-label">账户信息</span>
+                <span class="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
+                </span>
               </a>
             </li>
 

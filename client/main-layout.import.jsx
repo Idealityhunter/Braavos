@@ -11,15 +11,18 @@ let mainLayout = React.createClass({
     });
   },
   render() {
+    let intlData = AppDeps.IntlData.zh;
+    // 将intlData加入content中
+    let content = React.cloneElement(this.props.content, intlData);
     return (
       <div id="wrapper">
         {/*左侧菜单栏*/}
-        <LeftSiderBar />
+        <LeftSiderBar {...intlData} />
 
         <div id="page-wrapper" className="gray-bg">
           {/*顶部导航栏*/}
           <TopBar />
-          {this.props.content}
+          {content}
         </div>
       </div>
     );
