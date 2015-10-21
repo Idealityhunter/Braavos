@@ -14,7 +14,7 @@ FlowRouter.route('/', {
 
 FlowRouter.route('/login', {
   action() {
-    let intlData=AppDeps.IntlData.zh;
+    let intlData = AppDeps.IntlData.zh;
     ReactLayout.render(Login, {...intlData});
   }
 });

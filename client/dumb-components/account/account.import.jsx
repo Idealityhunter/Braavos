@@ -5,12 +5,13 @@ var account = React.createClass({
   mixins: [IntlMixin],
 
   render() {
+    let prefix = 'accountInfo.';
     return (
       <div className="tabs-container">
         <ul className="nav nav-tabs">
-          <li className="active"><a data-toggle="tab" href="#tab-1"><FormattedMessage message={this.getIntlMessage('account.basic')}/></a></li>
-          <li><a data-toggle="tab" href="#tab-2"><FormattedMessage message={this.getIntlMessage('account.password')} /></a></li>
-          <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage('account.finance')} /></a></li>
+          <li className="active"><a data-toggle="tab" href="#tab-1"><FormattedMessage message={this.getIntlMessage(prefix + 'basic')}/></a></li>
+          <li><a data-toggle="tab" href="#tab-2"><FormattedMessage message={this.getIntlMessage(prefix + 'password')} /></a></li>
+          <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage(prefix + 'finance')} /></a></li>
         </ul>
         <div className="tab-content">
           <div id="tab-1" className="tab-pane active">
