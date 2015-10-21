@@ -2,10 +2,11 @@ import {MainLayout} from 'client/main-layout';
 import {Test} from 'client/dumb-components/test';
 import {Register} from 'client/dumb-components/common/register';
 import {Login} from 'client/dumb-components/common/login';
+import {Account} from 'client/dumb-components/account/account';
 
 FlowRouter.route('/', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = AppDeps.IntlData.zh;
 
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
@@ -33,5 +34,42 @@ FlowRouter.route('/register', {
   action() {
     console.log('route: rendering');
     ReactLayout.render(Register);
+  }
+});
+
+FlowRouter.route('/product-info', {
+  action() {
+    var intlData = AppDeps.IntlData.fr;
+
+    ReactLayout.render(MainLayout, {
+      content: <Test {...intlData} />
+    });
+  }
+});
+FlowRouter.route('/order-info', {
+  action() {
+    var intlData = AppDeps.IntlData.fr;
+
+    ReactLayout.render(MainLayout, {
+      content: <Test {...intlData} />
+    });
+  }
+});
+FlowRouter.route('/finance-info', {
+  action() {
+    var intlData = AppDeps.IntlData.fr;
+
+    ReactLayout.render(MainLayout, {
+      content: <Test {...intlData} />
+    });
+  }
+});
+FlowRouter.route('/account-info', {
+  action() {
+    var intlData = AppDeps.IntlData.fr;
+
+    ReactLayout.render(MainLayout, {
+      content: <Account {...intlData} />
+    });
   }
 });

@@ -11,10 +11,11 @@ let mainLayout = React.createClass({
     });
   },
   render() {
+    var intlData = AppDeps.IntlData.zh;
     return (
       <div id="wrapper">
         {/*左侧菜单栏*/}
-        <LeftSiderBar />
+        <LeftSiderBar {...intlData} />
 
         <div id="page-wrapper" className="gray-bg">
           {/*顶部导航栏*/}
