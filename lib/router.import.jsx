@@ -6,18 +6,16 @@ import {Account} from 'client/dumb-components/account/account';
 
 FlowRouter.route('/', {
   action() {
-    var intlData = AppDeps.IntlData.zh;
-
     ReactLayout.render(MainLayout, {
-      content: <Test {...intlData} />
+      content: <Test />
     });
   }
 });
 
 FlowRouter.route('/login', {
   action() {
-    console.log('login');
-    ReactLayout.render(Login);
+    let intlData=AppDeps.IntlData.zh;
+    ReactLayout.render(Login, {...intlData});
   }
 });
 
