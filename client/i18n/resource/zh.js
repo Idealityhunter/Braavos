@@ -17,6 +17,12 @@ AppDeps.IntlData.zh = {
         financeMgmt: '财务管理',
         accountInfo: '账户信息'
       }
+    },
+    login: {
+      login: '登录',
+      userName: 'Email/手机号码',
+      password: '密码',
+      forgetPassword: '忘记密码'
     }
   }
 };
