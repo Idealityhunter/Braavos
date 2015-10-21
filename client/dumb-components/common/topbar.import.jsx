@@ -1,4 +1,9 @@
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+
 let topBar = React.createClass({
+  mixins: [IntlMixin],
+
   componentDidMount() {
     // Toggle left navigation
     $('#navbar-minimalize').on('click', function (event) {
@@ -37,16 +42,9 @@ let topBar = React.createClass({
           <a id="navbar-minimalize" className="minimalize-styl-2 btn btn-primary " href="#">
             <i className="fa fa-bars"></i>
           </a>
-          <form role="search" className="navbar-form-custom" action="search_results">
-            <div className="form-group">
-              <input type="text" placeholder="Search for something..." className="form-control" name="top-search" id="top-search" />
-            </div>
-          </form>
+
         </div>
         <ul className="nav navbar-top-links navbar-right">
-          <li>
-            <span className="m-r-sm text-muted welcome-message"> Welcome to INSPINIA+ Admin Theme.</span>
-          </li>
           <li className="dropdown">
             <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
               <i className="fa fa-envelope"></i>
@@ -145,7 +143,8 @@ let topBar = React.createClass({
           </li>
           <li>
             <a href="#">
-              <i className="fa fa-sign-out"></i> Log out
+              <i className="fa fa-sign-out"></i>
+              <FormattedMessage message={this.getIntlMessage('login.logout')}/>
             </a>
           </li>
           <li>

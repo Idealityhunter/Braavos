@@ -20,6 +20,7 @@ AppDeps.IntlData.zh = {
     },
     login: {
       login: '登录',
+      logout: '注销',
       userName: 'Email/手机号码',
       password: '密码',
       forgetPassword: '忘记密码'
