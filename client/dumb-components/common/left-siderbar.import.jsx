@@ -52,8 +52,8 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*商品管理*/}
-            <li className={ActiveRoute.path('/product-info') ? "active" : ""}>
-              <a href="/product-info">
+            <li className={ActiveRoute.path('/commodity-mgmt') ? "active" : ""}>
+              <a href="/commodity-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'commodityMgmt')}/>
@@ -62,8 +62,8 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*订单管理*/}
-            <li className={ActiveRoute.path('/order-info') ? "active" : ""}>
-              <a href="/order-info">
+            <li className={ActiveRoute.path('/order-mgmt') ? "active" : ""}>
+              <a href="/order-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'orderMgmt')}/>
@@ -72,8 +72,8 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*财务管理*/}
-            <li className={ActiveRoute.path('/finance-info') ? "active" : ""}>
-              <a href="/finance-info">
+            <li className={ActiveRoute.path('/finance-mgmt') ? "active" : ""}>
+              <a href="/finance-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'financeMgmt')}/>

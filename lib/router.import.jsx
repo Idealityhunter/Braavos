@@ -3,6 +3,7 @@ import {Test} from 'client/dumb-components/test';
 import {Register} from 'client/dumb-components/common/register';
 import {Login} from 'client/dumb-components/common/login';
 import {Account} from 'client/dumb-components/account/account';
+import {Commodity} from 'client/dumb-components/commodity/commodity';
 
 FlowRouter.route('/', {
   action() {
@@ -35,7 +36,16 @@ FlowRouter.route('/register', {
   }
 });
 
-FlowRouter.route('/product-info', {
+FlowRouter.route('/commodity-mgmt', {
+  action() {
+    var intlData = AppDeps.IntlData.zh;
+
+    ReactLayout.render(MainLayout, {
+      content: <Commodity {...intlData} />
+    });
+  }
+});
+FlowRouter.route('/order-mgmt', {
   action() {
     var intlData = AppDeps.IntlData.fr;
 
@@ -44,16 +54,7 @@ FlowRouter.route('/product-info', {
     });
   }
 });
-FlowRouter.route('/order-info', {
-  action() {
-    var intlData = AppDeps.IntlData.fr;
-
-    ReactLayout.render(MainLayout, {
-      content: <Test {...intlData} />
-    });
-  }
-});
-FlowRouter.route('/finance-info', {
+FlowRouter.route('/finance-mgmt', {
   action() {
     var intlData = AppDeps.IntlData.fr;
 
