@@ -21,7 +21,7 @@ let mainLayout = React.createClass({
 
         <div id="page-wrapper" className="gray-bg">
           {/*顶部导航栏*/}
-          <TopBar />
+          <TopBar {...intlData} />
           {content}
         </div>
       </div>
