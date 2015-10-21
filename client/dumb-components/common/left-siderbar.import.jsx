@@ -8,6 +8,7 @@ let leftSiderBar = React.createClass({
     $('#side-menu').metisMenu();
   },
   render() {
+    let prefix = 'mainLayout.leftSideBar.';
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -45,7 +46,7 @@ let leftSiderBar = React.createClass({
               <a href="/">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
-                  <FormattedMessage message={this.getIntlMessage('leftSideBar.homepage')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
                 </span>
               </a>
             </li>
@@ -55,7 +56,7 @@ let leftSiderBar = React.createClass({
               <a href="/product-info">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
-                  <FormattedMessage message={this.getIntlMessage('leftSideBar.commodityMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodityMgmt')}/>
                 </span>
               </a>
             </li>
@@ -65,7 +66,7 @@ let leftSiderBar = React.createClass({
               <a href="/order-info">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
-                  <FormattedMessage message={this.getIntlMessage('leftSideBar.orderMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'orderMgmt')}/>
                 </span>
               </a>
             </li>
@@ -75,7 +76,7 @@ let leftSiderBar = React.createClass({
               <a href="/finance-info">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
-                  <FormattedMessage message={this.getIntlMessage('leftSideBar.financeMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'financeMgmt')}/>
                 </span>
               </a>
             </li>
@@ -85,7 +86,7 @@ let leftSiderBar = React.createClass({
               <a href="/account-info">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
-                  <FormattedMessage message={this.getIntlMessage('leftSideBar.accountInfo')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
                 </span>
               </a>
             </li>
