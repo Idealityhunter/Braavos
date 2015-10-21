@@ -23,6 +23,11 @@ AppDeps.IntlData.zh = {
       userName: 'Email/手机号码',
       password: '密码',
       forgetPassword: '忘记密码'
+    },
+    accountInfo: {
+      basic: '基本信息',
+      password: '修改密码',
+      finance: '财务设置'
     }
   }
 };

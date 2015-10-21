@@ -64,7 +64,7 @@ FlowRouter.route('/finance-info', {
 });
 FlowRouter.route('/account-info', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = AppDeps.IntlData.zh;
 
     ReactLayout.render(MainLayout, {
       content: <Account {...intlData} />
