@@ -3,9 +3,7 @@
  * Created by zephyre on 10/20/15.
  */
 
-AppDeps.IntlData = AppDeps.IntlData || {};
-
-AppDeps.IntlData.zh = {
+BraavosCore.IntlData.zh = {
   locales: ['zh-CN'],
   messages: {
     welcome: '欢迎来到Braavos',

@@ -33,7 +33,7 @@ let leftSiderBar = React.createClass({
                   <li><a href="contacts.html">Contacts</a></li>
                   <li><a href="mailbox.html">Mailbox</a></li>
                   <li className="divider"></li>
-                  <li><a href="login.html">Logout</a></li>
+                  <li><a href="/login">Logout</a></li>
                 </ul>
               </div>
               <div className="logo-element">

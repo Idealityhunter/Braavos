@@ -14,7 +14,7 @@ FlowRouter.route('/', {
 
 FlowRouter.route('/login', {
   action() {
-    let intlData=AppDeps.IntlData.zh;
+    let intlData=BraavosCore.IntlData.zh;
     ReactLayout.render(Login, {...intlData});
   }
 });
@@ -37,7 +37,7 @@ FlowRouter.route('/register', {
 
 FlowRouter.route('/product-info', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = BraavosCore.IntlData.fr;
 
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
@@ -46,7 +46,7 @@ FlowRouter.route('/product-info', {
 });
 FlowRouter.route('/order-info', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = BraavosCore.IntlData.fr;
 
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
@@ -55,7 +55,7 @@ FlowRouter.route('/order-info', {
 });
 FlowRouter.route('/finance-info', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = BraavosCore.IntlData.fr;
 
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
@@ -64,7 +64,7 @@ FlowRouter.route('/finance-info', {
 });
 FlowRouter.route('/account-info', {
   action() {
-    var intlData = AppDeps.IntlData.fr;
+    var intlData = BraavosCore.IntlData.fr;
 
     ReactLayout.render(MainLayout, {
       content: <Account {...intlData} />
