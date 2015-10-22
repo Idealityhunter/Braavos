@@ -44,7 +44,7 @@ let leftSiderBar = React.createClass({
             {/*首页*/}
             <li className={ActiveRoute.path('/') ? "active" : ""}>
               <a href="/">
-                <i class="fa fa-diamond"></i>
+                <i className="fa fa-diamond"></i>
                 <span class="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
                 </span>
@@ -54,8 +54,8 @@ let leftSiderBar = React.createClass({
             {/*商品管理*/}
             <li className={ActiveRoute.path(/^\/commodity-mgmt/) ? "active" : ""}>
               <a href="/commodity-mgmt">
-                <i class="fa fa-diamond"></i>
-                <span class="nav-label">
+                <i className="fa fa-diamond"></i>
+                <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'commodityMgmt')}/>
                 </span>
               </a>
@@ -64,8 +64,8 @@ let leftSiderBar = React.createClass({
             {/*订单管理*/}
             <li className={ActiveRoute.path(/^\/order-mgmt/) ? "active" : ""}>
               <a href="/order-mgmt">
-                <i class="fa fa-diamond"></i>
-                <span class="nav-label">
+                <i className="fa fa-diamond"></i>
+                <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'orderMgmt')}/>
                 </span>
               </a>
@@ -74,8 +74,8 @@ let leftSiderBar = React.createClass({
             {/*财务管理*/}
             <li className={ActiveRoute.path(/^\/finance-mgmt/) ? "active" : ""}>
               <a href="/finance-mgmt">
-                <i class="fa fa-diamond"></i>
-                <span class="nav-label">
+                <i className="fa fa-diamond"></i>
+                <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'financeMgmt')}/>
                 </span>
               </a>
@@ -84,8 +84,8 @@ let leftSiderBar = React.createClass({
             {/*账户信息*/}
             <li className={ActiveRoute.path(/^\/account-info/) ? "active" : ""}>
               <a href="/account-info">
-                <i class="fa fa-diamond"></i>
-                <span class="nav-label">
+                <i className="fa fa-diamond"></i>
+                <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
                 </span>
               </a>
