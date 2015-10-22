@@ -24,7 +24,8 @@ Package.onUse(function (api) {
   // Schemas
   api.addFiles([
     'common/schema/geo.js',
-    'common/schema/trade.js'
+    'common/schema/trade.js',
+    'common/schema/account.js'
   ]);
 
   api.export('BraavosCore');

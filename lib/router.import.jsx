@@ -17,24 +17,23 @@ FlowRouter.route('/', {
 
 FlowRouter.route('/login', {
   action() {
-    let intlData=BraavosCore.IntlData.zh;
+    let intlData = BraavosCore.IntlData.zh;
     ReactLayout.render(Login, {...intlData});
   }
 });
 
 FlowRouter.route('/register', {
-  triggersEnter: [function() {
-    console.log('route: entered');
-    let code = FlowRouter.current().queryParams['code'];
-    // TODO validate code
-    if (code !== '12345') {
-      console.log('invalid code, redirect to /login');
-      FlowRouter.go('/login');
-    }
-  }],
   action() {
-    console.log('route: rendering');
-    ReactLayout.render(Register);
+    const token = FlowRouter.getQueryParam('token');
+    // 检查token是否有效
+    Meteor.call('account.register.checkToken', token, (err, ret)=> {
+      const isValid = (!err && ret.valid);
+      if (isValid) {
+        ReactLayout.render(Register);
+      } else {
+        FlowRouter.go('/login');
+      }
+    });
   }
 });
 
