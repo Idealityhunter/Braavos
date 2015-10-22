@@ -36,5 +36,8 @@ cosmos:browserify
 npm-container
 
 lxp:thrift-helper
+lxp:braavos-core
+
 omega:react-intl
 zimme:active-route
+aldeed:simple-schema

@@ -1,4 +1,4 @@
-Meteor.startup(function () {
+//Meteor.startup(function () {
   //var service = Npm.require('smscenter');
   //var SmsCenter = service.SmsCenter;
 
@@ -6,4 +6,4 @@ Meteor.startup(function () {
   //  transport:'framed'
   //});
   //console.log(client._ping());
-});
+//});
