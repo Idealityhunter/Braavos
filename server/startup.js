@@ -1,6 +1,6 @@
 /**
- *
- * Created by zephyre on 10/21/15.
+ * 服务端的启动代码
+ * Created by zephyre on 10/22/15.
  */
 
 /**
@@ -33,32 +33,41 @@ const buildMongoConf = () => {
     return `${host}:${port}`;
   }).join(',');
 
-
   const options = {readPreference: readPreference || 'primaryPreferred', authSource: db};
   if (replicaSet) {
     options.replicaSet = replicaSet;
   }
   const optionsStr = Object.getOwnPropertyNames(options).map(key=>`${key}=${options[key]}`).join('&');
 
-  BraavosCore.Database['braavos'] = {
-    'url': `mongodb://${user}:${password}@${servers}/${db}?${optionsStr}`
-  }
+  BraavosCore.Database.Braavos = {
+    url: `mongodb://${user}:${password}@${servers}/${db}?${optionsStr}`
+  };
 };
 
+/**
+ * 初始化集合
+ */
+const initColl = () => {
+  const Braavos = BraavosCore.Database.Braavos;
+  const Schema = BraavosCore.Schema;
+  Braavos.Collections = {};
+  const Collections = Braavos.Collections;
 
-Meteor.startup(function () {
-  if (Meteor.isServer) {
-    console.log('Server startup');
+  const driver = new MongoInternals.RemoteCollectionDriver(Braavos.url);
 
-    console.log('Fetching etcd data...');
-    resolveEtcdData();
-    buildMongoConf();
+  // 注册的
+  const RegisterToken = new Mongo.Collection('RegisterToken', {_driver: driver});
+  RegisterToken.attachSchema(Schema.RegisterToken);
+  Collections.RegisterToken = RegisterToken;
+};
 
-    console.log('Generating the UUID...');
-    Meteor.call('account.register.genToken', (err, ret)=> {
-      err ? console.log(err) : console.log(ret);
-    })
-  } else {
-    console.log('Client startup');
-  }
+Meteor.startup(()=> {
+  console.log('Server startup');
+
+  // 获取etcd设置
+  resolveEtcdData();
+
+  // 数据库设置
+  buildMongoConf();
+  initColl();
 });
