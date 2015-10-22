@@ -37,7 +37,9 @@ npm-container
 
 lxp:thrift-helper
 lxp:braavos-core
+lxp:etcd
 
 omega:react-intl
 zimme:active-route
 aldeed:simple-schema
+underscore
