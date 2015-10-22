@@ -4,8 +4,10 @@ import {Register} from 'client/dumb-components/common/register';
 import {Login} from 'client/dumb-components/common/login';
 import {Account} from 'client/dumb-components/account/account';
 import {Commodity} from 'client/dumb-components/commodity/commodity';
+import {CommodityModify} from 'client/dumb-components/commodity/commodityModify';
 
 FlowRouter.route('/', {
+  name: 'index',
   action() {
     ReactLayout.render(MainLayout, {
       content: <Test />
@@ -37,6 +39,9 @@ FlowRouter.route('/register', {
 });
 
 FlowRouter.route('/commodity-mgmt', {
+  name: 'commodityManagement',
+  title: 'hahah',
+  parent: 'gaagga',
   action() {
     var intlData = BraavosCore.IntlData.fr;
 
@@ -45,6 +50,17 @@ FlowRouter.route('/commodity-mgmt', {
     });
   }
 });
+
+FlowRouter.route('/commodity-mgmt/modify', {
+  action() {
+    var intlData = BraavosCore.IntlData.zh;
+
+    ReactLayout.render(MainLayout, {
+      content: <CommodityModify {...intlData} />
+    });
+  }
+});
+
 FlowRouter.route('/order-mgmt', {
   action() {
     var intlData = BraavosCore.IntlData.fr;

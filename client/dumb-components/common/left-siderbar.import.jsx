@@ -52,7 +52,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*商品管理*/}
-            <li className={ActiveRoute.path('/commodity-mgmt') ? "active" : ""}>
+            <li className={ActiveRoute.path(/^\/commodity-mgmt/) ? "active" : ""}>
               <a href="/commodity-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
@@ -62,7 +62,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*订单管理*/}
-            <li className={ActiveRoute.path('/order-mgmt') ? "active" : ""}>
+            <li className={ActiveRoute.path(/^\/order-mgmt/) ? "active" : ""}>
               <a href="/order-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
@@ -72,7 +72,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*财务管理*/}
-            <li className={ActiveRoute.path('/finance-mgmt') ? "active" : ""}>
+            <li className={ActiveRoute.path(/^\/finance-mgmt/) ? "active" : ""}>
               <a href="/finance-mgmt">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
@@ -82,7 +82,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*账户信息*/}
-            <li className={ActiveRoute.path('/account-info') ? "active" : ""}>
+            <li className={ActiveRoute.path(/^\/account-info/) ? "active" : ""}>
               <a href="/account-info">
                 <i class="fa fa-diamond"></i>
                 <span class="nav-label">
