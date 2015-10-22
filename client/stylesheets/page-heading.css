@@ -1,0 +1,5 @@
+
+/*for breadcrumbs*/
+.page-heading .breadcrumb > li + li:before, .page-heading .breadcrumb > span + li:before{
+    content: '\00a0>\00a0';
+}
