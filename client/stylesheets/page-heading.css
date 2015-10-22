@@ -67,23 +67,36 @@
 
 .account-finance-wrap .bank-select-frame{
     border: 1px dashed #ccc;
-    width: 200px;
-    height: 200px;
-    margin: 20px;
+    width: 100px;
+    height: 100px;
+    margin: 20px 0 20px 80px;
 }
 
 .account-finance-wrap .bank-select-frame .plus{
-    margin-top: 30px;
+    margin-top: 15px;
     text-align: center;
-    font-size: 80px;
+    font-size: 35px;
     color: #ddd;
     line-height: 1.2;
+}
+
+.account-finance-wrap .bank-select-frame .delete{
+    color: red;
 }
 
 .account-finance-wrap .bank-select-frame a{
     display: block;
     margin: 0px auto;
     color: #999;
-    font-size: 18px;
+    font-size: 14px;
     text-align: center;
+}
+
+/*commodity*/
+.commodity-instruction-wrap label{
+    width: 100px;
+}
+
+.commodity-instruction-wrap textarea{
+    width: 600px;
 }

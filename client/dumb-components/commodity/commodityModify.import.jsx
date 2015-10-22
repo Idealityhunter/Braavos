@@ -1,4 +1,5 @@
 import {Pageheading} from 'client/dumb-components/common/pageheading';
+import {CommodityModifyInstruction} from 'client/dumb-components/commodity/commodityModifyInstruction';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -16,8 +17,8 @@ var commodityModify = React.createClass({
             <li className="active"><a data-toggle="tab" href="#tab-1"><FormattedMessage message={this.getIntlMessage(prefix + 'basic')}/></a></li>
             <li><a data-toggle="tab" href="#tab-2"><FormattedMessage message={this.getIntlMessage(prefix + 'introduction')} /></a></li>
             <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage(prefix + 'instruction')} /></a></li>
-            <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage(prefix + 'traffic')} /></a></li>
-            <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage(prefix + 'book')} /></a></li>
+            <li><a data-toggle="tab" href="#tab-4"><FormattedMessage message={this.getIntlMessage(prefix + 'traffic')} /></a></li>
+            <li><a data-toggle="tab" href="#tab-5"><FormattedMessage message={this.getIntlMessage(prefix + 'book')} /></a></li>
           </ul>
           <div className="tab-content">
             <div id="tab-1" className="tab-pane active">
@@ -40,6 +41,25 @@ var commodityModify = React.createClass({
 
                 <p>I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy, my dear friend, so absorbed in the exquisite
                   sense of mere tranquil existence, that I neglect my talents. I should be incapable of drawing a single stroke at the present moment; and yet.</p>
+              </div>
+            </div>
+            <div id="tab-3" className="tab-pane">
+              <div className="panel-body">
+                <CommodityModifyInstruction />
+              </div>
+            </div>
+            <div id="tab-3" className="tab-pane">
+              <div className="panel-body">
+                <h4>银行卡</h4>
+                <ul>
+                  <li>2134 5217 3971 1</li>
+                  <li>2134 5217 3971 1</li>
+                  <li>2134 5217 3971 1</li>
+                  <li>2134 5217 3971 1</li>
+                </ul>
+                <h4>添加</h4>
+                <input type="text" placeholder="请输入您的银行卡号"/>
+                <button>添加</button>
               </div>
             </div>
             <div id="tab-3" className="tab-pane">
