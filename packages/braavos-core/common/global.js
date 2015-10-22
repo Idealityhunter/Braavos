@@ -6,3 +6,5 @@
 BraavosCore = {};
 BraavosCore.Schema = {};
 BraavosCore.IntlData = {};
+BraavosCore.RootConf = {};
+BraavosCore.Database = {};
