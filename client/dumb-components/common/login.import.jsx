@@ -6,13 +6,13 @@ let login = React.createClass({
 
   getInitialState() {
     return {
-      email: '',
+      userName: '',
       password: ''
     }
   },
-  changeEmail(e) {
+  changeUserName(e) {
     this.setState({
-      email: e.target.value,
+      userName: e.target.value,
     });
   },
   changePassword(e) {
@@ -22,7 +22,23 @@ let login = React.createClass({
   },
   handleLogin(e) {
     e.preventDefault();
-    console.log(this.state);
+    console.log(`Trying to log in: ${this.state}`);
+
+    const login = (user, password, callback) => {
+      //create a login request with admin: true, so our loginHandler can handle this request
+      const loginRequest = {user: user, password: password};
+
+      //send the login request
+      Accounts.callLoginMethod({
+        methodArguments: [loginRequest],
+        userCallback: callback
+      });
+    };
+
+    const {userName: user, password} = this.state;
+    login(user, password, () => {
+      FlowRouter.go('home')
+    });
   },
   render() {
     return (
@@ -39,10 +55,12 @@ let login = React.createClass({
             </p>
             <form className="m-t" role="form">
               <div className="form-group">
-                <input type="email" className="form-control" placeholder={this.getIntlMessage('login.userName')} value={this.state.email} onChange={this.changeEmail} required="" />
+                <input type="text" className="form-control" placeholder={this.getIntlMessage('login.userName')}
+                       value={this.state.userName} onChange={this.changeUserName} required=""/>
               </div>
               <div className="form-group">
-                <input type="password" className="form-control" placeholder={this.getIntlMessage('login.password')} value={this.state.password} onChange={this.changePassword} required="" />
+                <input type="password" className="form-control" placeholder={this.getIntlMessage('login.password')}
+                       value={this.state.password} onChange={this.changePassword} required=""/>
               </div>
               <button className="btn btn-primary block full-width m-b" onClick={this.handleLogin}>
                 <FormattedMessage message={this.getIntlMessage('login.login')}/>

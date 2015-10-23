@@ -8,9 +8,9 @@ import {CommodityModify} from 'client/dumb-components/commodity/commodityModify'
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
-  if (!Meteor.user()) {
-    redirect('login');
-  }
+  //if (!Meteor.userId()) {
+  //  redirect('login');
+  //}
 }
 
 // 主页
