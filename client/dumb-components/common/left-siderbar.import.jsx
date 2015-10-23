@@ -17,6 +17,8 @@ let leftSiderBar = React.createClass({
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
       userInfo.avatar += '?imageView2/2/w/48/h/48';
+    } else {
+      userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
     }
     return {
       userInfo: userInfo
@@ -37,21 +39,25 @@ let leftSiderBar = React.createClass({
             {/*头像部分*/}
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <span><img alt="image" className="img-circle" src={this.data.userInfo.avatar || ""}/></span>
+                <span><img alt="image" width="48px" className="img-circle" src={this.data.userInfo.avatar}/></span>
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
                       <strong className="font-bold">{this.data.userInfo.nickName}</strong>
                     </span>
-                    <span className="text-muted text-xs block">Art Director
+                    <span className="text-muted text-xs block">普通商户
                       <b className="caret"></b>
                     </span>
                   </span>
                 </a>
                 <ul className="dropdown-menu animated fadeInRight m-t-xs">
-                  <li><a href={FlowRouter.path('accountInfo')}>Profile</a></li>
-                  <li><a href="contacts.html">Contacts</a></li>
-                  <li><a href="mailbox.html">Mailbox</a></li>
+                  <li>
+                    <a href={FlowRouter.path('account')}>
+                      <FormattedMessage message={this.getIntlMessage(`${prefix}accountInfo`)}/>
+                    </a>
+                  </li>
+                  {/*<li><a href="contacts.html">Contacts</a></li>*/}
+                  {/*<li><a href="mailbox.html">Mailbox</a></li>*/}
                   <li className="divider"></li>
                   <li>
                     <a href={FlowRouter.path('logout')}>
@@ -66,9 +72,9 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*首页*/}
-            <li className={ActiveRoute.path('/') ? "active" : ""}>
-              <a href="/">
-                <i className="fa fa-diamond"></i>
+            <li className={ActiveRoute.name('home') ? "active" : ""}>
+              <a href={FlowRouter.path('home')}>
+                <i className="fa fa-diamond"/>
                 <span class="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
                 </span>
@@ -76,39 +82,39 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*商品管理*/}
-            <li className={ActiveRoute.path(/^\/commodity-mgmt/) ? "active" : ""}>
-              <a href="/commodity-mgmt">
-                <i className="fa fa-shopping-cart"></i>
+            <li className={ActiveRoute.name('commodities') ? "active" : ""}>
+              <a href={FlowRouter.path('commodities')}>
+                <i className="fa fa-shopping-cart"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodityMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodities')}/>
                 </span>
               </a>
             </li>
 
             {/*订单管理*/}
-            <li className={ActiveRoute.path(/^\/order-mgmt/) ? "active" : ""}>
-              <a href="/order-mgmt">
-                <i className="fa fa-tags"></i>
+            <li className={ActiveRoute.name('orders') ? "active" : ""}>
+              <a href={FlowRouter.path('orders')}>
+                <i className="fa fa-tags"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'orderMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'orders')}/>
                 </span>
               </a>
             </li>
 
             {/*财务管理*/}
-            <li className={ActiveRoute.path(/^\/finance-mgmt/) ? "active" : ""}>
-              <a href="/finance-mgmt">
-                <i className="fa fa-database"></i>
+            <li className={ActiveRoute.name('finance') ? "active" : ""}>
+              <a href={FlowRouter.path('finance')}>
+                <i className="fa fa-database"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'financeMgmt')}/>
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'finance')}/>
                 </span>
               </a>
             </li>
 
             {/*账户信息*/}
-            <li className={ActiveRoute.path(/^\/account-info/) ? "active" : ""}>
-              <a href="/account-info">
-                <i className="fa fa-user"></i>
+            <li className={ActiveRoute.name('account') ? "active" : ""}>
+              <a href={FlowRouter.path('account')}>
+                <i className="fa fa-user"/>
                 <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
                 </span>

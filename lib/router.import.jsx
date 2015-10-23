@@ -29,8 +29,7 @@ FlowRouter.route('/', {
       content: <Test />
     });
   },
-  subscriptions: function(params, queryParams) {
-    console.log('flow-router subscription');
+  subscriptions: function() {
     this.register('home', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
@@ -74,10 +73,8 @@ FlowRouter.route('/register', {
 });
 
 // 商品管理 - 列表
-FlowRouter.route('/commodity-mgmt', {
-  name: 'commodityManagement',
-  title: 'hahah',
-  parent: 'gaagga',
+FlowRouter.route('/commodities', {
+  name: 'commodities',
   triggersEnter: [loginCheck],
   action() {
     var intlData = BraavosCore.IntlData.fr;
@@ -85,11 +82,15 @@ FlowRouter.route('/commodity-mgmt', {
     ReactLayout.render(MainLayout, {
       content: <Commodity {...intlData} />
     });
+  },
+  subscriptions: function() {
+    this.register('commodities', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
 // 商品管理 - 修改
-FlowRouter.route('/commodity-mgmt/modify', {
+FlowRouter.route('/commodities/editor', {
+  name: 'commodityEditor',
   triggersEnter: [loginCheck],
   action() {
     var intlData = BraavosCore.IntlData.zh;
@@ -97,12 +98,15 @@ FlowRouter.route('/commodity-mgmt/modify', {
     ReactLayout.render(MainLayout, {
       content: <CommodityModify {...intlData} />
     });
+  },
+  subscriptions: function() {
+    this.register('commodityEditor', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
 // 订单管理
-FlowRouter.route('/order-mgmt', {
-  name: 'orderManagement',
+FlowRouter.route('/orders', {
+  name: 'orders',
   triggersEnter: [loginCheck],
   action() {
     var intlData = BraavosCore.IntlData.fr;
@@ -110,12 +114,15 @@ FlowRouter.route('/order-mgmt', {
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
     });
+  },
+  subscriptions: function() {
+    this.register('orders', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
 // 财务管理
-FlowRouter.route('/finance-mgmt', {
-  name: 'financeManagement',
+FlowRouter.route('/finance', {
+  name: 'finance',
   triggersEnter: [loginCheck],
   action() {
     var intlData = BraavosCore.IntlData.fr;
@@ -123,12 +130,15 @@ FlowRouter.route('/finance-mgmt', {
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
     });
+  },
+  subscriptions: function() {
+    this.register('finance', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
 // 账户信息
-FlowRouter.route('/account-info', {
-  name: 'accountInfo',
+FlowRouter.route('/account', {
+  name: 'account',
   triggersEnter: [loginCheck],
   action() {
     var intlData = BraavosCore.IntlData.fr;
@@ -136,5 +146,8 @@ FlowRouter.route('/account-info', {
     ReactLayout.render(MainLayout, {
       content: <Account {...intlData} />
     });
+  },
+  subscriptions: function() {
+    this.register('account', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });

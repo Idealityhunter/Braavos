@@ -7,7 +7,7 @@ var commodityModify = React.createClass({
   mixins: [IntlMixin],
 
   render() {
-    let prefix = 'commodityMgmt.';
+    let prefix = 'commodities.';
     return (
       <div className="commodity-mngm-wrap">
         <Pageheading root="首页" category="商品管理" title="商品修改"/>
