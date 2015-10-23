@@ -10,9 +10,9 @@ BraavosCore.IntlData.zh = {
     mainLayout: {
       leftSideBar: {
         homepage: '首页',
-        commodityMgmt: '商品管理',
-        orderMgmt: '订单管理',
-        financeMgmt: '财务管理',
+        commodities: '商品管理',
+        orders: '订单管理',
+        finance: '财务管理',
         accountInfo: '账户信息'
       }
     },
@@ -28,7 +28,7 @@ BraavosCore.IntlData.zh = {
       password: '修改密码',
       finance: '财务设置'
     },
-    commodityMgmt: {
+    commodities: {
       basic: '基本信息',
       introduction: '商品介绍',
       instruction: '购买须知',
