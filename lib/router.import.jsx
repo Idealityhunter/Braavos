@@ -8,9 +8,16 @@ import {CommodityModify} from 'client/dumb-components/commodity/commodityModify'
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
-  //if (!Meteor.userId()) {
-  //  redirect('login');
-  //}
+  if (!Meteor.userId()) {
+    redirect('login');
+  }
+}
+
+function func() {
+  const userId = parseInt(Meteor.userId());
+  if (userId) {
+    Meteor.subscribe('basicUserInfo', userId);
+  }
 }
 
 // 主页
@@ -21,6 +28,10 @@ FlowRouter.route('/', {
     ReactLayout.render(MainLayout, {
       content: <Test />
     });
+  },
+  subscriptions: function(params, queryParams) {
+    console.log('flow-router subscription');
+    this.register('home', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -31,6 +42,19 @@ FlowRouter.route('/login', {
     let intlData = BraavosCore.IntlData.zh;
     ReactLayout.render(Login, {...intlData});
   }
+});
+
+// 注销
+FlowRouter.route('/logout', {
+  name: 'logout',
+  triggersEnter: [(context, redirect, stop) =>{
+    console.log('Log out!');
+    Meteor.logout(() => {
+      redirect('login');
+    });
+    stop();
+  }]
+
 });
 
 // 注册

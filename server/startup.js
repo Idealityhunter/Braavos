@@ -34,9 +34,9 @@ function initMongo() {
   /**
    * 初始化braavos数据库对象
    */
-  const initBraavos = () => {
+  const helper = (dbKey, confKey, colls) => {
     const conf = BraavosCore.RootConf.braavos;
-    const {db, user, password, replicaSet, readPreference} = conf['mongo'];
+    const {db, user, password, replicaSet, readPreference} = conf['mongo'][dbKey];
 
     const options = {readPreference: readPreference || 'primaryPreferred', authSource: db};
     if (replicaSet) {
@@ -46,16 +46,20 @@ function initMongo() {
     const url = `mongodb://${user}:${password}@${servers}/${db}?${optionsStr}`;
     const driver = new MongoInternals.RemoteCollectionDriver(url);
 
-    BraavosCore.Database.Braavos = {};
-    const Braavos = BraavosCore.Database.Braavos;
-    const Schema = BraavosCore.Schema;
+    BraavosCore.Database[confKey] = {};
 
-    // 注册的
-    const RegisterToken = new Mongo.Collection('RegisterToken', {_driver: driver});
-    RegisterToken.attachSchema(Schema.RegisterToken);
-    Braavos.RegisterToken = RegisterToken;
+    colls.forEach(({collName, alias, schema}) => {
+      const c = new Mongo.Collection(collName, {_driver: driver});
+      if (schema) {
+        c.attachSchema(schema);
+      }
+      BraavosCore.Database[confKey][alias ? alias : collName] = c;
+    });
   };
-  initBraavos();
+
+  const Schema = BraavosCore.Schema;
+  helper('braavos', 'Braavos', [{collName: 'RegisterToken', schema: Schema.RegisterToken}]);
+  helper('yunkai', 'Yunkai', [{collName: 'UserInfo'}]);
 }
 
 /**

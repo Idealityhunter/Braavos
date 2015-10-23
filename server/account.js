@@ -22,9 +22,10 @@ Accounts.registerLoginHandler('password', function (loginRequest) {
     //you don't need to do hashing in previous versions
     var hashStampedToken = Accounts._hashStampedToken(stampedToken);
 
-    Meteor.users.update(userId,
-      {$push: {'services.resume.loginTokens': hashStampedToken}}, {upsert: true}
-    );
+    Meteor.users.update(userId, {$set: {loginTime: new Date()}}, {upsert: true});
+    //Meteor.users.update(userId,
+    //  {$push: {'services.resume.loginTokens': hashStampedToken}}, {upsert: true}
+    //);
 
     //sending token along with the userId
     return {
@@ -36,4 +37,10 @@ Accounts.registerLoginHandler('password', function (loginRequest) {
     return undefined;
     //return {error: err.toString()};
   }
+});
+
+Meteor.publish('basicUserInfo', userId=> {
+  console.log(`Publishing ${userId}...`);
+  const coll = BraavosCore.Database['Yunkai']['UserInfo'];
+  return coll.find({userId: userId});
 });
