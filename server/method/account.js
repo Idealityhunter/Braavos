@@ -33,7 +33,7 @@ Meteor.methods({
       return {valid: true};
     }
 
-    const ret = BraavosCore.Database.Braavos.Collections.RegisterToken.findOne(
+    const ret = BraavosCore.Database.Braavos.RegisterToken.findOne(
       {token: token, valid: true, expire: {'$gt': new Date()}});
     return {valid: Boolean(ret)};
   }
