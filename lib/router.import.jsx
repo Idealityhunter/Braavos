@@ -5,6 +5,7 @@ import {Login} from 'client/dumb-components/common/login';
 import {Account} from 'client/dumb-components/account/account';
 import {Commodity} from 'client/dumb-components/commodity/commodity';
 import {CommodityModify} from 'client/dumb-components/commodity/commodityModify';
+import {UdTest} from 'client/dumb-components/udTest';
 
 FlowRouter.route('/', {
   name: 'index',
@@ -87,3 +88,13 @@ FlowRouter.route('/account-info', {
     });
   }
 });
+
+FlowRouter.route('/ud-test', {
+  action() {
+    ReactLayout.render(MainLayout, {
+      content: <UdTest />
+    });
+  }
+});
+
+
