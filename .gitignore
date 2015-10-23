@@ -10,3 +10,4 @@ lib/*.js.cached
 lib/*.js.map
 
 node_modules/*
+packages/*/.npm

@@ -2,11 +2,31 @@ var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
 let leftSiderBar = React.createClass({
-  mixins: [IntlMixin],
+  mixins: [IntlMixin, ReactMeteorData],
+
+  getMeteorData() {
+    const userId = parseInt(Meteor.userId());
+    const userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne({userId: userId});
+
+    if (!userInfo) {
+      return {
+        userInfo: {}
+      };
+    }
+
+    // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
+    if (userInfo && userInfo.avatar) {
+      userInfo.avatar += '?imageView2/2/w/48/h/48';
+    }
+    return {
+      userInfo: userInfo
+    };
+  },
 
   componentDidMount() {
     $('#side-menu').metisMenu();
   },
+
   render() {
     let prefix = 'mainLayout.leftSideBar.';
     return (
@@ -17,11 +37,11 @@ let leftSiderBar = React.createClass({
             {/*头像部分*/}
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <span><img alt="image" className="img-circle" src="img/profile_small.jpg"/></span>
+                <span><img alt="image" className="img-circle" src={this.data.userInfo.avatar || ""}/></span>
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
-                      <strong className="font-bold">David Williams</strong>
+                      <strong className="font-bold">{this.data.userInfo.nickName}</strong>
                     </span>
                     <span className="text-muted text-xs block">Art Director
                       <b className="caret"></b>
@@ -29,11 +49,15 @@ let leftSiderBar = React.createClass({
                   </span>
                 </a>
                 <ul className="dropdown-menu animated fadeInRight m-t-xs">
-                  <li><a href="profile.html">Profile</a></li>
+                  <li><a href={FlowRouter.path('accountInfo')}>Profile</a></li>
                   <li><a href="contacts.html">Contacts</a></li>
                   <li><a href="mailbox.html">Mailbox</a></li>
                   <li className="divider"></li>
-                  <li><a href="/login">Logout</a></li>
+                  <li>
+                    <a href={FlowRouter.path('logout')}>
+                      <FormattedMessage message={this.getIntlMessage('login.logout')}/>
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div className="logo-element">
