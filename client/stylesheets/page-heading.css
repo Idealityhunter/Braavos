@@ -1,4 +1,9 @@
 
+/*initial*/
+textarea{
+    resize: none;
+}
+
 /*for breadcrumbs*/
 .page-heading .breadcrumb > li + li:before, .page-heading .breadcrumb > span + li:before{
     content: '\00a0>\00a0';
@@ -6,7 +11,7 @@
 
 /*for account basic*/
 .modify-text{
-
+    /*TODO */
 }
 
 .avatar img{
@@ -42,9 +47,6 @@
     }
 }
 
-.account-basic-wrap textarea{
-    resize: none;
-}
 .account-basic-wrap .height-auto{
     height: auto;
 }
@@ -80,7 +82,7 @@
     line-height: 1.2;
 }
 
-.account-finance-wrap .bank-select-frame .delete{
+.account-finance-wrap .delete{
     color: red;
 }
 
@@ -93,10 +95,15 @@
 }
 
 /*commodity*/
-.commodity-instruction-wrap label{
-    width: 100px;
+.commodity-modify-wrap label{
+    margin: 2px 20px;
+    font-size: 16px;
+    font-family: sans-serif;
+    width: 80px;
 }
 
-.commodity-instruction-wrap textarea{
+.commodity-modify-wrap textarea{
     width: 600px;
+    display: inline-block;
+    vertical-align: top;
 }

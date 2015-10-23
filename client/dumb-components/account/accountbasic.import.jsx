@@ -4,9 +4,8 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 let accountBasic = React.createClass({
   mixins: [IntlMixin],
   componentDidMount() {
-    let self = this;
     $('.modify-text').on('click', function(e){
-      let text = $(e.target)[0].previousElementSibling;
+      let text = e.target.previousElementSibling;
       let $textDiv = $(text).children('div');
       let $textInput = $(text).children('input, textarea');
       $textDiv.addClass('hide');

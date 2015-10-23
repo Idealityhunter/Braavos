@@ -45,7 +45,7 @@ let leftSiderBar = React.createClass({
             <li className={ActiveRoute.path('/') ? "active" : ""}>
               <a href="/">
                 <i className="fa fa-diamond"></i>
-                <span class="nav-label">
+                <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
                 </span>
               </a>
