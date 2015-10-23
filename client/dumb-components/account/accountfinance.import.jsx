@@ -15,19 +15,19 @@ let accountFinance = React.createClass({
             <div className="bank-name">渣打银行</div>
             <div className="bank-account">2134 5217 3971 1</div>
             <div className="bank-ID">Lucy</div>
-            <a href="javascript:void(0)" onclick={this.handleClick}>删除</a>
+            <a className="delete" href="javascript:void(0)" onclick={this.handleClick}>删除</a>
           </li>
           <li>
             <div className="bank-name">渣打银行</div>
             <div className="bank-account">2134 5217 3971 1</div>
             <div className="bank-ID">Lucy</div>
-            <a href="javascript:void(0)" onclick={this.handleClick}>删除</a>
+            <a className="delete" href="javascript:void(0)" onclick={this.handleClick}>删除</a>
           </li>
           <li>
             <div className="bank-name">渣打银行</div>
             <div className="bank-account">2134 5217 3971 1</div>
             <div className="bank-ID">Lucy</div>
-            <a href="javascript:void(0)" onclick={this.handleClick}>删除</a>
+            <a className="delete" href="javascript:void(0)" onclick={this.handleClick}>删除</a>
           </li>
         </ul>
         <div className="bank-select-frame">
