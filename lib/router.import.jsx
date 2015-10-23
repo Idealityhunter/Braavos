@@ -5,6 +5,7 @@ import {Login} from 'client/dumb-components/common/login';
 import {Account} from 'client/dumb-components/account/account';
 import {Commodity} from 'client/dumb-components/commodity/commodity';
 import {CommodityModify} from 'client/dumb-components/commodity/commodityModify';
+import {Finance} from 'client/dumb-components/finance/finance';
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
@@ -121,7 +122,7 @@ FlowRouter.route('/finance-mgmt', {
     var intlData = BraavosCore.IntlData.fr;
 
     ReactLayout.render(MainLayout, {
-      content: <Test {...intlData} />
+      content: <Finance {...intlData} />
     });
   }
 });
