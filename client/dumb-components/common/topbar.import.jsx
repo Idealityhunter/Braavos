@@ -142,7 +142,7 @@ let topBar = React.createClass({
             </ul>
           </li>
           <li>
-            <a href="#">
+            <a href={FlowRouter.path('logout')}>
               <i className="fa fa-sign-out"></i>
               <FormattedMessage message={this.getIntlMessage('login.logout')}/>
             </a>

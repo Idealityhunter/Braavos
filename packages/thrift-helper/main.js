@@ -8,7 +8,6 @@ ThriftHelper = {
     var module = Npm.require('thrift-helper');
     var client = module.createClient(service, host, port, options);
     if (apiList) {
-      console.log(apiList);
       return Async.wrap(client, apiList);
     }else {
       return client

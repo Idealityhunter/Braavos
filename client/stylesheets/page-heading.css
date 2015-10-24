@@ -1,0 +1,109 @@
+
+/*initial*/
+textarea{
+    resize: none;
+}
+
+/*for breadcrumbs*/
+.page-heading .breadcrumb > li + li:before, .page-heading .breadcrumb > span + li:before{
+    content: '\00a0>\00a0';
+}
+
+/*for account basic*/
+.modify-text{
+    /*TODO */
+}
+
+.avatar img{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.account-basic-wrap .no-border{
+    border: none;
+}
+
+@media (max-width: 767px) {
+    .account-basic-wrap hr{
+        margin: 10px 3% 20px 1%;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .account-basic-wrap hr{
+        margin: 10px 5% 20px 3%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .account-basic-wrap hr{
+        margin: 10px 7% 20px 5%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .account-basic-wrap hr{
+        margin: 10px 10% 20px 7%;
+    }
+}
+
+.account-basic-wrap .height-auto{
+    height: auto;
+}
+
+
+
+.account-finance-wrap ul.bank-account-list{
+    list-style: none;
+}
+
+.account-finance-wrap h4, .account-finance-wrap ul, .account-finance-wrap li div{
+    vertical-align: top;
+    display: inline-block;
+}
+
+.account-finance-wrap li div{
+    margin-right: 20px;
+    margin-bottom: 15px;
+}
+
+.account-finance-wrap .bank-select-frame{
+    border: 1px dashed #ccc;
+    width: 100px;
+    height: 100px;
+    margin: 20px 0 20px 80px;
+}
+
+.account-finance-wrap .bank-select-frame .plus{
+    margin-top: 15px;
+    text-align: center;
+    font-size: 35px;
+    color: #ddd;
+    line-height: 1.2;
+}
+
+.account-finance-wrap .delete{
+    color: red;
+}
+
+.account-finance-wrap .bank-select-frame a{
+    display: block;
+    margin: 0px auto;
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+}
+
+/*commodity*/
+.commodity-modify-wrap label{
+    margin: 2px 20px;
+    font-size: 16px;
+    font-family: sans-serif;
+    width: 80px;
+}
+
+.commodity-modify-wrap textarea{
+    width: 600px;
+    display: inline-block;
+    vertical-align: top;
+}
