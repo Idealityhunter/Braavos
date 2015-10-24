@@ -36,8 +36,13 @@ let login = React.createClass({
     };
 
     const {userName: user, password} = this.state;
-    login(user, password, () => {
-      FlowRouter.go('home')
+    login(user, password, (ret) => {
+      if (ret && ret.error) {
+        // 登录失败
+        alert('登录失败, 请重新输入!');
+      } else {
+        FlowRouter.go('home');
+      }
     });
   },
   render() {

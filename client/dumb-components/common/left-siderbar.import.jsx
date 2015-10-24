@@ -5,13 +5,16 @@ let leftSiderBar = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getMeteorData() {
-    const userId = parseInt(Meteor.userId());
-    const userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne({userId: userId});
+    const handle = Meteor.subscribe('basicUserInfo');
+
+    let userInfo;
+    if (handle.ready()) {
+      const userId = parseInt(Meteor.userId());
+      userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne({userId: userId});
+    }
 
     if (!userInfo) {
-      return {
-        userInfo: {}
-      };
+      userInfo = {};
     }
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
