@@ -24,9 +24,36 @@ BraavosCore.IntlData.zh = {
       forgetPassword: '忘记密码'
     },
     accountInfo: {
+      // START: tab strings
       basic: '基本信息',
+      finance: '财务设置',
       password: '修改密码',
-      finance: '财务设置'
+      // END: tab strings
+
+      // 基本信息的tab
+      basicTab: {
+        nickname: '昵称',
+        avatar: '头像',
+        realName: '真实姓名',
+        tel: '联系电话',
+        email: 'Email',
+        lang: '服务语言',
+        shop: '店铺名称',
+        zone: '所在地',
+        address: '详细地址',
+
+        // START: 输入框的placeholder
+        input: {
+          nickname: '请输入您的昵称',
+          realName: '请输入您的真实姓名',
+          tel: '请输入您的联系电话',
+          email: '请输入您的Email',
+          lang: '服务语言',
+          shop: '请输入您的店铺名称',
+          zone: '请输入您的所在地',
+          address: '请输入您的详细地址'
+        }
+      }
     },
     commodities: {
       basic: '基本信息',

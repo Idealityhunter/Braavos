@@ -1,6 +1,6 @@
 import {Breadcrumb} from 'client/dumb-components/common/breadcrumb';
-import {AccountBasic} from 'client/dumb-components/account/accountbasic';
-import {AccountFinance} from 'client/dumb-components/account/accountfinance';
+import {AccountBasic} from 'client/dumb-components/account/account-basic';
+import {AccountFinance} from 'client/dumb-components/account/account-finance';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -9,10 +9,10 @@ var account = React.createClass({
   mixins: [IntlMixin],
 
   render() {
-    let prefix = 'accountInfo.';
+    const prefix = 'accountInfo.';
+    const intlData = _.pick(this.props, 'locales', 'messages', 'format');
     return (
       <div className="account-info-wrap">
-        {/*<Pageheading root="首页" title="账户信息"/>*/}
         <Breadcrumb />
         <div className="tabs-container">
           <ul className="nav nav-tabs">
@@ -23,7 +23,7 @@ var account = React.createClass({
           <div className="tab-content">
             <div id="tab-1" className="tab-pane active">
               <div className="panel-body">
-                <AccountBasic />
+                <AccountBasic {...intlData} />
               </div>
             </div>
             <div id="tab-2" className="tab-pane">
