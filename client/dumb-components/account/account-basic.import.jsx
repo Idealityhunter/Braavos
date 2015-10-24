@@ -1,8 +1,10 @@
+import {TextEditor} from 'client/dumb-components/common/text-editor';
+import {GoogleMapComponent} from 'client/dumb-components/common/googlemaps';
+
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
-import {TextEditor} from 'client/dumb-components/common/text-editor';
 
-let accountBasic = React.createClass({
+export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getMeteorData() {
@@ -110,10 +112,11 @@ let accountBasic = React.createClass({
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}/>
           </div>
+          <div className="form-group" style={{margin: '40px auto 40px 120px', width: '75%', height: '500px'}}>
+            <GoogleMapComponent lat={40} lng={116.33}/>
+          </div>
         </div>
       </div>
     );
   }
 });
-
-export const AccountBasic = accountBasic;

@@ -24,6 +24,7 @@ FlowRouter.route('/', {
   title: lsbMessages['homepage'],
   triggersEnter: [loginCheck],
   action() {
+    //ReactLayout.render();
     ReactLayout.render(MainLayout, _.extend({content: <Test {...intlData} />}, intlData));
   }
 });
