@@ -14,12 +14,7 @@ function loginCheck(context, redirect, stop) {
   }
 }
 
-function func() {
-  const userId = parseInt(Meteor.userId());
-  if (userId) {
-    Meteor.subscribe('basicUserInfo', userId);
-  }
-}
+const intlData = BraavosCore.IntlData.zh;
 
 // 主页
 FlowRouter.route('/', {
@@ -27,11 +22,8 @@ FlowRouter.route('/', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Test />
+      content: <Test {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('home', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -39,7 +31,6 @@ FlowRouter.route('/', {
 FlowRouter.route('/login', {
   name: 'login',
   action() {
-    let intlData = BraavosCore.IntlData.zh;
     ReactLayout.render(Login, {...intlData});
   }
 });
@@ -47,7 +38,7 @@ FlowRouter.route('/login', {
 // 注销
 FlowRouter.route('/logout', {
   name: 'logout',
-  triggersEnter: [(context, redirect, stop) =>{
+  triggersEnter: [(context, redirect, stop) => {
     console.log('Log out!');
     Meteor.logout(() => {
       redirect('login');
@@ -78,14 +69,9 @@ FlowRouter.route('/commodities', {
   name: 'commodities',
   triggersEnter: [loginCheck],
   action() {
-    var intlData = BraavosCore.IntlData.fr;
-
     ReactLayout.render(MainLayout, {
       content: <Commodity {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('commodities', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -94,14 +80,9 @@ FlowRouter.route('/commodities/editor', {
   name: 'commodityEditor',
   triggersEnter: [loginCheck],
   action() {
-    var intlData = BraavosCore.IntlData.zh;
-
     ReactLayout.render(MainLayout, {
       content: <CommodityModify {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('commodityEditor', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -110,14 +91,9 @@ FlowRouter.route('/orders', {
   name: 'orders',
   triggersEnter: [loginCheck],
   action() {
-    var intlData = BraavosCore.IntlData.fr;
-
     ReactLayout.render(MainLayout, {
       content: <Test {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('orders', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -126,14 +102,9 @@ FlowRouter.route('/finance', {
   name: 'finance',
   triggersEnter: [loginCheck],
   action() {
-    var intlData = BraavosCore.IntlData.fr;
-
     ReactLayout.render(MainLayout, {
       content: <Finance {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('finance', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });
 
@@ -142,13 +113,8 @@ FlowRouter.route('/account', {
   name: 'account',
   triggersEnter: [loginCheck],
   action() {
-    var intlData = BraavosCore.IntlData.fr;
-
     ReactLayout.render(MainLayout, {
       content: <Account {...intlData} />
     });
-  },
-  subscriptions: function() {
-    this.register('account', Meteor.subscribe('basicUserInfo', parseInt(Meteor.userId())));
   }
 });

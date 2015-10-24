@@ -39,7 +39,4 @@ Accounts.registerLoginHandler('password', function (loginRequest) {
   }
 });
 
-Meteor.publish('basicUserInfo', userId=> {
-  const coll = BraavosCore.Database['Yunkai']['UserInfo'];
-  return coll.find({userId: userId});
-});
+
