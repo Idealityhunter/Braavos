@@ -11,7 +11,9 @@ let leftSiderBar = React.createClass({
     if (handle.ready()) {
       const userId = parseInt(Meteor.userId());
       userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne({userId: userId});
-    } else {
+    }
+
+    if (!userInfo) {
       userInfo = {};
     }
 
