@@ -1,4 +1,4 @@
-import {Pageheading} from 'client/dumb-components/common/pageheading';
+import {Breadcrumb} from 'client/dumb-components/common/breadcrumb';
 import {AccountBasic} from 'client/dumb-components/account/accountbasic';
 import {AccountFinance} from 'client/dumb-components/account/accountfinance';
 
@@ -12,7 +12,8 @@ var account = React.createClass({
     let prefix = 'accountInfo.';
     return (
       <div className="account-info-wrap">
-        <Pageheading root="首页" title="账户信息"/>
+        {/*<Pageheading root="首页" title="账户信息"/>*/}
+        <Breadcrumb />
         <div className="tabs-container">
           <ul className="nav nav-tabs">
             <li className="active"><a data-toggle="tab" href="#tab-1"><FormattedMessage message={this.getIntlMessage(prefix + 'basic')}/></a></li>

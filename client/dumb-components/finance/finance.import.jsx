@@ -1,4 +1,4 @@
-import {Pageheading} from 'client/dumb-components/common/pageheading';
+import {Breadcrumb} from 'client/dumb-components/common/breadcrumb';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -85,11 +85,9 @@ var finance = React.createClass({
     });
   },
   render() {
-    let prefix = 'financeMgmt.';
     return (
       <div className="finance-mngm-wrap">
-        <Pageheading root="首页" title="财务管理"/>
-
+        <Breadcrumb />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
