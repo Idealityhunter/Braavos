@@ -14,15 +14,13 @@ function loginCheck(context, redirect, stop) {
   }
 }
 
-const intlData = BraavosCore.IntlData.zh;
-
 // 主页
 FlowRouter.route('/', {
   name: 'home',
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Test {...intlData} />
+      content: <Test />
     });
   }
 });
@@ -70,7 +68,7 @@ FlowRouter.route('/commodities', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Commodity {...intlData} />
+      content: <Commodity />
     });
   }
 });
@@ -81,7 +79,7 @@ FlowRouter.route('/commodities/editor', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <CommodityModify {...intlData} />
+      content: <CommodityModify />
     });
   }
 });
@@ -92,7 +90,7 @@ FlowRouter.route('/orders', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Test {...intlData} />
+      content: <Test />
     });
   }
 });
@@ -103,7 +101,7 @@ FlowRouter.route('/finance', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Finance {...intlData} />
+      content: <Finance />
     });
   }
 });
@@ -114,7 +112,7 @@ FlowRouter.route('/account', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, {
-      content: <Account {...intlData} />
+      content: <Account />
     });
   }
 });
