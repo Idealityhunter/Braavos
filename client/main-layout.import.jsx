@@ -11,9 +11,10 @@ let mainLayout = React.createClass({
     });
   },
   render() {
-    let intlData = BraavosCore.IntlData.zh;
+    const intlData = BraavosCore.IntlData.zh;
     // 将intlData加入content中
-    let content = React.cloneElement(this.props.content, intlData);
+    const content = React.cloneElement(this.props.content, intlData);
+
     return (
       <div id="wrapper">
         {/*左侧菜单栏*/}
