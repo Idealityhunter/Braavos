@@ -11,9 +11,7 @@ let mainLayout = React.createClass({
     });
   },
   render() {
-    const intlData = BraavosCore.IntlData.zh;
-    // 将intlData加入content中
-    const content = React.cloneElement(this.props.content, intlData);
+    const intlData = _.pick(this.props, 'locales', 'messages', 'format');
 
     return (
       <div id="wrapper">
@@ -23,7 +21,7 @@ let mainLayout = React.createClass({
         <div id="page-wrapper" className="gray-bg">
           {/*顶部导航栏*/}
           <TopBar {...intlData} />
-          {content}
+          {this.props.content}
         </div>
       </div>
     );

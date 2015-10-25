@@ -38,3 +38,64 @@ Schema.RegisterToken = new SimpleSchema({
     defaultValue: true
   }
 });
+
+/**
+ * 基础的用户信息
+ *
+ * @type {SimpleSchema}
+ */
+Schema.UserInfo = new SimpleSchema({
+  /**
+   * 用户ID
+   */
+  userId: {
+    type: Number,
+    min: 1,
+    unique: true
+  },
+
+  /**
+   * 用户昵称
+   */
+  nickName: {
+    type: String,
+    min: 1,
+    max: 32
+  },
+
+  /**
+   * 用户的个性签名
+   */
+  signature: {
+    type: String,
+    max: 512,
+    optional: true
+  },
+
+  /**
+   * 头像
+   */
+  avatar: {
+    type: String,
+    max: 1024,
+    optional: true
+  },
+
+  /**
+   * 性别。m: 男性, f: 女性, b: 跨性别者, s: 保密, u: 未知
+   */
+  gender: {
+    type: String,
+    regEx: /^(m|f|b|s|u)$/i,
+    optional: true
+  },
+
+  /**
+   * 电话号码
+   */
+  tel: {
+    type: String,
+    max: 32,
+    unique: true
+  }
+});
