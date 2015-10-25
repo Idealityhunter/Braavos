@@ -1,16 +1,19 @@
 export const TextEditor = React.createClass({
   getInitialState() {
     return {
-      text: '',
-      editing: false
+      text: "",
+      editing: false,
+      // 原始数据
+      original: "",
+      // 上一次更新的值. 每次blur的时候, 将检查这一数值.
+      // 只有当二者不一致的时候, 才会真正执行提交的操作
+      lastUpdate: undefined,
+      // 标记位. 如果esc被按下, 会被置为true. 帮助检测esc事件
+      escPressed: false
     };
   },
 
   propTypes: {
-    // div部分所采用的css class
-    divStyleCls: React.PropTypes.arrayOf(React.PropTypes.string),
-    // a标签所采用的css class
-    aStyleCls: React.PropTypes.arrayOf(React.PropTypes.string),
     // 是否显示"修改"标签
     visibleEditAnchor: React.PropTypes.bool,
     // "修改"标签的文案
@@ -23,14 +26,33 @@ export const TextEditor = React.createClass({
 
   getDefaultProps() {
     return {
-      divStyleCls: [],
-      aStyleCls: [],
       visibleEditAnchor: true,
       editAnchorLabel: '修改',
       placeholder: '请输入',
       multiLines: false
     };
   },
+
+  componentDidMount() {
+    const inputNode= React.findDOMNode(this.refs['text-input']);
+
+    jQuery(inputNode).keyup(evt => {
+      const enterCode = 13;
+      // 如果为多行情况, 则不支持使用enter进行提交操作
+      if (!this.props['multiLine'] && evt.keyCode == enterCode) {
+        // Enter is pressed
+        evt.target.blur();
+      }
+    });
+
+    jQuery(inputNode).keydown(evt=>{
+      const escCode = 27;
+      if (evt.keyCode == escCode) {
+        this.state.escPressed = true;
+      }
+    });
+  },
+
 
   onClick() {
     this.setState({editing: true});
@@ -45,24 +67,28 @@ export const TextEditor = React.createClass({
 
   /**
    * 输入框内容发生变化
-   *
-   * @param evt
    */
   onChange(evt) {
     this.setState({text: evt.target.value});
   },
 
-  onKeyUp(evt) {
-    // 如果为多行情况, 则不支持使用enter进行提交操作
-    if (!this.props['multiLine'] && evt.keyCode == 13) {
-      // Enter is pressed
-      const inputNode = React.findDOMNode(this.refs['text-input']);
-      inputNode.blur();
-    }
+  onFocus() {
+    // 获得焦点的时候, 需要保存原始数据
+    this.state.original = this.state.text;
   },
 
   onBlur() {
+    if (this.state.escPressed) {
+      // Esc被按下
+      this.state.text = this.state.original;
+      this.state.escPressed = false;
+    }
+
     this.setState({editing: false});
+
+    if (this.state.lastUpdate != this.state.text) {
+      this.state.lastUpdate = this.state.text;
+    }
   },
 
   render() {
@@ -98,7 +124,9 @@ export const TextEditor = React.createClass({
              placeholder={this.props['placeholder']}
              value={this.state.text}
              onBlur={this.onBlur}
-             onKeyUp={this.onKeyUp}
+             onFocus={this.onFocus}
+             //onKeyUp={this.onKeyUp}
+             //onKeyDown={this.onKeyDown}
              onChange={this.onChange}/>;
 
     return (
