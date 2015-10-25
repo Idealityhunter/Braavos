@@ -8,15 +8,18 @@ export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getMeteorData() {
-    Meteor.subscribe('basicUserInfo');
-    const userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne() || {};
+    const handle = Meteor.subscribe('basicUserInfo');
 
-    //// TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
-    //if (userInfo && userInfo.avatar) {
-    //  userInfo.avatar += '?imageView2/2/w/48/h/48';
-    //} else {
-    //  userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
-    //}
+    const userId = parseInt(Meteor.userId());
+    const userInfo = handle.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({userId:userId}) : {};
+
+    // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
+    if (userInfo && userInfo.avatar) {
+      userInfo.avatar += '?imageView2/2/w/48/h/48';
+    } else {
+      userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
+    }
+
     return {
       userInfo: userInfo
     };
@@ -50,9 +53,21 @@ export const AccountBasic = React.createClass({
 
   render() {
     const prefix = 'accountInfo.basicTab';
+    UINFO_DATA = this.data;
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
+          <div className="form-group">
+            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+              <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
+            </label>
+            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
+                        text={this.data.userInfo.nickName}
+                        onSubmit={ nickname=>{
+                          Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: nickname});
+                        }}/>
+          </div>
+          <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
@@ -64,6 +79,7 @@ export const AccountBasic = React.createClass({
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.avatar`)}/>
             </label>
+
             <div className="col-xs-6 col-sm-7 col-md-8">
               <img
                 src="https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/super/whfpf%3D425%2C260%2C50/sign=03ade0c33f12b31bc7399e69e0250248/7e3e6709c93d70cf4be7d689fedcd100baa12b10.jpg"/>

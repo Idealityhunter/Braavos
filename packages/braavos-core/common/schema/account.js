@@ -99,3 +99,13 @@ Schema.UserInfo = new SimpleSchema({
     unique: true
   }
 });
+
+
+/**
+ * 商户信息
+ *
+ * @type {SimpleSchema}
+ */
+Schema.SalerInfo = new SimpleSchema({
+
+})

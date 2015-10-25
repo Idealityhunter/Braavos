@@ -59,7 +59,7 @@ function initMongo() {
 
   const Schema = BraavosCore.Schema;
   helper('braavos', 'Braavos', [{collName: 'RegisterToken', schema: Schema.RegisterToken}]);
-  helper('yunkai', 'Yunkai', [{collName: 'UserInfo'}]);
+  helper('yunkai', 'Yunkai', [{collName: 'UserInfo'}])
 }
 
 /**

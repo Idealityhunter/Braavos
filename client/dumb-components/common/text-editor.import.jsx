@@ -1,10 +1,10 @@
 export const TextEditor = React.createClass({
   getInitialState() {
     return {
-      text: "",
+      text: this.props.text,
       editing: false,
       // 原始数据
-      original: "",
+      original: this.props.text,
       // 上一次更新的值. 每次blur的时候, 将检查这一数值.
       // 只有当二者不一致的时候, 才会真正执行提交的操作
       lastUpdate: undefined,
@@ -14,6 +14,10 @@ export const TextEditor = React.createClass({
   },
 
   propTypes: {
+    // 提交修改的回调函数
+    onSubmit: React.PropTypes.object,
+    // 初始的文本信息
+    text: React.PropTypes.string,
     // 是否显示"修改"标签
     visibleEditAnchor: React.PropTypes.bool,
     // "修改"标签的文案
@@ -26,6 +30,7 @@ export const TextEditor = React.createClass({
 
   getDefaultProps() {
     return {
+      text: "",
       visibleEditAnchor: true,
       editAnchorLabel: '修改',
       placeholder: '请输入',
@@ -34,7 +39,7 @@ export const TextEditor = React.createClass({
   },
 
   componentDidMount() {
-    const inputNode= React.findDOMNode(this.refs['text-input']);
+    const inputNode = React.findDOMNode(this.refs['text-input']);
 
     jQuery(inputNode).keyup(evt => {
       const enterCode = 13;
@@ -45,7 +50,7 @@ export const TextEditor = React.createClass({
       }
     });
 
-    jQuery(inputNode).keydown(evt=>{
+    jQuery(inputNode).keydown(evt=> {
       const escCode = 27;
       if (evt.keyCode == escCode) {
         this.state.escPressed = true;
@@ -55,7 +60,8 @@ export const TextEditor = React.createClass({
 
 
   onClick() {
-    this.setState({editing: true});
+    // 准备进入编辑状态
+    this.setState({editing: true, text: this.props.text});
 
     setTimeout(() => {
       const inputNode = React.findDOMNode(this.refs['text-input']);
@@ -68,7 +74,7 @@ export const TextEditor = React.createClass({
   /**
    * 输入框内容发生变化
    */
-  onChange(evt) {
+    onChange(evt) {
     this.setState({text: evt.target.value});
   },
 
@@ -84,10 +90,24 @@ export const TextEditor = React.createClass({
       this.state.escPressed = false;
     }
 
-    this.setState({editing: false});
-
+    // 是否真的提交了
+    let submitted = false;
     if (this.state.lastUpdate != this.state.text) {
       this.state.lastUpdate = this.state.text;
+      if (this.props.onSubmit) {
+        submitted = true;
+        this.props.onSubmit(this.state.text);
+      }
+    }
+
+    if (submitted) {
+      // 给一些延迟. 造成的效果是, 输入框失去焦点的时候, 需要过很小一段时间, 才把文本框切换出来. 这样给文本框一些更新内容的时间
+      setTimeout(() => {
+        this.setState({editing: false});
+      }, 10);
+    } else {
+      // 直接切换
+      this.setState({editing: false});
     }
   },
 
@@ -95,7 +115,7 @@ export const TextEditor = React.createClass({
     // 根据state, 获得文本区域的显示字符
     const textAreaStyle = _.extend(
       {display: this.state.editing ? 'none' : 'block'},
-      this.state.text ? {} : {color: 'lightgray', 'font-style': 'italic'});
+      this.props.text ? {} : {color: 'lightgray', 'font-style': 'italic'});
 
     // "修改"链接的style
     const anchorStyle = {display: this.state.editing ? 'none' : 'block'};
@@ -125,8 +145,6 @@ export const TextEditor = React.createClass({
              value={this.state.text}
              onBlur={this.onBlur}
              onFocus={this.onFocus}
-             //onKeyUp={this.onKeyUp}
-             //onKeyDown={this.onKeyDown}
              onChange={this.onChange}/>;
 
     return (
@@ -135,7 +153,7 @@ export const TextEditor = React.createClass({
           <div className="form-control no-border height-auto cursor-pointer"
                style={textAreaStyle}
                onClick={this.onClick}>
-            {this.state.text ? this.state.text : this.props['placeholder']}
+            {this.props.text ? this.props.text : this.props['placeholder']}
           </div>
           {inputNode}
         </div>
