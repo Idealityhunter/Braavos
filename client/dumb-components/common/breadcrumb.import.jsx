@@ -22,7 +22,7 @@ const breadcrumb = React.createClass({
     // 获得对应的breadcrumb条目
     const entries = routes.map(r=> {
       const title = r.options.title || 'default';
-      return <li><a href={FlowRouter.path(r.options.name)}>{title}</a></li>;
+      return <li key={r.options.name}><a href={FlowRouter.path(r.options.name)}>{title}</a></li>;
     });
 
     return (
