@@ -20,7 +20,10 @@ export const AccountBasic = React.createClass({
     };
 
     return {
-      nickname: new TextEditorState()
+      nickname: new TextEditorState(),
+      tel: new TextEditorState(),
+      email: new TextEditorState(),
+      address: new TextEditorState()
     }
   },
 
@@ -60,20 +63,27 @@ export const AccountBasic = React.createClass({
   },
 
   getMeteorData() {
-    const handle = Meteor.subscribe('basicUserInfo');
+    Meteor.subscribe('basicUserInfo');
+    Meteor.subscribe('sellerInfo');
 
     const userId = parseInt(Meteor.userId());
-    const userInfo = handle.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) : {};
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) || {};
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
-      userInfo.avatar += '?imageView2/2/w/48/h/48';
+      userInfo.avatar = userInfo.avatar.indexOf("qiniudn") ? `${userInfo.avatar}?imageView2/2/w/128/h/128` : userInfo.avatar;
     } else {
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
     }
 
+    const sellerInfo = BraavosCore.Database.Braavos.SellerInfo.findOne({userId: userId}) || {};
+    if (!sellerInfo.contact) {
+      sellerInfo.contact = {number: ""};
+    }
+
     return {
-      userInfo: userInfo
+      userInfo: userInfo,
+      sellerInfo: sellerInfo
     };
   },
 
@@ -92,7 +102,7 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                        key="nickname" id="nickname"
+                        id="nickname"
                         label={this.data.userInfo.nickName}
                         text={this.state.nickname.text}
                         onClick={event=>this.handleClick(event, ()=>this.data.userInfo.nickName)}
@@ -118,7 +128,7 @@ export const AccountBasic = React.createClass({
 
             <div className="col-xs-6 col-sm-7 col-md-8">
               <img
-                src="https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/super/whfpf%3D425%2C260%2C50/sign=03ade0c33f12b31bc7399e69e0250248/7e3e6709c93d70cf4be7d689fedcd100baa12b10.jpg"/>
+                src={this.data.userInfo.avatar}/>
             </div>
             <a href="javascript:void(0)" className="modify-text col-xs-2" onClick={this.changeAvatar}>修改</a>
           </div>
@@ -127,48 +137,79 @@ export const AccountBasic = React.createClass({
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.tel`)}/>
             </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}/>
+            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
+                        id="tel"
+                        label={this.data.sellerInfo.contact.number}
+                        text={this.state.tel.text}
+                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.contact.number)}
+                        onChange={this.handleChange}
+                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.contact.number)}
+                        onSubmit={event=>this.handleSubmit(event, ()=>{
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: this.state.tel.text}});
+                        })}
+              />
           </div>
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.email`)}/>
             </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}/>
-          </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.lang`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.lang`)}/>
-          </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.shop`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
-          </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.zone`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
+            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
+                        id="email"
+                        label={this.data.sellerInfo.email}
+                        text={this.state.email.text}
+                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.email)}
+                        onChange={this.handleChange}
+                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.email)}
+                        onSubmit={event=>this.handleSubmit(event, ()=>{
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: this.state.email.text});
+                        })}
+              />
           </div>
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.address`)}/>
             </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}/>
+            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
+                        id="address"
+                        label={this.data.sellerInfo.address}
+                        text={this.state.address.text}
+                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.address)}
+                        onChange={this.handleChange}
+                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.address)}
+                        onSubmit={event=>this.handleSubmit(event, ()=>{
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: this.state.address.text});
+                        })}
+              />
           </div>
           {/*
-          <div className="form-group" style={{margin: '40px auto 40px 120px', width: '75%', height: '500px'}}>
-            <GoogleMapComponent lat={40} lng={116.33}/>
-          </div>
-          */}
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.lang`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.lang`)}/>
+           </div>
+           <hr />
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.shop`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
+           </div>
+           <hr />
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.zone`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
+           </div>
+           <hr />
+
+           <div className="form-group" style={{margin: '40px auto 40px 120px', width: '75%', height: '500px'}}>
+           <GoogleMapComponent lat={40} lng={116.33}/>
+           </div>
+           */}
         </div>
       </div>
     );

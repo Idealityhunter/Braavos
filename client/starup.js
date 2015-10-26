@@ -4,9 +4,18 @@
  * Created by zephyre on 10/23/15.
  */
 Meteor.startup(()=> {
+  const Schema = BraavosCore.Schema;
+
   BraavosCore.Database.Braavos = {};
+  const Braavos = BraavosCore.Database.Braavos;
+  Braavos.RegisterToken = new Mongo.Collection("RegisterToken");
+  Braavos.RegisterToken.attachSchema(Schema.RegisterToken);
+  Braavos.SellerInfo = new Mongo.Collection("SellerInfo");
+  Braavos.SellerInfo.attachSchema(Schema.SellerInfo);
+
   BraavosCore.Database.Yunkai = {};
-  BraavosCore.Database.Braavos.RegisterToken = new Mongo.Collection("RegisterToken");
-  BraavosCore.Database.Yunkai.UserInfo = new Mongo.Collection("UserInfo");
+  const Yunkai = BraavosCore.Database.Yunkai;
+  Yunkai.UserInfo = new Mongo.Collection("UserInfo");
+  Yunkai.UserInfo.attachSchema(Schema.UserInfo);
 });
 

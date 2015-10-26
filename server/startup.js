@@ -49,7 +49,7 @@ function initMongo() {
     BraavosCore.Database[confKey] = {};
 
     colls.forEach(({collName, alias, schema}) => {
-      const c = new Mongo.Collection(collName, {_driver: driver});
+      const c = new Mongo.Collection(collName, {_driver: driver, idGeneration: "MONGO"});
       if (schema) {
         c.attachSchema(schema);
       }
@@ -59,6 +59,7 @@ function initMongo() {
 
   const Schema = BraavosCore.Schema;
   helper('braavos', 'Braavos', [{collName: 'RegisterToken', schema: Schema.RegisterToken}]);
+  helper("braavos", "Braavos", [{collName: "SellerInfo", schema: Schema.SellerInfo}]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo'}])
 }
 
