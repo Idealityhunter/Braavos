@@ -23,6 +23,7 @@ Package.onUse(function (api) {
 
   // Schemas
   api.addFiles([
+    'common/schema/misc.js',
     'common/schema/geo.js',
     'common/schema/trade.js',
     'common/schema/account.js'

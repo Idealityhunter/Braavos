@@ -19,3 +19,23 @@ Schema.GeoEntity = new SimpleSchema({
   }
 });
 
+Schema.Country = new SimpleSchema({
+  // 中文名称
+  zhName: {
+    type: String,
+    max: 128
+  },
+
+  // 英文名称
+  enName: {
+    type: String,
+    max: 128
+  },
+
+  // ISO 3166-2标准的国家代码
+  code: {
+    type: String,
+    regEx: /^[A-Z]{2}$/
+  }
+});
+
