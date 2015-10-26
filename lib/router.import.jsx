@@ -6,6 +6,7 @@ import {Account} from 'client/dumb-components/account/account';
 import {Commodity} from 'client/dumb-components/commodity/commodity';
 import {CommodityModify} from 'client/dumb-components/commodity/commodityModify';
 import {Finance} from 'client/dumb-components/finance/finance';
+import {UETest} from 'client/dumb-components/ueTest';
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
@@ -115,5 +116,12 @@ FlowRouter.route('/account', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData));
+  }
+});
+
+FlowRouter.route('/test-ueditor', {
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <UETest {...intlData} />}, intlData));
   }
 });
