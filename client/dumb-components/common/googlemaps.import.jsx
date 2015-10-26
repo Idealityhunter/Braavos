@@ -6,7 +6,7 @@ export const GoogleMapComponent = React.createClass({
     zoom: React.PropTypes.number,
     lat: React.PropTypes.number,
     lng: React.PropTypes.number,
-    markers: React.PropTypes.object
+    markers: React.PropTypes.array
   },
 
   getDefaultProps() {

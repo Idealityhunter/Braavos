@@ -7,11 +7,63 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
+  getInitialState() {
+    // 每个TextEditor, 都需要维护这些状态
+    const TextEditorState = function () {
+      // 文本框处于编辑状态时的值
+      this.text = "";
+      // 原始数据
+      this.original = false;
+      // 上一次更新的值. 每次blur的时候, 将检查这一数值.
+      // 只有当二者不一致的时候, 才会真正执行提交的操作
+      this.lastSubmit = undefined;
+    };
+
+    return {
+      nickname: new TextEditorState()
+    }
+  },
+
+  // TextEditor中文本发生变化的事件
+  handleChange(event) {
+    const key = event.key;
+    const state = _.pick(this.state, key);
+    state[key].text = event.newText;
+    this.setState(state);
+  },
+
+  // TextEditor接收到焦点, 需要将原始的数据保存下来, 以备将来esc的时候使用
+  handleFocus(event, dataFunc) {
+    const key = event.key;
+    const state = _.pick(this.state, key);
+    state[key].original = dataFunc();
+  },
+
+  handleSubmit(event, submitFunc) {
+    const key = event.key;
+    const state = _.pick(this.state, key);
+    //state[key].editing = false;
+    if (state[key].lastSubmit != state[key].text) {
+      submitFunc(state[key].text);
+      state[key].lastSubmit = state[key].text;
+    }
+    this.setState(state);
+  },
+
+  // TextEditor被点击, 进入编辑状态
+  handleClick(event, datafunc) {
+    const key = event.key;
+    const state = _.pick(this.state, key);
+    state[key].text = datafunc();
+    //state[key].editing = true;
+    this.setState(state);
+  },
+
   getMeteorData() {
     const handle = Meteor.subscribe('basicUserInfo');
 
     const userId = parseInt(Meteor.userId());
-    const userInfo = handle.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({userId:userId}) : {};
+    const userInfo = handle.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) : {};
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
@@ -25,27 +77,6 @@ export const AccountBasic = React.createClass({
     };
   },
 
-  componentDidMount() {
-    $('.modify-text').on('click', function (e) {
-      const thisElem = e.target;
-      const text = (thisElem.tagName == 'A') ? thisElem.previousElementSibling : thisElem.parentNode;
-      const $textDiv = $(text).children('div');
-      const $textInput = $(text).children('input, textarea');
-      $textDiv.addClass('hide');
-      $textInput.removeClass('hide').focus();
-
-      // 光标置于末尾
-      const strLen = $textInput.val().length * 2;
-      $textInput[0].setSelectionRange(0, strLen);
-
-      $textInput.off('blur');
-      $textInput.on('blur', function (e) {
-        $textDiv.text(e.target.value).removeClass('hide');
-        $textInput.addClass('hide');
-      });
-    });
-  },
-
   changeAvatar (e){
     console.log(e);
     // TODO 上传图片
@@ -53,7 +84,6 @@ export const AccountBasic = React.createClass({
 
   render() {
     const prefix = 'accountInfo.basicTab';
-    UINFO_DATA = this.data;
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
@@ -62,10 +92,16 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                        text={this.data.userInfo.nickName}
-                        onSubmit={ nickname=>{
-                          Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: nickname});
-                        }}/>
+                        key="nickname" id="nickname"
+                        label={this.data.userInfo.nickName}
+                        text={this.state.nickname.text}
+                        onClick={event=>this.handleClick(event, ()=>this.data.userInfo.nickName)}
+                        onChange={this.handleChange}
+                        onFocus={event=>this.handleFocus(event, ()=>this.data.userInfo.nickName)}
+                        onSubmit={event=>this.handleSubmit(event, ()=>{
+                          Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: this.state.nickname.text});
+                        })}
+              />
           </div>
           <hr />
           <div className="form-group">
@@ -128,9 +164,11 @@ export const AccountBasic = React.createClass({
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}/>
           </div>
+          {/*
           <div className="form-group" style={{margin: '40px auto 40px 120px', width: '75%', height: '500px'}}>
             <GoogleMapComponent lat={40} lng={116.33}/>
           </div>
+          */}
         </div>
       </div>
     );
