@@ -1,2 +1,10 @@
 'use strict';
-System.import('./lib/router');
+
+if (Meteor.isClient) {
+  FlowRouter.wait();
+}
+System.import('./lib/router').then(() => {
+  if (Meteor.isClient) {
+    FlowRouter.initialize();
+  }
+});
