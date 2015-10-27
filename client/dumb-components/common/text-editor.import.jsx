@@ -30,7 +30,9 @@ export const TextEditor = React.createClass({
     // 获得焦点的事件
     onFocus: React.PropTypes.func,
     // 提交修改的回调函数
-    onSubmit: React.PropTypes.func
+    onSubmit: React.PropTypes.func,
+    // 按Esc取消修改的事件
+    onCanceled: React.PropTypes.func
   },
 
   getDefaultProps() {
@@ -44,26 +46,27 @@ export const TextEditor = React.createClass({
     };
   },
 
-  componentDidMount() {
-    const inputNode = React.findDOMNode(this.refs['text-input']);
-
-    jQuery(inputNode).keyup(evt => {
-      const enterCode = 13;
-      // 如果为多行情况, 则不支持使用enter进行提交操作
-      if (!this.props['multiLine'] && evt.keyCode == enterCode) {
-        // Enter is pressed
-        evt.target.blur();
-      }
-    });
-
-    jQuery(inputNode).keydown(evt=> {
-      const escCode = 27;
-      if (evt.keyCode == escCode) {
-        this.state.escPressed = true;
-      }
-    });
+  onKeyUp(event) {
+    const keyCode = event.keyCode;
+    const KEY_CODE_ENTER = 13;
+    const KEY_CODE_ESC = 27;
+    switch (keyCode) {
+      case KEY_CODE_ENTER:
+        // 如果为多行情况, 则不支持使用enter进行提交操作
+        if (!this.props['multiLine']) {
+          // Enter is pressed
+          event.target.blur();
+        }
+        break;
+      case KEY_CODE_ESC:
+        // Esc is pressed
+        this.props.onCanceled({key: this.props.id});
+        event.target.blur();
+        break;
+      default:
+        break;
+    }
   },
-
 
   onClick() {
     // 准备进入编辑状态
@@ -123,6 +126,7 @@ export const TextEditor = React.createClass({
              style={inputStyle}
              placeholder={this.props['placeholder']}
              value={this.props.text}
+             onKeyUp={this.onKeyUp}
              onBlur={this.onBlur}
              onFocus={this.onFocus}
              onChange={this.onChange}/>;

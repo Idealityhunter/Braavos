@@ -13,7 +13,7 @@ export const AccountBasic = React.createClass({
       // 文本框处于编辑状态时的值
       this.text = "";
       // 原始数据
-      this.original = false;
+      this.original = "";
       // 上一次更新的值. 每次blur的时候, 将检查这一数值.
       // 只有当二者不一致的时候, 才会真正执行提交的操作
       this.lastSubmit = undefined;
@@ -25,6 +25,14 @@ export const AccountBasic = React.createClass({
       email: new TextEditorState(),
       address: new TextEditorState()
     }
+  },
+
+  // TextEditor中用户按下Esc, 取消编辑操作的事件
+  handleCanceled(event) {
+    const key = event.key;
+    const state = _.pick(this.state, key);
+    state[key].text = state[key].original;
+    this.setState(state);
   },
 
   // TextEditor中文本发生变化的事件
@@ -40,12 +48,12 @@ export const AccountBasic = React.createClass({
     const key = event.key;
     const state = _.pick(this.state, key);
     state[key].original = dataFunc();
+    this.setState(state);
   },
 
   handleSubmit(event, submitFunc) {
     const key = event.key;
     const state = _.pick(this.state, key);
-    //state[key].editing = false;
     if (state[key].lastSubmit != state[key].text) {
       submitFunc(state[key].text);
       state[key].lastSubmit = state[key].text;
@@ -178,6 +186,7 @@ export const AccountBasic = React.createClass({
                         onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.address)}
                         onChange={this.handleChange}
                         onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.address)}
+                        onCanceled={this.handleCanceled}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: this.state.address.text});
                         })}
