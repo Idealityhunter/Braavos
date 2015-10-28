@@ -11,7 +11,7 @@ var commodity = React.createClass({
     return (
       <div className="commodity-mngm-wrap">
         <Breadcrumb />
-        <a href="/commodity-mgmt/modify"><button type="button" className="btn btn-info">添加商品</button></a>
+        <a href="/commodities/editor"><button type="button" className="btn btn-info">添加商品</button></a>
       </div>
     );
   }

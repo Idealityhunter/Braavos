@@ -107,3 +107,17 @@ textarea{
     display: inline-block;
     vertical-align: top;
 }
+
+/*for the steps header*/
+.commodity-modify-wrap .wizard > .steps > ul > li{
+    width: 20%;
+}
+
+.commodity-modify-wrap .steps-container{
+    margin-top: 20px;
+}
+
+/*hack for the auto height*/
+.commodity-modify-wrap .wizard > .content > .body{
+    position: static;
+}
