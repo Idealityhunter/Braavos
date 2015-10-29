@@ -2,13 +2,8 @@ import {CommentText} from 'client/dumb-components/common/comment-text';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
-var text;
 
 class commodityModifyBasic extends React.Component {
-  componentWillMount() {
-    text = '\n\n\n\n\n\n输入给游客的交通建议';
-  }
-
   componentDidMount() {
     $('textarea').on('blur', function (e) {
       console.log(e.target.value);

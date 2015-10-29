@@ -95,7 +95,7 @@ textarea{
 }
 
 /*commodity*/
-.commodity-modify-wrap label{
+.commodity-modify-wrap label, .account-security-wrap label{
     margin: 2px 20px;
     font-size: 16px;
     font-family: sans-serif;
@@ -122,22 +122,22 @@ textarea{
     position: static;
 }
 
-.commodity-modify-wrap .commodity-basic-form-wrap{
+.commodity-basic-form-wrap, .account-password-wrap{
     margin-left: 80px;
 }
 
-.commodity-modify-wrap .commodity-basic-form-wrap label{
+.commodity-basic-form-wrap label, .account-security-wrap .form-group label{
     font-weight: normal;
     font-size: 14px;
     margin: 5px 10px 0 0;
     width: auto;
 }
 
-.commodity-modify-wrap .commodity-basic-form-wrap .label-text{
+.commodity-basic-form-wrap .label-text{
     width: 70px;
 }
 
-.commodity-modify-wrap .commodity-basic-form-wrap select{
+.commodity-basic-form-wrap select{
     margin-right: 10px;
     width: 20%;
     display: inline-block;
