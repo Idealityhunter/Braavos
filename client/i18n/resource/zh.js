@@ -27,7 +27,7 @@ BraavosCore.IntlData.zh = {
       // START: tab strings
       basic: '基本信息',
       finance: '财务设置',
-      password: '修改密码',
+      security: '安全设置',
       // END: tab strings
 
       // 基本信息的tab
