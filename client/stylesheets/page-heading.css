@@ -121,3 +121,72 @@ textarea{
 .commodity-modify-wrap .wizard > .content > .body{
     position: static;
 }
+
+.commodity-modify-wrap .commodity-basic-form-wrap{
+    margin-left: 80px;
+}
+
+.commodity-modify-wrap .commodity-basic-form-wrap label{
+    font-weight: normal;
+    font-size: 14px;
+    margin: 5px 10px 0 0;
+    width: auto;
+}
+
+.commodity-modify-wrap .commodity-basic-form-wrap .label-text{
+    width: 70px;
+}
+
+.commodity-modify-wrap .commodity-basic-form-wrap select{
+    margin-right: 10px;
+    width: 20%;
+    display: inline-block;
+}
+
+
+.commodity-basic-form-wrap .table>tbody>tr>td{
+    border-color: #999;
+}
+
+.commodity-basic-form-wrap .table>tbody>tr{
+    border: 1px solid #999;
+}
+
+/*.commodity-basic-form-wrap .table>tbody>tr:last-child{*/
+    /*border: none;*/
+    /*/!*color: #ccc;*!/*/
+/*}*/
+
+/*.commodity-basic-form-wrap .table>tbody>tr:last-child td div{*/
+    /*text-align: center;*/
+    /*paddding: 2px;*/
+    /*border-radius: 2px;*/
+    /*border: 1px solid #ccc;*/
+/*}*/
+
+.commodity-modify-wrap .commodity-add{
+    margin-left: 0;
+}
+
+.commodity-modify-wrap .commodity-add>div{
+    margin-right: 25px;
+}
+
+.commodity-modify-wrap .commodity-add .desc>input{
+    width: 300px;
+}
+.commodity-modify-wrap .commodity-add .price-ave>input{
+    width: 100px;
+}
+.commodity-modify-wrap .commodity-add .price-cur>input{
+    width: 100px;
+}
+.commodity-modify-wrap .commodity-add .stock>input{
+    width: 100px;
+}
+
+/*表单中的注释样式*/
+.comment-text{
+    color: darksalmon;
+    font-size: 12px;
+}
