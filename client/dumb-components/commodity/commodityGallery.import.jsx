@@ -24,6 +24,7 @@ let images = [
 
 let commodityGallery = React.createClass({
   handleScroll(e){
+    if ($(e.target).hasClass('frozen')) return ;
     let self = this;
     let operator = $(e.target).hasClass('left') ? '+' : '-';
     $('.scroll-wrap').animate({
@@ -62,7 +63,17 @@ let commodityGallery = React.createClass({
   },
 
   handleDelete(e){
-    console.log(e);
+    swal({
+      title: "Are you sure?",
+      text: "You will not be able to recover this imaginary file!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: false
+    }, function(){
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    });
   },
 
   handleFocus(e){
@@ -72,13 +83,14 @@ let commodityGallery = React.createClass({
   },
 
   handleMain(e){
+    swal("Good job!", "已将该图设为主图！", "success");
     console.log(e);
   },
 
   render() {
     let imgList = this.state.images.map((img) =>
       <div className='inline img-wrap'>
-        <img className='' src={img.src} alt="" key={img} onClick={this.handleFocus}/>
+        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" key={img} onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/> <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
     );

@@ -217,6 +217,9 @@ textarea{
     margin-bottom: 5px;
 }
 
+.gallery-wrap .img-wrap img.active{
+    border: 1px solid #ff3333;
+}
 .gallery-wrap .img-wrap img{
     width: 80px;
     height: 80px;
