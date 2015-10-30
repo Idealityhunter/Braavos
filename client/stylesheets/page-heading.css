@@ -185,6 +185,73 @@ textarea{
     width: 100px;
 }
 
+/*commodity modify basic*/
+.gallery-wrap .img-view{
+    text-align: center;
+    width: 500px;
+    margin-bottom: 20px;
+}
+
+
+.gallery-wrap .middle-view{
+    width: 360px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.gallery-wrap .scroll-view{
+    margin-left: 35px;
+}
+
+.gallery-wrap .scroll-wrap{
+   width: auto;
+   height: 100px;
+   margin-left: 0;
+}
+
+.gallery-wrap .img-wrap{
+    width: 80px;
+    margin-left: 10px;
+    vertical-align: top;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.gallery-wrap .img-wrap img{
+    width: 80px;
+    height: 80px;
+}
+
+.gallery-wrap .img-wrap.select-frame{
+    height: 80px;
+    text-align: center;
+    padding-top: 10px;
+    border: 1px dotted #888;
+}
+
+.gallery-wrap .ctl-btn{
+    vertical-align: top;
+    border-radius: 2px;
+    border: 1px solid #aaa;
+    display: inline-block;
+    width: 20px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 20px;
+    color: #999;
+    cursor: pointer;
+    text-align: center;
+    margin-left: 10px;
+    background-color: #f8f8f8;
+}
+
+.gallery-wrap .ctl-btn.frozen{
+    border-color: #ccc;
+    color: #ccc;
+    cursor: default;
+    background-color: #f4f4f4;
+    border-style: dashed;
+}
 /*表单中的注释样式*/
 .comment-text{
     color: darksalmon;

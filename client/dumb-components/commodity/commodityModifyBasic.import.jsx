@@ -1,4 +1,5 @@
 import {CommentText} from 'client/dumb-components/common/comment-text';
+import {CommodityGallery} from 'client/dumb-components/commodity/commodityGallery';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -13,6 +14,8 @@ class commodityModifyBasic extends React.Component {
   render() {
     return (
       <div className="commodity-basic-wrap">
+        <label className="">商品图片</label>
+        <CommodityGallery />
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className="">基本信息</label>
         <form className="form-horizontal commodity-basic-form-wrap">
