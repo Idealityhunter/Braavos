@@ -14,7 +14,7 @@ CoreModel.Finance = {
       type: String,
       max: 34
     },
-    // 银行的SWIFT代码
+    // 银行的SWIFT代码. 对于境外账户, 这是必填项
     swift: {
       type: String,
       min: 8,
@@ -39,7 +39,7 @@ CoreModel.Finance = {
       min: 1,
       max: 256
     },
-    // 账单地址
+    // 账单地址, 境外必填
     billingAddress: {
       type: String,
       min: 1,
