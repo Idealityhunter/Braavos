@@ -38,6 +38,7 @@ npm-container
 lxp:thrift-helper
 lxp:braavos-core
 lxp:etcd
+lvxingpai:core-mode
 
 omega:react-intl
 zimme:active-route
