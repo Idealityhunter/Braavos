@@ -48,6 +48,7 @@ less@2.5.1
 livedata@1.0.15
 localstorage@1.0.5
 logging@1.0.8
+lvxingpai:core-model@0.0.1
 lxp:braavos-core@0.0.1
 lxp:etcd@0.0.1
 lxp:thrift-helper@0.1.0
