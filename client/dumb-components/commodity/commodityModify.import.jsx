@@ -1,9 +1,9 @@
-import {Pageheading} from 'client/dumb-components/common/pageheading';
-import {CommodityModifyBasic} from 'client/dumb-components/commodity/commodityModifyBasic';
-import {CommodityModifyIntroduction} from 'client/dumb-components/commodity/commodityModifyIntroduction';
-import {CommodityModifyInstruction} from 'client/dumb-components/commodity/commodityModifyInstruction';
-import {CommodityModifyBook} from 'client/dumb-components/commodity/commodityModifyBook';
-import {CommodityModifyTraffic} from 'client/dumb-components/commodity/commodityModifyTraffic';
+import {Pageheading} from '/client/dumb-components/common/pageheading';
+import {CommodityModifyBasic} from '/client/dumb-components/commodity/commodityModifyBasic';
+import {CommodityModifyIntroduction} from '/client/dumb-components/commodity/commodityModifyIntroduction';
+import {CommodityModifyInstruction} from '/client/dumb-components/commodity/commodityModifyInstruction';
+import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityModifyBook';
+import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;

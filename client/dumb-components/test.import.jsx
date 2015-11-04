@@ -1,4 +1,4 @@
-import {GoogleMapComponent} from 'client/dumb-components/common/googlemaps';
+import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedNumber = ReactIntl.FormattedNumber;

@@ -1,11 +1,11 @@
-import {MainLayout} from 'client/main-layout';
-import {Test} from 'client/dumb-components/test';
-import {Register} from 'client/dumb-components/common/register';
-import {Login} from 'client/dumb-components/common/login';
-import {Account} from 'client/dumb-components/account/account';
-import {Commodity} from 'client/dumb-components/commodity/commodity';
-import {CommodityModify} from 'client/dumb-components/commodity/commodityModify';
-import {Finance} from 'client/dumb-components/finance/finance';
+import {MainLayout} from '/client/main-layout';
+import {Test} from '/client/dumb-components/test';
+import {Register} from '/client/dumb-components/common/register';
+import {Login} from '/client/dumb-components/common/login';
+import {Account} from '/client/dumb-components/account/account';
+import {Commodity} from '/client/dumb-components/commodity/commodity';
+import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
+import {Finance} from '/client/dumb-components/finance/finance';
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {

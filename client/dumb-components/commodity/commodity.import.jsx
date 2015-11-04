@@ -1,4 +1,4 @@
-import {Breadcrumb} from 'client/dumb-components/common/breadcrumb';
+import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;

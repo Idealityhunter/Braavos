@@ -1,5 +1,5 @@
-import {CommentText} from 'client/dumb-components/common/comment-text';
-import {CommodityGallery} from 'client/dumb-components/commodity/commodityGallery';
+import {CommentText} from '/client/dumb-components/common/comment-text';
+import {CommodityGallery} from '/client/dumb-components/commodity/commodityGallery';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
