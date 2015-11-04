@@ -2,9 +2,18 @@ export const TextEditor = React.createClass({
   getInitialState() {
     return {
       // 是否处于编辑状态
-      editing: false
+      editing: false,
+      // 原始数据
+      original: "",
+      // 编辑框的数据
+      text: "",
+      // 上一次提交的数据
+      lastSubmit: ""
     };
   },
+
+  // 提交数据的时候, 使用该属性
+  _submitText: null,
 
   propTypes: {
     id: React.PropTypes.string,
@@ -18,8 +27,6 @@ export const TextEditor = React.createClass({
     // 是否为多行
     multiLines: React.PropTypes.bool,
 
-    // 编辑框的数据
-    text: React.PropTypes.string,
     // 标签的数据
     label: React.PropTypes.string,
 
@@ -37,7 +44,6 @@ export const TextEditor = React.createClass({
 
   getDefaultProps() {
     return {
-      text: "",
       label: "",
       visibleEditAnchor: true,
       editAnchorLabel: '修改',
@@ -60,7 +66,11 @@ export const TextEditor = React.createClass({
         break;
       case KEY_CODE_ESC:
         // Esc is pressed
-        this.props.onCanceled({key: this.props.id});
+        this.setState({text: this.state.original});
+        this._submitText = null;
+        if (this.props.onCanceled) {
+          this.props.onCanceled({key: this.props.id});
+        }
         event.target.blur();
         break;
       default:
@@ -70,28 +80,43 @@ export const TextEditor = React.createClass({
 
   onClick() {
     // 准备进入编辑状态
-    this.setState({editing: true});
-    this.props.onClick({key: this.props.id});
+    this.setState({editing: true, text: this.props.label, original: this.props.label});
+    if (this.props.onClick) {
+      this.props.onClick({key: this.props.id});
+    }
 
     setTimeout(() => {
       const inputNode = React.findDOMNode(this.refs['text-input']);
-      const len = this.props.text.length * 2;
+      const len = this.state.text.length * 2;
       inputNode.setSelectionRange(0, len);
       inputNode.focus();
     }, 10);
   },
 
   onFocus() {
-    this.props.onFocus({key: this.props.id});
+    this.setState({text: this.props.label});
+    if (this.props.onFocus) {
+      this.props.onFocus({key: this.props.id});
+    }
   },
 
   onBlur() {
-    this.setState({editing: false});
-    this.props.onSubmit({key: this.props.id});
+    const submitText = this._submitText;
+    const shouldSubmit = this.state.lastSubmit != submitText;
+    if (this._submitText && shouldSubmit && this.props.onSubmit) {
+      this.props.onSubmit({key: this.props.id, value: submitText});
+    }
+    setTimeout(()=>{
+      this.setState({editing: false, lastSubmit: submitText});
+    }, 10);
   },
 
   onChange(event) {
-    this.props.onChange({key: this.props.id, newText: event.target.value});
+    this.setState({text: event.target.value});
+    this._submitText = event.target.value;
+    if (this.props.onChange) {
+      this.props.onChange({key: this.props.id, newText: event.target.value});
+    }
   },
 
   render() {
@@ -116,7 +141,7 @@ export const TextEditor = React.createClass({
                 className="form-control"
                 style={inputStyle}
                 placeholder={this.props['placeholder']}
-                value={this.props.text}
+                value={this.state.text}
                 onBlur={this.onBlur}
                 onFocus={this.onFocus}
                 onChange={this.onChange}/>
@@ -125,7 +150,7 @@ export const TextEditor = React.createClass({
              className="form-control"
              style={inputStyle}
              placeholder={this.props['placeholder']}
-             value={this.props.text}
+             value={this.state.text}
              onKeyUp={this.onKeyUp}
              onBlur={this.onBlur}
              onFocus={this.onFocus}
