@@ -1,6 +1,5 @@
 {
   "redux": "3.0.2",
   "react-redux": "3.0.1",
-  "externalify": "0.1.0",
-  "react-bootstrap": "0.26.1"
+  "externalify": "0.1.0"
 }
