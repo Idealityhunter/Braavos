@@ -1,7 +1,7 @@
-import {Breadcrumb} from 'client/dumb-components/common/breadcrumb';
-import {AccountBasic} from 'client/dumb-components/account/account-basic';
-import {AccountFinance} from 'client/dumb-components/account/account-finance';
-import {AccountSecurity} from 'client/dumb-components/account/account-security';
+import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
+import {AccountBasic} from '/client/dumb-components/account/account-basic';
+import {AccountFinance} from '/client/dumb-components/account/account-finance';
+import {AccountSecurity} from '/client/dumb-components/account/account-security';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;

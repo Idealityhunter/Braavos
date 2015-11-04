@@ -1,5 +1,5 @@
-import {LeftSiderBar} from './dumb-components/common/left-siderbar';
-import {TopBar} from './dumb-components/common/topbar';
+import {LeftSiderBar} from '/client/dumb-components/common/left-siderbar';
+import {TopBar} from '/client/dumb-components/common/topbar';
 
 
 let mainLayout = React.createClass({

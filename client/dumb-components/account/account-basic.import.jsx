@@ -1,5 +1,5 @@
-import {TextEditor} from 'client/dumb-components/common/text-editor';
-import {GoogleMapComponent} from 'client/dumb-components/common/googlemaps';
+import {TextEditor} from '/client/dumb-components/common/text-editor';
+import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
