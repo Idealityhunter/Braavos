@@ -7,7 +7,8 @@
  * 获得etcd的数据
  */
 function resolveEtcdData() {
-  const url = `${process.env['ETCD_HOST']}:${process.env['ETCD_PORT']}`;
+  // 通过环境变量获得etcd地址, 默认为localhost:2379
+  const url = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
 
   const services = new EtcdHelper.EtcdServiceBuilder(url)
     .addEntry(['mongo-dev', 'mongo'])
@@ -58,9 +59,9 @@ function initMongo() {
   };
 
   const Schema = BraavosCore.Schema;
-  helper('braavos', 'Braavos', [{collName: 'RegisterToken', schema: Schema.RegisterToken}]);
-  helper("braavos", "Braavos", [{collName: "SellerInfo", schema: Schema.SellerInfo}]);
-  helper('yunkai', 'Yunkai', [{collName: 'UserInfo'}])
+  helper('braavos', 'Braavos', [{collName: 'Token', schema: Schema.Account.Token}]);
+  helper("braavos", "Braavos", [{collName: "Seller", schema: Schema.Account.Seller}]);
+  helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}])
 }
 
 /**
