@@ -84,7 +84,7 @@ export const AccountBasic = React.createClass({
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
     }
 
-    const sellerInfo = BraavosCore.Database.Braavos.SellerInfo.findOne({userId: userId}) || {};
+    const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({userId: userId}) || {};
     if (!sellerInfo.contact) {
       sellerInfo.contact = {number: ""};
     }
@@ -110,15 +110,11 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                        id="nickname"
-                        label={this.data.userInfo.nickName}
-                        text={this.state.nickname.text}
-                        onClick={event=>this.handleClick(event, ()=>this.data.userInfo.nickName)}
-                        onChange={this.handleChange}
-                        onFocus={event=>this.handleFocus(event, ()=>this.data.userInfo.nickName)}
-                        onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: this.state.nickname.text});
-                        })}
+                         id="nickname"
+                         label={this.data.userInfo.nickName}
+                         onSubmit={event=>{
+                           Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value});
+                         }}
               />
           </div>
           <hr />
@@ -148,12 +144,8 @@ export const AccountBasic = React.createClass({
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
                         id="tel"
                         label={this.data.sellerInfo.contact.number}
-                        text={this.state.tel.text}
-                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.contact.number)}
-                        onChange={this.handleChange}
-                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.contact.number)}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: this.state.tel.text}});
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
                         })}
               />
           </div>
@@ -165,12 +157,8 @@ export const AccountBasic = React.createClass({
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
                         id="email"
                         label={this.data.sellerInfo.email}
-                        text={this.state.email.text}
-                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.email)}
-                        onChange={this.handleChange}
-                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.email)}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: this.state.email.text});
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
                         })}
               />
           </div>
@@ -182,13 +170,8 @@ export const AccountBasic = React.createClass({
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
                         id="address"
                         label={this.data.sellerInfo.address}
-                        text={this.state.address.text}
-                        onClick={event=>this.handleClick(event, ()=>this.data.sellerInfo.address)}
-                        onChange={this.handleChange}
-                        onFocus={event=>this.handleFocus(event, ()=>this.data.sellerInfo.address)}
-                        onCanceled={this.handleCanceled}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: this.state.address.text});
+                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
                         })}
               />
           </div>
