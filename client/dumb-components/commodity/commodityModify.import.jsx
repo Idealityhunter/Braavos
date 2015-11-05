@@ -5,17 +5,26 @@ import {CommodityModifyInstruction} from '/client/dumb-components/commodity/comm
 import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityModifyBook';
 import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
 
+
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
 var commodityModify = React.createClass({
   mixins: [IntlMixin],
   componentDidMount (){
+    $('.modal-body').on('click', function(e){
+      console.log(e);
+    });
     $(".steps-container").steps({
       headerTag: "h3",
       bodyTag: "div",
       transitionEffect: "fade",
       autoFocus: true
+    });
+    $('.commodity-basic-datepicker .input-daterange').datepicker({
+      keyboardNavigation: false,
+      forceParse: false,
+      autoclose: true
     });
   },
   render() {
@@ -29,7 +38,7 @@ var commodityModify = React.createClass({
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'instruction')}/></h3>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'book')}/></h3>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'traffic')}/></h3>
-          <div><CommodityModifyBasic /></div>
+          <div className="basic"><CommodityModifyBasic /></div>
           <div><CommodityModifyIntroduction /></div>
           <div><CommodityModifyInstruction /></div>
           <div><CommodityModifyBook /></div>

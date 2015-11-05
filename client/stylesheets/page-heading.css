@@ -255,8 +255,44 @@ textarea{
     background-color: #f4f4f4;
     border-style: dashed;
 }
+
 /*表单中的注释样式*/
 .comment-text{
     color: darksalmon;
     font-size: 12px;
+}
+
+
+/*商品信息中的日历样式*/
+.calendar-container{
+    background-color: #fff;
+    position: absolute;
+    top: -10000px;
+}
+
+/*datapicker在modal中的用法*/
+.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top, .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom{
+    z-index: 100000 !important;
+}
+
+/*基本信息中modal中商品价格*/
+.modal-body .commodity-basic-price{
+    width: 80px;
+    vertical-align: top;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.modal-body .plus{
+    border: 1px dashed #bbb;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
 }
