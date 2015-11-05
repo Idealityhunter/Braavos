@@ -36,8 +36,8 @@ cosmos:browserify
 npm-container
 
 lxp:thrift-helper
-lxp:braavos-core
 lxp:etcd
+lvxingpai:braavos-core
 lvxingpai:core-model
 
 omega:react-intl
@@ -46,3 +46,4 @@ aldeed:simple-schema
 underscore
 react-meteor-data
 dburles:google-maps
+lvxingpai:meteor-jcrop

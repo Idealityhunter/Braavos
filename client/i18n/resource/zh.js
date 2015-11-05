@@ -21,7 +21,8 @@ BraavosCore.IntlData.zh = {
       logout: '注销',
       userName: 'Email/手机号码',
       password: '密码',
-      forgetPassword: '忘记密码'
+      forgetPassword: '忘记密码',
+      loginFailure: "用户名或密码不正确 :-("
     },
     accountInfo: {
       // START: tab strings
