@@ -1,6 +1,6 @@
 Package.describe({
-  name: 'lxp:braavos-core',
-  version: '0.0.1',
+  name: 'lvxingpai:braavos-core',
+  version: '0.1.0',
   // Brief, one-line summary of the package.
   summary: 'The core part of Braavos',
   // URL to the Git repository containing the source code for this package.
@@ -14,20 +14,10 @@ Package.onUse(function (api) {
   api.versionsFrom('1.2.0.2');
   api.use('ecmascript');
   api.use('aldeed:simple-schema');
-
-
-  api.addFiles('braavos-core.js');
+  api.use("lvxingpai:core-model");
 
   // Init
-  api.addFiles('common/global.js');
-
-  // Schemas
-  api.addFiles([
-    'common/schema/misc.js',
-    'common/schema/geo.js',
-    'common/schema/trade.js',
-    'common/schema/account.js'
-  ]);
+  api.addFiles('braavos-core.js');
 
   api.export('BraavosCore');
 });
