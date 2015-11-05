@@ -12,9 +12,6 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 var commodityModify = React.createClass({
   mixins: [IntlMixin],
   componentDidMount (){
-    $('.modal-body').on('click', function(e){
-      console.log(e);
-    });
     $(".steps-container").steps({
       headerTag: "h3",
       bodyTag: "div",
