@@ -23,45 +23,39 @@ let images = [
 ];
 
 let commodityGallery = React.createClass({
-  handleScroll(e){
-    if ($(e.target).hasClass('frozen')) return ;
-    let self = this;
-    let operator = $(e.target).hasClass('left') ? '+' : '-';
-    $('.scroll-wrap').animate({
-      marginLeft: operator + '=90px'
-    }, function(e){
-      let marginLeft = this.style.marginLeft;
-      marginLeft = marginLeft.substring(0, marginLeft.length - 2);
-      if (parseInt(marginLeft) < 0){
-        self.setState({
-          left: true
-        });
-      }else{
-        self.setState({
-          left: false
-        });
-      }
-      if (Math.abs(parseInt(marginLeft) / 90) + 3 < images.length){
-        self.setState({
-          right: true
-        });
-      }else{
-        self.setState({
-          right: false
-        });
-      }
-    });
-  },
-
   getInitialState() {
     return {
+      leftImages: 0,//左边不显示的图片的数量
       focusImage: images[0].src,
-      images: images,
-      left: false,
-      right: images.length > 3
+      images: images
     };
   },
 
+  //控制滚动的点击事件
+  handleScroll(e){
+    const scrollLeft = (this.state.leftImages > 0);
+    const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
+
+    if ($(e.target).hasClass('left')){
+      if (!scrollLeft) return ;
+      this.setState({
+        leftImages: this.state.leftImages - 1
+      });
+      $('.scroll-wrap').animate({
+        marginLeft: '+=90px'
+      });
+    }else{
+      if (!scrollRight) return ;
+      this.setState({
+        leftImages: this.state.leftImages + 1
+      });
+      $('.scroll-wrap').animate({
+        marginLeft: '-=90px'
+      });
+    }
+  },
+
+  //删除图片
   handleDelete(e){
     swal({
       title: "Are you sure?",
@@ -76,18 +70,23 @@ let commodityGallery = React.createClass({
     });
   },
 
+  //选择图片展示
   handleFocus(e){
     this.setState({
       focusImage: e.target.src
     });
   },
 
+  //设置主图(作为商品的主图)
   handleMain(e){
     swal("Good job!", "已将该图设为主图！", "success");
     console.log(e);
   },
 
   render() {
+    const scrollLeft = (this.state.leftImages > 0);
+    const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
+
     let imgList = this.state.images.map((img) =>
       <div className='inline img-wrap'>
         <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" key={img} onClick={this.handleFocus}/>
@@ -101,7 +100,7 @@ let commodityGallery = React.createClass({
           <img src={this.state.focusImage} alt="" style={{width: 250, height:200}}/>
         </div>
         <div className="scroll-view">
-          <div className={this.state.left ? "ctl-btn left " : "ctl-btn left frozen"} onClick={this.handleScroll}>{'<'}</div>
+          <div className={scrollLeft ? "ctl-btn left " : "ctl-btn left frozen"} onClick={this.handleScroll}>{'<'}</div>
           <div className="middle-view inline">
             <div className='scroll-wrap'>
               {imgList}
@@ -110,7 +109,7 @@ let commodityGallery = React.createClass({
               </div>
             </div>
           </div>
-          <div className={this.state.right ? "ctl-btn right " : "ctl-btn right frozen"} onClick={this.handleScroll}>></div>
+          <div className={scrollRight ? "ctl-btn right " : "ctl-btn right frozen"} onClick={this.handleScroll}>></div>
         </div>
       </div>
     );
