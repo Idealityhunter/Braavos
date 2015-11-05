@@ -1,5 +1,7 @@
 import {TextEditor} from '/client/dumb-components/common/text-editor';
 import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
+import {Avatar} from "/client/common/avatar";
+import {ImageCropper} from "/client/common/image-cropper"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -23,8 +25,19 @@ export const AccountBasic = React.createClass({
       nickname: new TextEditorState(),
       tel: new TextEditorState(),
       email: new TextEditorState(),
-      address: new TextEditorState()
+      address: new TextEditorState(),
+
+      // 是否显示上传头像的modal
+      showAvatarModal: false,
+      // 上传头像的modal中, 需要显示的image
+      avatarModalImageSrc: ""
     }
+  },
+
+  componentDidMount() {
+    //// 初始化avatar对象
+    //const avatar = ReactDOM.findDOMNode(this.refs["avatar"]);
+    //$(avatar).find("label").attr("for", "file-input");
   },
 
   // TextEditor中用户按下Esc, 取消编辑操作的事件
@@ -95,13 +108,39 @@ export const AccountBasic = React.createClass({
     };
   },
 
-  changeAvatar (e){
-    console.log(e);
-    // TODO 上传图片
+  // 上传头像
+  changeAvatar(evt) {
+    const file = evt.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        //const imgNode = ReactDOM.findDOMNode(this.refs["avatar-img"]);
+        console.log(`Image read: ${reader.result.length}`);
+        this.setState({showAvatarModal: true, avatarModalImageSrc: reader.result});
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+
+  // 关闭上传头像的modal
+  handleCloseAvatarModal(evt) {
+    this.setState({showAvatarModal: false});
   },
 
   render() {
     const prefix = 'accountInfo.basicTab';
+
+    const avatarModal = this.state.showAvatarModal ?
+      <ImageCropper title={this.getIntlMessage(`${prefix}.changeAvatar`)}
+                    okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
+                    imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
+                    imageMaxWidth={500}
+                    onSelect={function(evt) {console.log(evt);}}
+                    onOk={function(evt) {console.log(evt);}}
+                    onClose={this.handleCloseAvatarModal} />
+      :
+      <div />;
+
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
@@ -110,9 +149,9 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                         id="nickname"
-                         label={this.data.userInfo.nickName}
-                         onSubmit={event=>{
+                        id="nickname"
+                        label={this.data.userInfo.nickName}
+                        onSubmit={event=>{
                            Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value});
                          }}
               />
@@ -131,10 +170,9 @@ export const AccountBasic = React.createClass({
             </label>
 
             <div className="col-xs-6 col-sm-7 col-md-8">
-              <img
-                src={this.data.userInfo.avatar}/>
+              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}/>
+              {avatarModal}
             </div>
-            <a href="javascript:void(0)" className="modify-text col-xs-2" onClick={this.changeAvatar}>修改</a>
           </div>
           <hr />
           <div className="form-group">
