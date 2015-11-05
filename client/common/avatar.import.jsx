@@ -15,7 +15,10 @@ export const Avatar = React.createClass({
     // Style
     style: React.PropTypes.object,
     // 修改状态栏的文案
-    stripLabel: React.PropTypes.string
+    stripLabel: React.PropTypes.string,
+
+    // 回调函数
+    onChange: React.PropTypes.func
   },
 
   getInitialState() {
@@ -43,10 +46,19 @@ export const Avatar = React.createClass({
     this.setState({showStrip: false});
   },
 
+  onChange(evt) {
+    if (this.props.onChange) {
+      this.props.onChange(evt);
+    }
+  },
+
   render() {
     // 是否有输入功能
     const inputNode = this.props.allowEdit ?
-      <input id="avatar-file-input" type="file" style={{display:"none"}} onChange={this.changeAvatar}/>
+      <input id="avatar-file-input" type="file" style={{display:"none"}} onChange={this.onChange}
+             onClick={()=>{
+               $("#avatar-file-input").prop("value", null);
+             }}/>
       :
       <div/>;
 
@@ -62,6 +74,7 @@ export const Avatar = React.createClass({
       height: "25px",
       lineHeight: "25px",
       textAlign: "center",
+      cursor: "pointer",
       fontWeight: "normal",
       background: "#000",
       color: "#fff",
@@ -78,7 +91,9 @@ export const Avatar = React.createClass({
           <div style={{position:"relative", borderRadius:`${radius}px`}}>
             <img src={this.props.imageUrl} style={avatarStyle}
                  onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}/>
-            <span style={stripStyle}>{this.props.stripLabel}</span>
+            <span style={stripStyle} onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+              {this.props.stripLabel}
+            </span>
           </div>
         </label>
         {inputNode}
