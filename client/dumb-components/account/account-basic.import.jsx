@@ -1,6 +1,7 @@
 import {TextEditor} from '/client/dumb-components/common/text-editor';
 import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
 import {Avatar} from "/client/common/avatar";
+import {ImageCropper} from "/client/common/image-cropper"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -24,7 +25,12 @@ export const AccountBasic = React.createClass({
       nickname: new TextEditorState(),
       tel: new TextEditorState(),
       email: new TextEditorState(),
-      address: new TextEditorState()
+      address: new TextEditorState(),
+
+      // 是否显示上传头像的modal
+      showAvatarModal: false,
+      // 上传头像的modal中, 需要显示的image
+      avatarModalImageSrc: ""
     }
   },
 
@@ -103,20 +109,38 @@ export const AccountBasic = React.createClass({
   },
 
   // 上传头像
-  changeAvatar (evt){
+  changeAvatar(evt) {
     const file = evt.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const imgNode = ReactDOM.findDOMNode(this.refs["avatar-img"]);
-        console.log(`Image read: ${reader.result.length}`)
+        //const imgNode = ReactDOM.findDOMNode(this.refs["avatar-img"]);
+        console.log(`Image read: ${reader.result.length}`);
+        this.setState({showAvatarModal: true, avatarModalImageSrc: reader.result});
       };
       reader.readAsDataURL(file);
     }
   },
 
+  // 关闭上传头像的modal
+  handleCloseAvatarModal(evt) {
+    this.setState({showAvatarModal: false});
+  },
+
   render() {
     const prefix = 'accountInfo.basicTab';
+
+    const avatarModal = this.state.showAvatarModal ?
+      <ImageCropper title={this.getIntlMessage(`${prefix}.changeAvatar`)}
+                    okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
+                    imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
+                    imageMaxWidth={500}
+                    onSelect={function(evt) {console.log(evt);}}
+                    onOk={function(evt) {console.log(evt);}}
+                    onClose={this.handleCloseAvatarModal} />
+      :
+      <div />;
+
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
@@ -146,7 +170,8 @@ export const AccountBasic = React.createClass({
             </label>
 
             <div className="col-xs-6 col-sm-7 col-md-8">
-              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8}/>
+              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}/>
+              {avatarModal}
             </div>
           </div>
           <hr />
