@@ -9,8 +9,7 @@ Meteor.methods({
    * 生成一个注册token
    */
   'account.register.genToken': () => {
-    const RegisterToken = BraavosCore.Database.Braavos.Collections.RegisterToken;
-    RegisterToken.attachSchema(BraavosCore.Schema.RegisterToken);
+    const Token = BraavosCore.Database.Braavos.Token;
 
     const uuid = Meteor.uuid();
     console.log(`UUID generated: ${uuid}`);
@@ -18,7 +17,7 @@ Meteor.methods({
     const timestamp = new Date();
     // 默认情况下有效期为7天
     const expire = new Date(timestamp.getTime() + 7 * 24 * 3600 * 1000);
-    RegisterToken.insert({token: uuid, timestamp: timestamp, expire: expire});
+    Token.insert({token: uuid, timestamp: timestamp, expire: expire});
 
     return uuid;
   },
@@ -33,7 +32,7 @@ Meteor.methods({
       return {valid: true};
     }
 
-    const ret = BraavosCore.Database.Braavos.RegisterToken.findOne(
+    const ret = BraavosCore.Database.Braavos.Token.findOne(
       {token: token, valid: true, expire: {'$gt': new Date()}});
     return {valid: Boolean(ret)};
   }

@@ -84,7 +84,7 @@ export const AccountBasic = React.createClass({
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
     }
 
-    const sellerInfo = BraavosCore.Database.Braavos.SellerInfo.findOne({userId: userId}) || {};
+    const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({userId: userId}) || {};
     if (!sellerInfo.contact) {
       sellerInfo.contact = {number: ""};
     }
