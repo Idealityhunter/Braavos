@@ -115,7 +115,6 @@ export const AccountBasic = React.createClass({
       const reader = new FileReader();
       reader.onloadend = () => {
         //const imgNode = ReactDOM.findDOMNode(this.refs["avatar-img"]);
-        console.log(`Image read: ${reader.result.length}`);
         this.setState({showAvatarModal: true, avatarModalImageSrc: reader.result});
       };
       reader.readAsDataURL(file);
@@ -127,6 +126,16 @@ export const AccountBasic = React.createClass({
     this.setState({showAvatarModal: false});
   },
 
+  // 修改头像
+  handleModifyAvatar(evt) {
+    this.setState({showAvatarModal: false});
+    const imageNode=evt.imageNode;
+    const imageSrc = $(imageNode).prop("src");
+    // 利用图像的base64编码, 做MD5, 得到key
+    const md5 = CryptoJS.MD5(imageSrc);
+    console.log(`key: ${md5}`);
+  },
+
   render() {
     const prefix = 'accountInfo.basicTab';
 
@@ -136,7 +145,7 @@ export const AccountBasic = React.createClass({
                     imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
                     imageMaxWidth={500}
                     onSelect={function(evt) {console.log(evt);}}
-                    onOk={function(evt) {console.log(evt);}}
+                    onOk={this.handleModifyAvatar}
                     onClose={this.handleCloseAvatarModal} />
       :
       <div />;
