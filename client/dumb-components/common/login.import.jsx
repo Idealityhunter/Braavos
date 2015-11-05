@@ -9,8 +9,23 @@ let login = React.createClass({
       userName: "",
       password: "",
       // 登录是否失败
-      loginFailed: false
+      loginFailed: false,
+      // 当前输入框是否具有焦点
+      withFocus: false
     }
+  },
+  handleBlur(ref, evt) {
+    this.setState({withFocus: false});
+  },
+  handleFocus(ref, evt) {
+    if (!this.state.withFocus) {
+      const node = React.findDOMNode(this.refs[ref]);
+      const len = evt.target.value.length * 2;
+      setTimeout(()=> {
+        node.setSelectionRange(0, len);
+      }, 10);
+    }
+    this.setState({withFocus: true});
   },
   changeUserName(e) {
     this.setState({
@@ -43,9 +58,9 @@ let login = React.createClass({
         console.log("login failed");
 
         // 登录失败
-        this.setState({loginFailed:true});
+        this.setState({loginFailed: true});
 
-        setTimeout(()=>{
+        setTimeout(()=> {
           const passwordInput = React.findDOMNode(this.refs['password-input']);
           const len = this.state.password.length * 2;
           passwordInput.setSelectionRange(0, len);
@@ -84,12 +99,14 @@ let login = React.createClass({
             <form className="m-t" role="form">
               <div className="form-group">
                 <input type="text" className="form-control" placeholder={this.getIntlMessage('login.userName')}
-                       ref="user-input" value={this.state.userName} onChange={this.changeUserName} required=""/>
+                       ref="user-input" value={this.state.userName} onChange={this.changeUserName} required=""
+                       onClick={this.handleFocus.bind(this, "user-input")} onBlur={this.handleBlur}/>
               </div>
               <div className="form-group">
                 <input type="password" className="form-control" placeholder={this.getIntlMessage('login.password')}
                        ref="password-input" value={this.state.password} onChange={this.changePassword} required=""
-                       style={passwordStyle}/>
+                       style={passwordStyle} onClick={this.handleFocus.bind(this, "password-input")}
+                       onBlur={this.handleBlur}/>
               </div>
               <button className="btn btn-primary block full-width m-b" onClick={this.handleLogin}>
                 <FormattedMessage message={this.getIntlMessage('login.login')}/>
