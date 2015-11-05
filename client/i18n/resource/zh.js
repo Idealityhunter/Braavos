@@ -7,6 +7,10 @@ BraavosCore.IntlData.zh = {
   locales: ['zh-CN'],
   messages: {
     welcome: '欢迎来到Braavos',
+    dialog: {
+      ok: "确定",
+      cancel: "取消"
+    },
     mainLayout: {
       leftSideBar: {
         homepage: '首页',
@@ -35,6 +39,7 @@ BraavosCore.IntlData.zh = {
       basicTab: {
         nickname: '昵称',
         avatar: '头像',
+        changeAvatar: "修改头像",
         realName: '真实姓名',
         tel: '联系电话',
         email: 'Email',
