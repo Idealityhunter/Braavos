@@ -86,7 +86,7 @@ export const TextEditor = React.createClass({
     }
 
     setTimeout(() => {
-      const inputNode = React.findDOMNode(this.refs['text-input']);
+      const inputNode = ReactDOM.findDOMNode(this.refs['text-input']);
       const len = this.state.text.length * 2;
       inputNode.setSelectionRange(0, len);
       inputNode.focus();

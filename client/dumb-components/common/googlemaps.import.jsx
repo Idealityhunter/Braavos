@@ -82,7 +82,7 @@ const GoogleMapCore = React.createClass({
   componentDidMount() {
     GoogleMaps.create({
       name: this.props.name,
-      element: React.findDOMNode(this),
+      element: ReactDOM.findDOMNode(this),
       options: this.props.options
     });
 

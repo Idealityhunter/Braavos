@@ -19,7 +19,7 @@ let login = React.createClass({
   },
   handleFocus(ref, evt) {
     if (!this.state.withFocus) {
-      const node = React.findDOMNode(this.refs[ref]);
+      const node = ReactDOM.findDOMNode(this.refs[ref]);
       const len = evt.target.value.length * 2;
       setTimeout(()=> {
         node.setSelectionRange(0, len);
@@ -61,7 +61,7 @@ let login = React.createClass({
         this.setState({loginFailed: true});
 
         setTimeout(()=> {
-          const passwordInput = React.findDOMNode(this.refs['password-input']);
+          const passwordInput = ReactDOM.findDOMNode(this.refs['password-input']);
           const len = this.state.password.length * 2;
           passwordInput.setSelectionRange(0, len);
           passwordInput.focus();

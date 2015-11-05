@@ -50,6 +50,7 @@ localstorage@1.0.5
 logging@1.0.8
 lvxingpai:braavos-core@0.1.0
 lvxingpai:core-model@0.0.1
+lvxingpai:meteor-jcrop@0.1.0
 lxp:etcd@0.0.1
 lxp:thrift-helper@0.1.0
 meteor@1.1.10
