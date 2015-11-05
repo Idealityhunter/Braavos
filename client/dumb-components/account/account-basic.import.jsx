@@ -179,7 +179,9 @@ export const AccountBasic = React.createClass({
             </label>
 
             <div className="col-xs-6 col-sm-7 col-md-8">
-              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}/>
+              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}
+                      stripLabel={this.getIntlMessage(`${prefix}.changeAvatar`)}
+                />
               {avatarModal}
             </div>
           </div>

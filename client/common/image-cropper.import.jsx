@@ -159,14 +159,14 @@ export const ImageCropper = React.createClass({
     // 设置Jcrop
     $(imageNode).Jcrop({
       setSelect: initalSelection,
+      allowSelect: false,
+      bgOpacity: 0.4,
       onSelect: this.onSelect,
       onChange: this.onChange,
       aspectRatio: this.props.aspectRatio
     }, function () {
       // 设置margin
       $(imageNode).siblings(".jcrop-holder").css("margin", "10px auto");
-      // 取消radio
-      $(imageNode).siblings(".jcrop-holder").children("input").css("display", "none");
     });
   },
 

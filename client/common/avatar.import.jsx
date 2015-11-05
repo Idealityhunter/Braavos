@@ -34,7 +34,7 @@ export const Avatar = React.createClass({
       borderRadius: 4,
       imageUrl: "",
       style: {},
-      stripLabel: "修改图像"
+      stripLabel: "修改头像"
     };
   },
 
