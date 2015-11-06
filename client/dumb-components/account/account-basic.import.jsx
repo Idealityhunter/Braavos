@@ -30,7 +30,9 @@ export const AccountBasic = React.createClass({
       // 是否显示上传头像的modal
       showAvatarModal: false,
       // 上传头像的modal中, 需要显示的image
-      avatarModalImageSrc: ""
+      avatarModalImageSrc: "",
+      // 头像是否处于preloading状态
+      avatarPreloading: false
     }
   },
 
@@ -115,7 +117,6 @@ export const AccountBasic = React.createClass({
       const reader = new FileReader();
       reader.onloadend = () => {
         //const imgNode = ReactDOM.findDOMNode(this.refs["avatar-img"]);
-        console.log(`Image read: ${reader.result.length}`);
         this.setState({showAvatarModal: true, avatarModalImageSrc: reader.result});
       };
       reader.readAsDataURL(file);
@@ -127,6 +128,16 @@ export const AccountBasic = React.createClass({
     this.setState({showAvatarModal: false});
   },
 
+  // 修改头像
+  handleModifyAvatar(evt) {
+    this.setState({showAvatarModal: false, avatarPreloading: true});
+    const imageNode=evt.imageNode;
+    const imageSrc = $(imageNode).prop("src");
+    // 利用图像的base64编码, 做MD5, 得到key
+    const md5 = CryptoJS.MD5(imageSrc);
+    console.log(`key: ${md5}`);
+  },
+
   render() {
     const prefix = 'accountInfo.basicTab';
 
@@ -136,7 +147,7 @@ export const AccountBasic = React.createClass({
                     imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
                     imageMaxWidth={500}
                     onSelect={function(evt) {console.log(evt);}}
-                    onOk={function(evt) {console.log(evt);}}
+                    onOk={this.handleModifyAvatar}
                     onClose={this.handleCloseAvatarModal} />
       :
       <div />;
@@ -170,7 +181,9 @@ export const AccountBasic = React.createClass({
             </label>
 
             <div className="col-xs-6 col-sm-7 col-md-8">
-              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}/>
+              <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}
+                      stripLabel={this.getIntlMessage(`${prefix}.changeAvatar`)}
+                      preloading={this.state.avatarPreloading}/>
               {avatarModal}
             </div>
           </div>

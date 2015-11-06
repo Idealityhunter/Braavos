@@ -93,7 +93,11 @@ export const ImageCropper = React.createClass({
   onOk() {
     if (this.props.onOk) {
       const oSelection = this._selConversion(this.state.selection);
-      this.props.onOk({target: this, selection: this.state.selection, oSelection: oSelection});
+      this.props.onOk({
+        target: this,
+        selection: this.state.selection, oSelection: oSelection,
+        imageNode: ReactDOM.findDOMNode(this.refs["image"])
+      });
     }
   },
 
@@ -155,14 +159,14 @@ export const ImageCropper = React.createClass({
     // 设置Jcrop
     $(imageNode).Jcrop({
       setSelect: initalSelection,
+      allowSelect: false,
+      bgOpacity: 0.4,
       onSelect: this.onSelect,
       onChange: this.onChange,
       aspectRatio: this.props.aspectRatio
     }, function () {
       // 设置margin
       $(imageNode).siblings(".jcrop-holder").css("margin", "10px auto");
-      // 取消radio
-      $(imageNode).siblings(".jcrop-holder").children("input").css("display", "none");
     });
   },
 
