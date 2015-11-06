@@ -30,7 +30,9 @@ export const AccountBasic = React.createClass({
       // 是否显示上传头像的modal
       showAvatarModal: false,
       // 上传头像的modal中, 需要显示的image
-      avatarModalImageSrc: ""
+      avatarModalImageSrc: "",
+      // 头像是否处于preloading状态
+      avatarPreloading: false
     }
   },
 
@@ -128,7 +130,7 @@ export const AccountBasic = React.createClass({
 
   // 修改头像
   handleModifyAvatar(evt) {
-    this.setState({showAvatarModal: false});
+    this.setState({showAvatarModal: false, avatarPreloading: true});
     const imageNode=evt.imageNode;
     const imageSrc = $(imageNode).prop("src");
     // 利用图像的base64编码, 做MD5, 得到key
@@ -181,7 +183,7 @@ export const AccountBasic = React.createClass({
             <div className="col-xs-6 col-sm-7 col-md-8">
               <Avatar imageUrl={this.data.userInfo.avatar} borderRadius={8} onChange={this.changeAvatar}
                       stripLabel={this.getIntlMessage(`${prefix}.changeAvatar`)}
-                />
+                      preloading={this.state.avatarPreloading}/>
               {avatarModal}
             </div>
           </div>
