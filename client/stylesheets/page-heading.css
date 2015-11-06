@@ -172,17 +172,21 @@ textarea{
     margin-right: 25px;
 }
 
-.commodity-modify-wrap .commodity-add .desc>input{
+.commodity-modify-wrap .commodity-add .title>input{
     width: 300px;
+    text-align: center;
 }
-.commodity-modify-wrap .commodity-add .price-ave>input{
+.commodity-modify-wrap .commodity-add .market-price>input{
     width: 100px;
+    text-align: center;
 }
-.commodity-modify-wrap .commodity-add .price-cur>input{
+.commodity-modify-wrap .commodity-add .price>input{
     width: 100px;
+    text-align: center;
 }
 .commodity-modify-wrap .commodity-add .stock>input{
     width: 100px;
+    text-align: center;
 }
 
 /*commodity modify basic*/

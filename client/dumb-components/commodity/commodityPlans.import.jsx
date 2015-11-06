@@ -55,6 +55,23 @@ const commodityPlans = React.createClass({
       plans: this.state.plans.concat(this.state.plans[index])
     });
   },
+  // 添加套餐
+  _handleAddPlan(e) {
+    e.preventDefault();
+    const addForm = $(e.target).parents('.commodity-add')[0];
+    const planTitle = $(addForm).children('.title').children('input').val();
+    const planMarketprice = $(addForm).children('.market-price').children('input').val();
+    const planPrice = $(addForm).children('.price').children('input').val();
+    const planStock = $(addForm).children('.stock').children('input').val();
+    this.setState({
+      plans: this.state.plans.concat({
+        name: planTitle,
+        marketPrice: planMarketprice,
+        price: planPrice,
+        stock: planStock
+      })
+    });
+  },
   render() {
     let i = 0;
     const planList = this.state.plans.map(plan =>
@@ -86,16 +103,22 @@ const commodityPlans = React.createClass({
             </tbody>
           </table>
           <div className="form-group commodity-add">
-            <div className="inline desc"><input type='text' placeholder="套餐描述" /></div>
-            <div className="inline price-ave"><input type='text' placeholder="市场价" /></div>
-            <div className="inline price-cur">
-              <input type='text' className="inline" placeholder="售价" />
+            <div className="inline title">
+              <input type='text' placeholder="套餐描述"/>
+            </div>
+            <div className="inline market-price">
+              <input type='text' placeholder="市场价￥"/>
+            </div>
+            <div className="inline price">
+              <input type='text' className="inline" placeholder="售价￥" />
               <i className="fa fa-calendar cursor-pointer calender-price" style={{marginLeft: -20}} data-toggle="modal" data-target="#myModal"/>
             </div>
             <div className="inline stock">
               <input type='text' className="inline" placeholder="库存" />
             </div>
-            <div className="inline add-button"><button className="">确定</button></div>
+            <div className="inline add-button">
+              <button className="" onClick={this._handleAddPlan}>确定</button>
+            </div>
           </div>
         </form>
         <div className="modal inmodal" id="myModal" tabIndex="-1" role="dialog" aria-hidden="true">
