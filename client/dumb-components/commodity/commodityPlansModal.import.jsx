@@ -56,7 +56,6 @@ const commodityPlansModal = React.createClass({
         <i className='fa fa-minus-circle' onClick={this._handleDelete}/>
       </div>
     );
-    console.log(pricingList);
     return (
       <div className="modal inmodal" id={"calendar-modal-" + this.props.index} tabIndex="-1" role="dialog" aria-hidden="true">
         <div className="modal-dialog">

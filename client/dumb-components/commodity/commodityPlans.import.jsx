@@ -108,7 +108,6 @@ const commodityPlans = React.createClass({
     });
   },
   render() {
-    //console.log(this.state);
     let i = 0;//从1开始,0表示添加的input
     const planList = this.state.plans.map(plan =>
       <tr data-id={++i} key={plan.key}>
