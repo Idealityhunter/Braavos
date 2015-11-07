@@ -19,6 +19,7 @@ var commodityModify = React.createClass({
       autoFocus: true
     });
     $('.commodity-basic-datepicker .input-daterange').datepicker({
+      format: 'yyyy-mm-dd',
       keyboardNavigation: false,
       forceParse: false,
       autoclose: true

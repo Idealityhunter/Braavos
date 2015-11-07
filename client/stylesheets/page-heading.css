@@ -300,3 +300,11 @@ textarea{
     font-size: 30px;
     cursor: pointer;
 }
+
+.modal-body .fa-minus-circle{
+    font-size: 20px;
+    vertical-align: top;
+    margin-top: 6px;
+    margin-left: 10px;
+    cursor: pointer;
+}
