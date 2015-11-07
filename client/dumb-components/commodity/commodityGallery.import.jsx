@@ -89,7 +89,7 @@ let commodityGallery = React.createClass({
 
     const imgList = this.state.images.map((img) =>
       <div className='inline img-wrap'>
-        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" key={img} onClick={this.handleFocus}/>
+        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" key={img.src} onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/> <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
     );

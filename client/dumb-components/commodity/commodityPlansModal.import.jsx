@@ -1,11 +1,17 @@
 
 const commodityPlansModal = React.createClass({
   getInitialState() {
-    console.log('initial');
-    console.log(this.props);
+    let transferredPricing = [];
+    let i = 0;
+    if (this.props.plan.pricing){
+      transferredPricing = this.props.plan.pricing.map((pricing) => ({
+        'price': pricing.price,
+        'key': Meteor.uuid(),
+        'timeRange': [moment(pricing.timeRange[0]).format('YYYY-MM-DD'), moment(pricing.timeRange[1]).format('YYYY-MM-DD')]
+      }))
+    }
     return {
-      pricing: this.props.plan.pricing
-      //pricing: this.props.pricing
+      pricing: transferredPricing
     }
   },
   componentDidUpdate(){
@@ -18,24 +24,25 @@ const commodityPlansModal = React.createClass({
   },
   _handleDelete(e){
     const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
+    let copyPricing = this.state.pricing && this.state.pricing.slice();
+    copyPricing.splice(curIndex, 1);
     this.setState({
-      pricing: !this.state.pricing.splice(curIndex, 1) || this.state.pricing
+      pricing: copyPricing
     });
   },
   _handleAddPricing(e){
     this.setState({
       pricing: this.state.pricing.concat({
         price: "",
+        key: Meteor.uuid(),
         timeRange: [null, null]
       })
     })
   },
   render() {
-    console.log('render modal');
-    console.log(this.state);
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
-      <div className="pricing-wrap" data-id={i++} key={'pricing-' + i}>
+      <div className="pricing-wrap" data-id={i++} key={pricing.key}>
         <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
         <div className="inline">
           <div className="form-group commodity-basic-datepicker inline">
@@ -49,12 +56,13 @@ const commodityPlansModal = React.createClass({
         <i className='fa fa-minus-circle' onClick={this._handleDelete}/>
       </div>
     );
+    console.log(pricingList);
     return (
-      <div className="modal inmodal" id="myModal" tabIndex="-1" role="dialog" aria-hidden="true">
+      <div className="modal inmodal" id={"calendar-modal-" + this.props.index} tabIndex="-1" role="dialog" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content animated bounceInRight">
             <div className="modal-header">
-              set price fo {this.props.plan.title}
+              set price for {this.props.plan.title}
               <button type="button" className="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
             </div>
             <div className="modal-body">
