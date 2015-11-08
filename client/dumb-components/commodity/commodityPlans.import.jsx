@@ -6,8 +6,6 @@ const commodityPlans = React.createClass({
     return {
       // 会影响: 修改状态下的条款以及增加的项目(的calendar是否展示)
       dateRequired: true,
-      // 当为负数时表示触发的是addPlan的modal,假如为非负整数则为modifyPlan的modal
-      // curPlanIndex: -1,
       // 存储当前新增套餐的值(以防同时进行添加和修改,modal改变以至于无法保存pricing值)
       addPlan: {
         title: 'aaasad',
@@ -119,7 +117,7 @@ const commodityPlans = React.createClass({
         </td>
         <td className="price">
           <input className="inline" type='text' placeholder="售价￥" defaultValue={plan.price}/>
-          <i className="fa fa-calendar cursor-pointer calender-price" style={{marginLeft: -20}} data-toggle="modal" data-target={"#calendar-modal-" + i}/>
+          <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} data-toggle="modal" data-target={"#calendar-modal-" + i}/>
         </td>
         <td className="stock">
           <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
@@ -133,7 +131,7 @@ const commodityPlans = React.createClass({
       <tr className="plan-wrap" data-id={++i} key={plan.key}>
         <td className="title">{plan.title}</td>
         <td className="market-price">市场价￥{plan.marketPrice}</td>
-        <td className="price">售价￥{plan.price}起<i className="fa fa-calendar cursor-pointer calender-price" data-toggle="modal" data-target={"#calendar-modal-" + i} style={{marginLeft: 2}}/></td>
+        <td className="price">售价￥{plan.price}起<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} data-toggle="modal" data-target={"#calendar-modal-" + i} style={{marginLeft: 2}}/></td>
         <td className="stock">库存{plan.stock}</td>
         <td className="controller">
           <button className="" style={{marginRight: 10}} onClick={this._handleModify}>修改</button>
@@ -162,7 +160,6 @@ const commodityPlans = React.createClass({
           <table className="table">
             <tbody>
               {planList}
-
             </tbody>
           </table>
           {modalList}
@@ -175,7 +172,7 @@ const commodityPlans = React.createClass({
             </div>
             <div className="inline price">
               <input type='text' className="inline" placeholder="售价￥" />
-              <i className="fa fa-calendar cursor-pointer calender-price" style={{marginLeft: -20}} data-toggle="modal" data-target="#calendar-modal-0"/>
+              <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} data-toggle="modal" data-target="#calendar-modal-0"/>
             </div>
             <div className="inline stock">
               <input type='text' className="inline" placeholder="库存" />
