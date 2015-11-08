@@ -1,6 +1,7 @@
 import {CommentText} from '/client/dumb-components/common/comment-text';
 import {CommodityGallery} from '/client/dumb-components/commodity/commodityGallery';
 import {CommodityCalendar} from '/client/dumb-components/commodity/commodityCalendar';
+import {CommodityPlans} from '/client/dumb-components/commodity/commodityPlans';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -64,7 +65,7 @@ class commodityModifyBasic extends React.Component {
           </div>
           <div className="form-group">
             <label className="label-text">游玩时长</label>
-            <input className="inline" type='text' placeholder=""/> 小时
+            <input className="inline" type='number' placeholder=""/> 小时
           </div>
           <div className="form-group">
             <label className="label-text">旅行服务</label>
@@ -85,88 +86,7 @@ class commodityModifyBasic extends React.Component {
         </form>
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className="">预定设置*</label>
-        <form className="form-horizontal commodity-basic-form-wrap">
-          <div className="form-group">
-            <label className="label-text">使用日期</label>
-            <label className="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox2" value="option2"/> 需要使用日期
-            </label>
-            <CommentText text='是否需要游客在预定时指定他的使用日期'/>
-          </div>
-          <table className="table">
-            <tbody>
-              <tr>
-                <td className="">泰国清迈Oasis Spa绿洲水疗体验按摩</td>
-                <td className="">市场价$59</td>
-                <td className="">售价$39起<i className="fa fa-calendar cursor-pointer calender-price" data-toggle="modal" data-target="#myModal"/></td>
-                <td className="">库存<i className="fa fa-calendar cursor-pointer calender-stock" data-toggle="modal" data-target="#myModal"/></td>
-                <td className="controler">
-                  <button className="" style={{marginRight: 10}}>修改</button>
-                  <button className="" style={{marginRight: 10}}>删除</button>
-                  <button className="" style={{marginRight: 10}}>复制</button>
-                </td>
-              </tr>
-              <tr>
-                <td className="">泰国清迈Oasis Spa绿洲massage</td>
-                <td className="">市场价$30</td>
-                <td className="">售价$26起<i className="fa fa-calendar cursor-pointer calender-price" data-toggle="modal" data-target="#myModal"/></td>
-                <td className="">库存<i className="fa fa-calendar cursor-pointer calender-stock" data-toggle="modal" data-target="#myModal"/></td>
-                <td className="controler">
-                  <button className="" style={{marginRight: 10}}>修改</button>
-                  <button className="" style={{marginRight: 10}}>删除</button>
-                  <button className="" style={{marginRight: 10}}>复制</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div className="form-group commodity-add">
-            <div className="inline desc"><input type='text' placeholder="套餐描述" /></div>
-            <div className="inline price-ave"><input type='text' placeholder="市场价" /></div>
-            <div className="inline price-cur"><input type='text' className="inline" placeholder="售价" /><i className="fa fa-calendar cursor-pointer calender-price"/></div>
-            <div className="inline stock"><input type='text' className="inline" placeholder="库存" /><i className="fa fa-calendar cursor-pointer calender-stock"/></div>
-            <div className="inline add-button"><button className="">确定</button></div>
-          </div>
-        </form>
-
-        <div className="modal inmodal" id="myModal" tabIndex="-1" role="dialog" aria-hidden="true">
-          <div className="modal-dialog">
-            <div className="modal-content animated bounceInRight">
-              <div className="modal-header">
-                set price fo 泰国清迈Oasis Spa绿洲水疗体验按摩
-                <button type="button" className="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
-              </div>
-              <div className="modal-body">
-                <div className="commodity-basic-price-wrap">
-                  <input className="inline commodity-basic-price" type='text' placeholder="售价"/>
-                  <div className="inline">
-                    <div className="form-group commodity-basic-datepicker inline">
-                      <div className="input-daterange input-group">
-                        <input type="text" className="input-sm form-control" name="start" placeholder="from"/>
-                        <span className="input-group-addon">-</span>
-                        <input type="text" className="input-sm form-control" name="end" placeholder="to"/>
-                      </div>
-                    </div>
-                  </div>
-                  <input className="inline commodity-basic-price" type='text' placeholder="售价"/>
-                  <div className="inline">
-                    <div className="form-group commodity-basic-datepicker inline">
-                      <div className="input-daterange input-group">
-                        <input type="text" className="input-sm form-control" name="start" placeholder="from"/>
-                        <span className="input-group-addon">-</span>
-                        <input type="text" className="input-sm form-control" name="end" placeholder="to"/>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="plus">+</div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-white" data-dismiss="modal">Cancel</button>
-                <button type="button" className="btn btn-primary">Submit</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <CommodityPlans />
       </div>
     );
   }

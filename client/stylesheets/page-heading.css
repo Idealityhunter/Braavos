@@ -152,37 +152,89 @@ textarea{
     border: 1px solid #999;
 }
 
-/*.commodity-basic-form-wrap .table>tbody>tr:last-child{*/
-    /*border: none;*/
-    /*/!*color: #ccc;*!/*/
-/*}*/
-
-/*.commodity-basic-form-wrap .table>tbody>tr:last-child td div{*/
+.commodity-basic-plan table{
+    width: auto;
+}
+/*基本信息中plan-wrap的样式*/
+/*.plan-wrap{*/
     /*text-align: center;*/
-    /*paddding: 2px;*/
-    /*border-radius: 2px;*/
-    /*border: 1px solid #ccc;*/
 /*}*/
+.plan-wrap .title{
+    width: 250px;
+}
+.plan-wrap .market-price{
+    width: 150px;
+}
+.plan-wrap .price{
+    width: 100px;
+}
+.plan-wrap .stock{
+    width: 100px;
+}
+.plan-wrap .controller{
+    width: 200px;
+    /*text-align: left;*/
+}
 
+/*基本信息中addPlan的样式*/
 .commodity-modify-wrap .commodity-add{
-    margin-left: 0;
+    margin-left: 9px;
 }
 
 .commodity-modify-wrap .commodity-add>div{
-    margin-right: 25px;
+    margin-right: 16px;
 }
 
-.commodity-modify-wrap .commodity-add .desc>input{
-    width: 300px;
+.commodity-modify-wrap .title>input{
+    width: 250px;
+    text-align: center;
 }
-.commodity-modify-wrap .commodity-add .price-ave>input{
-    width: 100px;
+.commodity-modify-wrap .market-price>input{
+    width: 150px;
+    text-align: center;
 }
-.commodity-modify-wrap .commodity-add .price-cur>input{
+.commodity-modify-wrap .price>input{
     width: 100px;
+    text-align: center;
 }
-.commodity-modify-wrap .commodity-add .stock>input{
+.commodity-modify-wrap .stock>input{
     width: 100px;
+    text-align: center;
+}
+
+/*datapicker在modal中的用法*/
+.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top, .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom{
+    z-index: 100000 !important;
+}
+
+/*基本信息中modal中商品价格*/
+.modal-body .commodity-basic-price{
+    width: 80px;
+    vertical-align: top;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.modal-body .plus{
+    border: 1px dashed #bbb;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.modal-body .fa-minus-circle{
+    font-size: 20px;
+    vertical-align: top;
+    margin-top: 6px;
+    margin-left: 20px;
+    cursor: pointer;
 }
 
 /*commodity modify basic*/
@@ -264,35 +316,8 @@ textarea{
 
 
 /*商品信息中的日历样式*/
-.calendar-container{
-    background-color: #fff;
-    position: absolute;
-    top: -10000px;
-}
-
-/*datapicker在modal中的用法*/
-.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top, .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom{
-    z-index: 100000 !important;
-}
-
-/*基本信息中modal中商品价格*/
-.modal-body .commodity-basic-price{
-    width: 80px;
-    vertical-align: top;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    margin-right: 10px;
-}
-
-.modal-body .plus{
-    border: 1px dashed #bbb;
-    width: 40px;
-    height: 40px;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
-    cursor: pointer;
-}
+/*.calendar-container{*/
+    /*background-color: #fff;*/
+    /*position: absolute;*/
+    /*top: -10000px;*/
+/*}*/
