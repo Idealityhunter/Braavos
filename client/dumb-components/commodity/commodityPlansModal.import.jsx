@@ -14,6 +14,8 @@ const commodityPlansModal = React.createClass({
       pricing: transferredPricing
     }
   },
+
+  // 每次新增一条pricing的时候,都需要重新绑定一次datepicker plugin
   componentDidUpdate(){
     $('.commodity-basic-datepicker .input-daterange').datepicker({
       format: 'yyyy-mm-dd',
@@ -22,6 +24,8 @@ const commodityPlansModal = React.createClass({
       autoclose: true
     });
   },
+
+  // 删除一条pricing
   _handleDelete(e){
     const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
     let copyPricing = this.state.pricing && this.state.pricing.slice();
@@ -30,6 +34,8 @@ const commodityPlansModal = React.createClass({
       pricing: copyPricing
     });
   },
+
+  // 增加一条pricing
   _handleAddPricing(e){
     this.setState({
       pricing: this.state.pricing.concat({
@@ -39,6 +45,7 @@ const commodityPlansModal = React.createClass({
       })
     })
   },
+
   render() {
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>

@@ -19,7 +19,7 @@ const commodityPlans = React.createClass({
       },
       plans: [{
         key: Meteor.uuid(),
-        status: 'edit',
+        status: 'view',
         planId: 'aaaa',
         title: '泰国清迈Oasis Spa绿洲水疗体验按摩',
         marketPrice: 59,
@@ -59,6 +59,7 @@ const commodityPlans = React.createClass({
       }]
     }
   },
+
   // 套餐进入修改状态
   _handleModify(e) {
     e.preventDefault();
@@ -70,6 +71,7 @@ const commodityPlans = React.createClass({
       plans: copyPlan
     });
   },
+
   // 删除套餐
   _handleDelete(e) {
     e.preventDefault();
@@ -81,6 +83,7 @@ const commodityPlans = React.createClass({
       plans: copyPlan
     });
   },
+
   // 复制套餐
   _handleCopy(e) {
     e.preventDefault();
@@ -92,6 +95,7 @@ const commodityPlans = React.createClass({
       plans: copyPlan
     });
   },
+
   // 添加套餐
   _handleAddPlan(e) {
     e.preventDefault();
@@ -105,12 +109,14 @@ const commodityPlans = React.createClass({
       })
     });
   },
+
   // 修改是否需要日期(calendar)
   _handleDateRequired(e) {
     this.setState({
       dateRequired: !this.state.dateRequired// 当为true的时候有calendar并且会用组件填充售价(price);当为false的时候没有calendar,自己输入售价
     });
   },
+
   // 修改状态下确认修改
   _handleSubmitEdit(e) {
     e.preventDefault();
@@ -142,6 +148,7 @@ const commodityPlans = React.createClass({
       plans: copyPlan
     });
   },
+
   // 修改状态下取消修改
   _handleCancelEdit(e) {
     e.preventDefault();
@@ -153,6 +160,7 @@ const commodityPlans = React.createClass({
       plans: copyPlan
     });
   },
+
   render() {
     let i = 0;//从1开始,0表示添加的input
     const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
