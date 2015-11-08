@@ -163,7 +163,7 @@ textarea{
     width: 250px;
 }
 .plan-wrap .market-price{
-    width: 100px;
+    width: 150px;
 }
 .plan-wrap .price{
     width: 100px;
@@ -190,7 +190,7 @@ textarea{
     text-align: center;
 }
 .commodity-modify-wrap .market-price>input{
-    width: 100px;
+    width: 150px;
     text-align: center;
 }
 .commodity-modify-wrap .price>input{

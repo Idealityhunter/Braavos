@@ -64,14 +64,18 @@ const commodityPlans = React.createClass({
     e.preventDefault();
     const curIndex = $(e.target).parents('tr').attr('data-id');
     const arrayIndex = curIndex - 1;
-    // TODO 进入修改状态
+    let copyPlan = this.state.plans.slice();
+    copyPlan[arrayIndex].status = 'edit';
+    this.setState({
+      plans: copyPlan
+    });
   },
   // 删除套餐
   _handleDelete(e) {
     e.preventDefault();
     const curIndex = $(e.target).parents('tr').attr('data-id');
     const arrayIndex = curIndex - 1;
-    let copyPlan = this.state.plans && this.state.plans.slice();
+    let copyPlan = this.state.plans.slice();
     copyPlan.splice(arrayIndex, 1);
     this.setState({
       plans: copyPlan
@@ -82,8 +86,10 @@ const commodityPlans = React.createClass({
     e.preventDefault();
     const curIndex = $(e.target).parents('tr').attr('data-id');
     const arrayIndex = curIndex - 1;
+    let copyPlan = this.state.plans.concat(_.clone(this.state.plans[arrayIndex]));
+    copyPlan[copyPlan.length - 1].key = Meteor.uuid();
     this.setState({
-      plans: this.state.plans.concat(this.state.plans[arrayIndex])
+      plans: copyPlan
     });
   },
   // 添加套餐
@@ -92,7 +98,7 @@ const commodityPlans = React.createClass({
     const addForm = $(e.target).parents('.commodity-add')[0];
     this.setState({
       plans: this.state.plans.concat({
-        name: $(addForm).children('.title').children('input').val(),
+        title: $(addForm).children('.title').children('input').val(),
         marketPrice: $(addForm).children('.market-price').children('input').val(),
         price: $(addForm).children('.price').children('input').val(),
         stock: $(addForm).children('.stock').children('input').val()
@@ -103,6 +109,48 @@ const commodityPlans = React.createClass({
   _handleDateRequired(e) {
     this.setState({
       dateRequired: !this.state.dateRequired// 当为true的时候有calendar并且会用组件填充售价(price);当为false的时候没有calendar,自己输入售价
+    });
+  },
+  // 修改状态下确认修改
+  _handleSubmitEdit(e) {
+    e.preventDefault();
+    const $trElement = $(e.target).parents('tr');
+    const curIndex = $trElement.attr('data-id');
+    const arrayIndex = curIndex - 1;
+    let copyPlan = this.state.plans.slice();
+
+    // TODO 清除修改记录(addplan中应该为空,包括modal层)
+    const title = $trElement.children('.title').children('input').val();
+    const marketPrice = $trElement.children('.market-price').children('input').val();
+    const price = $trElement.children('.price').children('input').val();
+    const stock = $trElement.children('.stock').children('input').val();
+    _.extend(copyPlan[arrayIndex], {
+      status: 'view',
+      title: title,
+      marketPrice: marketPrice,
+      price: price,
+      //pricing: [{
+      //  price: 30,
+      //  timeRange: [new Date('2010-1-1'), new Date('2010-1-3')]
+      //}, {
+      //  price: 33,
+      //  timeRange: [new Date('2010-1-3'), new Date('2010-1-5')]
+      //}],
+      stock: stock
+    });
+    this.setState({
+      plans: copyPlan
+    });
+  },
+  // 修改状态下取消修改
+  _handleCancelEdit(e) {
+    e.preventDefault();
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    const arrayIndex = curIndex - 1;
+    let copyPlan = this.state.plans.slice();
+    copyPlan[arrayIndex].status = 'view';
+    this.setState({
+      plans: copyPlan
     });
   },
   render() {
