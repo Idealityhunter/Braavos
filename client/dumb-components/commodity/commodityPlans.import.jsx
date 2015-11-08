@@ -109,19 +109,39 @@ const commodityPlans = React.createClass({
   },
   render() {
     let i = 0;//从1开始,0表示添加的input
-    const planList = this.state.plans.map(plan =>
-      <tr data-id={++i} key={plan.key}>
-        <td className="">{plan.title}</td>
-        <td className="">市场价￥{plan.marketPrice}</td>
-        <td className="">售价￥{plan.price}起<i className="fa fa-calendar cursor-pointer calender-price" data-toggle="modal" data-target={"#calendar-modal-" + i} style={{marginLeft: 2}}/></td>
-        <td className="">库存{plan.stock}</td>
-        <td className="controler">
+    const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
+      <tr className="plan-wrap" data-id={++i} key={plan.key}>
+        <td className="title">
+          <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title}/>
+        </td>
+        <td className="market-price">
+          <input className="inline" type='text' placeholder="市场价￥" defaultValue={plan.marketPrice}/>
+        </td>
+        <td className="price">
+          <input className="inline" type='text' placeholder="售价￥" defaultValue={plan.price}/>
+          <i className="fa fa-calendar cursor-pointer calender-price" style={{marginLeft: -20}} data-toggle="modal" data-target={"#calendar-modal-" + i}/>
+        </td>
+        <td className="stock">
+          <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
+        </td>
+        <td className="controller">
+          <button className="" onClick={this._handleSubmitEdit} style={{marginRight:10}}>确定</button>
+          <button className="" onClick={this._handleCancelEdit}>取消</button>
+        </td>
+      </tr>
+    ) : (
+      <tr className="plan-wrap" data-id={++i} key={plan.key}>
+        <td className="title">{plan.title}</td>
+        <td className="market-price">市场价￥{plan.marketPrice}</td>
+        <td className="price">售价￥{plan.price}起<i className="fa fa-calendar cursor-pointer calender-price" data-toggle="modal" data-target={"#calendar-modal-" + i} style={{marginLeft: 2}}/></td>
+        <td className="stock">库存{plan.stock}</td>
+        <td className="controller">
           <button className="" style={{marginRight: 10}} onClick={this._handleModify}>修改</button>
           <button className="" style={{marginRight: 10}} onClick={this._handleDelete}>删除</button>
           <button className="" style={{marginRight: 10}} onClick={this._handleCopy}>复制</button>
         </td>
       </tr>
-    );
+    ));
     let j = 0;
     const modalList = this.state.plans.map(plan =>
       <CommodityPlansModal
@@ -142,6 +162,7 @@ const commodityPlans = React.createClass({
           <table className="table">
             <tbody>
               {planList}
+
             </tbody>
           </table>
           {modalList}
