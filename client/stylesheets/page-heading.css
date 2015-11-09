@@ -163,13 +163,13 @@ textarea{
     width: 250px;
 }
 .plan-wrap .market-price{
-    width: 150px;
+    width: 110px;
 }
 .plan-wrap .price{
-    width: 100px;
+    width: 150px;
 }
 .plan-wrap .stock{
-    width: 100px;
+    width: 130px;
 }
 .plan-wrap .controller{
     width: 200px;
@@ -190,15 +190,15 @@ textarea{
     text-align: center;
 }
 .commodity-modify-wrap .market-price>input{
-    width: 150px;
+    width: 110px;
     text-align: center;
 }
 .commodity-modify-wrap .price>input{
-    width: 100px;
+    width: 150px;
     text-align: center;
 }
 .commodity-modify-wrap .stock>input{
-    width: 100px;
+    width: 130px;
     text-align: center;
 }
 

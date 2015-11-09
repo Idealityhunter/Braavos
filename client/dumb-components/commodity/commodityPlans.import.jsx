@@ -16,49 +16,12 @@ const commodityPlans = React.createClass({
         pricing: [],
         stock: '',
       },
-      plans: [{
+      // Bug: 这种方法,假如另一边有人在操作,则数据的变动会无法传进来啊
+      plans: this.props.plans.map(plan => _.extend(plan, {
         showModal: false,
         key: Meteor.uuid(),
-        status: 'view',
-        planId: 'aaaa',
-        title: '泰国清迈Oasis Spa绿洲水疗体验按摩',
-        marketPrice: 59,
-        price: 30,
-        pricing: [{
-          price: 30,
-          timeRange: [new Date('2010-1-1'), new Date('2010-1-3')]
-        }, {
-          price: 33,
-          timeRange: [new Date('2010-1-3'), new Date('2010-1-5')]
-        }],
-        stock: 100
-      },{
-        showModal: false,
-        key: Meteor.uuid(),
-        status: 'view',
-        planId: 'aaaa',
-        title: '泰国清迈Oaaaasis Spa绿洲水疗体验按摩',
-        marketPrice: 59,
-        price: 30,
-        pricing: [{
-          price: 30,
-          timeRange: [new Date('2010-11-1'), new Date('2010-11-3')]
-        }, {
-          price: 33,
-          timeRange: [new Date('2010-11-3'), new Date('2010-11-5')]
-        }],
-        stock: 100
-      },{
-        showModal: false,
-        key: Meteor.uuid(),
-        status: 'view',
-        planId: 'aaaa',
-        title: '泰国清迈Oassssis Spa绿洲水疗体验按摩',
-        marketPrice: 59,
-        pricing: [],//注意一定要有初始值
-        price: 30,
-        stock: 100
-      }]
+        status: 'view'
+      }))
     }
   },
 
@@ -107,7 +70,8 @@ const commodityPlans = React.createClass({
         title: $(addForm).children('.title').children('input').val(),
         marketPrice: $(addForm).children('.market-price').children('input').val(),
         price: $(addForm).children('.price').children('input').val(),
-        stock: $(addForm).children('.stock').children('input').val()
+        stock: $(addForm).children('.stock').children('input').val(),
+        pricing: this.state.addPlan.pricing
       })
     });
   },
@@ -188,6 +152,7 @@ const commodityPlans = React.createClass({
     if ($(e.target).parents('.commodity-add').length > 0){
       this.setState({
         addPlan: _.extend(this.state.addPlan, {
+          existModal: true,
           showModal: true
         })
       });
@@ -195,7 +160,10 @@ const commodityPlans = React.createClass({
       const curIndex = $(e.target).parents('tr').attr('data-id');
       const arrayIndex = curIndex - 1;
       let copyPlan = this.state.plans.slice();
-      copyPlan[arrayIndex].showModal = true;
+      copyPlan[arrayIndex] = _.extend(copyPlan[arrayIndex], {
+        existModal: true,
+        showModal: true
+      });
       this.setState({
         plans: copyPlan
       });
@@ -205,9 +173,11 @@ const commodityPlans = React.createClass({
   // 控制modal修改的保存
   _handleSubmitModal(pricing, modalIndex){
     const curIndex = modalIndex;
+    console.log(pricing);
     if (curIndex == 0){
       this.setState({
         addPlan: _.extend(this.state.addPlan, {
+          existModal: false,
           showModal: false,
           pricing: pricing
         })
@@ -216,6 +186,7 @@ const commodityPlans = React.createClass({
       const arrayIndex = curIndex - 1;
       let copyPlan = this.state.plans.slice();
       _.extend(copyPlan[arrayIndex],{
+        existModal: false,
         showModal: false,
         pricing: pricing
       });

@@ -6,9 +6,53 @@ import {CommodityPlans} from '/client/dumb-components/commodity/commodityPlans';
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
-class commodityModifyBasic extends React.Component {
-  componentDidMount() {
-  }
+const commodityModifyBasic = React.createClass({
+  getDefaultProps(){
+    // 传入下一层的数据
+    return {
+      plans: [{
+        //showModal: false,
+        //key: Meteor.uuid(),
+        //status: 'view',
+        planId: 'aaaa',
+        title: '泰国清迈Oasis Spa绿洲水疗体验按摩',
+        marketPrice: 59,
+        price: 30,
+        pricing: [{
+          price: 30,
+          timeRange: [new Date('2010-1-1'), new Date('2010-1-3')]
+        }, {
+          price: 33,
+          timeRange: [new Date('2010-1-3'), new Date('2010-1-5')]
+        }],
+        stock: 100
+      },{
+        planId: 'aaaa',
+        title: '泰国清迈Oaaaasis Spa绿洲水疗体验按摩',
+        marketPrice: 59,
+        price: 30,
+        pricing: [{
+          price: 30,
+          timeRange: [new Date('2010-11-1'), new Date('2010-11-3')]
+        }, {
+          price: 33,
+          timeRange: [new Date('2010-11-3'), new Date('2010-11-5')]
+        }],
+        stock: 100
+      },{
+        planId: 'aaaa',
+        title: '泰国清迈Oassssis Spa绿洲水疗体验按摩',
+        marketPrice: 59,
+        pricing: [],//注意一定要有初始值
+        price: 30,
+        pricing: [{
+          price: 30,
+          timeRange: [new Date('2010-11-1'), new Date('2010-11-3')]
+        }],
+        stock: 100
+      }]
+    }
+  },
 
   render() {
     return (
@@ -86,11 +130,10 @@ class commodityModifyBasic extends React.Component {
         </form>
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className="">预定设置*</label>
-        <CommodityPlans />
+        <CommodityPlans plans={this.props.plans}/>
       </div>
     );
   }
-};
-
+});
 
 export const CommodityModifyBasic = commodityModifyBasic;

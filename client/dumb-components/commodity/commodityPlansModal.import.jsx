@@ -65,17 +65,6 @@ const commodityPlansModal = React.createClass({
         ]
       };
     }
-
-    // 为什么这种就不行
-    //let newPricing = $pricingList.map(pricingDom => {
-    //  return {
-    //    price: $(pricingDom).find('input.commodity-basic-price').val(),
-    //    timeRange: [
-    //      $(pricingDom).find('input[name=start]').val(),
-    //      $(pricingDom).find('input[name=end]').val()
-    //    ]
-    //  }
-    //});
     this.props.onSubmit(newPricing, this.props.index);
   },
 
@@ -96,52 +85,51 @@ const commodityPlansModal = React.createClass({
     });
   },
 
-  // 监控价格变化
-  _handlePrice(e){
-    console.log($(e.target).val());
-    const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-    let copyPricing = this.state.pricing.slice();
-    _.extend(copyPricing[curIndex], {
-      price: $(e.target).val()
-    });
-    this.setState({
-      pricing: copyPricing
-    });
-  },
-
-  // 监控时间变化
-  _handleStartTime(e){
-    console.log($(e.target).val());
-    const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-    let copyPricing = this.state.pricing.slice();
-    copyPricing[curIndex].timeRange[0] = $(e.target).val();
-    this.setState({
-      pricing: copyPricing
-    });
-  },
-
-  // 监控时间变化
-  _handleEndTime(e){
-    console.log($(e.target).val());
-    const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-    let copyPricing = this.state.pricing.slice();
-    copyPricing[curIndex].timeRange[1] = $(e.target).val();
-    this.setState({
-      pricing: copyPricing
-    });
-  },
+  //// 监控价格变化
+  //_handlePrice(e){
+  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
+  //  let copyPricing = this.state.pricing.slice();
+  //  _.extend(copyPricing[curIndex], {
+  //    price: $(e.target).val()
+  //  });
+  //  this.setState({
+  //    pricing: copyPricing
+  //  });
+  //},
+  //
+  //// 监控时间变化
+  //_handleStartTime(e){
+  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
+  //  let copyPricing = this.state.pricing.slice();
+  //  copyPricing[curIndex].timeRange[0] = $(e.target).val();
+  //  this.setState({
+  //    pricing: copyPricing
+  //  });
+  //},
+  //
+  //// 监控时间变化
+  //_handleEndTime(e){
+  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
+  //  let copyPricing = this.state.pricing.slice();
+  //  copyPricing[curIndex].timeRange[1] = $(e.target).val();
+  //  this.setState({
+  //    pricing: copyPricing
+  //  });
+  //},
 
   render() {
+    console.log('render');
+    if (!this.props.plan.existModal) return <div></div>;
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
       <div className="pricing-wrap" data-id={i++} key={pricing.key}>
-        <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price} onBlur={this._handlePrice}/>
+        <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
         <div className="inline">
           <div className="form-group commodity-basic-datepicker inline">
             <div className="input-daterange input-group">
-              <input type="text" className="input-sm form-control" name="start" placeholder="from" defaultValue={pricing.timeRange[0]} onBlur={this._handleStartTime}/>
+              <input type="text" className="input-sm form-control" name="start" placeholder="from" defaultValue={pricing.timeRange[0]}/>
               <span className="input-group-addon">-</span>
-              <input type="text" className="input-sm form-control" name="end" placeholder="to" defaultValue={pricing.timeRange[1]} onBlur={this._handleEndTime}/>
+              <input type="text" className="input-sm form-control" name="end" placeholder="to" defaultValue={pricing.timeRange[1]}/>
             </div>
           </div>
         </div>
@@ -170,7 +158,7 @@ const commodityPlansModal = React.createClass({
           {(this.props.plan.status == 'edit') ? <Button bsStyle="primary" onClick={this._handleSubmit}>Submit</Button> : ''}
         </Modal.Footer>
       </Modal>
-    )
+    );
   }
 });
 
