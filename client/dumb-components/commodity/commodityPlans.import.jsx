@@ -10,7 +10,7 @@ const commodityPlans = React.createClass({
       addPlan: {
         showModal: false,
         title: '',
-        status: '',
+        status: 'edit',
         marketPrice: '',
         price: '',
         pricing: [],
@@ -71,7 +71,8 @@ const commodityPlans = React.createClass({
         marketPrice: $(addForm).children('.market-price').children('input').val(),
         price: $(addForm).children('.price').children('input').val(),
         stock: $(addForm).children('.stock').children('input').val(),
-        pricing: this.state.addPlan.pricing
+        pricing: this.state.addPlan.pricing,
+        key: Meteor.uuid()
       })
     });
   },
@@ -173,7 +174,6 @@ const commodityPlans = React.createClass({
   // 控制modal修改的保存
   _handleSubmitModal(pricing, modalIndex){
     const curIndex = modalIndex;
-    console.log(pricing);
     if (curIndex == 0){
       this.setState({
         addPlan: _.extend(this.state.addPlan, {

@@ -4,7 +4,7 @@ const commodityPlansModal = React.createClass({
   getInitialState() {
     let transferredPricing = [];
     let i = 0;
-    if (this.props.plan.pricing){
+    if (this.props.plan.pricing) {
       transferredPricing = this.props.plan.pricing.map((pricing) => ({
         'price': pricing.price,
         'key': Meteor.uuid(),
@@ -12,8 +12,16 @@ const commodityPlansModal = React.createClass({
       }))
     }
     return {
-      pricing: transferredPricing
+      pricing: transferredPricing.slice(),//控制ui
+      originalPricing: transferredPricing.slice()//cache,存储进来编辑的状态
     }
+  },
+
+  componentDidMount() {
+    const node = ReactDOM.findDOMNode(this.refs["haha"]);
+    $(".input-daterange").children('input[name=start]').on('change', function(evt){
+      console.log(`jQuery: ${evt}`);
+    });
   },
 
   // 每次新增一条pricing的时候,都需要重新绑定一次datepicker plugin
@@ -56,7 +64,7 @@ const commodityPlansModal = React.createClass({
     const $pricingList = $modal.find('.pricing-wrap');
 
     let newPricing = [];
-    for(let i = 0;i < $pricingList.length;i++){
+    for (let i = 0; i < $pricingList.length; i++) {
       newPricing[i] = {
         price: $($pricingList[i]).find('input.commodity-basic-price').val(),
         timeRange: [
@@ -65,6 +73,10 @@ const commodityPlansModal = React.createClass({
         ]
       };
     }
+    this.setState({
+      originalPricing: newPricing.slice(),
+      pricing: newPricing.slice()
+    });
     this.props.onSubmit(newPricing, this.props.index);
   },
 
@@ -73,15 +85,16 @@ const commodityPlansModal = React.createClass({
     this.props.onClose(this.props.index);
     let transferredPricing = [];
     let i = 0;
-    if (this.props.plan.pricing){
-      transferredPricing = this.props.plan.pricing.map((pricing) => ({
+    if (this.state.originalPricing) {
+      transferredPricing = this.state.originalPricing.map((pricing) => ({
         'price': pricing.price,
         'key': Meteor.uuid(),
         'timeRange': [moment(pricing.timeRange[0]).format('YYYY-MM-DD'), moment(pricing.timeRange[1]).format('YYYY-MM-DD')]
       }))
     }
     this.setState({
-      pricing: transferredPricing
+      originalPricing: transferredPricing.slice(),
+      pricing: transferredPricing.slice()
     });
   },
 
@@ -118,24 +131,26 @@ const commodityPlansModal = React.createClass({
   //},
 
   render() {
-    console.log('render');
-    if (!this.props.plan.existModal) return <div></div>;
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
-      <div className="pricing-wrap" data-id={i++} key={pricing.key}>
-        <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
-        <div className="inline">
-          <div className="form-group commodity-basic-datepicker inline">
-            <div className="input-daterange input-group">
-              <input type="text" className="input-sm form-control" name="start" placeholder="from" defaultValue={pricing.timeRange[0]}/>
-              <span className="input-group-addon">-</span>
-              <input type="text" className="input-sm form-control" name="end" placeholder="to" defaultValue={pricing.timeRange[1]}/>
+        <div className="pricing-wrap" data-id={i++} key={pricing.key}>
+          <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
+          <div className="inline">
+            <div className="form-group commodity-basic-datepicker inline">
+              <div className="input-daterange input-group">
+                <input type="text" className="input-sm form-control" name="start" placeholder="from"
+                       defaultValue={pricing.timeRange[0]}
+                       onChange={evt=>{console.log(evt)}}
+                />
+                <span className="input-group-addon">-</span>
+                <input type="text" className="input-sm form-control" name="end" placeholder="to"
+                       defaultValue={pricing.timeRange[1]}/>
+              </div>
             </div>
           </div>
+          {(this.props.plan.status == 'edit') ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
         </div>
-        {(this.props.plan.status == 'edit') ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
-      </div>
-    );
+      );
     return (
       <Modal
         data-id={this.props.index}
