@@ -88,8 +88,8 @@ let commodityGallery = React.createClass({
     const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
 
     const imgList = this.state.images.map((img) =>
-      <div className='inline img-wrap'>
-        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" key={img.src} onClick={this.handleFocus}/>
+      <div className='inline img-wrap' key={img.src}>
+        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/> <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
     );

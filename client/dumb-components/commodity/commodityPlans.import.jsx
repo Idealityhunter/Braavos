@@ -8,16 +8,16 @@ const commodityPlans = React.createClass({
       dateRequired: true,
       // 存储当前新增套餐的值(以防同时进行添加和修改,modal改变以至于无法保存pricing值)
       addPlan: {
-        title: 'aaasad',
-        pricing: [{
-          price: 301,
-          timeRange: [new Date('2010-1-1'), new Date('2010-1-3')]
-        }, {
-          price: 332,
-          timeRange: [new Date('2010-1-3'), new Date('2010-1-5')]
-        }]
+        showModal: false,
+        title: '',
+        status: '',
+        marketPrice: '',
+        price: '',
+        pricing: [],
+        stock: '',
       },
       plans: [{
+        showModal: false,
         key: Meteor.uuid(),
         status: 'view',
         planId: 'aaaa',
@@ -33,6 +33,7 @@ const commodityPlans = React.createClass({
         }],
         stock: 100
       },{
+        showModal: false,
         key: Meteor.uuid(),
         status: 'view',
         planId: 'aaaa',
@@ -48,6 +49,7 @@ const commodityPlans = React.createClass({
         }],
         stock: 100
       },{
+        showModal: false,
         key: Meteor.uuid(),
         status: 'view',
         planId: 'aaaa',
@@ -117,7 +119,7 @@ const commodityPlans = React.createClass({
     });
   },
 
-  // 修改状态下确认修改
+  // plan在修改状态下确认修改
   _handleSubmitEdit(e) {
     e.preventDefault();
     const $trElement = $(e.target).parents('tr');
@@ -125,7 +127,6 @@ const commodityPlans = React.createClass({
     const arrayIndex = curIndex - 1;
     let copyPlan = this.state.plans.slice();
 
-    // TODO 清除修改记录(addplan中应该为空,包括modal层)
     const title = $trElement.children('.title').children('input').val();
     const marketPrice = $trElement.children('.market-price').children('input').val();
     const price = $trElement.children('.price').children('input').val();
@@ -147,9 +148,11 @@ const commodityPlans = React.createClass({
     this.setState({
       plans: copyPlan
     });
+
+    // TODO 清除修改记录(addplan中应该为空,包括modal层)
   },
 
-  // 修改状态下取消修改
+  // plan在修改状态下取消修改
   _handleCancelEdit(e) {
     e.preventDefault();
     const curIndex = $(e.target).parents('tr').attr('data-id');
@@ -161,6 +164,66 @@ const commodityPlans = React.createClass({
     });
   },
 
+  // 控制modal的消失
+  _handleCloseModal(modalIndex){
+    const curIndex = modalIndex;
+    if (curIndex == 0){
+      this.setState({
+        addPlan: _.extend(this.state.addPlan, {
+          showModal: false
+        })
+      });
+    }else{
+      const arrayIndex = curIndex - 1;
+      let copyPlan = this.state.plans.slice();
+      copyPlan[arrayIndex].showModal = false;
+      this.setState({
+        plans: copyPlan
+      });
+    }
+  },
+
+  // 控制modal的展示
+  _handleShowModal(e){
+    if ($(e.target).parents('.commodity-add').length > 0){
+      this.setState({
+        addPlan: _.extend(this.state.addPlan, {
+          showModal: true
+        })
+      });
+    }else{
+      const curIndex = $(e.target).parents('tr').attr('data-id');
+      const arrayIndex = curIndex - 1;
+      let copyPlan = this.state.plans.slice();
+      copyPlan[arrayIndex].showModal = true;
+      this.setState({
+        plans: copyPlan
+      });
+    }
+  },
+
+  // 控制modal修改的保存
+  _handleSubmitModal(pricing, modalIndex){
+    const curIndex = modalIndex;
+    if (curIndex == 0){
+      this.setState({
+        addPlan: _.extend(this.state.addPlan, {
+          showModal: false,
+          pricing: pricing
+        })
+      });
+    }else{
+      const arrayIndex = curIndex - 1;
+      let copyPlan = this.state.plans.slice();
+      _.extend(copyPlan[arrayIndex],{
+        showModal: false,
+        pricing: pricing
+      });
+      this.setState({
+        plans: copyPlan
+      });
+    }
+  },
   render() {
     let i = 0;//从1开始,0表示添加的input
     const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
@@ -173,7 +236,7 @@ const commodityPlans = React.createClass({
         </td>
         <td className="price">
           <input className="inline" type='text' placeholder="售价￥" defaultValue={plan.price}/>
-          <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} data-toggle="modal" data-target={"#calendar-modal-" + i}/>
+          <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
         </td>
         <td className="stock">
           <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
@@ -187,7 +250,7 @@ const commodityPlans = React.createClass({
       <tr className="plan-wrap" data-id={++i} key={plan.key}>
         <td className="title">{plan.title}</td>
         <td className="market-price">市场价￥{plan.marketPrice}</td>
-        <td className="price">售价￥{plan.price}起<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} data-toggle="modal" data-target={"#calendar-modal-" + i} style={{marginLeft: 2}}/></td>
+        <td className="price">售价￥{plan.price}起<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
         <td className="stock">库存{plan.stock}</td>
         <td className="controller">
           <button className="" style={{marginRight: 10}} onClick={this._handleModify}>修改</button>
@@ -201,6 +264,8 @@ const commodityPlans = React.createClass({
       <CommodityPlansModal
         plan = {this.state.plans[j]}
         index = {++j}
+        onClose = {this._handleCloseModal}
+        onSubmit = {this._handleSubmitModal}
       />
     )
     return (
@@ -221,17 +286,17 @@ const commodityPlans = React.createClass({
           {modalList}
           <div className="form-group commodity-add">
             <div className="inline title">
-              <input type='text' placeholder="套餐描述"/>
+              <input type='text' placeholder="套餐描述" defaultValue={this.state.addPlan.title}/>
             </div>
             <div className="inline market-price">
-              <input type='text' placeholder="市场价￥"/>
+              <input type='text' placeholder="市场价￥" defaultValue={this.state.addPlan.marketPrice}/>
             </div>
             <div className="inline price">
-              <input type='text' className="inline" placeholder="售价￥" />
-              <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} data-toggle="modal" data-target="#calendar-modal-0"/>
+              <input type='text' className="inline" placeholder="售价￥" defaultValue={this.state.addPlan.price}/>
+              <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
             </div>
             <div className="inline stock">
-              <input type='text' className="inline" placeholder="库存" />
+              <input type='text' className="inline" placeholder="库存" defaultValue={this.state.addPlan.stock}/>
             </div>
             <div className="inline add-button">
               <button className="" onClick={this._handleAddPlan}>确定</button>
@@ -239,6 +304,8 @@ const commodityPlans = React.createClass({
             <CommodityPlansModal
               index = {0}
               plan = {this.state.addPlan}
+              onClose = {this._handleCloseModal}
+              onSubmit = {this._handleSubmitModal}
             />
           </div>
         </form>
