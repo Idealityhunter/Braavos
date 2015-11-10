@@ -26,7 +26,7 @@ var commodityModify = React.createClass({
     });
   },
   render() {
-    let prefix = 'commodities.';
+    let prefix = 'commodities.modify.';
     return (
       <div className="commodity-modify-wrap">
         <Pageheading root="首页" category="商品管理" title="商品修改"/>
