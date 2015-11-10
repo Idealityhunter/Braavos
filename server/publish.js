@@ -26,3 +26,18 @@ Meteor.publish("sellerInfo", function () {
   }, {});
   return coll.find({userId: userId}, fields);
 });
+
+
+/**
+ * 发布商品信息
+ */
+Meteor.publish("commodities", function () {
+  const userId = parseInt(this.userId);
+  const coll = BraavosCore.Database.Braavos.Commodity;
+  const allowedFields = ["_id", "title", "desc", "seller"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+  return coll.find({'seller._id': userId}, fields);
+});

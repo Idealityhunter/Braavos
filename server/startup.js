@@ -61,6 +61,7 @@ function initMongo() {
   const Schema = BraavosCore.Schema;
   helper('braavos', 'Braavos', [{collName: 'Token', schema: Schema.Account.Token}]);
   helper("braavos", "Braavos", [{collName: "Seller", schema: Schema.Account.Seller}]);
+  helper("braavos", "Braavos", [{collName: "Commodity", schema: Schema.Account.Commodity}]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}])
 }
 

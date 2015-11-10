@@ -13,6 +13,8 @@ Meteor.startup(()=> {
   db.Token.attachSchema(schema.Account.Token);
   db.Seller = new Mongo.Collection("Seller");
   db.Seller.attachSchema(schema.Account.Seller);
+  db.Commodity = new Mongo.Collection("Commodity");
+  db.Commodity.attachSchema(schema.Account.Commodity);
 
   BraavosCore.Database.Yunkai = {};
   const yunkai = BraavosCore.Database.Yunkai;
