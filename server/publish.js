@@ -19,12 +19,12 @@ Meteor.publish('basicUserInfo', function () {
 Meteor.publish("sellerInfo", function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Seller;
-  const allowedFields = ["userId", "lang", "serviceZone", "shopTitle", "contact", "address", "email"];
+  const allowedFields = ["sellerId", "lang", "serviceZone", "shopTitle", "contact", "address", "email"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({userId: userId}, fields);
+  return coll.find({sellerId: userId}, fields);
 });
 
 
@@ -34,10 +34,10 @@ Meteor.publish("sellerInfo", function () {
 Meteor.publish("commodities", function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Commodity;
-  const allowedFields = ["_id", "title", "desc", "seller"];
+  const allowedFields = ["commodityId", "title", "desc", "seller"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({'seller._id': userId}, fields);
+  return coll.find({'seller.sellerId': userId}, fields);
 });

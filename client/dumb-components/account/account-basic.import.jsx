@@ -90,7 +90,7 @@ export const AccountBasic = React.createClass({
     Meteor.subscribe('sellerInfo');
 
     const userId = parseInt(Meteor.userId());
-    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) || {};
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({sellerId: userId}) || {};
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
@@ -99,7 +99,7 @@ export const AccountBasic = React.createClass({
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
     }
 
-    const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({userId: userId}) || {};
+    const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({sellerId: userId}) || {};
     if (!sellerInfo.contact) {
       sellerInfo.contact = {number: ""};
     }
