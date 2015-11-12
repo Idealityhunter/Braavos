@@ -15,7 +15,7 @@ Marketplace.Seller = new SimpleSchema({
   },
   // 商家对应的UserInfo
   userInfo: {
-    type: Account.UserInfo
+    type: CoreModel.Account.UserInfo
   },
   // 商家店铺的名称
   name: {
