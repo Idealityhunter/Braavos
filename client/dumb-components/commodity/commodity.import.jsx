@@ -13,9 +13,11 @@ var commodity = React.createClass({
   },
 
   getMeteorData() {
-    // 数据新增的时候需要重新生成一下table
-    console.log('data');
-    //$('.footable').footable();
+    // TODO 数据新增的时候需要重新生成一下table => 还是没起效果?
+    //window.requestAnimationFrame(function() {
+    //  console.log('request');
+    //  $('.footable').footable();
+    //});
 
     Meteor.subscribe('commodities');
     const userId = parseInt(Meteor.userId());
@@ -29,7 +31,6 @@ var commodity = React.createClass({
   },
 
   componentDidMount(){
-    //$('.footable').footable();
     $('.input-daterange').datepicker({
       format: 'yyyy-mm-dd',
       keyboardNavigation: false,

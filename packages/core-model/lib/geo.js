@@ -18,5 +18,20 @@ CoreModel.Geo = {
     enName: {
       type: String
     }
+  }),
+
+  // 国家信息
+  Country: new SimpleSchema({
+    // 标准的Morphia方案: "com.lvxingpai.model.geo.Country", 或者"com.lvxingpai.model.geo.Locality"
+    // 参见: https://github.com/mongodb/morphia/wiki/AllAnnotations  (className的说明)
+    className: {
+      type: String
+    },
+    zhName: {
+      type: String
+    },
+    enName: {
+      type: String
+    }
   })
 };
