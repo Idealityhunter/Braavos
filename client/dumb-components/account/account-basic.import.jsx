@@ -90,7 +90,7 @@ export const AccountBasic = React.createClass({
     Meteor.subscribe('sellerInfo');
 
     const userId = parseInt(Meteor.userId());
-    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({sellerId: userId}) || {};
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) || {};
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
