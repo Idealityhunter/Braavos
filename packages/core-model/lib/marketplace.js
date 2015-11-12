@@ -8,16 +8,25 @@ CoreModel.Marketplace = {};
 const Marketplace = CoreModel.Marketplace;
 
 Marketplace.Seller = new SimpleSchema({
-  // 商家对应的用户的userId
-  _id: {
+  // 商家的主键
+  sellerId: {
     type: Number,
     min: 1
   },
+  // 商家对应的UserInfo
+  userInfo: {
+    type: Account.UserInfo
+  },
   // 商家店铺的名称
-  shopTitle: {
+  name: {
     type: String,
     min: 1,
     max: 128
+  },
+  // 商家介绍
+  desc: {
+    type: CoreModel.Misc.RichText,
+    optional: true
   },
   // 商家支持那些语言
   lang: {
@@ -30,6 +39,11 @@ Marketplace.Seller = new SimpleSchema({
   serviceZones: {
     type: [CoreModel.Geo.GeoEntity],
     maxCount: 1024,
+    optional: true
+  },
+  // 服务标签
+  services: {
+    type: [String],
     optional: true
   },
   // 银行账户
@@ -62,6 +76,10 @@ Marketplace.Seller = new SimpleSchema({
     type: Number,
     min: 0,
     optional: true
+  },
+  // 开店时间
+  createTime: {
+    type: Date
   }
 });
 
@@ -137,10 +155,10 @@ Marketplace.CommodityPlan = new SimpleSchema({
   marketPrice: {
     type: Number,
     decimal: true,
-    min: 0,
-    optional: true
+    optional: true,
+    min: 0
   },
-  // 价格
+  // 商品售价
   price: {
     type: Number,
     decimal: true,
@@ -161,7 +179,7 @@ Marketplace.CommodityPlan = new SimpleSchema({
 // 商品
 Marketplace.Commodity = new SimpleSchema({
   // 商品编号
-  _id: {
+  commodityId: {
     type: Number,
     min: 1
   },
@@ -175,14 +193,9 @@ Marketplace.Commodity = new SimpleSchema({
     min: 1,
     max: 1024
   },
-  // 商品类别
-  category: {
-    type: [String]
-  },
   // 商品描述
   desc: {
-    type: String,
-    max: 65535,
+    type: CoreModel.Misc.RichText,
     optional: true
   },
   // 市场价格
@@ -203,6 +216,43 @@ Marketplace.Commodity = new SimpleSchema({
     type: [Marketplace.CommodityPlan],
     minCount: 1
   },
+  // 商品销量
+  salesVolume: {
+    type: Number,
+    min: 0,
+    optional: true
+  },
+  // 商品类别
+  category: {
+    type: [String],
+    minCount: 1,
+    maxCount: 1
+  },
+  // 商品的详细消费地址
+  address: {
+    type: String,
+    optional: true
+  },
+  // 服务时长
+  timeCost: {
+    type: String,
+    optional: true
+  },
+  // 购买须知
+  notice: {
+    type: [CoreModel.Misc.RichText],
+    optional: true
+  },
+  // 退改规定
+  refundPolicy: {
+    type: [CoreModel.Misc.RichText],
+    optional: true
+  },
+  // 交通信息
+  trafficInfo: {
+    type: [CoreModel.Misc.RichText],
+    optional: true
+  },
   // 商品封面图
   cover: {
     type: CoreModel.Misc.Images,
@@ -213,6 +263,14 @@ Marketplace.Commodity = new SimpleSchema({
     type: [CoreModel.Misc.Images],
     optional: true
   },
+  // 商品评分
+  rating: {
+    type: Number,
+    decimal: true,
+    optional: true,
+    min: 0,
+    max: 1
+  },
   // 商品状态
   status: {
     type: String,
@@ -222,16 +280,6 @@ Marketplace.Commodity = new SimpleSchema({
   // 商品的国家信息
   country: {
     type: CoreModel.Geo.Country,
-    optional: true
-  },
-  // 商品的详细消费地址
-  address: {
-    type: String,
-    optional: true
-  },
-  // 服务时长
-  timeCost: {
-    type: String,
     optional: true
   },
   // 商品的创建时间

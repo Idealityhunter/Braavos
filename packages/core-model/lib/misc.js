@@ -62,3 +62,19 @@ Misc.Images = new SimpleSchema({
     optional: true
   }
 });
+
+// 富文本信息
+Misc.RichText = new SimpleSchema({
+  title: {
+    type: String,
+    optional: true
+  },
+  summary: {
+    type: String,
+    optional: true
+  },
+  body: {
+    type: String,
+    optional: true
+  }
+});
