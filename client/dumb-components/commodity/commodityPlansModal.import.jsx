@@ -1,6 +1,10 @@
 import {Modal, Button} from "/lib/react-bootstrap"
 
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
+
 const commodityPlansModal = React.createClass({
+  mixins: [IntlMixin],
   getInitialState() {
     let transferredPricing = [];
     let i = 0;
@@ -131,6 +135,7 @@ const commodityPlansModal = React.createClass({
   //},
 
   render() {
+    prefix = 'commodities.modify.';
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
         <div className="pricing-wrap" data-id={i++} key={pricing.key}>

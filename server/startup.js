@@ -53,16 +53,19 @@ function initMongo() {
       const c = new Mongo.Collection(collName, {_driver: driver, idGeneration: "MONGO"});
       if (schema) {
         c.attachSchema(schema);
-      }
+      };
       BraavosCore.Database[confKey][alias ? alias : collName] = c;
     });
+
   };
 
   const Schema = BraavosCore.Schema;
-  helper('braavos', 'Braavos', [{collName: 'Token', schema: Schema.Account.Token}]);
-  helper("braavos", "Braavos", [{collName: "Seller", schema: Schema.Account.Seller}]);
-  helper("braavos", "Braavos", [{collName: "Commodity", schema: Schema.Account.Commodity}]);
-  helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}])
+  helper('braavos', 'Braavos', [
+    {collName: 'Token', schema: Schema.Account.Token},
+    {collName: "Seller", schema: Schema.Account.Seller},
+    {collName: "Commodity", schema: Schema.Account.Commodity}
+  ]);
+  helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}]);
 }
 
 /**

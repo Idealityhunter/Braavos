@@ -85,7 +85,16 @@ BraavosCore.IntlData.zh = {
         introduction: '商品介绍',
         instruction: '购买须知',
         traffic: '交通',
-        book: '预定和退改'
+        book: '预定和退改',
+        basicTab: {
+          commodityImages: '商品图片',
+          basicInfo: '基本信息',
+          commodityName: '商品名称',
+          addressInfo: '地址信息',
+          commodityCategories: '商品分类',
+          timeCost: '游玩时长',
+          hour: '小时'
+        },
       }
     }
   }
