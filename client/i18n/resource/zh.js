@@ -62,11 +62,40 @@ BraavosCore.IntlData.zh = {
       }
     },
     commodities: {
-      basic: '基本信息',
-      introduction: '商品介绍',
-      instruction: '购买须知',
-      traffic: '交通',
-      book: '预定和退改'
+      btn: {
+        addCommodity: '添加商品',
+        query: '查询',
+        reset: '重置'
+      },
+      label: {
+        number: '序号',
+        commodityId: '商品编号',
+        createdDate: '创建时间',
+        status: '状态',
+        commodityCover: '商品主图',
+        commodityTitle: '商品名',
+        desc: '介绍',
+        price: '价格',
+        stock: '存量',
+        salesVolume: '总销量',
+        action: '操作'
+      },
+      modify: {
+        basic: '基本信息',
+        introduction: '商品介绍',
+        instruction: '购买须知',
+        traffic: '交通',
+        book: '预定和退改',
+        basicTab: {
+          commodityImages: '商品图片',
+          basicInfo: '基本信息',
+          commodityName: '商品名称',
+          addressInfo: '地址信息',
+          commodityCategories: '商品分类',
+          timeCost: '游玩时长',
+          hour: '小时'
+        },
+      }
     }
   }
 };

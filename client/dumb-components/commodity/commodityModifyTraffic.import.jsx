@@ -16,7 +16,7 @@ let commodityModifyTraffic = React.createClass({
     return (
       <div className="commodity-traffic-wrap">
         <form className="form-horizontal">
-          <div className="form-group">
+          <div className="form-group traffic">
             <label className="">交通提示</label>
             <textarea className="form-control" rows="13" placeholder={text}/>
           </div>

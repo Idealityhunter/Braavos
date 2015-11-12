@@ -16,7 +16,7 @@ let commodityModifyIntroduction = React.createClass({
     return (
       <div className="commodity-introduction-wrap">
         <form className="form-horizontal">
-          <div className="form-group">
+          <div className="form-group introduction">
             <label className="">商品介绍</label>
             {/*
               TODO add the text editor
