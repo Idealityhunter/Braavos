@@ -2,5 +2,6 @@
   "redux": "3.0.2",
   "react-redux": "3.0.1",
   "externalify": "0.1.0",
-  "react-bootstrap": "0.27.3"
+  "react-bootstrap": "0.27.3",
+  "qiniu": "6.1.8"
 }
