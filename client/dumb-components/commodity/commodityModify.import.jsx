@@ -10,6 +10,7 @@ const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
+  mixins: [IntlMixin, ReactMeteorData],
   getInitialState(){
     return {
       plans: []
@@ -18,18 +19,9 @@ const commodityModify = React.createClass({
 
   getMeteorData() {
     Meteor.subscribe('sellerInfo');
-    console.log('haha');
     return {};
   },
 
-  handleChildSubmitState(plans){
-    console.log(this);
-    this.setState({
-      plans: plans
-    });
-    return ;
-  },
-  mixins: [IntlMixin],
   componentDidMount (){
     self = this;
     $(".steps-container").steps({
@@ -94,6 +86,15 @@ const commodityModify = React.createClass({
       autoclose: true
     });
   },
+
+
+  handleChildSubmitState(plans){
+    this.setState({
+      plans: plans
+    });
+    return ;
+  },
+
   render() {
     const prefix = 'commodities.modify.';
     return (

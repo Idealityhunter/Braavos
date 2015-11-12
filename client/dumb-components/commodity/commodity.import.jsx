@@ -21,7 +21,7 @@ var commodity = React.createClass({
 
     Meteor.subscribe('commodities');
     const userId = parseInt(Meteor.userId());
-    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller._id': userId}).fetch() || [];
+    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}).fetch() || [];
     commodities = commodities.map(commodity => _.extend(commodity, {
       key: Meteor.uuid()
     }));
@@ -72,7 +72,7 @@ var commodity = React.createClass({
     const commodityList = this.data.commodities.map(commodity =>
       <tr key={commodity.key}>
         <td>{i++}</td>
-        <td>{commodity._id}</td>
+        <td>{commodity.commodityId}</td>
         <td>{commodity.title}</td>
         <td>{commodity.desc}</td>
         <td>已发布/已下架/审核中</td>
