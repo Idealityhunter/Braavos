@@ -131,11 +131,19 @@ export const AccountBasic = React.createClass({
   // 修改头像
   handleModifyAvatar(evt) {
     this.setState({showAvatarModal: false, avatarPreloading: true});
-    const imageNode=evt.imageNode;
-    const imageSrc = $(imageNode).prop("src");
-    // 利用图像的base64编码, 做MD5, 得到key
-    const md5 = CryptoJS.MD5(imageSrc);
-    console.log(`key: ${md5}`);
+    const imageSrc = evt.croppedImage;
+
+    // 利用图像的内容, 做MD5, 得到key
+    const data = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
+    const hash = CryptoJS.MD5(data).toString();
+
+    Meteor.call("qiniu.uploadAvatar", imageSrc, hash, (err, ret) => {
+      if (!err) {
+        const avatar = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
+        Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: avatar});
+      }
+      this.setState({avatarPreloading: false});
+    })
   },
 
   render() {
@@ -146,7 +154,6 @@ export const AccountBasic = React.createClass({
                     okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
                     imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
                     imageMaxWidth={500}
-                    onSelect={function(evt) {console.log(evt);}}
                     onOk={this.handleModifyAvatar}
                     onClose={this.handleCloseAvatarModal} />
       :

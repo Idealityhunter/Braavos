@@ -93,10 +93,22 @@ export const ImageCropper = React.createClass({
   onOk() {
     if (this.props.onOk) {
       const oSelection = this._selConversion(this.state.selection);
+      const imageNode = ReactDOM.findDOMNode(this.refs["image"]);
+
+      const canvas = document.createElement("canvas");
+      const canvasSize = 240;
+      canvas.width = canvasSize;
+      canvas.height = canvasSize;
+      var ctx = canvas.getContext("2d");
+      const [l, t, w, h] = oSelection;
+      ctx.drawImage(imageNode, l, t, w, h, 0, 0, canvasSize, canvasSize);
+
       this.props.onOk({
         target: this,
         selection: this.state.selection, oSelection: oSelection,
-        imageNode: ReactDOM.findDOMNode(this.refs["image"])
+        // crop后的数据
+        croppedImage: canvas.toDataURL("image/png"),
+        imageNode: imageNode
       });
     }
   },
@@ -115,8 +127,6 @@ export const ImageCropper = React.createClass({
     this.setState({selection: sel});
     if (this.props.onSelect) {
       const oSelection = this._selConversion(sel);
-      console.log(sel);
-      console.log(oSelection);
       this.props.onSelect({target: this, selection: sel, oSelection: oSelection});
     }
   },
@@ -177,6 +187,7 @@ export const ImageCropper = React.createClass({
         <Modal.Header closeButton>
           <Modal.Title>{this.props.title}</Modal.Title>
         </Modal.Header>
+        <canvas ref="canvas" style={{display: "none"}} />
         <img ref="image" src={this.props.imageSrc}
              onLoad={this.onImageLoaded}
              style={{maxWidth:`${this.props.imageMaxWidth}px`, margin: "20px auto 20px"}}/>
