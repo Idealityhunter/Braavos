@@ -69,7 +69,6 @@ mongo-id@1.0.1
 npm-container@1.2.0
 npm-mongo@1.4.39_1
 observe-sequence@1.0.7
-omega:react-intl@0.0.1
 ordered-dict@1.0.4
 promise@0.5.1
 random@1.0.5
@@ -100,4 +99,5 @@ universe:modules-compiler@1.0.2
 url@1.0.5
 webapp@1.2.3
 webapp-hashing@1.0.5
+zephyre:react-intl@0.0.2_3
 zimme:active-route@2.3.2

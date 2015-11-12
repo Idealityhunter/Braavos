@@ -40,7 +40,6 @@ lxp:etcd
 lvxingpai:braavos-core
 lvxingpai:core-model
 
-omega:react-intl
 zimme:active-route
 aldeed:simple-schema
 underscore
@@ -48,3 +47,4 @@ react-meteor-data
 dburles:google-maps
 lvxingpai:meteor-jcrop
 jparker:crypto-md5
+zephyre:react-intl
