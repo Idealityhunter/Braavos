@@ -62,8 +62,8 @@ function initMongo() {
   const Schema = BraavosCore.Schema;
   helper('braavos', 'Braavos', [
     {collName: 'Token', schema: Schema.Account.Token},
-    {collName: "Seller", schema: Schema.Account.Seller},
-    {collName: "Commodity", schema: Schema.Account.Commodity}
+    {collName: "Seller", schema: Schema.Marketplace.Seller},
+    {collName: "Commodity", schema: Schema.Marketplace.Commodity}
   ]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}]);
 }
@@ -86,6 +86,16 @@ function initYunkaiService() {
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }
 
+/**
+ * 初始化七牛的SDK
+ */
+function initQiniuSDK() {
+  const qiniu = Meteor.npmRequire('qiniu');
+  qiniu.conf.ACCESS_KEY = BraavosCore.RootConf.braavos.qiniu.accessKey;
+  qiniu.conf.SECRET_KEY = BraavosCore.RootConf.braavos.qiniu.secretKey;
+  BraavosCore.Qiniu = qiniu;
+}
+
 Meteor.startup(()=> {
   console.log('Server startup');
   // 获取etcd设置
@@ -94,4 +104,6 @@ Meteor.startup(()=> {
   initMongo();
   // 初始化Yunkai
   initYunkaiService();
+
+  initQiniuSDK();
 });
