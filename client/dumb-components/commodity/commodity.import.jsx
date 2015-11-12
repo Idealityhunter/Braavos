@@ -75,7 +75,17 @@ var commodity = React.createClass({
         <td>{commodity.commodityId}</td>
         <td>{commodity.title}</td>
         <td>{commodity.desc}</td>
-        <td>已发布/已下架/审核中</td>
+        <td>
+          {
+            ((status) => {
+                switch (status){
+                  case 'review': return '审核中';
+                  case 'pub': return '已发布';
+                  default: return '已下架';
+                }
+            })(commodity.status)
+          }
+        </td>
         <td className="text-right">
           <div className="btn-group">
             <button className="btn-white btn btn-xs">编辑</button>
