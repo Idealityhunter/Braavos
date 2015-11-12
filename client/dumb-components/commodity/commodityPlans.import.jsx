@@ -20,7 +20,7 @@ const commodityPlans = React.createClass({
         modalPrice: '',
         pricing: [],
         modalPricing: [],
-        stock: ''
+        //stock: ''
       },
       // Bug: 这种方法,假如另一边有人在操作,则数据的变动会无法传进来啊
       plans: this.props.plans.map(plan => _.extend(plan, {
@@ -83,7 +83,7 @@ const commodityPlans = React.createClass({
       modalPrice: $(addForm).children('.price').children('input').val(),
       pricing: this.state.addPlan.modalPricing,
       modalPricing: this.state.addPlan.modalPricing,
-      stock: $(addForm).children('.stock').children('input').val(),
+      //stock: $(addForm).children('.stock').children('input').val(),
       key: Meteor.uuid()
     });
 
@@ -112,7 +112,7 @@ const commodityPlans = React.createClass({
     const title = $trElement.children('.title').children('input').val();
     const marketPrice = $trElement.children('.market-price').children('input').val();
     const price = $trElement.children('.price').children('input').val();
-    const stock = $trElement.children('.stock').children('input').val();
+    //const stock = $trElement.children('.stock').children('input').val();
 
     let copyPlan = this.state.plans.slice();
     _.extend(copyPlan[arrayIndex], {
@@ -121,7 +121,7 @@ const commodityPlans = React.createClass({
       marketPrice: marketPrice,
       price: copyPlan[arrayIndex].modalPrice,
       pricing: copyPlan[arrayIndex].modalPricing,
-      stock: stock
+      //stock: stock
     });
 
     // 提交修改给父组件
@@ -202,7 +202,9 @@ const commodityPlans = React.createClass({
           existModal: false,
           showModal: false,
           modalPricing: pricing,
-          modalPrice: _.reduce(pricing, function(min, pricingItme){ return Math.min(min, pricingItme.price)}, Number.MAX_VALUE)
+          modalPrice: (pricing.length > 0)
+            ? _.reduce(pricing, function(min, pricingItme){ return Math.min(min, pricingItme.price)}, Number.MAX_VALUE)
+            : null
         })
       });
     }else{
@@ -212,9 +214,9 @@ const commodityPlans = React.createClass({
         existModal: false,
         showModal: false,
         modalPricing: pricing,
-        modalPrice: _.reduce(pricing, function(min, pricingItme){
-          return Math.min(min, pricingItme.price)
-        }, Number.MAX_VALUE)
+        modalPrice: (pricing.length > 0)
+          ? _.reduce(pricing, function(min, pricingItme){ return Math.min(min, pricingItme.price)}, Number.MAX_VALUE)
+          : null
       });
       this.setState({
         plans: copyPlan
@@ -234,14 +236,16 @@ const commodityPlans = React.createClass({
         </td>
         <td className="price">
           {(this.state.dateRequired)
-            ? <input className="inline" type='text' placeholder="售价￥" value={plan.price} onClick={this._handleShowModal}/>
+            ? <input className="inline" type='text' placeholder="售价￥" value={plan.modalPrice} onClick={this._handleShowModal}/>
             : <input className="inline" type='text' placeholder="售价￥" defaultValue={plan.price}/>
           }
           <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
         </td>
-        <td className="stock">
-          <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
-        </td>
+        {/*
+         <td className="stock">
+         <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
+         </td>
+        */}
         <td className="controller">
           <button className="" onClick={this._handleSubmitEdit} style={{marginRight:10}}>确定</button>
           <button className="" onClick={this._handleCancelEdit}>取消</button>
@@ -252,7 +256,7 @@ const commodityPlans = React.createClass({
         <td className="title">{plan.title}</td>
         <td className="market-price">市场价￥{plan.marketPrice}</td>
         <td className="price">售价￥{plan.price}起<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
-        <td className="stock">库存{plan.stock}</td>
+        {/*<td className="stock">库存{plan.stock}</td>*/}
         <td className="controller">
           <button className="" style={{marginRight: 10}} onClick={this._handleModify}>修改</button>
           <button className="" style={{marginRight: 10}} onClick={this._handleDelete}>删除</button>
@@ -272,7 +276,7 @@ const commodityPlans = React.createClass({
     return (
       <div className="commodity-basic-plan">
         <form className="form-horizontal commodity-basic-form-wrap">
-          <div className="form-group">
+          <div className="form-group time-required">
             <label className="label-text">使用日期</label>
             <label className="checkbox-inline">
               <input type="checkbox" defaultChecked="checked" onChange={this._handleDateRequired}/> 需要使用日期
@@ -299,9 +303,11 @@ const commodityPlans = React.createClass({
               }
               <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
             </div>
+            {/*
             <div className="inline stock">
-              <input type='text' className="inline" placeholder="库存" defaultValue={this.state.addPlan.stock}/>
-            </div>
+             <input type='text' className="inline" placeholder="库存" defaultValue={this.state.addPlan.stock}/>
+             </div>
+            */}
             <div className="inline add-button">
               <button className="" onClick={this._handleAddPlan}>确定</button>
             </div>
