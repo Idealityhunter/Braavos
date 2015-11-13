@@ -5,19 +5,23 @@ var textChargeInclude, textChargeExcept, textUsage, textAttention;
 let commodityModifyInstruction = React.createClass({
   mixins: [IntlMixin],
 
-  componentWillMount() {
-    textChargeInclude = '1) 输入费用所包含的项目\n2)';
-    textChargeExcept = '个人消费及价格包含中未提及的其它费用';
-    //textUsage = '【收到票券类型】：\n【票券使用方法】：\n【出发和返回时间及地点】：\n【使用说明】：\n【适用门店】：\n【换票方式】：\n【换票地址】：\n【开放和结束时间】：';
-    textUsage = '';//待定
-    //textAttention = '【开放和结束时间】：\n【预约提醒】：\n【验证提醒】：\n【限购限用提醒】：\n【其它优惠】：\n【使用规则】：\n【温馨提示】：\n【商家服务】：';
-    textAttention = '';//待定
+  styles: {
+    asterisk: {
+      color: 'coral',
+      verticalAlign: 'text-top',
+      paddingLeft: 5,
+      fontsize: 18
+    }
   },
 
-  componentDidMount() {
-    $('textarea').on('blur', function(e){
-      console.log(e.target.value);
-    });
+  placeholders: {
+    textChargeInclude: '请简单介绍商品费用包含哪些项目',
+    textUsage: '请输入商品使用方法',
+    textAttention: ''
+  },
+
+  defaultValues: {
+    textChargeExcept: '1、费用包含中未提及的其他费用及个人消费',
   },
 
   render() {
@@ -25,26 +29,26 @@ let commodityModifyInstruction = React.createClass({
       <div className="commodity-instruction-wrap">
         <form className="form-horizontal">
           <div className="form-group charge-include">
-            <label className="">费用包含*</label>
-            <textarea className="form-control" rows="3" placeholder={textChargeInclude}/>
+            <label className="">费用包含<span style={this.styles.asterisk}>*</span></label>
+            <textarea className="form-control placeholder" rows="3" placeholder={this.placeholders.textChargeInclude}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group charge-except">
             <label className="">费用不含</label>
-            <textarea className="form-control" rows="3" placeholder="请输入费用不包含的项目" defaultValue={textChargeExcept}/>
+            <textarea className="form-control placeholder" rows="3" defaultValue={this.defaultValues.textChargeExcept}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group usage">
-            <label className="">使用方法*</label>
-            <textarea className="form-control" rows="8" placeholder="请输入商品的使用方法" defaultValue={textUsage}/>
+            <label className="">使用方法<span style={this.styles.asterisk}>*</span></label>
+            <textarea className="form-control placeholder" rows="8" placeholder={this.placeholders.textUsage}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group attention">
             <label className="">注意事项</label>
-            <textarea className="form-control" rows="8" placeholder="请输入服务中的注意事项" defaultValue={textAttention}/>
+            <textarea className="form-control placeholder" rows="8" placeholder={this.placeholders.textAttention}/>
           </div>
         </form>
       </div>

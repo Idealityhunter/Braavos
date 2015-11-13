@@ -280,8 +280,16 @@ textarea{
 .gallery-wrap .img-wrap.select-frame{
     height: 80px;
     text-align: center;
-    padding-top: 10px;
     border: 1px dotted #888;
+}
+
+.gallery-wrap .img-wrap.select-frame .plus{
+    font-size: 40px;
+    width: 80px;
+    margin: 0;
+    height: 80px;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .gallery-wrap .ctl-btn{
@@ -321,3 +329,19 @@ textarea{
     /*position: absolute;*/
     /*top: -10000px;*/
 /*}*/
+
+/*商品管理中的placeholder*/
+
+input.placeholder::-moz-placeholder, textarea.placeholder::-moz-placeholder{
+    color: #DDDDDD;
+    text-indent: 5px; /* 没有用 */
+    opacity: 1!important;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder:-ms-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder::-webkit-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}

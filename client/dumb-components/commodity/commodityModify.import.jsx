@@ -18,6 +18,7 @@ const commodityModify = React.createClass({
   },
 
   getMeteorData() {
+    Meteor.subscribe('basicUserInfo');
     Meteor.subscribe('sellerInfo');
     return {};
   },
@@ -35,15 +36,30 @@ const commodityModify = React.createClass({
         //const form = $(this);
 
         // TODO 获取数据
+        const priceInfo = _.reduce(self.state.plans, function(min, plan){
+          if (plan.price < min.price){
+            return {
+              price: plan.price,
+              marketPrice: plan.marketPrice
+            };
+          };
+          return min;
+        }, {
+          price: Number.MAX_VALUE,
+          marketPrice: Number.MAX_VALUE
+        });
+        const timeRequired = $('.form-group.time-required').find('input').prop('checked');
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
-          country: $('.form-group.address>select').val(),
+          country: {
+            className: $('.form-group.address>select').val(),
+            zhName: $('.form-group.address>select').val(),
+            enName: $('.form-group.address>select').val()
+          },
           address: $('.form-group.address>input').val(),
           category: [$('.form-group.category>select').val()],
           costTime: $('.form-group.cost-time>input').val(),
-          //marketPrice: $('.form-group.cost-time>input').val(),
-          //stock: $('.form-group.cost-time>input').val(),
-          price: $('.form-group.cost-time>input').val(),
+          //stockInfo: $('.form-group.cost-time>input').val(),
           //book: $('.form-group.book>textarea').val(),
           //unbook: $('.form-group.unbook>textarea').val(),
           //chargeInclude: $('.form-group.charge-include>textarea').val(),
@@ -52,14 +68,41 @@ const commodityModify = React.createClass({
           //attention: $('.form-group.attention>textarea').val(),
           //traffic: $('.form-group.traffic>textarea').val(),
           //desc: $('.form-group.introduction>textarea').val(),
-          plans: self.state.plans
+          price: priceInfo.price,
+          marketPrice: priceInfo.marketPrice,
+          plans: self.state.plans.map((plan) => {
+            return {
+              planId: plan.key,
+              price: plan.price,
+              marketPrice: plan.marketPrice,
+              pricing: (timeRequired) ? plan.pricing : [{
+                price: plan.price,
+                timeRange: []
+              }],
+              title: plan.title,
+              timeRequired: timeRequired//暂时全部一样
+            }
+          })
         };
 
         // TODO 提交并验证
-        Meteor.call('addCommodity', Meteor.userId(), commodityInfo, function(err, res){
+        Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
           // TODO 回调结果反应
-          console.log(err);
-          console.log(res);
+          if (err){
+            swal("Failed!", "添加商品失敗!.", "error");
+          };
+          if (res){
+            swal({
+              title: "Successful!",
+              text: "Your commodity has been added.",
+              type: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#AEDEF4",
+              closeOnConfirm: true
+            }, function(){
+              FlowRouter.go('commodities');
+            })
+          }
         });
 
         // steps插件在return false时,title的样式会有不同

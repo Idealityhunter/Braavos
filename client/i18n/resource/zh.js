@@ -93,7 +93,10 @@ BraavosCore.IntlData.zh = {
           addressInfo: '地址信息',
           commodityCategories: '商品分类',
           timeCost: '游玩时长',
-          hour: '小时'
+          hour: '小时',
+          gallery: {
+            cropUploadImage: '裁剪上传图片'
+          }
         },
       }
     }

@@ -8,6 +8,16 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModifyBasic = React.createClass({
   mixins: [IntlMixin],
+
+  styles: {
+    asterisk: {
+      color: 'coral',
+      verticalAlign: 'text-top',
+      paddingLeft: 5,
+      fontsize: 18
+    }
+  },
+
   getDefaultProps(){
     // 传入下一层的数据
     return {
@@ -60,17 +70,26 @@ const commodityModifyBasic = React.createClass({
     const prefix = 'commodities.modify.basicTab.';
     return (
       <div className="commodity-basic-wrap">
-        <label className=""><FormattedMessage message={this.getIntlMessage(prefix + 'commodityImages')}/></label>
+        <label className="">
+          <FormattedMessage message={this.getIntlMessage(prefix + 'commodityImages')}/>
+          <span style={this.styles.asterisk}>*</span>
+        </label>
         <CommodityGallery />
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className=""><FormattedMessage message={this.getIntlMessage(prefix + 'basicInfo')}/></label>
         <form className="form-horizontal commodity-basic-form-wrap">
           <div className="form-group title">
-            <label className="label-text"><FormattedMessage message={this.getIntlMessage(prefix + 'commodityName')}/>*</label>
-            <input className="inline" type='text' placeholder=""/>
+            <label className="label-text">
+              <FormattedMessage message={this.getIntlMessage(prefix + 'commodityName')}/>
+              <span style={this.styles.asterisk}>*</span>
+            </label>
+            <input className="inline placeholder" type='text' placeholder=""/>
           </div>
           <div className="form-group address">
-            <label className="label-text"><FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>*</label>
+            <label className="label-text">
+              <FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>
+              <span style={this.styles.asterisk}>*</span>
+            </label>
             <select name="" id="" className="form-control" defaultValue="0">
               <option value="0">中国</option>
               <option value="1">泰国</option>
@@ -84,10 +103,13 @@ const commodityModifyBasic = React.createClass({
              </select>
             */}
 
-            <input className="inline" type='text' placeholder=""/>
+            <input className="inline placeholder" type='text' placeholder=""/>
           </div>
           <div className="form-group category">
-            <label className="label-text"><FormattedMessage message={this.getIntlMessage(prefix + 'commodityCategories')}/>*</label>
+            <label className="label-text">
+              <FormattedMessage message={this.getIntlMessage(prefix + 'commodityCategories')}/>
+              <span style={this.styles.asterisk}>*</span>
+            </label>
             <select name="" id="" className="form-control" defaultValue="0">
               <option value="0">特色活动</option>
               <option value="1">文化体验</option>
@@ -116,8 +138,12 @@ const commodityModifyBasic = React.createClass({
            </div>
           */}
           <div className="form-group cost-time">
-            <label className="label-text"><FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/></label>
-            <input className="inline" type='text' placeholder="" style={{width:50,textAlign:'center'}}/><FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
+            <label className="label-text">
+              <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
+              <span style={this.styles.asterisk}>*</span>
+            </label>
+            <input className="inline placeholder" type='text' placeholder="" style={{width:50,textAlign:'center'}}/>
+            <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
           {/*
            <div className="form-group">
@@ -132,14 +158,14 @@ const commodityModifyBasic = React.createClass({
            <input type="checkbox" id="inlineCheckbox3" value="option3"/> 语言帮助
            </label>
            <label className="checkbox-inline">
-           <input type="checkbox" id="inlineCheckbox3" value="option3"/> 其它 <input className="inline" type='text' placeholder=""/>
+           <input type="checkbox" id="inlineCheckbox3" value="option3"/> 其它 <input className="inline placeholder" type='text' placeholder=""/>
            </label>
            <CommentText text='旅行服务为您愿意为游客免费提供的一些旅行帮助'/>
            </div>
           */}
         </form>
         <hr style={{border:'1px dashed #ddd'}}/>
-        <label className="">预定设置*</label>
+        <label className="">预定设置<span style={this.styles.asterisk}>*</span></label>
         <CommodityPlans plans={this.props.plans} handleSubmitState={this.props.handleChildSubmitState.bind(this)}/>
       </div>
     );
