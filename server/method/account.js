@@ -35,5 +35,19 @@ Meteor.methods({
     const ret = BraavosCore.Database.Braavos.Token.findOne(
       {token: token, valid: true, expire: {'$gt': new Date()}});
     return {valid: Boolean(ret)};
+  },
+
+  // 模拟登录
+  "account.login": (user, password) => {
+    const client = BraavosCore.Thrift.Yunkai.client;
+    try {
+      const userInfo = client.login(user, password, 'braavos');
+      const userId = parseInt(userInfo.userId.toString());
+      const sellerInfo = userInfo ? BraavosCore.Database.Braavos.Seller.findOne({sellerId: userId}) : undefined;
+      return {user: {userId: userId, nickname: userInfo.nickName, avatar: userInfo.avatar}, seller: sellerInfo}
+    } catch (err) {
+      console.log(`Login failed: user=${user}`);
+      return undefined;
+    }
   }
 });

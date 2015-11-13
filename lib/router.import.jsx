@@ -1,6 +1,7 @@
 import {MainLayout} from '/client/main-layout';
 import {Test} from '/client/dumb-components/test';
 import {Register} from '/client/dumb-components/common/register';
+import {RegistrationLayout} from "/client/common/registration"
 import {Login} from '/client/dumb-components/common/login';
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
@@ -57,7 +58,7 @@ FlowRouter.route('/register', {
     Meteor.call('account.register.checkToken', token, (err, ret)=> {
       const isValid = (!err && ret.valid);
       if (isValid) {
-        ReactLayout.render(Register, {...intlData});
+        ReactLayout.render(RegistrationLayout, {...intlData});
       } else {
         FlowRouter.go('login');
       }
