@@ -86,10 +86,23 @@ const commodityModify = React.createClass({
         };
 
         // TODO 提交并验证
-        Meteor.call('addCommodity', Meteor.userId(), commodityInfo, function(err, res){
+        Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
           // TODO 回调结果反应
-          console.log(err);
-          console.log(res);
+          if (err){
+            swal("Failed!", "添加商品失敗!.", "error");
+          };
+          if (res){
+            swal({
+              title: "Successful!",
+              text: "Your commodity has been added.",
+              type: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#AEDEF4",
+              closeOnConfirm: true
+            }, function(){
+              FlowRouter.go('commodities');
+            })
+          }
         });
 
         // steps插件在return false时,title的样式会有不同

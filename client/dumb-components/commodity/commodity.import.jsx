@@ -49,6 +49,49 @@ var commodity = React.createClass({
 
   },
 
+  // 下架商品
+  _handleDropCommodity(e){
+    const self = this;
+    e.preventDefault();
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    swal({
+      title: "Are you sure?",
+      text: "客戶將無法看到您下架的商品!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: false
+    }, function(){
+      Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'disabled', function(err, res){
+        if (err){
+          // 下架失敗
+          swal("Failed!", "Your commodity cannot be dropped.", "error");
+        };
+        if (res){
+          // 下架成功
+          swal("Dropped!", "Your commodity has been dropped.", "success");
+        }
+      });
+    });
+  },
+
+  _handlePubCommodity(e){
+    const self = this;
+    e.preventDefault();
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'pub', function(err, res){
+      if (err){
+        // 下架失敗
+        swal("Failed!", "Your commodity cannot be published.", "error");
+      };
+      if (res){
+        // 下架成功
+        swal("Published!", "Your commodity has been published.", "success");
+      }
+    });
+  },
+
   styles: {
     addBtn: {
       marginTop: 25,
@@ -68,10 +111,10 @@ var commodity = React.createClass({
   },
   render() {
     let prefix = 'commodities.';
-    let i = 1;
+    let i = 0;
     const commodityList = this.data.commodities.map(commodity =>
-      <tr key={commodity.key}>
-        <td>{i++}</td>
+      <tr key={commodity.key} data-id={i}>
+        <td>{++i}</td>
         <td>{commodity.commodityId}</td>
         <td>{commodity.title}</td>
         <td>{commodity.desc}</td>
@@ -81,6 +124,7 @@ var commodity = React.createClass({
                 switch (status){
                   case 'review': return '审核中';
                   case 'pub': return '已发布';
+                  case 'disabled': return '已下架';
                   default: return '已下架';
                 }
             })(commodity.status)
@@ -89,7 +133,11 @@ var commodity = React.createClass({
         <td className="text-right">
           <div className="btn-group">
             <button className="btn-white btn btn-xs">编辑</button>
-            <button className="btn-white btn btn-xs">下架</button>
+            {
+              (commodity.status == 'pub')
+                ? <button className="btn-white btn btn-xs" onClick={this._handleDropCommodity}>下架</button>
+                : <button className="btn-white btn btn-xs" onClick={this._handlePubCommodity}>上架</button>
+            }
           </div>
         </td>
       </tr>
