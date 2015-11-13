@@ -3,26 +3,25 @@ import {ImageCropper} from "/client/common/image-cropper"
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
-let images = [{
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/2s.jpg',
-    main: true
-  }, {
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/3s.jpg',
-  }, {
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/4s.jpg',
-  }, {
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/5s.jpg',
-  }, {
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/6s.jpg',
-  }, {
-    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/7s.jpg',
-  }
-];
+//let images = [{
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/2s.jpg',
+//    main: true
+//  }, {
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/3s.jpg',
+//  }, {
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/4s.jpg',
+//  }, {
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/5s.jpg',
+//  }, {
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/6s.jpg',
+//  }, {
+//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/7s.jpg',
+//  }
+//];
 
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
   getInitialState() {
-
     return {
       // 是否显示上传图片的modal
       showUploadModal: false,
@@ -34,8 +33,9 @@ let commodityGallery = React.createClass({
 
 
       leftImages: 0,//左边不显示的图片的数量
-      focusImage: images[0].src,
-      images: images
+      //focusImage: images[0].src,
+      focusImage: '',
+      images: []
     }
   },
 
@@ -65,6 +65,8 @@ let commodityGallery = React.createClass({
 
   // 删除图片
   handleDelete(e){
+    const self = this;
+    const curIndex = $(e.target).parents('.img-wrap').attr('data-id');
     swal({
       title: "Are you sure?",
       text: "You will not be able to recover this imaginary file!",
@@ -74,6 +76,17 @@ let commodityGallery = React.createClass({
       confirmButtonText: "Yes, delete it!",
       closeOnConfirm: false
     }, function(){
+      let copyImages = self.state.images.slice();
+      if (copyImages[curIndex].main && copyImages.length > 1){
+        if (curIndex != 0)
+          copyImages[0].main = true;
+        else
+          copyImages[1].main = true;
+      }
+      copyImages.splice(curIndex, 1);
+      self.setState({
+        images: copyImages
+      })
       swal("Deleted!", "Your imaginary file has been deleted.", "success");
     });
   },
@@ -87,8 +100,17 @@ let commodityGallery = React.createClass({
 
   // 设置主图(作为商品的主图)
   handleMain(e){
+    const imageUrl = $(e.target).siblings('img')[0].src;
+    let copyImages = this.state.images.slice();
+    this.setState({
+      images: _.map(copyImages, (image) => {
+        return {
+          src: image.src,
+          main: (image.src == imageUrl)
+        }
+      })
+    });
     swal("Good job!", "已将该图设为主图！", "success");
-    console.log(e);
   },
 
   // 上传图片
@@ -113,6 +135,7 @@ let commodityGallery = React.createClass({
 
   // 修改图片
   handleModifyImage(evt) {
+    self = this;
     this.setState({
       showUploadModal: false,
       imagePreloading: true
@@ -128,14 +151,19 @@ let commodityGallery = React.createClass({
         const imageUrl = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
         // TODO 修改成功的状态转换
         let copyImages = this.state.images.slice();
-        copyImages.push({src: imageUrl});
-        this.setState({
+        copyImages.push({
+          main: (copyImages.length == 0),
+          src: imageUrl
+        });
+        self.setState({
           images: copyImages,
-          imagePreloading: false
+          imagePreloading: false,
+          uploadModalImageSrc: '',
+          focusImage: imageUrl
         });
       }else{
         // TODO 修改失败的状态转换
-        this.setState({
+        self.setState({
           imagePreloading: false
         });
       }
@@ -157,10 +185,12 @@ let commodityGallery = React.createClass({
     const scrollLeft = (this.state.leftImages > 0);
     const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
 
+    let i = 0;
     const imgList = this.state.images.map((img) =>
-      <div className='inline img-wrap' key={img.src}>
+      <div className='inline img-wrap' key={img.src} data-id={i++}>
         <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" onClick={this.handleFocus}/>
-        <i className='fa fa-trash-o' onClick={this.handleDelete}/> <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
+        <i className='fa fa-trash-o' onClick={this.handleDelete}/>
+        <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
     );
 
