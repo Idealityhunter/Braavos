@@ -321,3 +321,19 @@ textarea{
     /*position: absolute;*/
     /*top: -10000px;*/
 /*}*/
+
+/*商品管理中的placeholder*/
+
+input.placeholder::-moz-placeholder, textarea.placeholder::-moz-placeholder{
+    color: #DDDDDD;
+    text-indent: 5px; /* 没有用 */
+    opacity: 1!important;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder:-ms-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder::-webkit-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}
