@@ -42,7 +42,7 @@ Misc.CropHint = new SimpleSchema({
 });
 
 // 图像
-Misc.Images = new SimpleSchema({
+Misc.Image = new SimpleSchema({
   // 有url的时候, 优先使用url
   url: {
     type: String,

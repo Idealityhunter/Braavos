@@ -83,7 +83,7 @@ Account.UserInfo = new SimpleSchema({
   // 性别
   gender: {
     type: String,
-    regEx: /^(m|f|s)$/,
+    regEx: /^(m|f|s)$/i,
     optional: true
   },
   tel: {

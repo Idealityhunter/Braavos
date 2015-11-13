@@ -15,7 +15,8 @@ Marketplace.Seller = new SimpleSchema({
   },
   // 商家对应的UserInfo
   userInfo: {
-    type: CoreModel.Account.UserInfo
+    type: CoreModel.Account.UserInfo,
+    blackbox: true
   },
   // 商家店铺的名称
   name: {
@@ -185,7 +186,8 @@ Marketplace.Commodity = new SimpleSchema({
   },
   // 商家
   seller: {
-    type: Marketplace.Seller
+    type: Marketplace.Seller,
+    blackbox: true
   },
   // 商品标题
   title: {
@@ -255,12 +257,12 @@ Marketplace.Commodity = new SimpleSchema({
   },
   // 商品封面图
   cover: {
-    type: CoreModel.Misc.Images,
+    type: CoreModel.Misc.Image,
     optional: true
   },
   // 商品图集
   images: {
-    type: [CoreModel.Misc.Images],
+    type: [CoreModel.Misc.Image],
     optional: true
   },
   // 商品评分
@@ -275,12 +277,19 @@ Marketplace.Commodity = new SimpleSchema({
   status: {
     type: String,
     // 审核中 / 已发布 / 已下架
-    regEx: /^(review|pub)$/i
+    regEx: /^(review|pub|disabled)$/i
   },
   // 商品的国家信息
   country: {
     type: CoreModel.Geo.Country,
-    optional: true
+    optional: true,
+    blackbox: true
+  },
+  // 商品的目的地属性
+  locality: {
+    type: CoreModel.Geo.Locality,
+    optional: true,
+    blackbox: true
   },
   // 商品的创建时间
   createTime: {
