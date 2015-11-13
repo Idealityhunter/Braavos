@@ -280,8 +280,16 @@ textarea{
 .gallery-wrap .img-wrap.select-frame{
     height: 80px;
     text-align: center;
-    padding-top: 10px;
     border: 1px dotted #888;
+}
+
+.gallery-wrap .img-wrap.select-frame .plus{
+    font-size: 40px;
+    width: 80px;
+    margin: 0;
+    height: 80px;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .gallery-wrap .ctl-btn{
