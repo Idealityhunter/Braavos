@@ -16,6 +16,13 @@ Accounts.registerLoginHandler('password', function (loginRequest) {
     const userInfo = client.login(user, password, 'braavos');
     const userId = userInfo.userId.toString();
 
+    // 必须有SellerInfo, 才说明是真正的卖家
+    const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({sellerId: parseInt(userId)}, {sellerId: 1});
+    if (!sellerInfo) {
+      console.log(`Login failed: user ${userId} is not a seller yet.`);
+      return undefined;
+    }
+
     //creating the token and adding to the user
     var stampedToken = Accounts._generateStampedLoginToken();
     //hashing is something added with Meteor 0.7.x,
