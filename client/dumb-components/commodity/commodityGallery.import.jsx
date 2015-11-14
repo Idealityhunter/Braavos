@@ -34,7 +34,7 @@ let commodityGallery = React.createClass({
 
       leftImages: 0,//左边不显示的图片的数量
       //focusImage: images[0].src,
-      focusImage: '',
+      focusImageIndex: null,
       images: []
     }
   },
@@ -94,7 +94,7 @@ let commodityGallery = React.createClass({
   //  选择图片展示
   handleFocus(e){
     this.setState({
-      focusImage: e.target.src
+      focusImageIndex: $(e.target).parent('.img-wrap').attr('data-id')
     });
   },
 
@@ -159,7 +159,7 @@ let commodityGallery = React.createClass({
           images: copyImages,
           imagePreloading: false,
           uploadModalImageSrc: '',
-          focusImage: imageUrl
+          focusImageIndex: copyImages.length - 1
         });
       }else{
         // TODO 修改失败的状态转换
@@ -172,6 +172,14 @@ let commodityGallery = React.createClass({
 
   render() {
     const prefix = 'commodities.modify.basicTab.gallery';
+
+    const preloader = (
+      <div style={{display: this.state.imagePreloading ? "block" : "none"}}>
+        <img src="/images/spinner.gif"
+             style={{position: "absolute", top: "110px", left: "235px", width: "30px", height: "30px"}}/>
+      </div>
+    );
+
     const uploadModal = this.state.showUploadModal ?
       <ImageCropper title={this.getIntlMessage(`${prefix}.cropUploadImage`)}
                     okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
@@ -187,8 +195,8 @@ let commodityGallery = React.createClass({
 
     let i = 0;
     const imgList = this.state.images.map((img) =>
-      <div className='inline img-wrap' key={img.src} data-id={i++}>
-        <img className={(img.src == this.state.focusImage) ? 'active' : ''} src={img.src} alt="" onClick={this.handleFocus}/>
+      <div className='inline img-wrap' key={Meteor.uuid()} data-id={i++}>
+        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={img.src} alt="" onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/>
         <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
@@ -200,8 +208,9 @@ let commodityGallery = React.createClass({
           {uploadModal}
         </div>
 
-        <div className="img-view">
-          <img src={this.state.focusImage} alt="" style={{width: 250, height:250}}/>
+        <div className="img-view" style={{position:'relative'}}>
+          <img src={(this.state.focusImageIndex !== null) ? this.state.images[this.state.focusImageIndex].src : ''} alt="" style={{width: 250, height:250}}/>
+          {preloader}
         </div>
         <div className="scroll-view">
           <div className={scrollLeft ? "ctl-btn left " : "ctl-btn left frozen"} onClick={this.handleScroll}>{'<'}</div>
