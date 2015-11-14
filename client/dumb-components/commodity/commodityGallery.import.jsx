@@ -77,12 +77,33 @@ let commodityGallery = React.createClass({
       closeOnConfirm: false
     }, function(){
       let copyImages = self.state.images.slice();
+      // 当为主图时的逻辑
       if (copyImages[curIndex].main && copyImages.length > 1){
         if (curIndex != 0)
           copyImages[0].main = true;
         else
           copyImages[1].main = true;
       }
+
+      // 当为focus图的逻辑时
+      if (curIndex == self.state.focusImageIndex){
+        if (copyImages.length > 1){
+          self.setState({
+            focusImageIndex: 0
+          })
+        }else{
+          self.setState({
+            focusImageIndex: null
+          })
+        }
+      }else{
+        if (curIndex < self.state.focusImageIndex){
+          self.setState({
+            focusImageIndex: self.state.focusImageIndex - 1
+          })
+        }
+      }
+
       copyImages.splice(curIndex, 1);
       self.setState({
         images: copyImages
