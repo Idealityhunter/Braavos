@@ -24,7 +24,7 @@ const commodityModify = React.createClass({
   },
 
   componentDidMount (){
-    self = this;
+    const self = this;
     $(".steps-container").steps({
       headerTag: "h3",
       bodyTag: "div",
@@ -35,7 +35,7 @@ const commodityModify = React.createClass({
         //当前step form
         //const form = $(this);
 
-        // TODO 获取数据
+        // 获取填写的信息
         const priceInfo = _.reduce(self.state.plans, function(min, plan){
           if (plan.price < min.price){
             return {
@@ -48,6 +48,20 @@ const commodityModify = React.createClass({
           price: Number.MAX_VALUE,
           marketPrice: Number.MAX_VALUE
         });
+
+        const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
+        let images = [];
+        let cover = {};
+        for (i = 0;i < imageList.length;i++){
+          if ($(imageList[i]).siblings('.fa-heart').length > 0)
+            cover = {
+             url: imageList[i].src
+            }
+          images[i] = {
+            url: imageList[i].src
+          };
+        };
+
         const timeRequired = $('.form-group.time-required').find('input').prop('checked');
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
@@ -82,7 +96,9 @@ const commodityModify = React.createClass({
               title: plan.title,
               timeRequired: timeRequired//暂时全部一样
             }
-          })
+          }),
+          cover: cover,
+          images : images
         };
 
         // TODO 提交并验证
