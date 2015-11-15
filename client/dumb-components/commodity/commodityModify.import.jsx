@@ -49,6 +49,7 @@ const commodityModify = React.createClass({
           marketPrice: Number.MAX_VALUE
         });
 
+        // 获取上传图片
         const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
         let images = [];
         let cover = {};
@@ -62,16 +63,27 @@ const commodityModify = React.createClass({
           };
         };
 
+        // 获取country选中的option对应的值
+        const countryIndex = $('.form-group.address>select').val();
+        const country = $($('.form-group.address>select>option')[parseInt(countryIndex)]).text();
+
+        // 获取category选中的option对应的值
+        const categoryIndex = $('.form-group.category>select').val();
+        const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
+
+        // TODO plans中pricing的日期的转换
+        // TODO 获取几个文本信息的值
+
         const timeRequired = $('.form-group.time-required').find('input').prop('checked');
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
           country: {
-            className: $('.form-group.address>select').val(),
-            zhName: $('.form-group.address>select').val(),
-            enName: $('.form-group.address>select').val()
+            className: country,
+            zhName: country,
+            enName: country
           },
           address: $('.form-group.address>input').val(),
-          category: [$('.form-group.category>select').val()],
+          category: [category],
           costTime: $('.form-group.cost-time>input').val(),
           //stockInfo: $('.form-group.cost-time>input').val(),
           //book: $('.form-group.book>textarea').val(),
