@@ -76,6 +76,7 @@ var commodity = React.createClass({
     });
   },
 
+  // 上架商品
   _handlePubCommodity(e){
     const self = this;
     e.preventDefault();
@@ -90,6 +91,13 @@ var commodity = React.createClass({
         swal("Published!", "Your commodity has been published.", "success");
       }
     });
+  },
+
+  // 编辑商品
+  _handleEditCommodity(e){
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    const curCommodityId = this.data.commodities[curIndex].commodityId;
+    FlowRouter.go(`/commodities/editor?commodityId=${curCommodityId}`);
   },
 
   styles: {
@@ -132,7 +140,7 @@ var commodity = React.createClass({
         </td>
         <td className="text-right">
           <div className="btn-group">
-            <button className="btn-white btn btn-xs">编辑</button>
+            <button className="btn-white btn btn-xs" onClick={this._handleEditCommodity}>编辑</button>
             {
               (commodity.status == 'pub')
                 ? <button className="btn-white btn btn-xs" onClick={this._handleDropCommodity}>下架</button>
@@ -154,7 +162,7 @@ var commodity = React.createClass({
         <div className="wrapper wrapper-content animated fadeInRight ecommerce">
           <div className="ibox-content m-b-sm border-bottom">
             <div className="row">
-              <a href="/commodities/editor" style={this.styles.addBtn}>
+              <a href="/commodities/add" style={this.styles.addBtn}>
                 <Button bsStyle="info" bsSize="small"><FormattedMessage message={this.getIntlMessage(prefix + 'btn.addCommodity')}/></Button>
               </a>
               <div className="col-sm-2">

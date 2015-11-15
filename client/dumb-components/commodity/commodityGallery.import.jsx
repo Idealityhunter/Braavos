@@ -22,6 +22,23 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
   getInitialState() {
+    let coverCount = 0;// 假如有两张一样的图片,就需要coverCount来取其中前面一张
+    const images = (this.props.images.length > 0)
+      ? this.props.images.map(image => {
+          if (image.url == this.props.cover.url && !coverCount){
+            coverCount = 1;
+            return {
+              src: image.url,
+              main: true
+            }
+          }else{
+            return {
+              src: image.url,
+              main: false
+            }
+          };
+        })
+      : [];
     return {
       // 是否显示上传图片的modal
       showUploadModal: false,
@@ -34,8 +51,8 @@ let commodityGallery = React.createClass({
 
       leftImages: 0,//左边不显示的图片的数量
       //focusImage: images[0].src,
-      focusImageIndex: null,
-      images: []
+      focusImageIndex: (images.length > 0) ? 0 : null,
+      images: images
     }
   },
 

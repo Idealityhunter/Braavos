@@ -20,7 +20,12 @@ const commodityModify = React.createClass({
   getMeteorData() {
     Meteor.subscribe('basicUserInfo');
     Meteor.subscribe('sellerInfo');
-    return {};
+    // TODO 暂时通过router传数据进来!
+    //Meteor.subscribe('commodityInfo', this.props.commodityId);
+    //const commodityInfo = BraavosCore.Database.Braavos.Commodity.findOne({commodityId: this.props.commodityId});
+    return {
+      //commodityInfo: commodityInfo
+    };
   },
 
   componentDidMount (){
@@ -84,7 +89,7 @@ const commodityModify = React.createClass({
           },
           address: $('.form-group.address>input').val(),
           category: [category],
-          costTime: $('.form-group.cost-time>input').val(),
+          timeCost: $('.form-group.cost-time>input').val(),
           //stockInfo: $('.form-group.cost-time>input').val(),
           //book: $('.form-group.book>textarea').val(),
           //unbook: $('.form-group.unbook>textarea').val(),
@@ -177,11 +182,33 @@ const commodityModify = React.createClass({
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'instruction')}/></h3>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'book')}/></h3>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'traffic')}/></h3>
-          <div className="basic"><CommodityModifyBasic handleChildSubmitState={this.handleChildSubmitState.bind(this)}/></div>
-          <div className="introduction"><CommodityModifyIntroduction /></div>
-          <div className="instruction"><CommodityModifyInstruction /></div>
-          <div className="book"><CommodityModifyBook /></div>
-          <div className="traffic"><CommodityModifyTraffic /></div>
+          <div className="basic">
+            <CommodityModifyBasic
+              handleChildSubmitState={this.handleChildSubmitState.bind(this)}
+              title={this.props.title || []}
+              cover={this.props.cover || ''}
+              images={this.props.images || []}
+              category={this.props.category || []}
+              country={this.props.country || {}}
+              address={this.props.address || ''}
+              timeCost={this.props.timeCost || ''}
+              plans={this.props.plans || []}
+              price={this.props.price || ''}
+              marketPrice={this.props.marketPrice || ''}
+            />
+          </div>
+          <div className="introduction">
+            <CommodityModifyIntroduction desc={this.props.desc || []}/>
+          </div>
+          <div className="instruction">
+            <CommodityModifyInstruction notice={this.props.notice || []}/>
+          </div>
+          <div className="book">
+            <CommodityModifyBook refundPolicy={this.props.refundPolicy || []}/>
+          </div>
+          <div className="traffic">
+            <CommodityModifyTraffic trafficInfo={this.props.trafficInfo || []}/>
+          </div>
         </div>
       </div>
     );

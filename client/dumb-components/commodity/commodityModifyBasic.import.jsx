@@ -22,59 +22,41 @@ const commodityModifyBasic = React.createClass({
     // 传入下一层的数据
     return {
       plans: []
-      //plans: [{
-      //  //showModal: false,
-      //  //key: Meteor.uuid(),
-      //  //status: 'view',
-      //  planId: 'aaaa',
-      //  title: '泰国清迈Oasis Spa绿洲水疗体验按摩',
-      //  marketPrice: 59,
-      //  price: 30,
-      //  pricing: [{
-      //    price: 30,
-      //    timeRange: [new Date('2010-1-1'), new Date('2010-1-3')]
-      //  }, {
-      //    price: 33,
-      //    timeRange: [new Date('2010-1-3'), new Date('2010-1-5')]
-      //  }],
-      //  stock: 100
-      //},{
-      //  planId: 'aaaa',
-      //  title: '泰国清迈Oaaaasis Spa绿洲水疗体验按摩',
-      //  marketPrice: 59,
-      //  price: 30,
-      //  pricing: [{
-      //    price: 30,
-      //    timeRange: [new Date('2010-11-1'), new Date('2010-11-3')]
-      //  }, {
-      //    price: 33,
-      //    timeRange: [new Date('2010-11-3'), new Date('2010-11-5')]
-      //  }],
-      //  stock: 100
-      //},{
-      //  planId: 'aaaa',
-      //  title: '泰国清迈Oassssis Spa绿洲水疗体验按摩',
-      //  marketPrice: 59,
-      //  pricing: [],//注意一定要有初始值
-      //  price: 30,
-      //  pricing: [{
-      //    price: 30,
-      //    timeRange: [new Date('2010-11-1'), new Date('2010-11-3')]
-      //  }],
-      //  stock: 100
-      //}]
     }
   },
 
   render() {
     const prefix = 'commodities.modify.basicTab.';
+    let selectCountryIndex = 0;
+    let selectCategoryIndex = 0;
+
+    // 获取国家对应的option的value
+    if (this.props.country && this.props.country.zhName){
+      const countryArray = ['中国','菲律宾','泰国'];
+      for (let i = 0;i < countryArray.length;i++){
+        if (countryArray[i] == this.props.country.zhName){
+          selectCountryIndex = i;
+        }
+      };
+    };
+
+    // 获取国家对应的option的value
+    if (this.props.category && this.props.category.length > 0){
+      const categoryArray = ['特色活动', '文化体验', '美食住宿', '城市游览', '门票预订', '演出', 'SPA', '游船', '其它'];
+      for (let i = 0;i < categoryArray.length;i++){
+        if (categoryArray[i] == this.props.category[0]){
+          selectCategoryIndex = i;
+        }
+      };
+    };
+
     return (
       <div className="commodity-basic-wrap">
         <label className="">
           <FormattedMessage message={this.getIntlMessage(prefix + 'commodityImages')}/>
           <span style={this.styles.asterisk}>*</span>
         </label>
-        <CommodityGallery />
+        <CommodityGallery images={this.props.images} cover={this.props.cover}/>
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className=""><FormattedMessage message={this.getIntlMessage(prefix + 'basicInfo')}/></label>
         <form className="form-horizontal commodity-basic-form-wrap">
@@ -83,14 +65,14 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'commodityName')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <input className="inline placeholder" type='text' placeholder=""/>
+            <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.title || ''}/>
           </div>
           <div className="form-group address">
             <label className="label-text">
               <FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <select name="" id="" className="form-control" defaultValue="0">
+            <select name="" id="" className="form-control" defaultValue={selectCountryIndex}>
               <option value="0">中国</option>
               <option value="1">泰国</option>
               <option value="2">菲律宾</option>
@@ -103,14 +85,14 @@ const commodityModifyBasic = React.createClass({
              </select>
             */}
 
-            <input className="inline placeholder" type='text' placeholder=""/>
+            <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.address || ''}/>
           </div>
           <div className="form-group category">
             <label className="label-text">
               <FormattedMessage message={this.getIntlMessage(prefix + 'commodityCategories')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <select name="" id="" className="form-control" defaultValue="0">
+            <select name="" id="" className="form-control" defaultValue={selectCategoryIndex}>
               <option value="0">特色活动</option>
               <option value="1">文化体验</option>
               <option value="2">美食住宿</option>
@@ -142,7 +124,7 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <input className="inline placeholder" type='text' placeholder="" style={{width:50,textAlign:'center'}}/>
+            <input className="inline placeholder" type='text' placeholder="" style={{width:50,textAlign:'center'}} defaultValue={this.props.timeCost || ""}/>
             <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
           {/*
@@ -166,7 +148,10 @@ const commodityModifyBasic = React.createClass({
         </form>
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className="">预定设置<span style={this.styles.asterisk}>*</span></label>
-        <CommodityPlans plans={this.props.plans} handleSubmitState={this.props.handleChildSubmitState.bind(this)}/>
+        <CommodityPlans
+          plans={this.props.plans}
+          handleSubmitState={this.props.handleChildSubmitState.bind(this)}
+        />
       </div>
     );
   }
