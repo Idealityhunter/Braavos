@@ -125,7 +125,6 @@ var commodity = React.createClass({
         <td>{++i}</td>
         <td>{commodity.commodityId}</td>
         <td>{commodity.title}</td>
-        <td>{commodity.desc.summary}</td>
         <td>
           {
             ((status) => {
@@ -212,8 +211,8 @@ var commodity = React.createClass({
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
                         {/*<th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>*/}
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                         {/*
+                          <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
