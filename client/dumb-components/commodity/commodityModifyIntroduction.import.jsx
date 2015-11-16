@@ -17,7 +17,9 @@ let commodityModifyIntroduction = React.createClass({
             {/*
               TODO add the text editor
             */}
-            <textarea className="form-control placeholder" rows="13" placeholder={this.placeholders.introduction}/>
+            <textarea className="form-control placeholder" rows="13"
+                      placeholder={this.placeholders.introduction}
+                      defaultValue={(this.props.desc.body) ? this.props.desc.body : ''}/>
           </div>
         </form>
       </div>

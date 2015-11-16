@@ -23,13 +23,17 @@ let commodityModifyBook = React.createClass({
         <form className="form-horizontal">
           <div className="form-group book">
             <label className="">预定流程<span style={this.styles.asterisk}>*</span></label>
-            <textarea className="form-control placeholder" rows="3" placeholder={this.placeholders.book}/>
+            <textarea className="form-control placeholder" rows="3"
+                      placeholder={this.placeholders.book}
+                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[0].body : ''}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group unbook">
             <label className="">退改规定<span style={this.styles.asterisk}>*</span></label>
-            <textarea className="form-control placeholder" rows="3" placeholder={this.placeholders.unbook}/>
+            <textarea className="form-control placeholder" rows="3"
+                      placeholder={this.placeholders.unbook}
+                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[1].body : ''}/>
           </div>
         </form>
       </div>

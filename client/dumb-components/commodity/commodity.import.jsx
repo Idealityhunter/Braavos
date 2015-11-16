@@ -125,7 +125,7 @@ var commodity = React.createClass({
         <td>{++i}</td>
         <td>{commodity.commodityId}</td>
         <td>{commodity.title}</td>
-        <td>{commodity.desc}</td>
+        <td>{commodity.desc.summary}</td>
         <td>
           {
             ((status) => {

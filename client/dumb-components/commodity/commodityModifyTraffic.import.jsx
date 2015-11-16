@@ -14,7 +14,9 @@ let commodityModifyTraffic = React.createClass({
         <form className="form-horizontal">
           <div className="form-group traffic">
             <label className="">交通提示</label>
-            <textarea className="form-control placeholder" rows="13" placeholder={this.placeholders.trafficInfo}/>
+            <textarea className="form-control placeholder" rows="13"
+                      placeholder={this.placeholders.trafficInfo}
+                      defaultValue={(this.props.trafficInfo.length > 0) ? this.props.trafficInfo[0].body : ''}/>
           </div>
         </form>
       </div>

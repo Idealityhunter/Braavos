@@ -91,14 +91,56 @@ const commodityModify = React.createClass({
           category: [category],
           timeCost: $('.form-group.cost-time>input').val(),
           //stockInfo: $('.form-group.cost-time>input').val(),
-          //book: $('.form-group.book>textarea').val(),
-          //unbook: $('.form-group.unbook>textarea').val(),
-          //chargeInclude: $('.form-group.charge-include>textarea').val(),
-          //chargeExcept: $('.form-group.charge-except>textarea').val(),
-          //usage: $('.form-group.usage>textarea').val(),
-          //attention: $('.form-group.attention>textarea').val(),
-          //traffic: $('.form-group.traffic>textarea').val(),
-          //desc: $('.form-group.introduction>textarea').val(),
+          refundPolicy: [
+            {
+              // book
+              title: '预定流程',
+              summary: $('.form-group.book>textarea').val(),
+              body: $('.form-group.book>textarea').val()
+            },
+            {
+              // unbook
+              title: '退改流程',
+              summary: $('.form-group.unbook>textarea').val(),
+              body: $('.form-group.unbook>textarea').val()
+            }
+          ],
+          notice: [
+            {
+              // chargeInclude
+              title: '费用包含',
+              summary: $('.form-group.charge-include>textarea').val(),
+              body: $('.form-group.charge-include>textarea').val()
+            },
+            {
+              // chargeExcept
+              title: '费用不含',
+              summary: $('.form-group.charge-except>textarea').val(),
+              body: $('.form-group.charge-except>textarea').val()
+            },
+            {
+              // usage
+              title: '使用方法',
+              summary: $('.form-group.usage>textarea').val(),
+              body: $('.form-group.usage>textarea').val()
+            },
+            {
+              // attention
+              title: '注意事项',
+              summary: $('.form-group.attention>textarea').val(),
+              body: $('.form-group.attention>textarea').val()
+            }
+          ],
+          trafficInfo: [{
+            title: '交通提示',
+            summary: $('.form-group.traffic>textarea').val(),
+            body: $('.form-group.traffic>textarea').val()
+          }],
+          desc: {
+            title: '商品介绍',
+            summary: $('.form-group.introduction>textarea').val(),
+            body: $('.form-group.introduction>textarea').val()
+          },
           price: priceInfo.price,
           marketPrice: priceInfo.marketPrice,
           plans: self.state.plans.map((plan) => {
@@ -198,7 +240,7 @@ const commodityModify = React.createClass({
             />
           </div>
           <div className="introduction">
-            <CommodityModifyIntroduction desc={this.props.desc || []}/>
+            <CommodityModifyIntroduction desc={this.props.desc || {}}/>
           </div>
           <div className="instruction">
             <CommodityModifyInstruction notice={this.props.notice || []}/>

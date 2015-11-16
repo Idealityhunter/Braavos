@@ -30,25 +30,33 @@ let commodityModifyInstruction = React.createClass({
         <form className="form-horizontal">
           <div className="form-group charge-include">
             <label className="">费用包含<span style={this.styles.asterisk}>*</span></label>
-            <textarea className="form-control placeholder" rows="3" placeholder={this.placeholders.textChargeInclude}/>
+            <textarea className="form-control placeholder" rows="3"
+                      placeholder={this.placeholders.textChargeInclude}
+                      defaultValue={(this.props.notice.length > 0) ? this.props.notice[0].body : ''}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group charge-except">
             <label className="">费用不含</label>
-            <textarea className="form-control placeholder" rows="3" defaultValue={this.defaultValues.textChargeExcept}/>
+            <textarea className="form-control placeholder" rows="3"
+                      defaultValue={this.defaultValues.textChargeExcept}
+                      defaultValue={(this.props.notice.length > 0) ? this.props.notice[1].body : ''}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group usage">
             <label className="">使用方法<span style={this.styles.asterisk}>*</span></label>
-            <textarea className="form-control placeholder" rows="8" placeholder={this.placeholders.textUsage}/>
+            <textarea className="form-control placeholder" rows="8"
+                      placeholder={this.placeholders.textUsage}
+                      defaultValue={(this.props.notice.length > 0) ? this.props.notice[2].body : ''}/>
           </div>
         </form>
         <form className="form-horizontal">
           <div className="form-group attention">
             <label className="">注意事项</label>
-            <textarea className="form-control placeholder" rows="8" placeholder={this.placeholders.textAttention}/>
+            <textarea className="form-control placeholder" rows="8"
+                      placeholder={this.placeholders.textAttention}
+                      defaultValue={(this.props.notice.length > 0) ? this.props.notice[3].body : ''}/>
           </div>
         </form>
       </div>
