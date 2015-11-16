@@ -161,24 +161,46 @@ const commodityModify = React.createClass({
         };
 
         // TODO 提交并验证
-        Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
-          // TODO 回调结果反应
-          if (err){
-            swal("Failed!", "添加商品失敗!.", "error");
-          };
-          if (res){
-            swal({
-              title: "Successful!",
-              text: "Your commodity has been added.",
-              type: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#AEDEF4",
-              closeOnConfirm: true
-            }, function(){
-              FlowRouter.go('commodities');
-            })
-          }
-        });
+        // 编辑和添加的不同
+        if (self.props.commodityId) {
+          Meteor.call('commodity.update', Meteor.userId(), commodityInfo, self.props.commodityId, function(err, res){
+            // TODO 回调结果反应
+            if (err){
+              swal("Failed!", "编辑商品信息失敗!.", "error");
+            };
+            if (res){
+              swal({
+                title: "Successful!",
+                text: "Your commodity has been modified.",
+                type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#AEDEF4",
+                closeOnConfirm: true
+              }, function(){
+                FlowRouter.go('commodities');
+              })
+            }
+          });
+        } else {
+          Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
+            // TODO 回调结果反应
+            if (err){
+              swal("Failed!", "添加商品失敗!.", "error");
+            };
+            if (res){
+              swal({
+                title: "Successful!",
+                text: "Your commodity has been added.",
+                type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#AEDEF4",
+                closeOnConfirm: true
+              }, function(){
+                FlowRouter.go('commodities');
+              })
+            }
+          });
+        }
 
         // steps插件在return false时,title的样式会有不同
         return true;
