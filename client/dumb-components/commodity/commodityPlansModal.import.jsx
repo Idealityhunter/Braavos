@@ -1,4 +1,5 @@
-import {Modal, Button} from "/lib/react-bootstrap"
+import {Modal, Button} from "/lib/react-bootstrap";
+import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -102,54 +103,24 @@ const commodityPlansModal = React.createClass({
     });
   },
 
-  //// 监控价格变化
-  //_handlePrice(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  _.extend(copyPricing[curIndex], {
-  //    price: $(e.target).val()
-  //  });
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-  //
-  //// 监控时间变化
-  //_handleStartTime(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  copyPricing[curIndex].timeRange[0] = $(e.target).val();
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-  //
-  //// 监控时间变化
-  //_handleEndTime(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  copyPricing[curIndex].timeRange[1] = $(e.target).val();
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-
   render() {
     prefix = 'commodities.modify.';
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
         <div className="pricing-wrap" data-id={i++} key={pricing.key}>
-          <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
+          <NumberInput className="inline commodity-basic-price" placeholder="售价￥" defaultValue={pricing.price}/>
           <div className="inline">
             <div className="form-group commodity-basic-datepicker inline">
               <div className="input-daterange input-group">
-                <input type="text" className="input-sm form-control" name="start" placeholder="from"
+                <input type="text" className="input-sm form-control" name="start" placeholder="from" readOnly
                        defaultValue={pricing.timeRange[0]}
-                       onChange={evt=>{console.log(evt)}}
+                       style={{backgroundColor: '#fff'}}
                 />
                 <span className="input-group-addon">-</span>
-                <input type="text" className="input-sm form-control" name="end" placeholder="to"
-                       defaultValue={pricing.timeRange[1]}/>
+                <input type="text" className="input-sm form-control" name="end" placeholder="to" readOnly
+                       defaultValue={pricing.timeRange[1]}
+                       style={{backgroundColor: '#fff'}}
+                />
               </div>
             </div>
           </div>

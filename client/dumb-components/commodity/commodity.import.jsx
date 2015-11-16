@@ -180,10 +180,14 @@ var commodity = React.createClass({
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></label>
                   <div className="input-daterange input-group">
-                    <input type="text" className="input-sm form-control" name="start" placeholder="" defaultValue="" style={this.styles.datepickerInput}/>
+                    <input type="text" className="input-sm form-control" name="start" placeholder="" defaultValue=""
+                           readOnly
+                           style={this.styles.datepickerInput}/>
                     <i className="fa fa-calendar cursor-pointer calender-price" style={this.styles.calendar}/>
                     <span className="input-group-addon">-</span>
-                    <input type="text" className="input-sm form-control" name="end" placeholder="" defaultValue="" style={this.styles.datepickerInput}/>
+                    <input type="text" className="input-sm form-control" name="end" placeholder="" defaultValue=""
+                           readOnly
+                           style={this.styles.datepickerInput}/>
                     <i className="fa fa-calendar cursor-pointer calender-price" style={this.styles.calendar}/>
                   </div>
                 </div>

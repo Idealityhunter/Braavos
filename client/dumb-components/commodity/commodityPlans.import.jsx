@@ -1,5 +1,6 @@
 import {CommentText} from '/client/dumb-components/common/comment-text';
 import {CommodityPlansModal} from '/client/dumb-components/commodity/commodityPlansModal';
+import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -244,7 +245,7 @@ const commodityPlans = React.createClass({
           <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title}/>
         </td>
         <td className="market-price">
-          <input className="inline" type='text' placeholder="市场价￥" defaultValue={plan.marketPrice}/>
+          <NumberInput className="inline" placeholder="市场价￥" defaultValue={plan.marketPrice}/>
         </td>
         <td className="price">
           {(this.state.dateRequired)
@@ -310,7 +311,7 @@ const commodityPlans = React.createClass({
               <input type='text' placeholder="套餐描述" defaultValue={this.state.addPlan.title}/>
             </div>
             <div className="inline market-price">
-              <input type='text' placeholder="市场价￥" defaultValue={this.state.addPlan.marketPrice}/>
+              <NumberInput placeholder="市场价￥" defaultValue={this.state.addPlan.marketPrice}/>
             </div>
             <div className="inline price">
               {(this.state.dateRequired)

@@ -2,6 +2,7 @@ import {CommentText} from '/client/dumb-components/common/comment-text';
 import {CommodityGallery} from '/client/dumb-components/commodity/commodityGallery';
 import {CommodityCalendar} from '/client/dumb-components/commodity/commodityCalendar';
 import {CommodityPlans} from '/client/dumb-components/commodity/commodityPlans';
+import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -27,8 +28,8 @@ const commodityModifyBasic = React.createClass({
 
   render() {
     const prefix = 'commodities.modify.basicTab.';
-    let selectCountryIndex = 0;
-    let selectCategoryIndex = 0;
+    let selectCountryIndex = '';
+    let selectCategoryIndex = '';
 
     // 获取国家对应的option的value
     if (this.props.country && this.props.country.zhName){
@@ -72,18 +73,18 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <select name="" id="" className="form-control" defaultValue={selectCountryIndex}>
+            <select name="" id="" className="form-control" placeholder="国家" defaultValue={selectCountryIndex}>
               <option value="0">中国</option>
               <option value="1">泰国</option>
               <option value="2">菲律宾</option>
             </select>
-            <select name="" id="" className="form-control" defaultValue="0">
+            <select name="" id="" className="form-control" placeholder="城市" defaultValue="">
               <option value="0">海南</option>
               <option value="1">北京</option>
               <option value="2">上海</option>
             </select>
 
-            <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.address || ''}/>
+            <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''}/>
           </div>
           <div className="form-group category">
             <label className="label-text">
@@ -122,7 +123,10 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <input className="inline placeholder" type='text' placeholder="" style={{width:50}} defaultValue={this.props.timeCost || ""}/>
+            <NumberInput className="inline placeholder" style={{width:50}}
+                         value={this.props.timeCost || ''}
+                         placeholder=''
+            />
             <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
           {/*
