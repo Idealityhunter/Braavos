@@ -48,12 +48,24 @@ const commodityPlans = React.createClass({
   // 删除套餐
   _handleDelete(e) {
     e.preventDefault();
-    const curIndex = $(e.target).parents('tr').attr('data-id');
-    const arrayIndex = curIndex - 1;
-    let copyPlan = this.state.plans.slice();
-    copyPlan.splice(arrayIndex, 1);
-    this.setState({
-      plans: copyPlan
+    const self = this;
+    swal({
+      title: "确认删除该套餐?",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText: "取消",
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "删除",
+      closeOnConfirm: false
+    }, function(){
+      const curIndex = $(e.target).parents('tr').attr('data-id');
+      const arrayIndex = curIndex - 1;
+      let copyPlan = self.state.plans.slice();
+      copyPlan.splice(arrayIndex, 1);
+      self.setState({
+        plans: copyPlan
+      });
+      swal("成功删除该套餐", "", "success");
     });
   },
 
@@ -277,11 +289,15 @@ const commodityPlans = React.createClass({
       <div className="commodity-basic-plan">
         <form className="form-horizontal commodity-basic-form-wrap">
           <div className="form-group time-required">
-            <label className="label-text">使用日期</label>
-            <label className="checkbox-inline">
+            <label className="label-text">添加商品</label>
+            {/*
+              <label className="label-text">使用日期</label>
+                <label className="checkbox-inline">
               <input type="checkbox" defaultChecked="checked" onChange={this._handleDateRequired}/> 需要使用日期
-            </label>
-            <CommentText text='是否需要游客在预定时指定他的使用日期'/>
+              </label>
+              <CommentText text='是否需要游客在预定时指定他的使用日期'/>
+             */}
+
           </div>
           <table className="table">
             <tbody>

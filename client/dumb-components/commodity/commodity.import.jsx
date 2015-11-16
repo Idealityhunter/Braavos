@@ -55,22 +55,23 @@ var commodity = React.createClass({
     e.preventDefault();
     const curIndex = $(e.target).parents('tr').attr('data-id');
     swal({
-      title: "Are you sure?",
-      text: "客戶將無法看到您下架的商品!",
+      title: "确认下架?",
+      text: "",
       type: "warning",
       showCancelButton: true,
+      cancelButtonText: "取消",
       confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "下架",
       closeOnConfirm: false
     }, function(){
       Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'disabled', function(err, res){
         if (err){
           // 下架失敗
-          swal("Failed!", "Your commodity cannot be dropped.", "error");
+          swal("下架失败!", "", "error");
         };
         if (res){
           // 下架成功
-          swal("Dropped!", "Your commodity has been dropped.", "success");
+          swal("下架成功", "", "success");
         }
       });
     });
@@ -83,12 +84,12 @@ var commodity = React.createClass({
     const curIndex = $(e.target).parents('tr').attr('data-id');
     Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'pub', function(err, res){
       if (err){
-        // 下架失敗
-        swal("Failed!", "Your commodity cannot be published.", "error");
+        // 上架失败
+        swal("上架失败!", "", "error");
       };
       if (res){
-        // 下架成功
-        swal("Published!", "Your commodity has been published.", "success");
+        // 上架成功
+        swal("上架成功!", "", "success");
       }
     });
   },
@@ -126,6 +127,7 @@ var commodity = React.createClass({
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
+        <td>{commodity.price}</td>
         <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
         <td>
           {
@@ -145,7 +147,9 @@ var commodity = React.createClass({
             {
               (commodity.status == 'pub')
                 ? <button className="btn-white btn btn-xs" onClick={this._handleDropCommodity}>下架</button>
-                : <button className="btn-white btn btn-xs" onClick={this._handlePubCommodity}>上架</button>
+                : (commodity.status == 'disabled')
+                  ? <button className="btn-white btn btn-xs" onClick={this._handlePubCommodity}>上架</button>
+                  : ''
             }
           </div>
         </td>
@@ -210,17 +214,17 @@ var commodity = React.createClass({
                     <thead>
                       <tr>
                         <th data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-                        <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
+                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
+                        <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
+                        <th data-hide="all" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
                           <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
-                          <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
                           */}
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
                         <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/></th>
                       </tr>
                     </thead>

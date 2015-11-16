@@ -239,7 +239,7 @@ const commodityModify = React.createClass({
     const prefix = 'commodities.modify.';
     return (
       <div className="commodity-modify-wrap">
-        <Pageheading root="首页" category="商品管理" title="商品修改"/>
+        <Pageheading root="首页" category="商品管理" title={this.props.commodityId ? "编辑商品" : "添加商品"}/>
         <div className='steps-container'>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'basic')}/></h3>
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'introduction')}/></h3>

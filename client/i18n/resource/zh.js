@@ -90,7 +90,7 @@ BraavosCore.IntlData.zh = {
           commodityImages: '商品图片',
           basicInfo: '基本信息',
           commodityName: '商品名称',
-          addressInfo: '地址信息',
+          addressInfo: '目的地',
           commodityCategories: '商品分类',
           timeCost: '游玩时长',
           hour: '小时',

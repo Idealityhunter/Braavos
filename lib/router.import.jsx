@@ -79,7 +79,7 @@ FlowRouter.route('/commodities', {
 
 // 商品管理 - 修改
 FlowRouter.route('/commodities/add', {
-  name: 'commodityEditor',
+  name: 'commodityAdd',
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData));

@@ -77,13 +77,11 @@ const commodityModifyBasic = React.createClass({
               <option value="1">泰国</option>
               <option value="2">菲律宾</option>
             </select>
-            {/*
-             <select name="" id="" className="form-control" defaultValue="0">
-             <option value="0">海南</option>
-             <option value="1">北京</option>
-             <option value="2">上海</option>
-             </select>
-            */}
+            <select name="" id="" className="form-control" defaultValue="0">
+              <option value="0">海南</option>
+              <option value="1">北京</option>
+              <option value="2">上海</option>
+            </select>
 
             <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.address || ''}/>
           </div>
@@ -124,7 +122,7 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <input className="inline placeholder" type='text' placeholder="" style={{width:50,textAlign:'center'}} defaultValue={this.props.timeCost || ""}/>
+            <input className="inline placeholder" type='text' placeholder="" style={{width:50}} defaultValue={this.props.timeCost || ""}/>
             <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
           {/*

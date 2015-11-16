@@ -85,12 +85,12 @@ let commodityGallery = React.createClass({
     const self = this;
     const curIndex = $(e.target).parents('.img-wrap').attr('data-id');
     swal({
-      title: "Are you sure?",
-      text: "You will not be able to recover this imaginary file!",
+      title: "确定删除这张图片吗?",
       type: "warning",
       showCancelButton: true,
+      cancelButtonText: "取消",
       confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "删除",
       closeOnConfirm: false
     }, function(){
       let copyImages = self.state.images.slice();
@@ -125,7 +125,7 @@ let commodityGallery = React.createClass({
       self.setState({
         images: copyImages
       })
-      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+      swal("成功删除该图片", "", "success");
     });
   },
 
@@ -146,9 +146,10 @@ let commodityGallery = React.createClass({
           src: image.src,
           main: (image.src == imageUrl)
         }
-      })
+      }),
+      focusImageIndex: $(e.target).parent('.img-wrap').attr('data-id')
     });
-    swal("Good job!", "已将该图设为主图！", "success");
+    swal("已将该图设为主图！", "", "success");
   },
 
   // 上传图片
