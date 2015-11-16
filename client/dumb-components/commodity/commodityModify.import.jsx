@@ -13,7 +13,7 @@ const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
   getInitialState(){
     return {
-      plans: []
+      plans: this.props.plans || []
     }
   },
 
