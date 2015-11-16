@@ -124,7 +124,9 @@ var commodity = React.createClass({
       <tr key={commodity.key} data-id={i}>
         <td>{++i}</td>
         <td>{commodity.commodityId}</td>
+        <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
+        <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
         <td>
           {
             ((status) => {
@@ -209,14 +211,14 @@ var commodity = React.createClass({
                       <tr>
                         <th data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
-                        {/*<th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>*/}
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
+                        <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
                           <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
-                          <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                           */}
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
                         <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/></th>
