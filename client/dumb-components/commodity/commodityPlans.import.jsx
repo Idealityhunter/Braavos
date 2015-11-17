@@ -290,7 +290,7 @@ const commodityPlans = React.createClass({
       <div className="commodity-basic-plan">
         <form className="form-horizontal commodity-basic-form-wrap">
           <div className="form-group time-required">
-            <label className="label-text">添加商品</label>
+            <label className="label-text">添加套餐</label>
             {/*
               <label className="label-text">使用日期</label>
                 <label className="checkbox-inline">

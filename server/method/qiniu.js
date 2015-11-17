@@ -5,11 +5,11 @@
 
 Meteor.methods({
   // 上传
-  "qiniu.uploadAvatar": function(data, hash, bucketName, prefix) {
+  "qiniu.uploadAvatar": function(data, bucketName, prefix) {
 
     // TODO hash should be calculated from the raw data (binary format)
     const crypto = Npm.require('crypto');
-    const hash1 = crypto.createHash('md5').update(data, 'utf5').digest('hex').toString();
+    const hash = crypto.createHash('md5').update(data, 'utf5').digest('hex').toString();
 
     // TODO pass the following arguments: prefix / bucket
     const qiniu = BraavosCore.Qiniu;
