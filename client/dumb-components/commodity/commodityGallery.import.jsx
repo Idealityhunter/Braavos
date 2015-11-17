@@ -184,8 +184,11 @@ let commodityGallery = React.createClass({
     // 利用图像的内容, 做MD5, 得到key
     const data = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
     const hash = CryptoJS.MD5(data).toString();
+    const bk = 'avatar';
+    const prefix = 'avatar/';
 
-    Meteor.call("qiniu.uploadAvatar", imageSrc, hash, (err, ret) => {
+    //Meteor.call("qiniu.uploadAvatar", imageSrc, hash, (err, ret) => {
+    Meteor.call("qiniu.uploadAvatar", data, bk, prefix, (err, ret) => {
       if (!err) {
         const imageUrl = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
         // TODO 修改成功的状态转换

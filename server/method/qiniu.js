@@ -5,11 +5,11 @@
 
 Meteor.methods({
   // 上传
-  "qiniu.uploadAvatar": function(data, bucketName, prefix) {
+  "qiniu.uploadAvatar": function(data, hash, bucketName, prefix) {
 
     // TODO hash should be calculated from the raw data (binary format)
     const crypto = Npm.require('crypto');
-    const hash = crypto.createHash('md5').update(data, 'utf5').digest('hex').toString();
+    const hash1 = crypto.createHash('md5').update(data, 'utf5').digest('hex').toString();
 
     // TODO pass the following arguments: prefix / bucket
     const qiniu = BraavosCore.Qiniu;
@@ -18,7 +18,7 @@ Meteor.methods({
 
     // 获得文件名
     const key = `${prefix || ""}${hash}`;
-    const {name: name, domain:domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketName];
+    const {name: name, domain: domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketName];
 
     // 获得上传token
     const putPolicy = new qiniu.rs.PutPolicy(`${name}:${key}`);
@@ -30,14 +30,16 @@ Meteor.methods({
     // TODO qiniu.io.put返回值中, 有ret和err. 在ret里面需要返回完整的url
 
     const wrapUpload = Async.wrap(qiniu.io.put);
-    const {err, ret} = wrapUpload(token, key, rawData, extra);
-    if (ret) {
-      ret.url = `http://${domain}/${key}`
-    }
-    return {ret: ret, err: err};
-    //
-    //
-    //const avatar = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
-    //return wrapUpload(token, key, rawData, extra);
+    // TODO 获取wrapUpload的结果,并返回给client端
+    //const {err: err, ret: ret} = wrapUpload(token, key, rawData, extra);
+    //if (ret) {
+    //  ret.url = `http://${domain}/${key}`
+    //}
+    //return {ret: ret, err: err};
+
+    // 测试用
+    //return wrapUpload(token + 'heheda', key, rawData, extra);
+
+    return wrapUpload(token, key, rawData, extra);
   }
 });
