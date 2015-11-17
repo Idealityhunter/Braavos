@@ -35,10 +35,75 @@ const commodityModify = React.createClass({
       bodyTag: "div",
       transitionEffect: "fade",
       autoFocus: true,
+      onStepChanging: function(event, currentIndex, newIndex){
+        if (currentIndex < newIndex){
+          // TODO 验证当前tab的必要信息是否填充完毕
+          switch (currentIndex){
+            case 0: {
+              // 名称,图片,时长和套餐是必须的
+              if (!$('.form-group.title>input').val()
+                || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
+                || !$('.form-group.cost-time>input').val()
+                || self.state.plans.length <= 0){
+                // TODO 弹窗提示?还是别的?
+                return false;
+              }
+              break;
+            };
+            case 2: {
+              // 费用包含和使用方法是必须的
+              if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
+                // TODO 弹窗提示?还是别的?
+                return false;
+              }
+              break;
+            };
+            case 3: {
+              // 预定和退改流程都是必须的
+              if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
+                // TODO 弹窗提示?还是别的?
+                return false;
+              }
+              break;
+            };
+            default: return true;
+          }
+        }
+        return true;
+      },
       onFinishing: function (event, currentIndex) {
         // TODO 验证和提交
-        //当前step form
-        //const form = $(this);
+        //$(".body:eq(" + newIndex + ") .error", form).removeClass("error")
+
+        // 当前若是在最后一页则无需检查,可以直接提交
+        if (currentIndex < 4){
+          // TODO 在其它的页面的提交需要做检查
+          if (!$('.form-group.title>input').val()
+            || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
+            || !$('.form-group.cost-time>input').val()
+            || self.state.plans.length <= 0){
+            // TODO 弹窗提示?还是别的?
+            console.log($(".steps>ul>li:eq(0)"));
+            $(".steps>ul>li:eq(0)").addClass("error");
+            location.hash = "steps-uid-0-t-0";
+            if (currentIndex != 0)
+              return true;
+            else
+              return false;
+          };
+          if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
+            // TODO 弹窗提示?还是别的?
+            //$(".steps>ul>li:eq(2)").addClass("error");
+            //location.hash = "steps-uid-0-t-2";
+            return false;
+          };
+          if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
+            // TODO 弹窗提示?还是别的?
+            //$(".steps>ul>li:eq(3)").addClass("error");
+            //location.hash = "steps-uid-0-t-3";
+            return false;
+          };
+        };
 
         // 获取填写的信息
         const priceInfo = _.reduce(self.state.plans, function(min, plan){
@@ -206,17 +271,6 @@ const commodityModify = React.createClass({
         return true;
       }
     });
-    // TODO 理解jquery validate的用法
-    //.validate({
-    //  errorPlacement: function (error, element) {
-    //    element.before(error);
-    //  },
-    //  rules: {
-    //    confirm: {
-    //      equalTo: "#password"
-    //    }
-    //  }
-    //});
 
     // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证
     $('.commodity-basic-datepicker .input-daterange').datepicker({

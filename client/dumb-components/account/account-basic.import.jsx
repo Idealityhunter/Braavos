@@ -135,12 +135,13 @@ export const AccountBasic = React.createClass({
 
     // 利用图像的内容, 做MD5, 得到key
     const data = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
-    const hash = CryptoJS.MD5(data).toString();
+    //const hash = CryptoJS.MD5(data).toString();
+    const bk = 'avatar';
+    const prefix = 'avatar/';
 
-    Meteor.call("qiniu.uploadAvatar", imageSrc, hash, (err, ret) => {
+    Meteor.call("qiniu.uploadAvatar", data, bk, prefix, (err, ret) => {
       if (!err) {
-        const avatar = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
-        Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: avatar});
+        Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: ret.url});
       }
       this.setState({avatarPreloading: false});
     })
