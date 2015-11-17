@@ -245,7 +245,7 @@ const commodityPlans = React.createClass({
           <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title}/>
         </td>
         <td className="market-price">
-          <NumberInput className="inline" placeholder="市场价￥" defaultValue={plan.marketPrice}/>
+          <NumberInput className="inline" placeholder="市场价￥" value={plan.marketPrice}/>
         </td>
         <td className="price">
           {(this.state.dateRequired)
