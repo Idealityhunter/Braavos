@@ -144,7 +144,10 @@ const commodityModify = React.createClass({
         // TODO plans中pricing的日期的转换
         // TODO 获取几个文本信息的值
 
-        const timeRequired = $('.form-group.time-required').find('input').prop('checked');
+        // tips: 现在timeRequired默认为true且不可修改
+        //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
+        const timeRequired = true;
+
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
           country: {
