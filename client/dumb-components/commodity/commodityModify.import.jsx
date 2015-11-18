@@ -280,7 +280,10 @@ const commodityModify = React.createClass({
       format: 'yyyy-mm-dd',
       keyboardNavigation: false,
       forceParse: false,
-      autoclose: true
+      autoclose: true,
+      //language: 'en'
+      // TODO 待解决 => 希望能够展示中文的月份等信息
+      language: 'zh'
     });
   },
 
