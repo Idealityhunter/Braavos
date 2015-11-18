@@ -6,18 +6,7 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 //let images = [{
 //    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/2s.jpg',
 //    main: true
-//  }, {
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/3s.jpg',
-//  }, {
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/4s.jpg',
-//  }, {
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/5s.jpg',
-//  }, {
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/6s.jpg',
-//  }, {
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/7s.jpg',
-//  }
-//];
+//  }];
 
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
@@ -239,13 +228,30 @@ let commodityGallery = React.createClass({
     })
   },
 
+  styles: {
+    focusImg: {
+      width: 250,
+      height: 250,
+      display: 'block',
+      border: '1px solid rgb(170, 170, 170)',
+      margin: '0px auto'
+    },
+    preloader: {
+      position: "absolute",
+      top: "110px",
+      left: "235px",
+      width: "30px",
+      height: "30px"
+    }
+  },
+
   render() {
     const prefix = 'commodities.modify.basicTab.gallery';
 
     const preloader = (
       <div style={{display: this.state.imagePreloading ? "block" : "none"}}>
         <img src="/images/spinner.gif"
-             style={{position: "absolute", top: "110px", left: "235px", width: "30px", height: "30px"}}/>
+             style={this.styles.preloader}/>
       </div>
     );
 
@@ -278,7 +284,8 @@ let commodityGallery = React.createClass({
         </div>
 
         <div className="img-view" style={{position:'relative'}}>
-          <img src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''} alt="" style={{width: 250, height:250}}/>
+          <img src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''} alt=""
+               style={this.styles.focusImg}/>
           {preloader}
         </div>
         <div className="scroll-view">
