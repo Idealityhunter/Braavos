@@ -174,7 +174,7 @@ let commodityGallery = React.createClass({
 
   // 修改图片
   handleModifyImage(evt) {
-    self = this;
+    const self = this;
     this.setState({
       showUploadModal: false,
       imagePreloading: true
@@ -182,25 +182,47 @@ let commodityGallery = React.createClass({
     const imageSrc = evt.croppedImage;
 
     //deprecated 利用图像的内容, 做MD5, 得到key
-    //const data = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
-    //const hash = CryptoJS.MD5(data).toString();
+    const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
     const bk = 'avatar';
     const prefix = 'avatar/';
 
-    Meteor.call("qiniu.uploadAvatar", imageSrc, bk, prefix, (err, ret) => {
-      if (!err) {
-        const imageUrl = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
-        // TODO 修改成功的状态转换
-        let copyImages = this.state.images.slice();
-        copyImages.push({
-          main: (copyImages.length == 0),
-          src: imageUrl
-        });
-        self.setState({
-          images: copyImages,
-          imagePreloading: false,
-          uploadModalImageSrc: '',
-          focusImageIndex: copyImages.length - 1
+    Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
+      if (!err && ret){
+        // 组建form
+        var form = new FormData();
+        form.append("key", ret.key);
+        form.append("token", ret.token);
+        form.append("file", imageData);
+
+        // 发送post请求
+        $.ajax({
+          url: 'upload.qiniu.com',
+          data: form,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          type: 'POST',
+          success: function(data, textStatus, jqXHR) {
+            // TODO 修改成功的状态转换
+            let copyImages = self.state.images.slice();
+            copyImages.push({
+              main: (copyImages.length == 0),
+              src: ret.url
+            });
+            self.setState({
+              images: copyImages,
+              imagePreloading: false,
+              uploadModalImageSrc: '',
+              focusImageIndex: copyImages.length - 1
+            });
+          },
+          error(jqXHR, textStatus, errorThrown){
+            // TODO 修改失败的状态转换
+            self.setState({
+              imagePreloading: false
+            });
+          }
         });
       }else{
         // TODO 修改失败的状态转换
@@ -237,7 +259,7 @@ let commodityGallery = React.createClass({
     let i = 0;
     const imgList = this.state.images.map((img) =>
       <div className='inline img-wrap' key={Meteor.uuid()} data-id={i++}>
-        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={img.src} alt="" onClick={this.handleFocus}/>
+        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={`${img.src}?imageView2/2/w/128/h/128`} alt="" onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/>
         <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
@@ -250,7 +272,7 @@ let commodityGallery = React.createClass({
         </div>
 
         <div className="img-view" style={{position:'relative'}}>
-          <img src={(this.state.focusImageIndex !== null) ? this.state.images[this.state.focusImageIndex].src : ''} alt="" style={{width: 250, height:250}}/>
+          <img src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''} alt="" style={{width: 250, height:250}}/>
           {preloader}
         </div>
         <div className="scroll-view">

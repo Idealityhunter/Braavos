@@ -130,25 +130,40 @@ export const AccountBasic = React.createClass({
 
   // 修改头像
   handleModifyAvatar(evt) {
+    const self = this;
     this.setState({showAvatarModal: false, avatarPreloading: true});
     const imageSrc = evt.croppedImage;
 
     //deprecated 利用图像的内容, 做MD5, 得到key
-    //const data = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
-    //const hash = CryptoJS.MD5(data).toString();
+    const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
     const bk = 'avatar';
     const prefix = 'avatar/';
 
-    Meteor.call("qiniu.uploadAvatar", imageSrc, bk, prefix, (err, ret) => {
-      if (!err) {
-        const avatar = `http://7sbm17.com1.z0.glb.clouddn.com/${ret.key}`;
-        Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: avatar});
-        //Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: ret.url});
-      }else{
-        // TODO 上传失败,错误处理
-        console.log(err);
+    Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
+      if (!err && ret){
+        // 组建form
+        var form = new FormData();
+        form.append("key", ret.key);
+        form.append("token", ret.token);
+        form.append("file", imageData);
+
+        // 发送post请求
+        $.ajax({
+          url: 'upload.qiniu.com',
+          data: form,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          type: 'POST',
+          success: function(err, res, data){
+            Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: ret.url});
+            self.setState({avatarPreloading: false});
+          }
+        })
+      } else {
+        // TODO 错误处理
       }
-      this.setState({avatarPreloading: false});
     })
   },
 
