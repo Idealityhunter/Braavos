@@ -126,10 +126,10 @@ const commodityModify = React.createClass({
         for (i = 0;i < imageList.length;i++){
           if ($(imageList[i]).siblings('.fa-heart').length > 0)
             cover = {
-             url: imageList[i].src
+             url: imageList[i].src.split('?')[0]//截取掉imageView等参数
             }
           images[i] = {
-            url: imageList[i].src
+            url: imageList[i].src.split('?')[0]
           };
         };
 
