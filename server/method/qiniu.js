@@ -45,6 +45,7 @@ Meteor.methods({
 
     // TODO BUG: 获得上传token => 然而并没有起作用
     const returnBody = '{' +
+      '"key": $(key),' +
       '"name": $(fname),' +
       '"size": $(fsize),' +
       '"w": $(imageInfo.width),' +

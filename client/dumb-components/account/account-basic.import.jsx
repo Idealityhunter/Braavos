@@ -142,27 +142,38 @@ export const AccountBasic = React.createClass({
     Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
       if (!err && ret){
         // 组建form
-        var form = new FormData();
+        const form = new FormData();
         form.append("key", ret.key);
         form.append("token", ret.token);
-        form.append("file", imageData);
+
+        // 添加文件
+        const writer = new Uint8Array(imageData.length);
+        for (let i=0; i<writer.length; i++) {
+          writer[i] = imageData.charCodeAt(i);
+        }
+        const blob = new Blob([writer], {type: "application/octet-stream"});
+        form.append("file", blob);
 
         // 发送post请求
         $.ajax({
           url: 'http://upload.qiniu.com',
+          //url : 'https://up.qbox.me/',
           data: form,
-          async: false,
-          cache: false,
           contentType: false,
           processData: false,
           type: 'POST',
-          success: function(err, res, data){
+          success: function(data, textStatus, jqXHR){
             Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: ret.url});
+            self.setState({avatarPreloading: false});
+          },
+          error(jqXHR, textStatus, errorThrown){
+            // TODO 修改失败的状态转换
             self.setState({avatarPreloading: false});
           }
         })
       } else {
         // TODO 错误处理
+        self.setState({avatarPreloading: false});
       }
     })
   },
