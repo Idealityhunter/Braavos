@@ -149,7 +149,7 @@ export const AccountBasic = React.createClass({
 
         // 发送post请求
         $.ajax({
-          url: 'upload.qiniu.com',
+          url: 'http://upload.qiniu.com',
           data: form,
           async: false,
           cache: false,
