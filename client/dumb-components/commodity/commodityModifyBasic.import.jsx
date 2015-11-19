@@ -19,10 +19,9 @@ const commodityModifyBasic = React.createClass({
     }
   },
 
-  // 写死的
   getInitialState(){
     return {
-      country: this.props.country && this.props.country.zhName || '阿尔巴尼亚',
+      country: this.props.country && this.props.country.zhName || '阿尔巴尼亚',//阿尔巴尼亚是为了第一次添加时的locality的获取
       locality: this.props.locality && this.props.locality.zhName || ''
     }
   },

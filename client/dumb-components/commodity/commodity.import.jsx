@@ -122,7 +122,7 @@ var commodity = React.createClass({
     let prefix = 'commodities.';
     let i = 0;
     const commodityList = this.data.commodities.map(commodity =>
-      <tr key={commodity.key} data-id={i}>
+      <tr key={commodity.key} data-id={i} style={(commodity.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
         <td>{++i}</td>
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
@@ -141,7 +141,7 @@ var commodity = React.createClass({
             })(commodity.status)
           }
         </td>
-        <td className="text-right">
+        <td className="text-right" style={{color: '#333'}}>
           <div className="btn-group">
             <button className="btn-white btn btn-xs" onClick={this._handleEditCommodity}>编辑</button>
             {
