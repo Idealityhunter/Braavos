@@ -35,6 +35,13 @@ const commodityModify = React.createClass({
       bodyTag: "div",
       transitionEffect: "fade",
       autoFocus: true,
+      enableCancelButton: false,
+      labels: {
+        finish: "完成",
+        next: "下一步",
+        previous: "上一步",
+        cancel: '取消'
+      },
       onStepChanging: function(event, currentIndex, newIndex){
         if (currentIndex < newIndex){
           // TODO 验证当前tab的必要信息是否填充完毕

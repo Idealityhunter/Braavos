@@ -127,7 +127,7 @@ let commodityGallery = React.createClass({
 
   // 设置主图(作为商品的主图)
   handleMain(e){
-    const imageUrl = $(e.target).siblings('img')[0].src;
+    const imageUrl = $(e.target).siblings('img')[0].src.split('?')[0];
     let copyImages = this.state.images.slice();
     this.setState({
       images: _.map(copyImages, (image) => {
