@@ -15,6 +15,10 @@ Meteor.startup(()=> {
   db.Seller.attachSchema(schema.Marketplace.Seller);
   db.Commodity = new Mongo.Collection("Commodity");
   db.Commodity.attachSchema(schema.Marketplace.Commodity);
+  db.Country = new Mongo.Collection("Country");
+  db.Country.attachSchema(schema.Geo.Country);
+  db.Locality = new Mongo.Collection("Locality");
+  db.Locality.attachSchema(schema.Geo.Locality);
 
   BraavosCore.Database.Yunkai = {};
   const yunkai = BraavosCore.Database.Yunkai;

@@ -20,6 +20,7 @@ const commodityModify = React.createClass({
   getMeteorData() {
     Meteor.subscribe('basicUserInfo');
     Meteor.subscribe('sellerInfo');
+
     // TODO 暂时通过router传数据进来!
     //Meteor.subscribe('commodityInfo', this.props.commodityId);
     //const commodityInfo = BraavosCore.Database.Braavos.Commodity.findOne({commodityId: this.props.commodityId});
@@ -141,15 +142,19 @@ const commodityModify = React.createClass({
         };
 
         // 获取country选中的option对应的值
-        const countryIndex = $('.form-group.address>select').val();
-        const country = $($('.form-group.address>select>option')[parseInt(countryIndex)]).text();
+        const countryIndex = $('.form-group.address>select.country-select').val();
+        const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
+        const countryEn = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).attr('data-en');
+
+        // 获取locality选中的option对应的值
+        const localityIndex = $('.form-group.address>select.locality-select').val();
+        const localityZh = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).text();
+        const localityEn = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).attr('data-en');
 
         // 获取category选中的option对应的值
         const categoryIndex = $('.form-group.category>select').val();
         const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
 
-        // TODO plans中pricing的日期的转换
-        // TODO 获取几个文本信息的值
 
         // tips: 现在timeRequired默认为true且不可修改
         //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
@@ -158,9 +163,14 @@ const commodityModify = React.createClass({
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
           country: {
-            className: country,
-            zhName: country,
-            enName: country
+            className: 'com.lvxingpai.model.geo.Country',
+            zhName: countryZh,
+            enName: countryEn
+          },
+          locality: {
+            className: 'com.lvxingpai.model.geo.Locality',
+            zhName: localityZh,
+            enName: localityEn
           },
           address: $('.form-group.address>input').val(),
           category: [category],
@@ -319,6 +329,7 @@ const commodityModify = React.createClass({
               images={this.props.images || []}
               category={this.props.category || []}
               country={this.props.country || {}}
+              locality={this.props.locality || {}}
               address={this.props.address || ''}
               timeCost={this.props.timeCost || ''}
               plans={this.props.plans || []}

@@ -64,7 +64,9 @@ function initMongo() {
   helper('braavos', 'Braavos', [
     {collName: 'Token', schema: Schema.Account.Token},
     {collName: "Seller", schema: Schema.Marketplace.Seller},
-    {collName: "Commodity", schema: Schema.Marketplace.Commodity}
+    {collName: "Commodity", schema: Schema.Marketplace.Commodity},
+    {collName: "Country", schema: Schema.Marketplace.Country},
+    {collName: "Locality", schema: Schema.Marketplace.Locality}
   ]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}]);
 }

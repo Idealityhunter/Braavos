@@ -8,7 +8,7 @@ const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModifyBasic = React.createClass({
-  mixins: [IntlMixin],
+  mixins: [IntlMixin, ReactMeteorData],
 
   styles: {
     asterisk: {
@@ -19,6 +19,28 @@ const commodityModifyBasic = React.createClass({
     }
   },
 
+  // 写死的
+  getInitialState(){
+    return {
+      country: this.props.country && this.props.country.zhName || '阿尔巴尼亚',
+      locality: this.props.locality && this.props.locality.zhName || ''
+    }
+  },
+
+  // 获取country和locality列表的数据
+  getMeteorData() {
+    Meteor.subscribe('countries');
+    const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+
+    Meteor.subscribe('localities', this.state.country);
+    const localities = BraavosCore.Database.Braavos.Locality.find({}, {sort: {'enName': 1}}).fetch();
+
+    return {
+      countries: countries,
+      localities: localities
+    }
+  },
+
   getDefaultProps(){
     // 传入下一层的数据
     return {
@@ -26,30 +48,80 @@ const commodityModifyBasic = React.createClass({
     }
   },
 
+  // 修改国家时,触发更新locality的数据
+  _handleCountryChange(e){
+    const country = $(e.target).children(`option:eq(${e.target.value})`).text();
+    this.setState({
+      country: country
+    })
+  },
+
+  // 修改locaity
+  _handleLocalityChange(e){
+    const locality = $(e.target).children(`option:eq(${e.target.value})`).text();
+    this.setState({
+      locality: locality
+    })
+  },
+
   render() {
     const prefix = 'commodities.modify.basicTab.';
     let selectCountryIndex = '';
     let selectCategoryIndex = '';
+    let selectLocalityIndex = '';
+    let i = 0;
+    const self = this;
 
     // 获取国家对应的option的value
-    if (this.props.country && this.props.country.zhName){
-      const countryArray = ['中国','菲律宾','泰国'];
-      for (let i = 0;i < countryArray.length;i++){
-        if (countryArray[i] == this.props.country.zhName){
+    if (this.state.country){
+      const countryArray = this.data.countries.slice();
+      for (i = 0;i < countryArray.length;i++){
+        if (countryArray[i].zhName == this.state.country){
           selectCountryIndex = i;
+          break;
         }
       };
     };
 
     // 获取国家对应的option的value
+    if (this.state.locality){
+      const localityArray = this.data.localities.slice();
+      for (i = 0;i < localityArray.length;i++){
+        if (localityArray[i].zhName == this.state.locality){
+          selectLocalityIndex = i;
+          break;
+        }
+      };
+    };
+
+    // 获取目录对应的option的value
     if (this.props.category && this.props.category.length > 0){
       const categoryArray = ['特色活动', '文化体验', '美食住宿', '城市游览', '门票预订', '演出', 'SPA', '游船', '其它'];
-      for (let i = 0;i < categoryArray.length;i++){
+      for (i = 0;i < categoryArray.length;i++){
         if (categoryArray[i] == this.props.category[0]){
           selectCategoryIndex = i;
-        }
+          break;
+        };
       };
     };
+
+    // 根据data生成country的select组件
+    i = 0;
+    const countryOptionList = this.data.countries.map(country => (<option value={i++} data-en={country.enName}>{country.zhName}</option>));
+    const countrySelect = (
+      <select name="" id="" className="country-select form-control" placeholder="国家" value={selectCountryIndex} onChange={this._handleCountryChange}>
+        {countryOptionList}
+      </select>
+    );
+
+    // 根据data生成locality的select组件
+    let j = 0;
+    const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-en={locality.enName}>{locality.zhName}</option>));
+    const localitySelect = (
+      <select name="" id="" className="locality-select form-control" placeholder="城市" value={selectLocalityIndex} onChange={this._handleLocalityChange}>
+        {localityOptionList}
+      </select>
+    );
 
     return (
       <div className="commodity-basic-wrap">
@@ -73,17 +145,8 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <select name="" id="" className="form-control" placeholder="国家" defaultValue={selectCountryIndex}>
-              <option value="0">中国</option>
-              <option value="1">泰国</option>
-              <option value="2">菲律宾</option>
-            </select>
-            <select name="" id="" className="form-control" placeholder="城市" defaultValue="">
-              <option value="0">海南</option>
-              <option value="1">北京</option>
-              <option value="2">上海</option>
-            </select>
-
+            {countrySelect}
+            {localitySelect}
             <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''}/>
           </div>
           <div className="form-group category">

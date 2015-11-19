@@ -55,4 +55,31 @@ Meteor.publish("commodityInfo", function (commodityId) {
   return memo;
 }, {});
   return coll.find({commodityId: commodityId, 'seller.sellerId': userId}, fields);
+})
+
+
+/**
+ * 发布国家列表信息
+ */
+Meteor.publish("countries", function () {
+  const coll = BraavosCore.Database.Braavos.Country;
+  const allowedFields = ["zhName", "pinyin", "code"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+  return coll.find({}, fields);
+});
+
+/**
+ * 发布城市列表信息
+ */
+Meteor.publish("localities", function (country) {
+  const coll = BraavosCore.Database.Braavos.Locality;
+  const allowedFields = ["zhName", "country", "enName"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+  return coll.find({'country.zhName': country}, fields);
 });
