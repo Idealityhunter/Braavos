@@ -20,4 +20,40 @@ Meteor.methods({
         commodityInfo: ret
       };
     },
+
+  // 生成commodityId
+  'commodity.insert.generateCommodityId': () => {
+    const client = BraavosCore.Thrift.IdGen.client;
+    try {
+      const int64_commodityId = client.generate('commodity');
+      return int64_commodityId.toNumber()
+    } catch(err) {
+      console.log(`Generate commodityId failed!`);
+      console.log(err);
+      return undefined;
+    };
+  },
+
+
+  // 添加商品
+  'commodity.insert': function (userId, doc) {
+    const collCommodity = BraavosCore.Database.Braavos.Commodity;
+    const uid = parseInt(userId);
+    if (isNaN(uid)) return;
+
+    // TODO 获取 seller信息
+    const collSeller = BraavosCore.Database.Braavos.Seller;
+    const collUserInfo = BraavosCore.Database.Yunkai.UserInfo;
+
+    const commodityId = Meteor.call('commodity.insert.generateCommodityId');
+    _.extend(doc, {
+      commodityId: commodityId,
+      seller: _.extend(collSeller.findOne({'sellerId': uid}), {
+        'userInfo': collUserInfo.findOne({'userId': uid})
+      }) || {},
+      status: 'review',
+      createTime: new Date()
+    });
+    return collCommodity.insert(doc);
+  }
 });

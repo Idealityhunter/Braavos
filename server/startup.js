@@ -14,6 +14,7 @@ function resolveEtcdData() {
     .addEntry(['mongo-dev', 'mongo'])
     .addEntry('yunkai')
     .addEntry('smscenter')
+    .addEntry('idgen')
     .addEntry(['hedy-base', 'hedy'])
     .addEntry(['hedy-dev', 'hedy'])
     .build();
@@ -87,6 +88,24 @@ function initYunkaiService() {
 }
 
 /**
+ * 初始化IdGen Thrift服务
+ */
+function initIdGenService() {
+  const services = BraavosCore.RootConf.backends['idgen'];
+  if (!Object.keys(services)) {
+    throw('Cannot find Idgen services.');
+  }
+  const {host, port} = services[Object.keys(services)[0]];
+  const module = Npm.require('idgen');
+  const IdGen = module.IdGen;
+  const IdGenTypes = module.IdGenTypes;
+
+  const apiSet = ['ping', 'generate', 'getCounter', 'resetCounter'];
+  const client = ThriftHelper.createClient(IdGen, host, port, apiSet, {transport: 'framed'});
+  BraavosCore.Thrift.IdGen = {types: IdGenTypes, client: client};
+}
+
+/**
  * 初始化七牛的SDK
  */
 function initQiniuSDK() {
@@ -105,5 +124,9 @@ Meteor.startup(()=> {
   // 初始化Yunkai
   initYunkaiService();
 
+  // 初始化IdGen
+  initIdGenService();
+
   initQiniuSDK();
+
 });
