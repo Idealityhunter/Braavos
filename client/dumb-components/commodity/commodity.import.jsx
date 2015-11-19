@@ -21,7 +21,7 @@ var commodity = React.createClass({
 
     Meteor.subscribe('commodities');
     const userId = parseInt(Meteor.userId());
-    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}).fetch() || [];
+    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}, {sort: {createTime: -1}}).fetch() || [];
     commodities = commodities.map(commodity => _.extend(commodity, {
       key: Meteor.uuid()
     }));
