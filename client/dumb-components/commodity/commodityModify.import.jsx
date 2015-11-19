@@ -241,7 +241,7 @@ const commodityModify = React.createClass({
           Meteor.call('commodity.update', Meteor.userId(), commodityInfo, self.props.commodityId, function(err, res){
             // TODO 回调结果反应
             if (err){
-              swal("Failed!", "编辑商品信息失敗!.", "error");
+              swal("编辑商品失敗!", "", "error");
             };
             if (res){
               swal({
@@ -263,7 +263,7 @@ const commodityModify = React.createClass({
             };
             if (res){
               swal({
-                title: "成功添加商品",
+                title: "成功添加商品!",
                 type: "success",
                 showCancelButton: false,
                 confirmButtonColor: "#AEDEF4",
