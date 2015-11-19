@@ -268,7 +268,7 @@ const commodityPlans = React.createClass({
       <tr className="plan-wrap" data-id={++i} key={plan.key}>
         <td className="title">{plan.title}</td>
         <td className="market-price">市场价￥{plan.marketPrice}</td>
-        <td className="price">售价￥{plan.price}起<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
+        <td className="price">售价￥{plan.price}{(plan.pricing.length > 1) ? '起' : ''}<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
         {/*<td className="stock">库存{plan.stock}</td>*/}
         <td className="controller">
           <button className="" style={{marginRight: 10}} onClick={this._handleModify}>修改</button>
