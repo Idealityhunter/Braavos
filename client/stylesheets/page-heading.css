@@ -183,6 +183,7 @@ textarea{
 
 .commodity-modify-wrap .commodity-add>div{
     margin-right: 16px;
+    vertical-align: top;
 }
 
 .commodity-modify-wrap .commodity-basic-plan .title>input{

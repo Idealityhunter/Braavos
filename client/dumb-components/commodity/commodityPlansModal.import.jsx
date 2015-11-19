@@ -110,7 +110,7 @@ const commodityPlansModal = React.createClass({
         <div className="pricing-wrap" data-id={i++} key={pricing.key}>
           <NumberInput className="inline commodity-basic-price" placeholder="售价￥" value={pricing.price}/>
           <div className="inline">
-            <div className="form-group commodity-basic-datepicker inline">
+            <div className="form-group commodity-basic-datepicker inline" style={{width:350}}>
               <div className="input-daterange input-group">
                 <input type="text" className="input-sm form-control" name="start" placeholder="from" readOnly
                        defaultValue={pricing.timeRange[0]}
@@ -136,7 +136,7 @@ const commodityPlansModal = React.createClass({
         id={"calendar-modal-" + this.props.index}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title">set price for {this.props.plan.title}</Modal.Title>
+          <Modal.Title id="contained-modal-title">{this.props.plan.title} 设置价格</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="commodity-basic-price-list">
