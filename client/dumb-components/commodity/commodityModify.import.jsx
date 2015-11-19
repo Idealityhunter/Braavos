@@ -245,8 +245,7 @@ const commodityModify = React.createClass({
             };
             if (res){
               swal({
-                title: "Successful!",
-                text: "Your commodity has been modified.",
+                title: "成功编辑商品!",
                 type: "success",
                 showCancelButton: false,
                 confirmButtonColor: "#AEDEF4",
@@ -260,12 +259,11 @@ const commodityModify = React.createClass({
           Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
             // TODO 回调结果反应
             if (err){
-              swal("Failed!", "添加商品失敗!.", "error");
+              swal("添加商品失敗!!", "", "error");
             };
             if (res){
               swal({
-                title: "Successful!",
-                text: "Your commodity has been added.",
+                title: "成功添加商品",
                 type: "success",
                 showCancelButton: false,
                 confirmButtonColor: "#AEDEF4",
