@@ -14,8 +14,9 @@ const commodityPlansModal = React.createClass({
         'price': pricing.price,
         'key': Meteor.uuid(),
         'timeRange': [moment(pricing.timeRange[0]).format('YYYY-MM-DD'), moment(pricing.timeRange[1]).format('YYYY-MM-DD')]
-      }))
-    }
+      }));
+    };
+
     return {
       pricing: transferredPricing.slice(),//控制ui
       originalPricing: transferredPricing.slice()//cache,存储进来编辑的状态
@@ -68,6 +69,7 @@ const commodityPlansModal = React.createClass({
     const $modal = $(e.target).parents('.modal-dialog');
     const $pricingList = $modal.find('.pricing-wrap');
 
+    // 获取当前修改的价格信息
     let newPricing = [];
     for (let i = 0; i < $pricingList.length; i++) {
       newPricing[i] = {
@@ -77,7 +79,46 @@ const commodityPlansModal = React.createClass({
           $($pricingList[i]).find('input[name=end]').val()
         ]
       };
+    };
+
+    // 检验价格信息
+    if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && pricingItem.price != ''}, true)){
+      swal('请输入售价', '', 'error');
+      return ;
     }
+
+    // 检查时间的起始和结束
+    if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && (!pricingItem.timeRange[0] || !pricingItem.timeRange[1] || pricingItem.timeRange[0] <= pricingItem.timeRange[1])}, true)){
+      swal('截止时间必须大于起始时间!', '', 'error');
+      return ;
+    }
+
+    // TODO 检验时间重叠情况
+    if (newPricing.length > 1) {
+      // 排序
+      newPricing.sort((pricingA, pricingB) => {
+        if (pricingA.timeRange[0] == null) return false;
+        if (pricingB.timeRange[0] == null) return true;
+        if (pricingA.timeRange[0] > pricingB.timeRange[0]) return true;
+        return false;
+      });
+
+      const dateInterval = newPricing[0].timeRange.slice();
+      let isValid = true;
+      for (let i = 1; i < newPricing.length; i++){
+        if (dateInterval[1] == null || dateInterval[0] == newPricing[i].timeRange[0] || dateInterval[1] >= newPricing[i].timeRange[0]){
+          isValid = false;
+          break;
+        }
+      };
+
+      if (!isValid){
+        swal('请输入正确的时间范围(时间范围不可以重叠)', '', 'error');
+        return ;
+      };
+    };
+
+    // 修改寄存器存储的原始价格信息
     this.setState({
       originalPricing: newPricing.slice(),
       pricing: newPricing.slice()

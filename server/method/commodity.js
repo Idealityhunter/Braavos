@@ -48,9 +48,9 @@ Meteor.methods({
     const commodityId = Meteor.call('commodity.insert.generateCommodityId');
     _.extend(doc, {
       commodityId: commodityId,
-      seller: _.extend(collSeller.findOne({'sellerId': uid}), {
-        'userInfo': collUserInfo.findOne({'userId': uid})
-      }) || {},
+      seller: _.pick(_.extend(collSeller.findOne({'sellerId': uid}), {
+        'userInfo': _.pick(collUserInfo.findOne({'userId': uid}), 'nickName', 'userId', 'avatar')
+      }), 'sellerId', 'name', 'userInfo') || {},
       status: 'review',
       createTime: new Date()
     });

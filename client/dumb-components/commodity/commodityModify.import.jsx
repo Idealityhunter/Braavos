@@ -230,7 +230,7 @@ const commodityModify = React.createClass({
           marketPrice: priceInfo.marketPrice,
           plans: self.state.plans.map((plan) => {
             return {
-              planId: plan.key,
+              planId: plan.planId,
               price: plan.price,
               marketPrice: plan.marketPrice,
               pricing: (timeRequired) ? plan.pricing : [{

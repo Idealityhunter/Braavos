@@ -28,7 +28,7 @@ const commodityPlans = React.createClass({
       // Bug: 这种方法,假如另一边有人在操作,则数据的变动会无法传进来啊
       plans: this.props.plans.map(plan => _.extend(plan, {
         showModal: false,
-        key: Meteor.uuid(),
+        planId: Meteor.uuid(),
         status: 'view',
         modalPrice: plan.price,
         modalPricing: plan.pricing//存储pricing的副本,当modal提交时会覆盖此处
@@ -79,7 +79,7 @@ const commodityPlans = React.createClass({
     const arrayIndex = curIndex - 1;
     let copyPlan = this.state.plans;
     copyPlan = copyPlan.concat(_.clone(this.state.plans[arrayIndex]));
-    copyPlan[copyPlan.length - 1].key = Meteor.uuid();
+    copyPlan[copyPlan.length - 1].planId = Meteor.uuid();
     this.props.handleSubmitState(copyPlan);
     this.setState({
       plans: copyPlan
@@ -90,25 +90,32 @@ const commodityPlans = React.createClass({
   _handleAddPlan(e) {
     e.preventDefault();
     const addForm = $(e.target).parents('.commodity-add')[0];
-    let copyPlan = this.state.plans.slice();
-    copyPlan = copyPlan.concat({
+    const addPlan = {
       title: $(addForm).children('.title').children('input').val(),
-      marketPrice: $(addForm).children('.market-price').children('input').val(),
-      price: $(addForm).children('.price').children('input').val(),
+      marketPrice: parseInt($(addForm).children('.market-price').children('input').val()),
+      price: parseInt($(addForm).children('.price').children('input').val()),
       modalPrice: $(addForm).children('.price').children('input').val(),
-      pricing: this.state.addPlan.modalPricing,
+      pricing: this.state.addPlan.modalPricing.map(pricing => _.extend(pricing, {
+        price: parseInt(pricing.price),
+        timeRange: pricing.timeRange.map(date => (date != null) ? new Date(date) : null)
+      })),
       modalPricing: this.state.addPlan.modalPricing,
       //stock: $(addForm).children('.stock').children('input').val(),
-      key: Meteor.uuid()
-    });
+      planId: Meteor.uuid()
+    };
 
-    // 提交修改给父组件
-    this.props.handleSubmitState(copyPlan);
-    this.setState({
-      plans: copyPlan,
+    if (Match.test(_.extend(_.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
+      let copyPlan = this.state.plans.slice().concat(addPlan);
+      // 提交修改给父组件
+      this.props.handleSubmitState(copyPlan);
+      this.setState({
+        plans: copyPlan,
 
-      // TODO 清除修改记录(addplan中应该为空,包括modal层)
-    });
+        // TODO 清除修改记录(addplan中应该为空,包括modal层)
+      });
+    }else{
+      swal('请正确添加套餐!', '', 'error');
+    }
   },
 
   // 修改是否需要日期(calendar)
@@ -127,25 +134,50 @@ const commodityPlans = React.createClass({
 
     // 非state存储的编辑结果的获取
     const title = $trElement.children('.title').children('input').val();
-    const marketPrice = $trElement.children('.market-price').children('input').val();
-    const price = $trElement.children('.price').children('input').val();
+    const marketPrice = parseInt($trElement.children('.market-price').children('input').val());
+    //const price = $trElement.children('.price').children('input').val();
     //const stock = $trElement.children('.stock').children('input').val();
 
     let copyPlan = this.state.plans.slice();
-    _.extend(copyPlan[arrayIndex], {
+    if (title == ''){
+      swal('请输入套餐名称', '', 'error');
+      return ;
+    };
+    if (marketPrice == ''){
+      swal('请输入市场价!', '', 'error');
+      return ;
+    };
+    if (copyPlan[arrayIndex].modalPricing.length == 0){
+      swal('请添加套餐的售价信息!', '', 'error');
+      return ;
+    }
+    const editPlan = {
       status: 'view',
       title: title,
       marketPrice: marketPrice,
       price: copyPlan[arrayIndex].modalPrice,
       pricing: copyPlan[arrayIndex].modalPricing,
       //stock: stock
-    });
+      planId: copyPlan[arrayIndex].planId
+    };
 
+    _.extend(copyPlan[arrayIndex], editPlan);
     // 提交修改给父组件
     this.props.handleSubmitState(copyPlan);
     this.setState({
-      plans: copyPlan
+      plans: copyPlan,
     });
+
+    //if (Match.test(_.extend(_.pick(editPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
+    //  _.extend(copyPlan[arrayIndex], editPlan);
+    //  // 提交修改给父组件
+    //  this.props.handleSubmitState(copyPlan);
+    //  this.setState({
+    //    plans: copyPlan,
+    //  });
+    //}else{
+    //  swal('请正确编辑套餐!', '', 'error');
+    //}
   },
 
   // plan在修改状态下取消修改
@@ -218,7 +250,7 @@ const commodityPlans = React.createClass({
           showModal: false,
           modalPricing: pricing,
           modalPrice: (pricing.length > 0)
-            ? _.reduce(pricing, function(min, pricingItme){ return Math.min(min, pricingItme.price)}, Number.MAX_VALUE)
+            ? _.reduce(pricing, function(min, pricingItem){ return Math.min(min, pricingItem.price)}, Number.MAX_VALUE)
             : null
         })
       });
@@ -230,7 +262,7 @@ const commodityPlans = React.createClass({
         showModal: false,
         modalPricing: pricing,
         modalPrice: (pricing.length > 0)
-          ? _.reduce(pricing, function(min, pricingItme){ return Math.min(min, pricingItme.price)}, Number.MAX_VALUE)
+          ? _.reduce(pricing, function(min, pricingItem){ return Math.min(min, pricingItem.price)}, Number.MAX_VALUE)
           : null
       });
       this.setState({
@@ -253,7 +285,7 @@ const commodityPlans = React.createClass({
 
     let i = 0;//从1开始,0表示添加的input
     const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
-      <tr className="plan-wrap" data-id={++i} key={plan.key}>
+      <tr className="plan-wrap" data-id={++i} key={plan.planId}>
         <td className="title">
           <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title}/>
         </td>
@@ -278,7 +310,7 @@ const commodityPlans = React.createClass({
         </td>
       </tr>
     ) : (
-      <tr className="plan-wrap" data-id={++i} key={plan.key}>
+      <tr className="plan-wrap" data-id={++i} key={plan.planId}>
         <td className="title">{plan.title}</td>
         <td className="market-price">市场价￥{plan.marketPrice}</td>
         <td className="price">售价￥{plan.price}{(plan.pricing.length > 1) ? '起' : ''}<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
