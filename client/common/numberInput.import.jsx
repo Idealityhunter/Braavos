@@ -23,6 +23,7 @@ const numberInput = React.createClass({
              style={this.props.style}
              defaultValue={this.originValue}
              onChange={this._handleInput}
+             id={this.props.id}
       />
     )
   }

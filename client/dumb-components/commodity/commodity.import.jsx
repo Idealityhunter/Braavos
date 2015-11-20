@@ -1,5 +1,6 @@
 import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap"
+import {NumberInput} from '/client/common/numberInput';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -173,7 +174,8 @@ var commodity = React.createClass({
               <div className="col-sm-2">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-id"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></label>
-                  <input type="text" id="commodity-id" name="commodity-id" defaultValue="" placeholder="商品编号" className="form-control"/>
+                  {/*<input type="text" id="commodity-id" name="commodity-id" defaultValue="" placeholder="商品编号" className="form-control"/>*/}
+                  <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
                 </div>
               </div>
               <div className="col-sm-3">
