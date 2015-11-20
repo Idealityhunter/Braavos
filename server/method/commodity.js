@@ -46,10 +46,16 @@ Meteor.methods({
     const collUserInfo = BraavosCore.Database.Yunkai.UserInfo;
 
     const commodityId = Meteor.call('commodity.insert.generateCommodityId');
+    const userInfo = _.pick(collUserInfo.findOne({'userId': uid}), 'nickName', 'userId', 'avatar');
+    if (_.isString(userInfo.avatar)){
+      userInfo.avatar = {
+        url: userInfo.avatar
+      }
+    };
     _.extend(doc, {
       commodityId: commodityId,
       seller: _.pick(_.extend(collSeller.findOne({'sellerId': uid}), {
-        'userInfo': _.pick(collUserInfo.findOne({'userId': uid}), 'nickName', 'userId', 'avatar')
+        'userInfo': userInfo
       }), 'sellerId', 'name', 'userInfo') || {},
       status: 'review',
       createTime: new Date()
