@@ -96,4 +96,69 @@ Account.UserInfo = new SimpleSchema({
   }
 });
 
+// 身份证件
+Account.IdProof = new SimpleSchema({
+  // 证件类型
+  idType: {
+    type: String,
+    // 分别表示: 护照/中国大陆身份证
+    allowedValues: ["passport", "cnid"]
+  },
+  // 国家代码
+  nation: {
+    type: String,
+    regEx: /[A-Z]{2}/,
+    // 当idType为cnid时, 可以不提供nation信息
+    optional: true
+  },
+  // 证件编号
+  code: {
+    type: String,
+    min: 8,
+    max: 64
+  }
+});
+
+// 实名信息
+Account.RealNameInfo = new SimpleSchema({
+  // 姓
+  surname: {
+    type: String,
+    min: 1,
+    max: 64
+  },
+  // 名
+  givenName: {
+    type: String,
+    min: 1,
+    max: 256
+  },
+  // 性别
+  gender: {
+    type: String,
+    allowedValues: ["m", "f"],
+    optional: true
+  },
+  // 生日
+  birthday: {
+    type: Date,
+    optional: true
+  },
+  // 身份信息
+  identities: {
+    type: [Account.IdProof],
+    optional: true
+  },
+  // 电话号码
+  tel: {
+    type: CoreModel.Misc.PhoneNumber,
+    optional: true
+  },
+  // 电子邮件
+  email: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email,
+    optional: true
+  }
+});
 
