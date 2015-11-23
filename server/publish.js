@@ -68,7 +68,7 @@ Meteor.publish("countries", function () {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({}, fields);
+  return coll.find({}, fields, {sort: {'pinyin': 1}});
 });
 
 /**
@@ -81,5 +81,5 @@ Meteor.publish("localities", function (country) {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({'country.zhName': country}, fields);
+  return coll.find({'country.zhName': country}, fields, {sort: {'enName': 1}});
 });
