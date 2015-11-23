@@ -155,6 +155,17 @@ const commodityModify = React.createClass({
         const categoryIndex = $('.form-group.category>select').val();
         const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
 
+        // 获取RichText
+        const ue = UE.getEditor('ueContainer');
+        const desc = {
+          title: '商品介绍',
+          //summary: $('.form-group.introduction>textarea').val(),
+          body: ue.getContent()
+        };
+        // 截取summary, 保留所有空白符
+        const tmp = document.createElement("DIV");
+        tmp.innerHTML = desc.body;
+        desc.summary = (tmp.textContent || tmp.innerText || "").substring(0, 100);
 
         // tips: 现在timeRequired默认为true且不可修改
         //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
@@ -221,11 +232,7 @@ const commodityModify = React.createClass({
             summary: $('.form-group.traffic>textarea').val(),
             body: $('.form-group.traffic>textarea').val()
           }],
-          desc: {
-            title: '商品介绍',
-            summary: $('.form-group.introduction>textarea').val(),
-            body: $('.form-group.introduction>textarea').val()
-          },
+          desc: desc,
           price: priceInfo.price,
           marketPrice: priceInfo.marketPrice,
           plans: self.state.plans.map((plan) => {

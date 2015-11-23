@@ -173,7 +173,7 @@ let commodityGallery = React.createClass({
     //deprecated 利用图像的内容, 做MD5, 得到key
     const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
     const bk = 'avatar';
-    const prefix = 'avatar/';
+    const prefix = 'commodity/images/';
 
     Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
       if (!err && ret){
