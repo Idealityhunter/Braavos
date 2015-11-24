@@ -12,7 +12,7 @@ function resolveEtcdData() {
 
   const services = new EtcdHelper.EtcdServiceBuilder(url)
     .addEntry(['mongo-dev', 'mongo'])
-    .addEntry('yunkai')
+    .addEntry(['yunkai-dev', 'yunkai'])
     .addEntry('smscenter')
     .addEntry('idgen')
     .addEntry(['hedy-base', 'hedy'])
@@ -84,7 +84,7 @@ function initYunkaiService() {
   const Yunkai = module.Yunkai;
   const YunkaiTypes = module.YunkaiTypes;
 
-  const apiSet = ['getUserById', 'login'];
+  const apiSet = ['getUserById', 'login', 'createUserPoly'];
   const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {transport: 'framed'});
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }

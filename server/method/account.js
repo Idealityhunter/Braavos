@@ -47,7 +47,20 @@ Meteor.methods({
       return {user: {userId: userId, nickname: userInfo.nickName, avatar: userInfo.avatar}, seller: sellerInfo}
     } catch (err) {
       console.log(`Login failed: user=${user}`);
-      return undefined;
+      throw err;
+    }
+  },
+
+  // 新建用户
+  "account.createUser": (email, password) => {
+    const client = BraavosCore.Thrift.Yunkai.client;
+    try {
+      const user = client.createUserPoly("email", email, password, null);
+      user.userId = parseInt(user.userId.toString());
+      return user;
+    } catch (err) {
+      console.log(`Failed to create user: ${err}`);
+      throw err;
     }
   }
 });
