@@ -297,6 +297,9 @@ const commodityModify = React.createClass({
       }
     });
 
+    UM.delEditor('ueContainer');
+    UM.getEditor('ueContainer');
+
     // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证
     $('.commodity-basic-datepicker .input-daterange').datepicker({
       format: 'yyyy-mm-dd',

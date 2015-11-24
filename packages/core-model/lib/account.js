@@ -92,7 +92,8 @@ Account.UserInfo = new SimpleSchema({
   },
   // 用户角色
   roles: {
-    type: [Number]
+    type: [Number],
+    optional: true
   }
 });
 
