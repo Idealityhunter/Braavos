@@ -12,7 +12,8 @@ const numberInput = React.createClass({
       this.originValue = $(e.target).val();
     } else {
       $(e.target).val(this.originValue);
-    }
+    };
+    this.props.onChange && this.props.onChange(e);
   },
 
   render(){

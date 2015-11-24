@@ -171,6 +171,11 @@ const commodityPlansModal = React.createClass({
     });
   },
 
+  // 清除因为提交造成的error效果
+  _handleClearErrorClass(e){
+    $(e.taraget).removeClass('error');
+  },
+
   render() {
     const prefix = 'commodities.modify.';
     let i = 0;
@@ -183,11 +188,13 @@ const commodityPlansModal = React.createClass({
               <input type="text" className="input-sm form-control" name="start" placeholder="from" readOnly
                      defaultValue={pricing.timeRange[0]}
                      style={{backgroundColor: '#fff'}}
+                     onChange={this._handleClearErrorClass}
               />
               <span className="input-group-addon">-</span>
               <input type="text" className="input-sm form-control" name="end" placeholder="to" readOnly
                      defaultValue={pricing.timeRange[1]}
                      style={{backgroundColor: '#fff'}}
+                     onChange={this._handleClearErrorClass}
               />
             </div>
           </div>

@@ -17,6 +17,10 @@ let commodityModifyBook = React.createClass({
     unbook: '请输入退订或改订的相关规定'
   },
 
+  _handleClearErrorClass(e){
+    $(e.target).removeClass('error');
+  },
+
   render() {
     return (
       <div className="commodity-book-wrap">
@@ -25,7 +29,9 @@ let commodityModifyBook = React.createClass({
             <label className="">预定流程<span style={this.styles.asterisk}>*</span></label>
             <textarea className="form-control placeholder" rows="3"
                       placeholder={this.placeholders.book}
-                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[0].body : ''}/>
+                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[0].body : ''}
+                      onChange={this._handleClearErrorClass}
+            />
           </div>
         </form>
         <form className="form-horizontal">
@@ -33,7 +39,9 @@ let commodityModifyBook = React.createClass({
             <label className="">退改规定<span style={this.styles.asterisk}>*</span></label>
             <textarea className="form-control placeholder" rows="3"
                       placeholder={this.placeholders.unbook}
-                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[1].body : ''}/>
+                      defaultValue={(this.props.refundPolicy.length > 0) ? this.props.refundPolicy[1].body : ''}
+                      onChange={this._handleClearErrorClass}
+            />
           </div>
         </form>
       </div>

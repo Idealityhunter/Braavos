@@ -49,27 +49,65 @@ const commodityModify = React.createClass({
           switch (currentIndex){
             case 0: {
               // 名称,图片,时长和套餐是必须的
-              if (!$('.form-group.title>input').val()
-                || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
-                || !$('.form-group.cost-time>input').val()
-                || self.state.plans.length <= 0){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.title>input').val()
+              //  || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
+              //  || !$('.form-group.cost-time>input').val()
+              //  || self.state.plans.length <= 0){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.title>input').val()){
+                swal('请填写商品名称!', '', 'error');
+                $('.form-group.title>input').addClass('error');
                 return false;
-              }
+              };
+              if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0){
+                swal('请添加商品图片!', '', 'error');
+                return false;
+              };
+              if (!$('.form-group.cost-time>input').val()){
+                swal('请填写游玩时长!', '', 'error');
+                $('.form-group.cost-time>input').addClass('error');
+                return false;
+              };
+              if (self.state.plans.length <= 0){
+                swal('请添加套餐信息!', '', 'error');
+                return false;
+              };
               break;
             };
             case 2: {
               // 费用包含和使用方法是必须的
-              if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.charge-include>textarea').val()){
+                swal('请填写费用包含项目!', '', 'error');
+                $('.form-group.charge-include>textarea').addClass('error');
+                return false;
+              }
+              if (!$('.form-group.usage>textarea').val()){
+                swal('请填写商品使用方法!', '', 'error');
+                $('.form-group.usage>textarea').addClass('error');
                 return false;
               }
               break;
             };
             case 3: {
               // 预定和退改流程都是必须的
-              if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.book>textarea').val()){
+                swal('请填写预订流程!', '', 'error');
+                $('.form-group.book>textarea').addClass('error');
+                return false;
+              }
+              if (!$('.form-group.unbook>textarea').val()){
+                swal('请填写退订和改订的相关规定!', '', 'error');
+                $('.form-group.unbook>textarea').addClass('error');
                 return false;
               }
               break;
