@@ -39,6 +39,7 @@ lxp:thrift-helper
 lxp:etcd
 lvxingpai:braavos-core
 lvxingpai:core-model
+zephyre:ueditor
 
 zimme:active-route
 aldeed:simple-schema
