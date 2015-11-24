@@ -65,6 +65,7 @@ Account.UserInfo = new SimpleSchema({
   // 昵称
   nickName: {
     type: String,
+    regEx: /^[a-zA-Z0-9_\u4e00-\u9fa5]$/,
     min: 2,
     max: 32
   },

@@ -16,13 +16,17 @@ const SignupWithLxp = React.createClass({
 
   getInitialState() {
     return {
+      // 输入的用户名
       name: "",
+      // 输入的密码
       password: "",
+      // 登录失败
       loginFailed: false
     }
   },
 
   propTypes: {
+    // 通过旅行派账号的登录验证, 绑定商户账号
     onBindAccount: React.PropTypes.func
   },
 
@@ -51,9 +55,12 @@ const SignupWithLxp = React.createClass({
           input.focus();
         }, 10);
       } else if (this.props.onBindAccount) {
-        // 返回的结果: {user: ..., seller: ..., username: ..., password: ...}
+        // 返回的结果: {user: ..., username: ..., password: ...}
         // user是用户信息, seller是商户信息. 如果seller不为null, 说明已经绑定过了.
-        this.props.onBindAccount(_.extend(ret, {username: this.state.name, password: this.state.password}));
+        this.props.onBindAccount({
+          user: {userId: ret.user.userId}, seller: ret.seller, username: this.state.name,
+          password: this.state.password
+        });
       }
     });
   },
@@ -94,72 +101,163 @@ const SignupWoLxp = React.createClass({
 
   getInitialState() {
     return {
+      // 登录用户名(目前仅支持email)
       name: "",
-      password: "",
+      // 密码
+      password1: "",
+      // 密码确认
       password2: "",
+      // 店铺名称
+      sellerName: "",
+      // 两次输入的密码不匹配
       passwordNotAgree: false,
-      agreePolicy: true
+      // 哪一次输入的密码不符合, password1还是password2?
+      passwordNotAgreeIndex: null,
+      // 登录名不符合要求
+      invalidName: false,
+      // 密码不符合要求
+      invalidPassword: false,
+      // 哪一次输入的密码不正确, password1还是password2?
+      invalidPasswordIndex: null,
+      // 用户名已存在
+      nameExists: false
     };
   },
 
+  propTypes: {
+    onCreateUser: React.PropTypes.func
+  },
+
+  // 初始化overlay
+  // * state: 使用哪个state来控制状态
+  // * targetRef: 对应哪个component ref
+  _overlayBuilder(state, targetRef, messageKey) {
+    return <Overlay show={state} placement="right" target={() => ReactDOM.findDOMNode(this.refs[targetRef])}>
+      <Tooltip id={Meteor.uuid()}>
+        <FormattedMessage message={this.getIntlMessage("login.loginFailure")}/>
+      </Tooltip>
+    </Overlay>;
+  },
+
+  // 检查密码的有效性
+  _checkPassword(source, password) {
+    const state = {};
+    let result = false;
+
+    // 清除原有的overlay
+    ["invalidPassword", "passwordNotAgree"].forEach(key => {
+      state[key] = false;
+      state[`${key}Index`] = null;
+    });
+
+    // 检查密码的有效性
+    const re = /^[\x21-\x7e]{6,16}$/;
+    if (!re.test(password)) {
+      state.invalidPassword = true;
+      state.invalidPasswordIndex = source;
+    } else {
+      const passwords = _.pick(this.state, "password1", "password2");
+      passwords[source] = password;
+      const {password1: p1, password2: p2} = passwords;
+      if (p1 && p2 && p1 != p2) {
+        // 当两个password都非空且不等的时候, 报告错误
+        state.passwordNotAgree = true;
+        state.passwordNotAgreeIndex = source;
+      } else {
+        result = true;
+      }
+    }
+
+    return {result: result, state: state};
+  },
+
+  onInputPassword(source, evt) {
+    // 只处理密码
+    if (!_.contains(["password1", "password2"], source)) {
+      return;
+    }
+    const state = this._checkPassword(source, evt.target.value).state;
+    state[source] = evt.target.value;
+    this.setState(state);
+  },
+
   onInputChange(source, evt) {
-    this.setState({passwordNotAgree: false});
-    if (source == "name") {
-      this.setState({name: evt.target.value});
-    } else if (source == "password") {
-      this.setState({password: evt.target.value});
-    } else if (source == "password2") {
-      this.setState({password2: evt.target.value});
+    const sourceList = ["name", "sellerName"];
+    if (_.contains(sourceList, source)) {
+      const state = {};
+      state[source] = evt.target.value;
+      this.setState(state);
     }
   },
 
-  onOK(evt) {
-    // 验证密码是否一致
-    if (this.state.password != this.state.password2) {
-      this.setState({passwordNotAgree: true});
-      // 重新输入
-      setTimeout(() => {
-        const inputNode = ReactDOM.findDOMNode(this.refs.passwordInput2);
-        const len = this.state.password.length * 2;
-        const input = $(inputNode).find("input[type=password]")[0];
-        input.setSelectionRange(0, len);
-        input.focus();
-      }, 10);
-    } else if (this.props.onOK) {
-      this.props.onOK(evt);
+  onCreateUser(evt) {
+    // 输入有效性检查
+    if (this.state.invalidPassword || this.state.passwordNotAgree) {
+      return;
+    }
+    if (this.props.onCreateUser) {
+      this.props.onCreateUser({email: this.state.name.trim(), password: this.state.password1.trim()});
     }
   },
 
   render() {
-    const passwordInput =
-      <div>
-        <Input type="password" label="重复密码" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
-               value={this.state.password2} onChange={this.onInputChange.bind(this, "password2")}
-               placeholder="密码" ref="passwordInput2"
+    // 密码输入控件
+    const opts = {
+      password1: {
+        label: "密码",
+        placeholder: "请输入密码"
+      },
+      password2: {
+        label: "重复密码",
+        placeholder: "请重新输入密码"
+      }
+    };
+    const passwordInputs = _.keys(opts).map(key => {
+      const value = opts[key];
+      let overlay = null;
+      let overlayMessage = null;
+      if (this.state.invalidPassword && this.state.invalidPasswordIndex == key) {
+        // 密码不合法
+        overlayMessage = "密码必须是6~16位的字母, 数字或者英文符号";
+      } else if (this.state.passwordNotAgree && this.state.passwordNotAgreeIndex == key) {
+        // 密码不一致
+        overlayMessage = "密码输入不一致";
+      }
+      if (!!overlayMessage) {
+        overlay = (
+          <Overlay show={true} placement="right" target={() => ReactDOM.findDOMNode(this.refs[key])}>
+            <Tooltip id={Meteor.uuid()}>
+              {overlayMessage}
+            </Tooltip>
+          </Overlay>
+        );
+      } else {
+        overlay = <div/>;
+      }
+      return (
+        <div>
+          <Input type="password" label={value.label} labelClassName="col-xs-3" wrapperClassName="col-xs-9"
+                 value={this.state[key]} onChange={this.onInputPassword.bind(this, key)}
+                 placeholder={value.placeholder} ref={key}
           />
-        <Overlay show={this.state.passwordNotAgree} placement="right"
-                 target={() => ReactDOM.findDOMNode(this.refs.passwordInput2)}>
-          <Tooltip id={Meteor.uuid()}>
-            密码不一致
-          </Tooltip>
-        </Overlay>
-      </div>;
+          {overlay}
+        </div>
+      )
+    });
 
     return (
       <div style={{padding: "20px"}}>
         <form className="form-horizontal">
-          <Input type="text" label="账户名" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
-                 value={this.state.name} onChange={this.onInputChange.bind(this, "name")}
-                 placeholder="手机号码或email"
+          <div>
+            <Input type="text" label="账户名" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
+                   value={this.state.name} onChange={this.onInputChange.bind(this, "name")}
+                   placeholder="请输入email地址"
             />
-          <Input type="password" label="密码" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
-                 value={this.state.password} onChange={this.onInputChange.bind(this, "password")}
-                 placeholder="密码"
-            />
-          {passwordInput}
-
+          </div>
+          {passwordInputs[0]}
+          {passwordInputs[1]}
           <div style={{margin: "20px 20px 20px"}}>
-            <Button bsStyle="primary" block onClick={this.onOK}>注册</Button>
+            <Button bsStyle="primary" block onClick={this.onCreateUser}>注册</Button>
           </div>
         </form>
       </div>
@@ -273,8 +371,7 @@ export const RegistrationLayout = React.createClass({
       showRedirectHome: false,
 
       // 绑定或注册得到的用户/商户信息
-      user: null,
-      seller: null,
+      userId: null,
       username: "",
       password: ""
     };
@@ -287,7 +384,7 @@ export const RegistrationLayout = React.createClass({
   // 绑定了旅行派账号
   onBindAccount(ret) {
     const {user, seller, username, password} = ret;
-    this.setState({user: user, seller: seller, username: username, password: password});
+    this.setState({userId: user.userId, username: username, password: password});
     if (seller) {
       // 已有旅行派账号, 直接登录
       this.setState({showRedirectHome: true});
@@ -300,10 +397,26 @@ export const RegistrationLayout = React.createClass({
     login(this.state.username, this.state.password);
   },
 
+  // 创建旅行派账户
+  handleCreateUser(user) {
+    // 创建用户
+    const email = user.email;
+    const password = user.password;
+    Meteor.call("account.createUser", email, password, (err, ret) => {
+      if (err) {
+        console.log(`Failed to create user: ${err}`);
+      } else {
+        console.log(`Created new user: ${ret}`);
+        this.setState({userId: ret.userId, username: email, password: password});
+        this.showProfileEditor();
+      }
+    })
+  },
+
   // 创建卖家信息, 然后登录
   handleCreateSeller(info) {
     Meteor.call("marketplace.createSeller", {
-      sellerId: this.state.user.userId,
+      sellerId: this.state.userId,
       name: info.sellerName
     }, err => {
       if (!err) {
@@ -324,9 +437,9 @@ export const RegistrationLayout = React.createClass({
             <Tab eventKey={1} title="已有旅行派账号">
               <SignupWithLxp onBindAccount={this.onBindAccount}/>
             </Tab>
-            {/*<Tab eventKey={2} title="没有旅行派账号">
-              <SignupWoLxp onOK={this.showProfileEditor}/>
-            </Tab>*/}
+            <Tab eventKey={2} title="没有旅行派账号">
+              <SignupWoLxp onCreateUser={this.handleCreateUser}/>
+            </Tab>
           </Tabs>
         </div>
         <ProfileEditor showModal={this.state.showModal} onHide={() => this.setState({showModal: false})}
