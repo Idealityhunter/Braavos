@@ -5,7 +5,6 @@
 
 import {Tab, Tabs, Input, Button, Modal, Tooltip, Overlay, Label} from "/lib/react-bootstrap"
 import {Avatar} from "/client/common/avatar";
-import {Int64} from "/lib/node-int64"
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;

@@ -99,5 +99,6 @@ universe:modules-compiler@1.0.2
 url@1.0.5
 webapp@1.2.3
 webapp-hashing@1.0.5
-zephyre:react-intl@0.0.2_3
+zephyre:react-intl@0.0.2_4
+zephyre:ueditor@0.0.1
 zimme:active-route@2.3.2

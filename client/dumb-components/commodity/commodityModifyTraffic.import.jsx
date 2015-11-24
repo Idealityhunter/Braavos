@@ -4,21 +4,19 @@ var text;
 
 let commodityModifyTraffic = React.createClass({
   mixins: [IntlMixin],
-  componentWillMount() {
-    text = '\n\n\n\n\n\n请输入给游客的交通建议';
+  placeholders: {
+    trafficInfo: '请输入给游客的交通建议，比如游玩地址或乘车方案'
   },
-  componentDidMount() {
-    $('textarea').on('blur', function(e){
-      console.log(e.target.value);
-    });
-  },
+
   render() {
     return (
       <div className="commodity-traffic-wrap">
         <form className="form-horizontal">
           <div className="form-group traffic">
             <label className="">交通提示</label>
-            <textarea className="form-control" rows="13" placeholder={text}/>
+            <textarea className="form-control placeholder" rows="13"
+                      placeholder={this.placeholders.trafficInfo}
+                      defaultValue={(this.props.trafficInfo.length > 0) ? this.props.trafficInfo[0].body : ''}/>
           </div>
         </form>
       </div>

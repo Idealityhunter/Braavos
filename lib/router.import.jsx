@@ -78,11 +78,28 @@ FlowRouter.route('/commodities', {
 });
 
 // 商品管理 - 修改
-FlowRouter.route('/commodities/editor', {
-  name: 'commodityEditor',
+FlowRouter.route('/commodities/add', {
+  name: 'commodityAdd',
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData));
+  }
+});
+
+FlowRouter.route('/commodities/editor', {
+  name: 'commodityEditor',
+  triggersEnter: [loginCheck],
+  action(param, queryParam) {
+    const commodityId = queryParam.commodityId;
+    // 检查token是否是当前用户的商品
+    Meteor.call('commodity.editor.checkCommodityId', commodityId, (err, ret) => {
+      const isValid = (!err && ret.valid);
+      if (isValid) {
+        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData));
+      } else {
+        FlowRouter.go('home');
+      }
+    });
   }
 });
 

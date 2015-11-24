@@ -29,7 +29,7 @@ Meteor.publish("sellerInfo", function () {
 
 
 /**
- * 发布商品信息
+ * 发布商品列表信息
  */
 Meteor.publish("commodities", function () {
   const userId = parseInt(this.userId);
@@ -40,4 +40,46 @@ Meteor.publish("commodities", function () {
     return memo;
   }, {});
   return coll.find({'seller.sellerId': userId}, fields);
+});
+
+
+/**
+ * 发布商品信息
+ */
+Meteor.publish("commodityInfo", function (commodityId) {
+  const userId = parseInt(this.userId);
+  const coll = BraavosCore.Database.Braavos.Commodity;
+  const allowedFields = ["commodityId", "title", "seller", "country", "address", "category", "price", "marketPrice", "plans", "cover", "images", "notice", "refundPolicy", "trafficInfo", "desc"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+      memo[f] = 1;
+  return memo;
+}, {});
+  return coll.find({commodityId: commodityId, 'seller.sellerId': userId}, fields);
+})
+
+
+/**
+ * 发布国家列表信息
+ */
+Meteor.publish("countries", function () {
+  const coll = BraavosCore.Database.Braavos.Country;
+  const allowedFields = ["zhName", "pinyin", "code"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+  return coll.find({}, fields, {sort: {'pinyin': 1}});
+});
+
+/**
+ * 发布城市列表信息
+ */
+Meteor.publish("localities", function (country) {
+  const coll = BraavosCore.Database.Braavos.Locality;
+  const allowedFields = ["zhName", "country", "enName"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+  return coll.find({'country.zhName': country}, fields, {sort: {'enName': 1}});
 });

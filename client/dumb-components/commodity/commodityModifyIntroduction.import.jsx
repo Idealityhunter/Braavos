@@ -4,24 +4,24 @@ var text;
 
 let commodityModifyIntroduction = React.createClass({
   mixins: [IntlMixin],
-  componentWillMount() {
-    text = '\n\n\n\n\n\n请输入商品介绍';
+  placeholders: {
+    introduction: '请添加商品介绍，您可粘贴图片或编辑文字描述'
   },
-  componentDidMount() {
-    $('textarea').on('blur', function(e){
-      console.log(e.target.value);
-    });
-  },
+
   render() {
     return (
       <div className="commodity-introduction-wrap">
         <form className="form-horizontal">
           <div className="form-group introduction">
             <label className="">商品介绍</label>
-            {/*
-              TODO add the text editor
+            <div className="essay-contents">
+              <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
+            </div>
+            {/* origin textarea
+             <textarea className="form-control placeholder" rows="13"
+             placeholder={this.placeholders.introduction}
+             defaultValue={(this.props.desc.body) ? this.props.desc.body : ''}/>
             */}
-            <textarea className="form-control" rows="13" placeholder={text}/>
           </div>
         </form>
       </div>

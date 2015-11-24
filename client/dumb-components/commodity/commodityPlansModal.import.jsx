@@ -1,4 +1,5 @@
-import {Modal, Button} from "/lib/react-bootstrap"
+import {Modal, Button} from "/lib/react-bootstrap";
+import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -13,8 +14,9 @@ const commodityPlansModal = React.createClass({
         'price': pricing.price,
         'key': Meteor.uuid(),
         'timeRange': [moment(pricing.timeRange[0]).format('YYYY-MM-DD'), moment(pricing.timeRange[1]).format('YYYY-MM-DD')]
-      }))
-    }
+      }));
+    };
+
     return {
       pricing: transferredPricing.slice(),//控制ui
       originalPricing: transferredPricing.slice()//cache,存储进来编辑的状态
@@ -67,6 +69,7 @@ const commodityPlansModal = React.createClass({
     const $modal = $(e.target).parents('.modal-dialog');
     const $pricingList = $modal.find('.pricing-wrap');
 
+    // 获取当前修改的价格信息
     let newPricing = [];
     for (let i = 0; i < $pricingList.length; i++) {
       newPricing[i] = {
@@ -76,7 +79,46 @@ const commodityPlansModal = React.createClass({
           $($pricingList[i]).find('input[name=end]').val()
         ]
       };
+    };
+
+    // 检验价格信息
+    if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && pricingItem.price != ''}, true)){
+      swal('请输入售价', '', 'error');
+      return ;
     }
+
+    // 检查时间的起始和结束
+    if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && (!pricingItem.timeRange[0] || !pricingItem.timeRange[1] || pricingItem.timeRange[0] <= pricingItem.timeRange[1])}, true)){
+      swal('截止时间必须大于起始时间!', '', 'error');
+      return ;
+    }
+
+    // TODO 检验时间重叠情况
+    if (newPricing.length > 1) {
+      // 排序
+      newPricing.sort((pricingA, pricingB) => {
+        if (pricingA.timeRange[0] == null) return false;
+        if (pricingB.timeRange[0] == null) return true;
+        if (pricingA.timeRange[0] > pricingB.timeRange[0]) return true;
+        return false;
+      });
+
+      const dateInterval = newPricing[0].timeRange.slice();
+      let isValid = true;
+      for (let i = 1; i < newPricing.length; i++){
+        if (dateInterval[1] == null || dateInterval[0] == newPricing[i].timeRange[0] || dateInterval[1] >= newPricing[i].timeRange[0]){
+          isValid = false;
+          break;
+        }
+      };
+
+      if (!isValid){
+        swal('请输入正确的时间范围(时间范围不可以重叠)', '', 'error');
+        return ;
+      };
+    };
+
+    // 修改寄存器存储的原始价格信息
     this.setState({
       originalPricing: newPricing.slice(),
       pricing: newPricing.slice()
@@ -102,60 +144,30 @@ const commodityPlansModal = React.createClass({
     });
   },
 
-  //// 监控价格变化
-  //_handlePrice(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  _.extend(copyPricing[curIndex], {
-  //    price: $(e.target).val()
-  //  });
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-  //
-  //// 监控时间变化
-  //_handleStartTime(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  copyPricing[curIndex].timeRange[0] = $(e.target).val();
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-  //
-  //// 监控时间变化
-  //_handleEndTime(e){
-  //  const curIndex = $(e.target).parents('.pricing-wrap').attr('data-id');
-  //  let copyPricing = this.state.pricing.slice();
-  //  copyPricing[curIndex].timeRange[1] = $(e.target).val();
-  //  this.setState({
-  //    pricing: copyPricing
-  //  });
-  //},
-
   render() {
-    prefix = 'commodities.modify.';
+    const prefix = 'commodities.modify.';
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
-        <div className="pricing-wrap" data-id={i++} key={pricing.key}>
-          <input className="inline commodity-basic-price" type='text' placeholder="售价￥" defaultValue={pricing.price}/>
-          <div className="inline">
-            <div className="form-group commodity-basic-datepicker inline">
-              <div className="input-daterange input-group">
-                <input type="text" className="input-sm form-control" name="start" placeholder="from"
-                       defaultValue={pricing.timeRange[0]}
-                       onChange={evt=>{console.log(evt)}}
-                />
-                <span className="input-group-addon">-</span>
-                <input type="text" className="input-sm form-control" name="end" placeholder="to"
-                       defaultValue={pricing.timeRange[1]}/>
-              </div>
+      <div className="pricing-wrap" data-id={i++} key={pricing.key}>
+        <NumberInput className="inline commodity-basic-price" placeholder="售价￥" value={pricing.price}/>
+        <div className="inline">
+          <div className="form-group commodity-basic-datepicker inline" style={{width:350}}>
+            <div className="input-daterange input-group">
+              <input type="text" className="input-sm form-control" name="start" placeholder="from" readOnly
+                     defaultValue={pricing.timeRange[0]}
+                     style={{backgroundColor: '#fff'}}
+              />
+              <span className="input-group-addon">-</span>
+              <input type="text" className="input-sm form-control" name="end" placeholder="to" readOnly
+                     defaultValue={pricing.timeRange[1]}
+                     style={{backgroundColor: '#fff'}}
+              />
             </div>
           </div>
-          {(this.props.plan.status == 'edit') ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
         </div>
-      );
+        {(this.props.plan.status == 'edit') ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
+      </div>
+    );
     return (
       <Modal
         data-id={this.props.index}
@@ -165,7 +177,7 @@ const commodityPlansModal = React.createClass({
         id={"calendar-modal-" + this.props.index}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title">set price for {this.props.plan.title}</Modal.Title>
+          <Modal.Title id="contained-modal-title">{this.props.plan.title} 设置价格</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="commodity-basic-price-list">

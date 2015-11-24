@@ -1,5 +1,6 @@
 import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap"
+import {NumberInput} from '/client/common/numberInput';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -21,7 +22,7 @@ var commodity = React.createClass({
 
     Meteor.subscribe('commodities');
     const userId = parseInt(Meteor.userId());
-    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}).fetch() || [];
+    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}, {sort: {createTime: -1}}).fetch() || [];
     commodities = commodities.map(commodity => _.extend(commodity, {
       key: Meteor.uuid()
     }));
@@ -49,6 +50,58 @@ var commodity = React.createClass({
 
   },
 
+  // 下架商品
+  _handleDropCommodity(e){
+    const self = this;
+    e.preventDefault();
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    swal({
+      title: "确认下架?",
+      text: "",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText: "取消",
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "下架",
+      closeOnConfirm: false
+    }, function(){
+      Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'disabled', function(err, res){
+        if (err){
+          // 下架失敗
+          swal("下架失败!", "", "error");
+        };
+        if (res){
+          // 下架成功
+          swal("下架成功", "", "success");
+        }
+      });
+    });
+  },
+
+  // 上架商品
+  _handlePubCommodity(e){
+    const self = this;
+    e.preventDefault();
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'pub', function(err, res){
+      if (err){
+        // 上架失败
+        swal("上架失败!", "", "error");
+      };
+      if (res){
+        // 上架成功
+        swal("上架成功!", "", "success");
+      }
+    });
+  },
+
+  // 编辑商品
+  _handleEditCommodity(e){
+    const curIndex = $(e.target).parents('tr').attr('data-id');
+    const curCommodityId = this.data.commodities[curIndex].commodityId;
+    FlowRouter.go(`/commodities/editor?commodityId=${curCommodityId}`);
+  },
+
   styles: {
     addBtn: {
       marginTop: 25,
@@ -68,18 +121,37 @@ var commodity = React.createClass({
   },
   render() {
     let prefix = 'commodities.';
-    let i = 1;
+    let i = 0;
     const commodityList = this.data.commodities.map(commodity =>
-      <tr key={commodity.key}>
-        <td>{i++}</td>
+      <tr key={commodity.key} data-id={i} style={(commodity.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
+        <td>{++i}</td>
         <td>{commodity.commodityId}</td>
+        <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
-        <td>{commodity.desc}</td>
-        <td>已发布/已下架/审核中</td>
-        <td className="text-right">
+        <td>￥{commodity.price}{commodity.plans.length>1 ? '起' : ''}</td>
+        <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
+        <td>
+          {
+            ((status) => {
+                switch (status){
+                  case 'review': return '审核中';
+                  case 'pub': return '已发布';
+                  case 'disabled': return '已下架';
+                  default: return '已下架';
+                }
+            })(commodity.status)
+          }
+        </td>
+        <td className="text-right" style={{color: '#333'}}>
           <div className="btn-group">
-            <button className="btn-white btn btn-xs">编辑</button>
-            <button className="btn-white btn btn-xs">下架</button>
+            <button className="btn-white btn btn-xs" onClick={this._handleEditCommodity}>编辑</button>
+            {
+              (commodity.status == 'pub')
+                ? <button className="btn-white btn btn-xs" onClick={this._handleDropCommodity}>下架</button>
+                : (commodity.status == 'disabled')
+                  ? <button className="btn-white btn btn-xs" onClick={this._handlePubCommodity}>上架</button>
+                  : ''
+            }
           </div>
         </td>
       </tr>
@@ -96,23 +168,28 @@ var commodity = React.createClass({
         <div className="wrapper wrapper-content animated fadeInRight ecommerce">
           <div className="ibox-content m-b-sm border-bottom">
             <div className="row">
-              <a href="/commodities/editor" style={this.styles.addBtn}>
+              <a href="/commodities/add" style={this.styles.addBtn}>
                 <Button bsStyle="info" bsSize="small"><FormattedMessage message={this.getIntlMessage(prefix + 'btn.addCommodity')}/></Button>
               </a>
               <div className="col-sm-2">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-id"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></label>
-                  <input type="text" id="commodity-id" name="commodity-id" defaultValue="" placeholder="商品编号" className="form-control"/>
+                  {/*<input type="text" id="commodity-id" name="commodity-id" defaultValue="" placeholder="商品编号" className="form-control"/>*/}
+                  <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
                 </div>
               </div>
               <div className="col-sm-3">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></label>
                   <div className="input-daterange input-group">
-                    <input type="text" className="input-sm form-control" name="start" placeholder="" defaultValue="" style={this.styles.datepickerInput}/>
+                    <input type="text" className="input-sm form-control" name="start" placeholder="" defaultValue=""
+                           readOnly
+                           style={this.styles.datepickerInput}/>
                     <i className="fa fa-calendar cursor-pointer calender-price" style={this.styles.calendar}/>
                     <span className="input-group-addon">-</span>
-                    <input type="text" className="input-sm form-control" name="end" placeholder="" defaultValue="" style={this.styles.datepickerInput}/>
+                    <input type="text" className="input-sm form-control" name="end" placeholder="" defaultValue=""
+                           readOnly
+                           style={this.styles.datepickerInput}/>
                     <i className="fa fa-calendar cursor-pointer calender-price" style={this.styles.calendar}/>
                   </div>
                 </div>
@@ -143,17 +220,17 @@ var commodity = React.createClass({
                     <thead>
                       <tr>
                         <th data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
-                        {/*<th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>*/}
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
+                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
+                        <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
+                        <th data-hide="all" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
-                          <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
+                          <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
-                          <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                           */}
-                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
+                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
                         <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/></th>
                       </tr>
                     </thead>
