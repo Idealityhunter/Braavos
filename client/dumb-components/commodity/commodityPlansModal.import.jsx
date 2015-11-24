@@ -17,6 +17,15 @@ const commodityPlansModal = React.createClass({
       }));
     };
 
+    // 当没有填写信息的时候,默认提供一条价格信息(只有日期)
+    if (this.props.plan.pricing.length == 0){
+      transferredPricing = [{
+        'price': '',
+        'key': Meteor.uuid(),
+        'timeRange': [moment().format('YYYY-MM-DD'), moment(new Date().valueOf() + 1000 * 60 * 60 * 24 * 90).format('YYYY-MM-DD')]
+      }]
+    }
+
     return {
       pricing: transferredPricing.slice(),//控制ui
       originalPricing: transferredPricing.slice()//cache,存储进来编辑的状态
@@ -69,7 +78,7 @@ const commodityPlansModal = React.createClass({
     const $modal = $(e.target).parents('.modal-dialog');
     const $pricingList = $modal.find('.pricing-wrap');
 
-    // 获取当前修改的价格信息
+    // 获取价格信息的当前修改结果
     let newPricing = [];
     for (let i = 0; i < $pricingList.length; i++) {
       newPricing[i] = {
@@ -88,12 +97,30 @@ const commodityPlansModal = React.createClass({
     }
 
     // 检查时间的起始和结束
-    if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && (!pricingItem.timeRange[0] || !pricingItem.timeRange[1] || pricingItem.timeRange[0] <= pricingItem.timeRange[1])}, true)){
-      swal('截止时间必须大于起始时间!', '', 'error');
-      return ;
-    }
+    // 时间始末都可为null
+    //if (! _.reduce(newPricing, function(validate, pricingItem){ return validate && (!pricingItem.timeRange[0] || !pricingItem.timeRange[1] || pricingItem.timeRange[0] <= pricingItem.timeRange[1])}, true)){
+    //  swal('截止时间必须大于起始时间!', '', 'error');
+    //  return ;
+    //}
+    for (let i = 0; i < newPricing.length; i++ ){
+      if (!newPricing[i].timeRange[0]){
+        $($pricingList[i]).find('input[name=start]').addClass('error');
+        swal('起始时间不能为空!', '', 'error');
+        return ;
+      };
+      if (!newPricing[i].timeRange[1]){
+        $($pricingList[i]).find('input[name=end]').addClass('error');
+        swal('截止时间不能为空!', '', 'error');
+        return ;
+      };
+      if (newPricing[i].timeRange[0] > newPricing[i].timeRange[1]){
+        swal('截止时间必须不早于起始时间!', '', 'error');
+        return ;
+      };
+    };
 
-    // TODO 检验时间重叠情况
+
+    // 检验时间重叠情况
     if (newPricing.length > 1) {
       // 排序
       newPricing.sort((pricingA, pricingB) => {
@@ -165,7 +192,7 @@ const commodityPlansModal = React.createClass({
             </div>
           </div>
         </div>
-        {(this.props.plan.status == 'edit') ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
+        {(this.props.plan.status == 'edit' && this.state.pricing.length > 1) ? <i className='fa fa-minus-circle' onClick={this._handleDelete}/> : ''}
       </div>
     );
     return (

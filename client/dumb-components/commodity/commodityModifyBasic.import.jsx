@@ -137,7 +137,7 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'commodityName')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.title || ''}/>
+            <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.title || ''} style={{padding: 6}}/>
           </div>
           <div className="form-group address">
             <label className="label-text">
@@ -146,7 +146,7 @@ const commodityModifyBasic = React.createClass({
             </label>
             {countrySelect}
             {localitySelect}
-            <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''}/>
+            <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''} style={{padding: 6}}/>
           </div>
           <div className="form-group category">
             <label className="label-text">
@@ -185,7 +185,7 @@ const commodityModifyBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
-            <NumberInput className="inline placeholder" style={{width:50}}
+            <NumberInput className="inline placeholder" style={{width:50, padding:6}}
                          value={this.props.timeCost || ''}
                          placeholder=''
             />
