@@ -78,3 +78,4 @@ Misc.RichText = new SimpleSchema({
     optional: true
   }
 });
+

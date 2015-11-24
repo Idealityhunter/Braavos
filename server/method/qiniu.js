@@ -61,47 +61,5 @@ Meteor.methods({
       key : key,
       url : `http://${domain}/${key}`
     }
-  },
-
-  'getPicUpToken': function (op) {
-    check(op, Object);
-
-    const {bucketName, prefix, generator} = op;
-
-    // 生成key
-    let timestamp = '';
-    switch (generator){
-      case 1:
-        timestamp = moment().format('YYYYMMDDHHmmssSSS');
-        break;
-      default:
-        timestamp = moment().format('YYYYMMDDHHmmssSSS');
-    };
-
-    const key = `${prefix || ""}${timestamp}`;
-
-    // 生成token
-    const qiniu = BraavosCore.Qiniu;
-    const {name: name, domain: domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketName];
-    const returnBody = '{' +
-      '"key": $(key),' +
-      '"name": $(fname),' +
-      '"size": $(fsize),' +
-      '"w": $(imageInfo.width),' +
-      '"h": $(imageInfo.height),' +
-      '"fmt": $(imageInfo.format),' +
-      '"cm": $(imageInfo.colorModel),' +
-      '"hash": $(etag)' +
-      '}';
-    const putPolicy = new qiniu.rs.PutPolicy(`${name}:${key}`, undefined, undefined, undefined, returnBody);
-    const token = putPolicy.token();
-
-    return {
-      token: token,
-      //key: (op.prefix || '') + id + (op.suffix || ''),
-      key: key,
-      url: `http://${domain}/${key}`
-    };
-  },
-
+  }
 });
