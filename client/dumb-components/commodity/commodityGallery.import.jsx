@@ -189,7 +189,7 @@ let commodityGallery = React.createClass({
         }
         const blob = new Blob([writer], {type: "application/octet-stream"});
         form.append("file", blob);
-        form.append("file", imageSrc);
+        //form.append("file", imageSrc);
 
         // 发送post请求
         $.ajax({

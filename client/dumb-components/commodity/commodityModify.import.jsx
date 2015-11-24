@@ -11,6 +11,9 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  placeholders: {
+    introduction: '请添加商品介绍，您可粘贴图片或编辑文字描述'
+  },
   getInitialState(){
     return {
       plans: this.props.plans || []
@@ -156,11 +159,11 @@ const commodityModify = React.createClass({
         const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
 
         // 获取RichText
-        const ue = UE.getEditor('ueContainer');
+        const um = UM.getEditor('ueContainer');
         const desc = {
           title: '商品介绍',
           //summary: $('.form-group.introduction>textarea').val(),
-          body: ue.getContent()
+          body: um.getContent()
         };
         // 截取summary, 保留所有空白符
         const tmp = document.createElement("DIV");
@@ -297,8 +300,14 @@ const commodityModify = React.createClass({
       }
     });
 
+    // 初始化desc页面的um插件
     UM.delEditor('ueContainer');
-    UM.getEditor('ueContainer');
+    UM.delEditor('ueContainer');
+    const um = UM.getEditor('ueContainer');
+    um.ready(function(){
+      //设置编辑器的内容
+      um.setContent((self.props.desc && self.props.desc.body) ? self.props.desc.body : self.placeholders.introduction);
+    });
 
     // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证
     $('.commodity-basic-datepicker .input-daterange').datepicker({
@@ -311,7 +320,6 @@ const commodityModify = React.createClass({
       language: 'zh'
     });
   },
-
 
   handleChildSubmitState(plans){
     this.setState({
@@ -348,7 +356,7 @@ const commodityModify = React.createClass({
             />
           </div>
           <div className="introduction">
-            <CommodityModifyIntroduction desc={this.props.desc || {}}/>
+            <CommodityModifyIntroduction/>
           </div>
           <div className="instruction">
             <CommodityModifyInstruction notice={this.props.notice || []}/>
