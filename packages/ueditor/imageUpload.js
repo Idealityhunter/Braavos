@@ -2,6 +2,54 @@
  *
  * Created by zephyre on 11/24/15.
  */
+
+var sendAndInsertImage = function (file, editor) {
+  // drop或者paste的时候, 会触发这个函数
+  const reader = new FileReader();
+  let result = null;
+
+  var loadingId = 'loading_' + (+new Date()).toString(36);
+  editor.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="/images/spinner.gif">');
+  reader.onload = () => {
+    const result = reader.result;
+    const bk = 'avatar';
+    const prefix = 'commodity/desc/images/';
+
+    Meteor.call("qiniu.uploadImage", result, bk, prefix, (err, ret) => {
+      if (!err && ret){
+        // 组建form
+        const form = new FormData();
+        form.append("key", ret.key);
+        form.append("token", ret.token);
+        form.append("file", file);
+
+        // 发送post请求
+        $.ajax({
+          url: 'http://upload.qiniu.com',
+          data: form,
+          contentType: false,
+          processData: false,
+          type: 'POST',
+          success: function(data, textStatus, jqXHR) {
+            // TODO 修改成功
+            editor.execCommand('insertimage', {
+              src: ret.url,
+              _src: ret.url
+            });
+            $(`#${loadingId}`).remove();
+          },
+          error(jqXHR, textStatus, errorThrown){
+            // TODO 修改失败
+            $(`#${loadingId}`).remove();
+          }
+        });
+      }else{
+        // TODO 修改失败
+      }
+    });
+  };
+  reader.readAsDataURL(file);
+};
 /**
  * @description
  * 1.拖放文件到编辑区域，自动上传并插入到选区
@@ -15,30 +63,6 @@ UM.plugins['autoupload'] = function () {
 
   me.setOpt('pasteImageEnabled', true);
   me.setOpt('dropFileEnabled', true);
-  var sendAndInsertImage = function (file, editor) {
-    // drop或者paste的时候, 会触发这个函数
-    const reader = new FileReader();
-    let result = null;
-    reader.onload = () => {
-      const result = reader.result;
-      console.log(`Drag/paste done. Ready to upload. Length: ${result.length}`);
-      console.log(result);
-      const picLink = 'http://7sbm17.com1.z0.glb.clouddn.com/000003013081659c4b649a597b945da3?imageView2/1/w/200';
-      editor.execCommand('insertimage', {
-        src: picLink,
-        _src: picLink
-      });
-    };
-    reader.readAsDataURL(file);
-
-    //const cb = function () {
-    //  editor.execCommand('insertimage', {
-    //    src: picLink,
-    //    _src: picLink
-    //  });
-    //};
-    //formUpload(file, cb);
-  };
 
   function getPasteImage(e) {
     return e.clipboardData && e.clipboardData.items && e.clipboardData.items.length == 1 && /^image\//.test(e.clipboardData.items[0].type) ? e.clipboardData.items : null;
@@ -91,8 +115,18 @@ UM.registerUI('image',
     var $btn = $.eduibutton({
       icon: 'image',
       click: function () {
-        // TODO 弹出input对话框, 选择图像文件
-        console.log('TODO: input image file');
+        // 新建一个input,并且绑定上传事件
+        if ($('#ueditorUploadImage').length == 0){
+          this._$el.after('<input type="file" id="ueditorUploadImage" class="uploadFile" style="display:none"/>');
+          $('#ueditorUploadImage').on('change', function(e){
+            const file = e.target.files[0] || e.dataTransfer.files[0];
+            if(file){
+              sendAndInsertImage(file, me);
+            }
+          });
+        };
+
+        $('#ueditorUploadImage').trigger('click');
       },
       title: this.getLang('labelMap')['image'] || ''
     });
@@ -103,3 +137,4 @@ UM.registerUI('image',
     });
     return $btn;
   });
+

@@ -155,10 +155,16 @@ textarea{
 .commodity-basic-plan table{
     width: auto;
 }
+
 /*基本信息中plan-wrap的样式*/
 /*.plan-wrap{*/
     /*text-align: center;*/
 /*}*/
+
+.plan-wrap>div{
+    margin-right: 16px;
+}
+
 .plan-wrap .title{
     width: 250px;
 }
@@ -173,12 +179,27 @@ textarea{
 }
 .plan-wrap .controller{
     width: 200px;
-    /*text-align: left;*/
+}
+
+.commodity-modify-wrap .plan-list{
+    margin-bottom: 20px;
+    width: 800px;
+}
+
+.commodity-modify-wrap .plan-wrap{
+    border: 1px solid #aaa;
+    border-bottom: none;
+    padding: 5px;
+    width: 800px;
+}
+
+.commodity-modify-wrap .plan-wrap:last-child{
+    border-bottom: 1px solid #aaa;
 }
 
 /*基本信息中addPlan的样式*/
 .commodity-modify-wrap .commodity-add{
-    margin-left: 9px;
+    margin-left: 6px;
 }
 
 .commodity-modify-wrap .commodity-add>div{
@@ -345,4 +366,10 @@ input.placeholder::-moz-placeholder, textarea.placeholder:-ms-input-placeholder 
 input.placeholder::-moz-placeholder, textarea.placeholder::-webkit-input-placeholder {
     color: #DDDDDD;
     text-indent: 5px;
+}
+
+
+/*商品编辑页面中的文本框的错误处理样式*/
+input.error, textarea.error{
+    border: 1px solid red !important;
 }
