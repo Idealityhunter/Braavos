@@ -14,8 +14,8 @@ Package.onUse(function (api) {
   api.versionsFrom('1.2.1');
   api.use('ecmascript');
   api.use('jquery', 'client');
-  api.addFiles(['umeditor.config.js', 'umeditor.min.js', 'themes/default/css/umeditor.css', 'lang/zh-cn/zh-cn.js'], 'client');
-  //api.addFiles(['umeditor.config.js', 'umeditor.js', 'lang/zh-cn/zh-cn.js'], 'client');
+  api.addFiles(['umeditor.config.js', 'umeditor.min.js', 'imageUpload.js', 'themes/default/css/umeditor.css'
+    , 'themes/default/css/edui-scale.css', 'lang/zh-cn/zh-cn.js'], 'client');
 
   // 加载静态文件(包括图像, css, 以及部分js)
   function loadHelper(assetNames, path) {

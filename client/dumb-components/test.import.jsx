@@ -39,14 +39,15 @@ const test = React.createClass({
 
   componentDidMount(){
     UM.delEditor('ueContainer');
-    UM.getEditor('ueContainer');
+    const um = UM.getEditor('ueContainer');
+    um.setContent('<p><img src="http://ueditor.baidu.com/server/umeditor/upload/demo.jpg" /></p>');
   },
 
   render() {
     return (
       <div>
         <div className="essay-contents">
-          <script id="ueContainer" name="content" type="text/plain" style={{height: 700}}></script>
+          <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
         </div>
         <div>
           <input type="text" onChange={this.onChange} name="latitude" value={this.state.lat}/>
