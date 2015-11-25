@@ -14,19 +14,20 @@ let commodityGallery = React.createClass({
     let coverCount = 0;// 假如有两张一样的图片,就需要coverCount来取其中前面一张
     const images = (this.props.images.length > 0)
       ? this.props.images.map(image => {
-          if (image.url == this.props.cover.url && !coverCount){
-            coverCount = 1;
-            return {
-              src: image.url,
-              main: true
-            }
-          }else{
-            return {
-              src: image.url,
-              main: false
-            }
-          };
-        })
+      if (image.url == this.props.cover.url && !coverCount) {
+        coverCount = 1;
+        return {
+          src: image.url,
+          main: true
+        }
+      } else {
+        return {
+          src: image.url,
+          main: false
+        }
+      }
+      ;
+    })
       : [];
     return {
       // 是否显示上传图片的modal
@@ -50,16 +51,16 @@ let commodityGallery = React.createClass({
     const scrollLeft = (this.state.leftImages > 0);
     const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
 
-    if ($(e.target).hasClass('left')){
-      if (!scrollLeft) return ;
+    if ($(e.target).hasClass('left')) {
+      if (!scrollLeft) return;
       this.setState({
         leftImages: this.state.leftImages - 1
       });
       $('.scroll-wrap').animate({
         marginLeft: '+=90px'
       });
-    }else{
-      if (!scrollRight) return ;
+    } else {
+      if (!scrollRight) return;
       this.setState({
         leftImages: this.state.leftImages + 1
       });
@@ -81,10 +82,10 @@ let commodityGallery = React.createClass({
       confirmButtonColor: "#DD6B55",
       confirmButtonText: "删除",
       closeOnConfirm: false
-    }, function(){
+    }, function () {
       let copyImages = self.state.images.slice();
       // 当为主图时的逻辑
-      if (copyImages[curIndex].main && copyImages.length > 1){
+      if (copyImages[curIndex].main && copyImages.length > 1) {
         if (curIndex != 0)
           copyImages[0].main = true;
         else
@@ -92,18 +93,18 @@ let commodityGallery = React.createClass({
       }
 
       // 当为focus图的逻辑时
-      if (curIndex == self.state.focusImageIndex){
-        if (copyImages.length > 1){
+      if (curIndex == self.state.focusImageIndex) {
+        if (copyImages.length > 1) {
           self.setState({
             focusImageIndex: 0
           })
-        }else{
+        } else {
           self.setState({
             focusImageIndex: null
           })
         }
-      }else{
-        if (curIndex < self.state.focusImageIndex){
+      } else {
+        if (curIndex < self.state.focusImageIndex) {
           self.setState({
             focusImageIndex: self.state.focusImageIndex - 1
           })
@@ -171,12 +172,12 @@ let commodityGallery = React.createClass({
     const imageSrc = evt.croppedImage;
 
     //deprecated 利用图像的内容, 做MD5, 得到key
-    const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
+    const imageData = atob(imageSrc.replace(/^data:image\/[a-z]+;base64,/, ""));
     const key = `commodity/images/${CryptoJS.MD5(imageData).toString()}`;
     const bucketKey = "commodity";
 
     Meteor.call("qiniu.getUploadToken", bucketKey, key, {}, (err, ret) => {
-      if (!err && ret){
+      if (!err && ret) {
         // 组建form
         const form = new FormData();
         form.append("key", ret.key);
@@ -184,7 +185,7 @@ let commodityGallery = React.createClass({
 
         // 添加文件
         const writer = new Uint8Array(imageData.length);
-        for (let i=0; i<writer.length; i++) {
+        for (let i = 0; i < writer.length; i++) {
           writer[i] = imageData.charCodeAt(i);
         }
         const blob = new Blob([writer], {type: "application/octet-stream"});
@@ -198,7 +199,7 @@ let commodityGallery = React.createClass({
           contentType: false,
           processData: false,
           type: 'POST',
-          success: function(data, textStatus, jqXHR) {
+          success: function (data, textStatus, jqXHR) {
             // TODO 修改成功的状态转换
             let copyImages = self.state.images.slice();
             copyImages.push({
@@ -219,7 +220,7 @@ let commodityGallery = React.createClass({
             });
           }
         });
-      }else{
+      } else {
         // TODO 修改失败的状态转换
         self.setState({
           imagePreloading: false
@@ -261,7 +262,7 @@ let commodityGallery = React.createClass({
                     imageSrc={this.state.uploadModalImageSrc} showModal={true} aspectRatio={1}
                     imageMaxWidth={500}
                     onOk={this.handleModifyImage}
-                    onClose={this.handleCloseUploadModal} />
+                    onClose={this.handleCloseUploadModal}/>
       :
       <div />;
 
@@ -271,7 +272,8 @@ let commodityGallery = React.createClass({
     let i = 0;
     const imgList = this.state.images.map((img) =>
       <div className='inline img-wrap' key={Meteor.uuid()} data-id={i++}>
-        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={`${img.src}?imageView2/2/w/128/h/128`} alt="" onClick={this.handleFocus}/>
+        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={`${img.src}?imageView2/2/w/128/h/128`}
+             alt="" onClick={this.handleFocus}/>
         <i className='fa fa-trash-o' onClick={this.handleDelete}/>
         <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
       </div>
@@ -284,8 +286,10 @@ let commodityGallery = React.createClass({
         </div>
 
         <div className="img-view" style={{position:'relative'}}>
-          <img src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''} alt=""
-               style={this.styles.focusImg}/>
+          <img
+            src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''}
+            alt=""
+            style={this.styles.focusImg}/>
           {preloader}
         </div>
         <div className="scroll-view">
@@ -295,7 +299,8 @@ let commodityGallery = React.createClass({
               {imgList}
               <div className="select-frame img-wrap inline">
                 <label className="plus cursor-pointer" htmlFor="upload-file-input">+</label>
-                <input id="upload-file-input" className="hidden" type="file" onChange={this.changeImage} preloading={this.state.imagePreloading}/>
+                <input id="upload-file-input" className="hidden" type="file" onChange={this.changeImage}
+                       preloading={this.state.imagePreloading}/>
               </div>
             </div>
           </div>

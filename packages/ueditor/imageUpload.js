@@ -6,17 +6,17 @@
 var sendAndInsertImage = function (file, editor) {
   // drop或者paste的时候, 会触发这个函数
   const reader = new FileReader();
-  let result = null;
-
-  var loadingId = 'loading_' + (+new Date()).toString(36);
-  editor.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="/images/spinner.gif">');
+  const loadingId = `loading_${Meteor.uuid()}`;
+  editor.execCommand('inserthtml', `<img class="loadingclass" id="${loadingId}" src="/images/spinner.gif">`);
   reader.onload = () => {
     const result = reader.result;
-    const bk = 'avatar';
-    const prefix = 'commodity/desc/images/';
+    // TODO 考虑这种情况: 将来umeditor可能会用在非commodity的场合. 所以, 应该考虑一下bucketKey和prefix的命名.
+    const bucketKey = "commodity";
+    const imageData = atob(result.replace(/^data:image\/[a-z]+;base64,/, ""));
+    const key = `commodity/images/${CryptoJS.MD5(imageData).toString()}`;
 
-    Meteor.call("qiniu.uploadImage", result, bk, prefix, (err, ret) => {
-      if (!err && ret){
+    Meteor.call("qiniu.getUploadToken", bucketKey, key, {}, (err, ret) => {
+      if (!err && ret) {
         // 组建form
         const form = new FormData();
         form.append("key", ret.key);
@@ -30,7 +30,7 @@ var sendAndInsertImage = function (file, editor) {
           contentType: false,
           processData: false,
           type: 'POST',
-          success: function(data, textStatus, jqXHR) {
+          success: function (data, textStatus, jqXHR) {
             // TODO 修改成功
             editor.execCommand('insertimage', {
               src: ret.url,
@@ -43,7 +43,7 @@ var sendAndInsertImage = function (file, editor) {
             $(`#${loadingId}`).remove();
           }
         });
-      }else{
+      } else {
         // TODO 修改失败
       }
     });
@@ -116,15 +116,16 @@ UM.registerUI('image',
       icon: 'image',
       click: function () {
         // 新建一个input,并且绑定上传事件
-        if ($('#ueditorUploadImage').length == 0){
+        if ($('#ueditorUploadImage').length == 0) {
           this._$el.after('<input type="file" id="ueditorUploadImage" class="uploadFile" style="display:none"/>');
-          $('#ueditorUploadImage').on('change', function(e){
+          $('#ueditorUploadImage').on('change', function (e) {
             const file = e.target.files[0] || e.dataTransfer.files[0];
-            if(file){
+            if (file) {
               sendAndInsertImage(file, me);
             }
           });
-        };
+        }
+        ;
 
         $('#ueditorUploadImage').trigger('click');
       },
