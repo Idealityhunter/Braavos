@@ -172,10 +172,10 @@ let commodityGallery = React.createClass({
 
     //deprecated 利用图像的内容, 做MD5, 得到key
     const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
-    const bk = 'avatar';
-    const prefix = 'commodity/images/';
+    const key = `commodity/images/${CryptoJS.MD5(imageData).toString()}`;
+    const bucketKey = "commodity";
 
-    Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
+    Meteor.call("qiniu.getUploadToken", bucketKey, key, {}, (err, ret) => {
       if (!err && ret){
         // 组建form
         const form = new FormData();
