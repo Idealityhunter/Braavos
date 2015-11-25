@@ -19,6 +19,8 @@ let leftSiderBar = React.createClass({
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
+      // 假如是新的avtar结构,要做特殊处理
+      userInfo.avatar.url && (userInfo.avatar = userInfo.avatar.url);
       userInfo.avatar += '?imageView2/2/w/48/h/48';
     } else {
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
