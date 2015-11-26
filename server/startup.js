@@ -117,6 +117,11 @@ function initQiniuSDK() {
   BraavosCore.Qiniu = qiniu;
 }
 
+function initKadira() {
+  const {appId, appSecret} = BraavosCore.RootConf.braavos.kadira;
+  Kadira.connect(appId, appSecret);
+}
+
 Meteor.startup(()=> {
   console.log('Server startup');
   // 获取etcd设置
@@ -131,4 +136,6 @@ Meteor.startup(()=> {
 
   initQiniuSDK();
 
+  // 初始化Kadira
+  initKadira();
 });

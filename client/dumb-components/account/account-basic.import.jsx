@@ -94,6 +94,8 @@ export const AccountBasic = React.createClass({
 
     // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
     if (userInfo && userInfo.avatar) {
+      // 假如是新的avtar结构,要做特殊处理
+      userInfo.avatar.url && (userInfo.avatar = userInfo.avatar.url);
       userInfo.avatar = userInfo.avatar.indexOf("qiniudn") ? `${userInfo.avatar}?imageView2/2/w/128/h/128` : userInfo.avatar;
     } else {
       userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
@@ -135,12 +137,12 @@ export const AccountBasic = React.createClass({
     const imageSrc = evt.croppedImage;
 
     //deprecated 利用图像的内容, 做MD5, 得到key
-    const imageData = atob(imageSrc.replace(/^data:image\/(png|jpg);base64,/, ""));
-    const bk = 'avatar';
-    const prefix = 'avatar/';
+    const imageData = atob(imageSrc.replace(/^data:image\/[a-z]+;base64,/, ""));
+    const key = `avatar/${CryptoJS.MD5(imageData).toString()}`;
+    const bucketKey = "avatar";
 
-    Meteor.call("qiniu.uploadImage", imageSrc, bk, prefix, (err, ret) => {
-      if (!err && ret){
+    Meteor.call("qiniu.getUploadToken", bucketKey, key, {}, (err, ret) => {
+      if (!err && ret) {
         // 组建form
         const form = new FormData();
         form.append("key", ret.key);
@@ -148,7 +150,7 @@ export const AccountBasic = React.createClass({
 
         // 添加文件
         const writer = new Uint8Array(imageData.length);
-        for (let i=0; i<writer.length; i++) {
+        for (let i = 0; i < writer.length; i++) {
           writer[i] = imageData.charCodeAt(i);
         }
         const blob = new Blob([writer], {type: "application/octet-stream"});
@@ -162,8 +164,8 @@ export const AccountBasic = React.createClass({
           contentType: false,
           processData: false,
           type: 'POST',
-          success: function(data, textStatus, jqXHR){
-            Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: ret.url});
+          success: function (data, textStatus, jqXHR) {
+            Meteor.call("account.basicInfo.update", Meteor.userId(), {avatar: {url: ret.url}});
             self.setState({avatarPreloading: false});
           },
           error(jqXHR, textStatus, errorThrown){
@@ -187,7 +189,7 @@ export const AccountBasic = React.createClass({
                     imageSrc={this.state.avatarModalImageSrc} showModal={true} aspectRatio={1}
                     imageMaxWidth={500}
                     onOk={this.handleModifyAvatar}
-                    onClose={this.handleCloseAvatarModal} />
+                    onClose={this.handleCloseAvatarModal}/>
       :
       <div />;
 
@@ -204,7 +206,7 @@ export const AccountBasic = React.createClass({
                         onSubmit={event=>{
                            Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value});
                          }}
-              />
+            />
           </div>
           <hr />
           <div className="form-group">
@@ -237,7 +239,7 @@ export const AccountBasic = React.createClass({
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
                         })}
-              />
+            />
           </div>
           <hr />
           <div className="form-group">
@@ -250,7 +252,7 @@ export const AccountBasic = React.createClass({
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
                         })}
-              />
+            />
           </div>
           <hr />
           <div className="form-group">
@@ -263,7 +265,7 @@ export const AccountBasic = React.createClass({
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
                         })}
-              />
+            />
           </div>
           {/*
            <div className="form-group">

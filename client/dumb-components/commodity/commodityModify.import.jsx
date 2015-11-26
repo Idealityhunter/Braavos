@@ -11,6 +11,9 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  placeholders: {
+    introduction: '请添加商品介绍，您可粘贴图片或编辑文字描述'
+  },
   getInitialState(){
     return {
       plans: this.props.plans || []
@@ -49,27 +52,65 @@ const commodityModify = React.createClass({
           switch (currentIndex){
             case 0: {
               // 名称,图片,时长和套餐是必须的
-              if (!$('.form-group.title>input').val()
-                || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
-                || !$('.form-group.cost-time>input').val()
-                || self.state.plans.length <= 0){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.title>input').val()
+              //  || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
+              //  || !$('.form-group.cost-time>input').val()
+              //  || self.state.plans.length <= 0){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.title>input').val()){
+                swal('请填写商品名称!', '', 'error');
+                $('.form-group.title>input').addClass('error');
                 return false;
-              }
+              };
+              if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0){
+                swal('请添加商品图片!', '', 'error');
+                return false;
+              };
+              if (!$('.form-group.cost-time>input').val()){
+                swal('请填写游玩时长!', '', 'error');
+                $('.form-group.cost-time>input').addClass('error');
+                return false;
+              };
+              if (self.state.plans.length <= 0){
+                swal('请添加套餐信息!', '', 'error');
+                return false;
+              };
               break;
             };
             case 2: {
               // 费用包含和使用方法是必须的
-              if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.charge-include>textarea').val()){
+                swal('请填写费用包含项目!', '', 'error');
+                $('.form-group.charge-include>textarea').addClass('error');
+                return false;
+              }
+              if (!$('.form-group.usage>textarea').val()){
+                swal('请填写商品使用方法!', '', 'error');
+                $('.form-group.usage>textarea').addClass('error');
                 return false;
               }
               break;
             };
             case 3: {
               // 预定和退改流程都是必须的
-              if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
-                // TODO 弹窗提示?还是别的?
+              //if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
+              //  // TODO 弹窗提示?还是别的?
+              //  return false;
+              //}
+              if (!$('.form-group.book>textarea').val()){
+                swal('请填写预订流程!', '', 'error');
+                $('.form-group.book>textarea').addClass('error');
+                return false;
+              }
+              if (!$('.form-group.unbook>textarea').val()){
+                swal('请填写退订和改订的相关规定!', '', 'error');
+                $('.form-group.unbook>textarea').addClass('error');
                 return false;
               }
               break;
@@ -156,11 +197,11 @@ const commodityModify = React.createClass({
         const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
 
         // 获取RichText
-        const ue = UE.getEditor('ueContainer');
+        const um = UM.getEditor('ueContainer');
         const desc = {
           title: '商品介绍',
           //summary: $('.form-group.introduction>textarea').val(),
-          body: ue.getContent()
+          body: um.getContent()
         };
         // 截取summary, 保留所有空白符
         const tmp = document.createElement("DIV");
@@ -297,21 +338,26 @@ const commodityModify = React.createClass({
       }
     });
 
+    // 初始化desc页面的um插件
     UM.delEditor('ueContainer');
-    UM.getEditor('ueContainer');
+    UM.delEditor('ueContainer');
+    const um = UM.getEditor('ueContainer');
+    um.ready(function(){
+      //设置编辑器的内容
+      um.setContent((self.props.desc && self.props.desc.body) ? self.props.desc.body : self.placeholders.introduction);
+    });
 
     // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证
     $('.commodity-basic-datepicker .input-daterange').datepicker({
+      language: 'zh',
       format: 'yyyy-mm-dd',
       keyboardNavigation: false,
       forceParse: false,
       autoclose: true,
       //language: 'en'
       // TODO 待解决 => 希望能够展示中文的月份等信息
-      language: 'zh'
     });
   },
-
 
   handleChildSubmitState(plans){
     this.setState({
@@ -348,7 +394,7 @@ const commodityModify = React.createClass({
             />
           </div>
           <div className="introduction">
-            <CommodityModifyIntroduction desc={this.props.desc || {}}/>
+            <CommodityModifyIntroduction/>
           </div>
           <div className="instruction">
             <CommodityModifyInstruction notice={this.props.notice || []}/>

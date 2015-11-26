@@ -3,6 +3,39 @@
  * Created by zephyre on 11/12/15.
  */
 
+/**
+ * 生成七牛上传的token
+ * @param bucketKey
+ * @param key
+ * @param options
+ * @returns {{token, key: *, url: *}}
+ */
+function getUploadToken(bucketKey, key, options) {
+  const qiniu = BraavosCore.Qiniu;
+  const {name: name, domain: domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketKey];
+
+  const returnBody = '{' +
+    '"key": $(key),' +
+    '"name": $(fname),' +
+    '"size": $(fsize),' +
+    '"w": $(imageInfo.width),' +
+    '"h": $(imageInfo.height),' +
+    '"fmt": $(imageInfo.format),' +
+    '"cm": $(imageInfo.colorModel),' +
+    '"hash": $(etag)' +
+    '}';
+  const putPolicy = new qiniu.rs.PutPolicy(`${name}:${key}`, undefined, undefined, undefined, returnBody);
+  _.extend(putPolicy, options || {});
+  putPolicy.insertOnly = 1;
+  const token = putPolicy.token();
+
+  return {
+    token: token,
+    key: key,
+    url: `http://${domain}/${key}`
+  }
+}
+
 Meteor.methods({
   // Deprecated 上传
   //"qiniu.uploadAvatar": function(data, bucketName, prefix) {
@@ -35,73 +68,16 @@ Meteor.methods({
   //  return wrapUpload(token, key, rawData, extra);
   //},
 
-  "qiniu.uploadImage": function(data, bucketName, prefix) {
-    const crypto = Npm.require('crypto');
-    const hash = crypto.createHash('md5').update(data, 'utf5').digest('hex').toString();
-    const key = `${prefix || ""}${hash}`;
-
-    const qiniu = BraavosCore.Qiniu;
-    const {name: name, domain: domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketName];
-
-    const returnBody = '{' +
-      '"key": $(key),' +
-      '"name": $(fname),' +
-      '"size": $(fsize),' +
-      '"w": $(imageInfo.width),' +
-      '"h": $(imageInfo.height),' +
-      '"fmt": $(imageInfo.format),' +
-      '"cm": $(imageInfo.colorModel),' +
-      '"hash": $(etag)' +
-      '}';
-    const putPolicy = new qiniu.rs.PutPolicy(`${name}:${key}`, undefined, undefined, undefined, returnBody);
-    const token = putPolicy.token();
-
-    return {
-      token: token,
-      key : key,
-      url : `http://${domain}/${key}`
-    }
-  },
-
-  'getPicUpToken': function (op) {
-    check(op, Object);
-
-    const {bucketName, prefix, generator} = op;
-
-    // 生成key
-    let timestamp = '';
-    switch (generator){
-      case 1:
-        timestamp = moment().format('YYYYMMDDHHmmssSSS');
-        break;
-      default:
-        timestamp = moment().format('YYYYMMDDHHmmssSSS');
-    };
-
-    const key = `${prefix || ""}${timestamp}`;
-
-    // 生成token
-    const qiniu = BraavosCore.Qiniu;
-    const {name: name, domain: domain} = BraavosCore.RootConf.braavos.qiniu.buckets[bucketName];
-    const returnBody = '{' +
-      '"key": $(key),' +
-      '"name": $(fname),' +
-      '"size": $(fsize),' +
-      '"w": $(imageInfo.width),' +
-      '"h": $(imageInfo.height),' +
-      '"fmt": $(imageInfo.format),' +
-      '"cm": $(imageInfo.colorModel),' +
-      '"hash": $(etag)' +
-      '}';
-    const putPolicy = new qiniu.rs.PutPolicy(`${name}:${key}`, undefined, undefined, undefined, returnBody);
-    const token = putPolicy.token();
-
-    return {
-      token: token,
-      //key: (op.prefix || '') + id + (op.suffix || ''),
-      key: key,
-      url: `http://${domain}/${key}`
-    };
-  },
-
+  /**
+   *
+   * @param key
+   //* @param data datauri的形式
+   * @param bucketKey 存放在哪个bucket中. 对应于braavis.qiniu.buckets中的一个key
+   //* @param prefix 上传图像的key的前缀
+   * @param options
+   * @returns {{token, key: *, url: *}}
+   */
+  "qiniu.getUploadToken": function (bucketKey, key, options) {
+    return getUploadToken(bucketKey, key, options);
+  }
 });
