@@ -66,7 +66,6 @@ const commodityModifyBasic = React.createClass({
   // 清除因为提交造成的error效果
   _handleClearErrorClass(e){
     $(e.target).removeClass('error');
-    console.log(e);
   },
 
   render() {
