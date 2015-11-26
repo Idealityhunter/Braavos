@@ -19,6 +19,8 @@ export const AccountBasic = React.createClass({
       // 上一次更新的值. 每次blur的时候, 将检查这一数值.
       // 只有当二者不一致的时候, 才会真正执行提交的操作
       this.lastSubmit = undefined;
+      // 商户介绍
+      this.sellerDesc = "";
     };
 
     return {
@@ -36,10 +38,21 @@ export const AccountBasic = React.createClass({
     }
   },
 
+  componentDidUpdate() {
+    const um = UM.getEditor('ueContainer');
+    const desc = this.data.sellerInfo.desc || {};
+    um.setContent(desc.body || "");
+  },
+
   componentDidMount() {
-    //// 初始化avatar对象
-    //const avatar = ReactDOM.findDOMNode(this.refs["avatar"]);
-    //$(avatar).find("label").attr("for", "file-input");
+    // 初始化desc页面的um插件
+    UM.delEditor('ueContainer');
+    const um = UM.getEditor('ueContainer');
+    $("#ueContainer").blur(function (evt) {
+      const desc = um.getContent();
+      const doc = {"desc.body": desc};
+      Meteor.call("marketplace.seller.update", Meteor.userId(), doc);
+    });
   },
 
   // TextEditor中用户按下Esc, 取消编辑操作的事件
@@ -180,6 +193,18 @@ export const AccountBasic = React.createClass({
     })
   },
 
+  // 生成一个text field
+  _buildTextField(message, placeholder, onSubmit, label) {
+    return (
+      <div className="form-group">
+        <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+          <FormattedMessage message={message}/>
+        </label>
+        <TextEditor placeholder={placeholder} label={label} onSubmit={onSubmit}/>
+      </div>
+    );
+  },
+
   render() {
     const prefix = 'accountInfo.basicTab';
 
@@ -193,20 +218,25 @@ export const AccountBasic = React.createClass({
       :
       <div />;
 
+    const textFields = {
+      nickname: [
+        this.getIntlMessage(`${prefix}.nickname`),
+        this.getIntlMessage(`${prefix}.input.nickname`),
+        event => Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value}),
+        this.data.userInfo.nickName
+      ],
+      sellerName: [
+        this.getIntlMessage(`${prefix}.sellerName`),
+        this.getIntlMessage(`${prefix}.input.sellerName`),
+        event => Meteor.call("marketplace.seller.update", Meteor.userId(), {name: event.value}),
+        this.data.sellerInfo.name
+      ]
+    };
+
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                        label={this.data.userInfo.nickName}
-                        onSubmit={event=>{
-                           Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value});
-                         }}
-            />
-          </div>
+          {this._buildTextField.apply(this, textFields.nickname)}
           <hr />
           <div className="form-group avatar">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
@@ -221,48 +251,61 @@ export const AccountBasic = React.createClass({
             </div>
           </div>
           <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.realName`)}/>
-          </div>
+          {this._buildTextField.apply(this, textFields.sellerName)}
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.tel`)}/>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}.sellerDesc`)}/>
             </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
-                        label={this.data.sellerInfo.contact.number}
-                        onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
-                        })}
-            />
+            <div className="col-xs-6 col-sm-7 col-md-8">
+              <script id="ueContainer" name="content" type="text/plain" style={{width: "auto", height: 300}}></script>
+            </div>
+            <div><p style={{display: "none"}}>{(this.data.sellerInfo.sellerDesc||{}).body}</p></div>
           </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.email`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
-                        label={this.data.sellerInfo.email}
-                        onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
-                        })}
-            />
-          </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.address`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
-                        label={this.data.sellerInfo.address}
-                        onSubmit={event=>this.handleSubmit(event, ()=>{
-                          Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
-                        })}
-            />
-          </div>
+          {/*
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.realName`)}/>
+           </div>
+           <hr />
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.tel`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
+           label={this.data.sellerInfo.contact.number}
+           onSubmit={event=>this.handleSubmit(event, ()=>{
+           Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
+           })}
+           />
+           </div>
+           <hr />
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.email`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
+           label={this.data.sellerInfo.email}
+           onSubmit={event=>this.handleSubmit(event, ()=>{
+           Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
+           })}
+           />
+           </div>
+           <hr />
+           <div className="form-group">
+           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+           <FormattedMessage message={this.getIntlMessage(`${prefix}.address`)}/>
+           </label>
+           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
+           label={this.data.sellerInfo.address}
+           onSubmit={event=>this.handleSubmit(event, ()=>{
+           Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
+           })}
+           />
+           </div>
+           */}
           {/*
            <div className="form-group">
            <label className="col-xs-4 col-sm-3 col-md-2 control-label">

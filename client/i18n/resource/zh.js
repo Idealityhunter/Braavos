@@ -40,6 +40,8 @@ BraavosCore.IntlData.zh = {
         nickname: '昵称',
         avatar: '头像',
         changeAvatar: "修改头像",
+        sellerName: '商户名称',
+        sellerDesc: '商户介绍',
         realName: '真实姓名',
         tel: '联系电话',
         email: 'Email',
@@ -51,6 +53,7 @@ BraavosCore.IntlData.zh = {
         // START: 输入框的placeholder
         input: {
           nickname: '请输入您的昵称',
+          sellerName: '请输入商户名称',
           realName: '请输入您的真实姓名',
           tel: '请输入您的联系电话',
           email: '请输入您的Email',
