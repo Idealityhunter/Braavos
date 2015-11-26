@@ -65,6 +65,9 @@ const commodityPlans = React.createClass({
       const arrayIndex = curIndex - 1;
       let copyPlan = self.state.plans.slice();
       copyPlan.splice(arrayIndex, 1);
+
+      // 提交修改给父组件
+      self.props.handleSubmitState(copyPlan);
       self.setState({
         plans: copyPlan
       });
@@ -80,6 +83,8 @@ const commodityPlans = React.createClass({
     let copyPlan = this.state.plans;
     copyPlan = copyPlan.concat(_.clone(this.state.plans[arrayIndex]));
     copyPlan[copyPlan.length - 1].planId = Meteor.uuid();
+
+    // 提交修改给父组件
     this.props.handleSubmitState(copyPlan);
     this.setState({
       plans: copyPlan
@@ -106,6 +111,7 @@ const commodityPlans = React.createClass({
 
     if (Match.test(_.extend(_.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
       let copyPlan = this.state.plans.slice().concat(addPlan);
+
       // 提交修改给父组件
       this.props.handleSubmitState(copyPlan);
       this.setState({

@@ -38,9 +38,9 @@ const test = React.createClass({
   },
 
   componentDidMount(){
-    UM.delEditor('ueContainer');
-    const um = UM.getEditor('ueContainer');
-    um.setContent('<p><img src="http://ueditor.baidu.com/server/umeditor/upload/demo.jpg" /></p>');
+    //UM.delEditor('ueContainer');
+    //const um = UM.getEditor('ueContainer');
+    //um.setContent('<p><img src="http://ueditor.baidu.com/server/umeditor/upload/demo.jpg" /></p>');
   },
 
   render() {
