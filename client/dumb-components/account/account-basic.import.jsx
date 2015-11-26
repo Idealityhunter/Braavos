@@ -201,19 +201,11 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.nickname`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.nickname`)}
-                        id="nickname"
                         label={this.data.userInfo.nickName}
                         onSubmit={event=>{
                            Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value});
                          }}
             />
-          </div>
-          <hr />
-          <div className="form-group">
-            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-              <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
-            </label>
-            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.realName`)}/>
           </div>
           <hr />
           <div className="form-group avatar">
@@ -231,10 +223,16 @@ export const AccountBasic = React.createClass({
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+              <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
+            </label>
+            <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.realName`)}/>
+          </div>
+          <hr />
+          <div className="form-group">
+            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.tel`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
-                        id="tel"
                         label={this.data.sellerInfo.contact.number}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
@@ -247,7 +245,6 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.email`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
-                        id="email"
                         label={this.data.sellerInfo.email}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
@@ -260,7 +257,6 @@ export const AccountBasic = React.createClass({
               <FormattedMessage message={this.getIntlMessage(`${prefix}.address`)}/>
             </label>
             <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
-                        id="address"
                         label={this.data.sellerInfo.address}
                         onSubmit={event=>this.handleSubmit(event, ()=>{
                           Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
