@@ -16,8 +16,6 @@ export const TextEditor = React.createClass({
   _submitText: null,
 
   propTypes: {
-    id: React.PropTypes.string,
-
     // 是否显示"修改"标签
     visibleEditAnchor: React.PropTypes.bool,
     // "修改"标签的文案
@@ -69,7 +67,7 @@ export const TextEditor = React.createClass({
         this.setState({text: this.state.original});
         this._submitText = null;
         if (this.props.onCanceled) {
-          this.props.onCanceled({key: this.props.id});
+          this.props.onCanceled();
         }
         event.target.blur();
         break;
@@ -82,7 +80,7 @@ export const TextEditor = React.createClass({
     // 准备进入编辑状态
     this.setState({editing: true, text: this.props.label, original: this.props.label});
     if (this.props.onClick) {
-      this.props.onClick({key: this.props.id});
+      this.props.onClick();
     }
 
     setTimeout(() => {
@@ -96,7 +94,7 @@ export const TextEditor = React.createClass({
   onFocus() {
     this.setState({text: this.props.label});
     if (this.props.onFocus) {
-      this.props.onFocus({key: this.props.id});
+      this.props.onFocus();
     }
   },
 
@@ -104,7 +102,7 @@ export const TextEditor = React.createClass({
     const submitText = this._submitText;
     const shouldSubmit = this.state.lastSubmit != submitText;
     if (this._submitText && shouldSubmit && this.props.onSubmit) {
-      this.props.onSubmit({key: this.props.id, value: submitText});
+      this.props.onSubmit({value: submitText});
     }
     setTimeout(()=>{
       this.setState({editing: false, lastSubmit: submitText});
@@ -115,7 +113,7 @@ export const TextEditor = React.createClass({
     this.setState({text: event.target.value});
     this._submitText = event.target.value;
     if (this.props.onChange) {
-      this.props.onChange({key: this.props.id, newText: event.target.value});
+      this.props.onChange({newText: event.target.value});
     }
   },
 
