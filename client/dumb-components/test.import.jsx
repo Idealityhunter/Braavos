@@ -46,15 +46,17 @@ const test = React.createClass({
   render() {
     return (
       <div>
-        <div className="essay-contents">
-          <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
-        </div>
-        <div>
-          <input type="text" onChange={this.onChange} name="latitude" value={this.state.lat}/>
-          <input type="text" onChange={this.onChange} name="longitude" value={this.state.lng}/>
-          <button onClick={this.onClick}>Click</button>
-          <GoogleMapComponent lat={this.state.location[0]} lng={this.state.location[1]}/>
-        </div>
+        {/*
+         <div className="essay-contents">
+         <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
+         </div>
+         <div>
+         <input type="text" onChange={this.onChange} name="latitude" value={this.state.lat}/>
+         <input type="text" onChange={this.onChange} name="longitude" value={this.state.lng}/>
+         <button onClick={this.onClick}>Click</button>
+         <GoogleMapComponent lat={this.state.location[0]} lng={this.state.location[1]}/>
+         </div>
+        */}
       </div>
     );
   }

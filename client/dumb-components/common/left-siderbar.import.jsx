@@ -97,6 +97,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*订单管理*/}
+            {/*
             <li className={ActiveRoute.name('orders') ? "active" : ""}>
               <a href={FlowRouter.path('orders')}>
                 <i className="fa fa-tags"/>
@@ -105,8 +106,10 @@ let leftSiderBar = React.createClass({
                 </span>
               </a>
             </li>
+             */}
 
             {/*财务管理*/}
+            {/*
             <li className={ActiveRoute.name('finance') ? "active" : ""}>
               <a href={FlowRouter.path('finance')}>
                 <i className="fa fa-database"/>
@@ -115,6 +118,7 @@ let leftSiderBar = React.createClass({
                 </span>
               </a>
             </li>
+             */}
 
             {/*账户信息*/}
             <li className={ActiveRoute.name('account') ? "active" : ""}>
@@ -127,6 +131,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*Dashboards*/}
+            {/*
             <li>
               <a href="#">
                 <i className="fa fa-th-large"></i>
@@ -140,8 +145,10 @@ let leftSiderBar = React.createClass({
                 <li><a href="dashboard_4_1.html">Dashboard v.4</a></li>
               </ul>
             </li>
+             */}
 
             {/*Menu Levels*/}
+            {/*
             <li>
               <a href="#">
                 <i className="fa fa-sitemap"></i>
@@ -161,6 +168,7 @@ let leftSiderBar = React.createClass({
                 <li><a href="#">Second Level Item</a></li>
               </ul>
             </li>
+            */}
           </ul>
         </div>
       </nav>
