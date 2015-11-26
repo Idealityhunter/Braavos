@@ -1398,8 +1398,8 @@
 		forceParse: true,
 		format: 'mm/dd/yyyy',
 		keyboardNavigation: true,
-    //language: 'en',
-		language: 'zh',// hack处理
+    language: 'en',
+    //language: 'zh',// hack处理
 		minViewMode: 0,
 		multidate: false,
 		multidateSeparator: ',',
@@ -1671,6 +1671,8 @@
 
 }(window.jQuery));
 
+
+// 自定义的语言包
 $.fn.datepicker.dates['zh'] = {
 	days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
 	daysShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],

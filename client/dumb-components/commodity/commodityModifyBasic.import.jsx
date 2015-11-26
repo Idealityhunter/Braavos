@@ -28,11 +28,17 @@ const commodityModifyBasic = React.createClass({
 
   // 获取country和locality列表的数据
   getMeteorData() {
-    Meteor.subscribe('countries');
-    const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+    const handleCountry = Meteor.subscribe('countries');
+    let countries = [];
+    if(handleCountry.ready()) {
+      countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+    };
 
-    Meteor.subscribe('localities', this.state.country);
-    const localities = BraavosCore.Database.Braavos.Locality.find({}, {sort: {'enName': 1}}).fetch();
+    const handleLocality = Meteor.subscribe('localities', this.state.country);
+    let localities = [];
+    if(handleLocality.ready()) {
+      localities = BraavosCore.Database.Braavos.Locality.find({}, {sort: {'enName': 1}}).fetch();
+    };
 
     return {
       countries: countries,
@@ -45,6 +51,56 @@ const commodityModifyBasic = React.createClass({
     return {
       plans: []
     }
+  },
+
+  // 每次数据更新, 应该重新绑定一下scountry-elect
+  componentDidUpdate(){
+    const self = this;
+    // 绑定chosen插件或者更新数据
+    if ($(".country-select").next('.chosen-container').length <= 0){
+      $('.country-select').chosen({
+        no_results_text: '没有找到这个国家'
+      });
+    } else{
+      $(".country-select").trigger("chosen:updated");
+    };
+
+    if ($(".locality-select").next('.chosen-container').length <= 0){
+      $('.locality-select').chosen({
+        no_results_text: '没有找到这个目的地'
+      });
+    } else{
+      $(".locality-select").trigger("chosen:updated");
+    };
+
+    // 根据chosen的选择更新state
+    $('.country-select').on('change', function(evt, params) {
+      self.setState({
+        country: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
+      })
+    });
+    $('.locality-select').on('change', function(evt, params) {
+      self.setState({
+        locality: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
+      })
+    });
+
+    //window.requestAnimationFrame(function() {
+    //  $('.country-select').next('.chosen-container').remove();
+    //  $('.country-select').chosen({});
+    //  $('.locality-select').next('.chosen-container').remove();
+    //  $('.locality-select').chosen({});
+    //  $('.country-select').next('.chosen-container').children('.chosen-single').children('span')[0].addEventListener("DOMSubtreeModified", function(e){
+    //    const $country = $(this);
+    //    if ($country.text()){
+    //      // 当修改完成时才setState,中间为空时不触发
+    //      self.setState({
+    //        country: $country.text()
+    //      });
+    //      //Meteor.subscribe('localities', self.state.country);
+    //    }
+    //  }, false);
+    //});
   },
 
   // 修改国家时,触发更新locality的数据
@@ -113,7 +169,12 @@ const commodityModifyBasic = React.createClass({
     i = 0;
     const countryOptionList = this.data.countries.map(country => (<option value={i++} data-en={country.enName}>{country.zhName}</option>));
     const countrySelect = (
-      <select name="" id="" className="country-select form-control" placeholder="国家" value={selectCountryIndex} onChange={this._handleCountryChange}>
+      <select name="" id=""
+              className="country-select form-control"
+              placeholder="国家"
+              data-placeholder="国家数据正在加载中"
+              value={selectCountryIndex}
+              onChange={this._handleCountryChange}>
         {countryOptionList}
       </select>
     );
@@ -122,7 +183,12 @@ const commodityModifyBasic = React.createClass({
     let j = 0;
     const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-en={locality.enName}>{locality.zhName}</option>));
     const localitySelect = (
-      <select name="" id="" className="locality-select form-control" placeholder="城市" value={selectLocalityIndex} onChange={this._handleLocalityChange}>
+      <select name="" id=""
+              className="locality-select form-control"
+              placeholder="城市"
+              data-placeholder="城市数据正在加载中"
+              value={selectLocalityIndex}
+              onChange={this._handleLocalityChange}>
         {localityOptionList}
       </select>
     );
@@ -151,7 +217,7 @@ const commodityModifyBasic = React.createClass({
             </label>
             {countrySelect}
             {localitySelect}
-            <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''} style={{padding: 6}}/>
+            <input className="inline placeholder" type='text' placeholder="(选填)详细地址" defaultValue={this.props.address || ''} style={{verticalAlign: 'top', padding: 6}}/>
           </div>
           <div className="form-group category">
             <label className="label-text">

@@ -47,7 +47,8 @@ const commodityPlansModal = React.createClass({
         format: 'yyyy-mm-dd',
         keyboardNavigation: false,
         forceParse: false,
-        autoclose: true
+        autoclose: true,
+        language: 'zh'
       });
     });
   },
