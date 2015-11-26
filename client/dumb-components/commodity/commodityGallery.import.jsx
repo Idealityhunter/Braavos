@@ -14,20 +14,19 @@ let commodityGallery = React.createClass({
     let coverCount = 0;// 假如有两张一样的图片,就需要coverCount来取其中前面一张
     const images = (this.props.images.length > 0)
       ? this.props.images.map(image => {
-      if (image.url == this.props.cover.url && !coverCount) {
-        coverCount = 1;
-        return {
-          src: image.url,
-          main: true
+        if (image.url == this.props.cover.url && !coverCount) {
+          coverCount = 1;
+          return {
+            src: image.url,
+            main: true
+          }
+        } else {
+          return {
+            src: image.url,
+            main: false
+          }
         }
-      } else {
-        return {
-          src: image.url,
-          main: false
-        }
-      }
-      ;
-    })
+      })
       : [];
     return {
       // 是否显示上传图片的modal

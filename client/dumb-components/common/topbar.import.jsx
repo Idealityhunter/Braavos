@@ -45,6 +45,8 @@ let topBar = React.createClass({
 
         </div>
         <ul className="nav navbar-top-links navbar-right">
+          {/*消息提示*/}
+          {/*
           <li className="dropdown">
             <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
               <i className="fa fa-envelope"></i>
@@ -99,6 +101,9 @@ let topBar = React.createClass({
               </li>
             </ul>
           </li>
+          */}
+          {/*系统提示*/}
+          {/*
           <li className="dropdown">
             <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
               <i className="fa fa-bell"></i>  <span className="label label-primary">8</span>
@@ -141,6 +146,7 @@ let topBar = React.createClass({
               </li>
             </ul>
           </li>
+           */}
           <li>
             <a href={FlowRouter.path('logout')}>
               <i className="fa fa-sign-out"></i>

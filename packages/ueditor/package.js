@@ -15,7 +15,7 @@ Package.onUse(function (api) {
   api.use('ecmascript');
   api.use('jquery', 'client');
   api.addFiles(['umeditor.config.js', 'umeditor.min.js', 'imageUpload.js', 'themes/default/css/umeditor.css'
-    , 'themes/default/css/edui-scale.css', 'lang/zh-cn/zh-cn.js'], 'client');
+    , 'themes/default/css/custom.css', 'lang/zh-cn/zh-cn.js'], 'client');
 
   // 加载静态文件(包括图像, css, 以及部分js)
   function loadHelper(assetNames, path) {

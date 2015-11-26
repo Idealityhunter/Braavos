@@ -132,7 +132,6 @@ const commodityModify = React.createClass({
             || !$('.form-group.cost-time>input').val()
             || self.state.plans.length <= 0){
             // TODO 弹窗提示?还是别的?
-            console.log($(".steps>ul>li:eq(0)"));
             $(".steps>ul>li:eq(0)").addClass("error");
             location.hash = "steps-uid-0-t-0";
             if (currentIndex != 0)
@@ -334,12 +333,12 @@ const commodityModify = React.createClass({
         }
 
         // steps插件在return false时,title的样式会有不同
-        return true;
+        // return true;
+        return false;
       }
     });
 
     // 初始化desc页面的um插件
-    UM.delEditor('ueContainer');
     UM.delEditor('ueContainer');
     const um = UM.getEditor('ueContainer');
     um.ready(function(){
