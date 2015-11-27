@@ -82,7 +82,9 @@ const PhoneEditor = React.createClass({
 });
 
 // umeditor是否初始化
-let umeditorInit = false;
+const umeditorFlags = {
+  init: false
+};
 
 export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
@@ -99,25 +101,28 @@ export const AccountBasic = React.createClass({
   },
 
   componentDidUpdate() {
+    this.refreshEditor();
+  },
+
+  refreshEditor() {
     if (!this.data.subsReady) {
       return;
     }
 
     let um = null;
-    if (!umeditorInit) {
+    if (!umeditorFlags.init) {
       $("div.tab-content").focus();
       // 初始化desc页面的um插件
       UM.delEditor('ueContainer');
       um = UM.getEditor('ueContainer');
       $("#ueContainer").blur(() => {
         if (this.data.subsReady) {
-          console.log('um update');
           const desc = um.getContent();
           const doc = {"desc.body": desc};
           Meteor.call("marketplace.seller.update", Meteor.userId(), doc);
         }
       });
-      umeditorInit = true;
+      umeditorFlags.init = true;
     } else {
       um = UM.getEditor("ueContainer");
     }
@@ -127,7 +132,8 @@ export const AccountBasic = React.createClass({
   },
 
   componentDidMount() {
-
+    umeditorFlags.init = false;
+    this.refreshEditor();
   },
 
   // TextEditor中用户按下Esc, 取消编辑操作的事件
@@ -377,7 +383,8 @@ export const AccountBasic = React.createClass({
 
     const phone = _.first((this.data.sellerInfo || {}).phone || [{}]);
     const phoneEditor =
-      <PhoneEditor countries={this.data.countries} phoneNumber={phone.number} selectedCountry={phone.countryCode || "CN"}
+      <PhoneEditor countries={this.data.countries} phoneNumber={phone.number}
+                   selectedCountry={phone.countryCode || "CN"}
                    onUpdatePhone={this.handleUpdatePhone}/>;
 
     return (
