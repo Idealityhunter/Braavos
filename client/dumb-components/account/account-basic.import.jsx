@@ -2,6 +2,8 @@ import {TextEditor} from '/client/dumb-components/common/text-editor';
 import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
 import {Avatar} from "/client/common/avatar";
 import {ImageCropper} from "/client/common/image-cropper"
+import {Chosen} from "/client/common/chosen";
+import {Label, Input} from "/lib/react-bootstrap"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -123,6 +125,19 @@ export const AccountBasic = React.createClass({
       userInfo: userInfo,
       sellerInfo: sellerInfo
     };
+  },
+
+  // 更新商户的语言选项
+  handleUpdateLang(evt) {
+    const selected = evt.selected;
+    const deselected = evt.deselected;
+
+    if (selected) {
+      Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "add", selected);
+    }
+    if (deselected) {
+      Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "remove", deselected);
+    }
   },
 
   // 上传头像
@@ -252,6 +267,17 @@ export const AccountBasic = React.createClass({
           </div>
           <hr />
           {this._buildTextField.apply(this, textFields.sellerName)}
+          <hr />
+          <div className="form-group">
+            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+              商户语言
+            </label>
+            <div className="col-xs-6 col-sm-7 col-md-8">
+              <Chosen multiSelect={true} style={{width: 240}} selected={this.data.sellerInfo.lang}
+                      onChange={this.handleUpdateLang} placeholder={"请选择服务语言"}
+                      options={[{value: "zh", text: "中文"}, {value: "en", text: "英文"}, {value: "local", text: "当地语言"}]}/>
+            </div>
+          </div>
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
