@@ -3,7 +3,7 @@ import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
 import {Avatar} from "/client/common/avatar";
 import {ImageCropper} from "/client/common/image-cropper"
 import {Chosen} from "/client/common/chosen";
-import {Label, Input} from "/lib/react-bootstrap"
+import {Label, Input, Overlay, Tooltip} from "/lib/react-bootstrap"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -12,25 +12,7 @@ export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState() {
-    // 每个TextEditor, 都需要维护这些状态
-    const TextEditorState = function () {
-      // 文本框处于编辑状态时的值
-      this.text = "";
-      // 原始数据
-      this.original = "";
-      // 上一次更新的值. 每次blur的时候, 将检查这一数值.
-      // 只有当二者不一致的时候, 才会真正执行提交的操作
-      this.lastSubmit = undefined;
-      // 商户介绍
-      this.sellerDesc = "";
-    };
-
     return {
-      nickname: new TextEditorState(),
-      tel: new TextEditorState(),
-      email: new TextEditorState(),
-      address: new TextEditorState(),
-
       // 是否显示上传头像的modal
       showAvatarModal: false,
       // 上传头像的modal中, 需要显示的image
@@ -62,14 +44,6 @@ export const AccountBasic = React.createClass({
     const key = event.key;
     const state = _.pick(this.state, key);
     state[key].text = state[key].original;
-    this.setState(state);
-  },
-
-  // TextEditor中文本发生变化的事件
-  handleChange(event) {
-    const key = event.key;
-    const state = _.pick(this.state, key);
-    state[key].text = event.newText;
     this.setState(state);
   },
 
@@ -209,15 +183,58 @@ export const AccountBasic = React.createClass({
   },
 
   // 生成一个text field
-  _buildTextField(message, placeholder, onSubmit, label) {
+  _buildTextField({message, placeholder, onSubmit, validator, label, overlayMessage}) {
     return (
       <div className="form-group">
         <label className="col-xs-4 col-sm-3 col-md-2 control-label">
           <FormattedMessage message={message}/>
         </label>
-        <TextEditor placeholder={placeholder} label={label} onSubmit={onSubmit}/>
+        <TextEditor placeholder={placeholder} label={label} onSubmit={onSubmit} validator={validator}
+                    overlayMessage={overlayMessage}/>
       </div>
     );
+  },
+
+  // text field相关的设置
+  _buildTextFieldsConfig() {
+    const prefix = 'accountInfo.basicTab';
+    return {
+      nickname: {
+        message: this.getIntlMessage(`${prefix}.nickname`),
+        placeholder: this.getIntlMessage(`${prefix}.input.nickname`),
+        onSubmit: event => Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value}),
+        validator: value => {
+          const ctx = CoreModel.Account.UserInfo.newContext();
+          return ctx.validateOne({nickName: value}, "nickName")
+        },
+        label: this.data.userInfo.nickName,
+        overlayMessage: "请输入正确的用户昵称"
+      },
+      sellerName: {
+        message: this.getIntlMessage(`${prefix}.sellerName`),
+        placeholder: this.getIntlMessage(`${prefix}.input.sellerName`),
+        onSubmit: event => Meteor.call("marketplace.seller.update", Meteor.userId(), {name: event.value}),
+        validator: value => {
+          const ctx = CoreModel.Marketplace.Seller.newContext();
+          return ctx.validateOne({name: value}, "name")
+        },
+        label: this.data.sellerInfo.name,
+        overlayMessage: "请输入正确的商户名称"
+      },
+      email: {
+        message: this.getIntlMessage(`${prefix}.email`),
+        placeholder: this.getIntlMessage(`${prefix}.input.email`),
+        onSubmit: event => {
+          Meteor.call("marketplace.seller.update", Meteor.userId(), {email: [event.value]})
+        },
+        validator: value => {
+          const ctx = CoreModel.Marketplace.Seller.newContext();
+          return ctx.validateOne({email: [value]}, "email")
+        },
+        label: _.first(this.data.sellerInfo.email || []),
+        overlayMessage: "请输入正确的email地址"
+      }
+    }
   },
 
   render() {
@@ -233,25 +250,13 @@ export const AccountBasic = React.createClass({
       :
       <div />;
 
-    const textFields = {
-      nickname: [
-        this.getIntlMessage(`${prefix}.nickname`),
-        this.getIntlMessage(`${prefix}.input.nickname`),
-        event => Meteor.call("account.basicInfo.update", Meteor.userId(), {nickName: event.value}),
-        this.data.userInfo.nickName
-      ],
-      sellerName: [
-        this.getIntlMessage(`${prefix}.sellerName`),
-        this.getIntlMessage(`${prefix}.input.sellerName`),
-        event => Meteor.call("marketplace.seller.update", Meteor.userId(), {name: event.value}),
-        this.data.sellerInfo.name
-      ]
-    };
+
+    const textFields = this._buildTextFieldsConfig();
 
     return (
       <div className="account-basic-wrap row">
         <div className="form-horizontal">
-          {this._buildTextField.apply(this, textFields.nickname)}
+          {this._buildTextField(textFields.nickname)}
           <hr />
           <div className="form-group avatar">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
@@ -266,7 +271,7 @@ export const AccountBasic = React.createClass({
             </div>
           </div>
           <hr />
-          {this._buildTextField.apply(this, textFields.sellerName)}
+          {this._buildTextField(textFields.sellerName)}
           <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
@@ -279,6 +284,8 @@ export const AccountBasic = React.createClass({
             </div>
           </div>
           <hr />
+          {this._buildTextField(textFields.email)}
+          <hr />
           <div className="form-group">
             <label className="col-xs-4 col-sm-3 col-md-2 control-label">
               <FormattedMessage message={this.getIntlMessage(`${prefix}.sellerDesc`)}/>
@@ -288,77 +295,6 @@ export const AccountBasic = React.createClass({
             </div>
             <div><p style={{display: "none"}}>{(this.data.sellerInfo.sellerDesc||{}).body}</p></div>
           </div>
-          {/*
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.realName`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.realName`)}/>
-           </div>
-           <hr />
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.tel`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.tel`)}
-           label={this.data.sellerInfo.contact.number}
-           onSubmit={event=>this.handleSubmit(event, ()=>{
-           Meteor.call("account.sellerInfo.update", Meteor.userId(), {contact: {number: event.value}});
-           })}
-           />
-           </div>
-           <hr />
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.email`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.email`)}
-           label={this.data.sellerInfo.email}
-           onSubmit={event=>this.handleSubmit(event, ()=>{
-           Meteor.call("account.sellerInfo.update", Meteor.userId(), {email: event.value});
-           })}
-           />
-           </div>
-           <hr />
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.address`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.address`)}
-           label={this.data.sellerInfo.address}
-           onSubmit={event=>this.handleSubmit(event, ()=>{
-           Meteor.call("account.sellerInfo.update", Meteor.userId(), {address: event.value});
-           })}
-           />
-           </div>
-           */}
-          {/*
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.lang`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.lang`)}/>
-           </div>
-           <hr />
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.shop`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
-           </div>
-           <hr />
-           <div className="form-group">
-           <label className="col-xs-4 col-sm-3 col-md-2 control-label">
-           <FormattedMessage message={this.getIntlMessage(`${prefix}.zone`)}/>
-           </label>
-           <TextEditor placeholder={this.getIntlMessage(`${prefix}.input.shop`)}/>
-           </div>
-           <hr />
-
-           <div className="form-group" style={{margin: '40px auto 40px 120px', width: '75%', height: '500px'}}>
-           <GoogleMapComponent lat={40} lng={116.33}/>
-           </div>
-           */}
         </div>
       </div>
     );
