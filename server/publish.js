@@ -31,7 +31,7 @@ Meteor.publish("sellerInfo", function () {
 /**
  * 发布商品列表信息
  */
-Meteor.publish("commodities", function () {
+Meteor.publish("commodities", function (options) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Commodity;
   const allowedFields = ["commodityId", "title", "desc", "seller"];
@@ -39,7 +39,12 @@ Meteor.publish("commodities", function () {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({'seller.sellerId': userId}, fields);
+  if (options && options.createTime){
+    // TODO 转化成ISODate
+    options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
+    options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
+  }
+  return coll.find(_.extend({'seller.sellerId': userId}, options), fields);
 });
 
 
