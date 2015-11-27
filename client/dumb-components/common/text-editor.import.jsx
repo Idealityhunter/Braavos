@@ -1,3 +1,5 @@
+import {Label, Input, Overlay, Tooltip} from "/lib/react-bootstrap"
+
 export const TextEditor = React.createClass({
   getInitialState() {
     return {
@@ -8,7 +10,9 @@ export const TextEditor = React.createClass({
       // 编辑框的数据
       text: "",
       // 上一次提交的数据
-      lastSubmit: ""
+      lastSubmit: "",
+      // 是否显示overlay
+      showOverlay: false
     };
   },
 
@@ -24,6 +28,10 @@ export const TextEditor = React.createClass({
     placeholder: React.PropTypes.string,
     // 是否为多行
     multiLines: React.PropTypes.bool,
+    // Overlay的信息
+    overlayMessage: React.PropTypes.string,
+    // 检查输入是否正确
+    validator: React.PropTypes.func,
 
     // 标签的数据
     label: React.PropTypes.string,
@@ -110,10 +118,16 @@ export const TextEditor = React.createClass({
   },
 
   onChange(event) {
-    this.setState({text: event.target.value});
-    this._submitText = event.target.value;
+    const newValue = event.target.value;
+    // 输入有效性检查
+    if (this.props.validator) {
+      this.setState({showOverlay: !this.props.validator(newValue)});
+    }
+
+    this.setState({text: newValue});
+    this._submitText = newValue;
     if (this.props.onChange) {
-      this.props.onChange({newText: event.target.value});
+      this.props.onChange({target: this, newValue: event.target.value});
     }
   },
 
@@ -133,6 +147,14 @@ export const TextEditor = React.createClass({
       <a href="javascript:void(0)" style={anchorStyle} className="col-xs-2"
          onClick={this.onClick}>{this.props.editAnchorLabel}</a> :
       <span />;
+
+    const overlay =
+      <Overlay show={this.state.showOverlay} placement="right"
+               target={() => ReactDOM.findDOMNode(this.refs["textField"])}>
+        <Tooltip id={Meteor.uuid()}>
+          {this.props.overlayMessage}
+        </Tooltip>
+      </Overlay>;
 
     const inputNode = this.props['multiLine'] ?
       <textarea ref="text-input"
@@ -156,13 +178,14 @@ export const TextEditor = React.createClass({
 
     return (
       <div>
-        <div className="col-xs-6 col-sm-7 col-md-8">
+        <div className="col-xs-6 col-sm-7 col-md-8" ref="textField">
           <div className="form-control no-border height-auto cursor-pointer"
                style={textAreaStyle}
                onClick={this.onClick}>
             {this.props.label ? this.props.label : this.props['placeholder']}
           </div>
           {inputNode}
+          {overlay}
         </div>
         {anchor}
       </div>
