@@ -64,7 +64,7 @@ var commodity = React.createClass({
       };
       if ($('.input-daterange>input[name=end]').val()){
         _.extend(createTimeRange.createTime, {
-          '$lte': $('.input-daterange>input[name=end]').val()
+          '$lte': moment($('.input-daterange>input[name=end]').val()).add(1, 'day').format('YYYY-MM-DD')
         });
       };
     };
@@ -184,10 +184,7 @@ var commodity = React.createClass({
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
         <td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>
-        {/*
         <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
-        */}
-        <td>{commodity.createTime.toString()}</td>
         <td>
           {
             ((status) => {
@@ -282,7 +279,7 @@ var commodity = React.createClass({
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
                         <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
-                        <th data-type="date" data-format-string="MMMM Do YYYY" data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
+                        <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
                           <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
