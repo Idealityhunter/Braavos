@@ -10,44 +10,102 @@ var commodity = React.createClass({
 
   getInitialState(){
     return {
+      options: {}
     }
   },
 
   getMeteorData() {
-    // TODO 数据新增的时候需要重新生成一下table => 还是没起效果?
-    //window.requestAnimationFrame(function() {
-    //  console.log('request');
-    //  $('.footable').footable();
-    //});
-
-    Meteor.subscribe('commodities');
-    const userId = parseInt(Meteor.userId());
-    let commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}, {sort: {createTime: -1}}).fetch() || [];
-    commodities = commodities.map(commodity => _.extend(commodity, {
-      key: Meteor.uuid()
-    }));
+    const handleCommodity = Meteor.subscribe('commodities', this.state.options);
+    let commodities = [];
+    if (handleCommodity.ready()){
+      const userId = parseInt(Meteor.userId());
+      //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
+      commodities = BraavosCore.Database.Braavos.Commodity.find({'seller.sellerId': userId}, {sort: {createTime: -1}}).fetch();
+      commodities = commodities.map(commodity => _.extend(commodity, {
+        key: Meteor.uuid()
+      }));
+    }
     return {
       commodities: commodities
     };
   },
 
   componentDidMount(){
+    $('.footable').footable();
     $('.input-daterange').datepicker({
       format: 'yyyy-mm-dd',
       keyboardNavigation: false,
       forceParse: false,
-      autoclose: true
+      autoclose: true,
+      language: 'zh'
     });
+  },
+
+  componentDidUpdate(){
+    const self = this;
+    $('.footable').trigger('footable_redraw');
   },
 
   // 商品筛选结果的更新
   _handleFilter(){
+    // TODO 获取3个选择条件的数据
+    const commodityId = $('#commodity-id').val()
+      ? {'commodityId': parseInt($('#commodity-id').val())}
+      : {};
 
+    let createTimeRange = {};
+    if ($('.input-daterange>input[name=start]').val() || $('.input-daterange>input[name=end]').val()){
+      _.extend(createTimeRange, {'createTime': {}})
+
+      if ($('.input-daterange>input[name=start]').val()){
+        _.extend(createTimeRange.createTime, {
+          '$gte': $('.input-daterange>input[name=start]').val()
+        });
+      };
+      if ($('.input-daterange>input[name=end]').val()){
+        _.extend(createTimeRange.createTime, {
+          '$lte': $('.input-daterange>input[name=end]').val()
+        });
+      };
+    };
+
+    const commodityStatusIndex = $('#commodity-status').val();
+    let commodityStatus;
+    switch(parseInt(commodityStatusIndex)){
+      case 0:
+        commodityStatus = {};
+        break;
+      case 1:
+        commodityStatus = {status: 'disabled'};
+        break;
+      case 2:
+        commodityStatus = {status: 'pub'};
+        break;
+      case 3:
+        commodityStatus = {status: 'review'};
+        break;
+      default:
+        commodityStatus = {};
+    };
+    this.setState({
+      options: _.extend(createTimeRange, commodityId, commodityStatus)
+    });
   },
 
   // 重置筛选条件,并且展示所有商品
   _handleReset(){
-
+    // TODO 清空3个选择条件的数据 => 是否需要展示全部
+    $('#commodity-id').val('');
+    $('.input-daterange').datepicker({
+      format: 'yyyy-mm-dd',
+      keyboardNavigation: false,
+      forceParse: false,
+      autoclose: true,
+      language: 'zh'
+    });
+    $('.input-daterange>input[name=start]').val('');
+    $('.input-daterange>input[name=end]').val('');
+    $('#commodity-status').val('0');
   },
 
   // 下架商品
@@ -174,7 +232,6 @@ var commodity = React.createClass({
               <div className="col-sm-2">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-id"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></label>
-                  {/*<input type="text" id="commodity-id" name="commodity-id" defaultValue="" placeholder="商品编号" className="form-control"/>*/}
                   <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
                 </div>
               </div>
@@ -216,21 +273,21 @@ var commodity = React.createClass({
             <div className="col-lg-12">
               <div className="ibox">
                 <div className="ibox-content">
-                  <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                  <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
                     <thead>
                       <tr>
                         <th data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
+                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
+                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
                         <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
-                        <th data-hide="all" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
+                        <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
                           <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
                           <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
                           */}
-                        <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
+                        <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
                         <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/></th>
                       </tr>
                     </thead>
