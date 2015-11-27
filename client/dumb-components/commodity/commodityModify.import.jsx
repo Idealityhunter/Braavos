@@ -40,6 +40,7 @@ const commodityModify = React.createClass({
       transitionEffect: "fade",
       autoFocus: true,
       enableCancelButton: false,
+      enableKeyNavigation: false,
       labels: {
         finish: "完成",
         next: "下一步",
