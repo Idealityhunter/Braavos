@@ -13,6 +13,7 @@ export const Chosen = React.createClass({
     multiSelect: React.PropTypes.bool,
     // 样式
     style: React.PropTypes.object,
+    className: React.PropTypes.string,
     // 已选择的options
     selected: React.PropTypes.array,
     // 回调函数
@@ -39,6 +40,11 @@ export const Chosen = React.createClass({
 
   componentDidMount() {
     this._initUI();
+
+    const node = $(ReactDOM.findDOMNode(this.refs.chosen));
+    // 被选中的项目
+    const vals = (this.props.selected || []);
+    node.val(vals).trigger("chosen:updated");
   },
 
   componentDidUpdate() {
@@ -55,8 +61,9 @@ export const Chosen = React.createClass({
     );
 
     const style = _.pick(this.props.style || {}, "width");
+    const className = this.props.className || ""
     return this.props.multiSelect ?
-      <select ref="chosen" multiple style={style}>{items}</select> :
-      <select ref="chosen" style={style}>{items}</select>;
+      <select ref="chosen" multiple className={className} style={style}>{items}</select> :
+      <select ref="chosen" className={className} style={style}>{items}</select>;
   }
 });

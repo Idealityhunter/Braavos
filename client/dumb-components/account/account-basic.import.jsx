@@ -8,6 +8,82 @@ import {Label, Input, Overlay, Tooltip} from "/lib/react-bootstrap"
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
+const PhoneEditor = React.createClass({
+  propTypes: {
+    // 更新电话号码
+    onUpdatePhone: React.PropTypes.func,
+    // 国家
+    countries: React.PropTypes.array,
+    // 选中的国家
+    selectedCountry: React.PropTypes.string,
+    // 电话号码
+    phoneNumber: React.PropTypes.number
+  },
+
+  getInitialState() {
+    return {
+      selectedCountry: this.props.selectedCountry,
+      phoneNumber: this.props.phoneNumber
+    }
+  },
+
+  // 更新电话信息
+  onUpdatePhone(countryCode, number) {
+    if (this.props.onUpdatePhone) {
+      const dialCode = _.find(this.props.countries, item => item.code == countryCode).dialCode;
+      this.props.onUpdatePhone({countryCode: countryCode, number: number, dialCode: dialCode});
+    }
+  },
+
+  // 更新国家
+  onUpdateCountry(event) {
+    const countryCode = event.selected;
+    this.setState({selectedCountry: countryCode});
+    // 如果已经输入了电话号码, 则触发更新操作
+    const phoneNumber = this.state.phoneNumber;
+    if (phoneNumber) {
+      this.onUpdatePhone(countryCode, phoneNumber);
+    }
+  },
+
+  // 更新电话号码
+  onUpdateNumber(event) {
+    const number = parseInt(event.value);
+    if (number && !isNaN(number)) {
+      this.setState({phoneNumber: number});
+      const countryCode = this.state.selectedCountry;
+      if (countryCode) {
+        this.onUpdatePhone(countryCode, number);
+      }
+    }
+  },
+
+  render() {
+    const countries = this.props.countries || [];
+    const countryOptions = countries.map(item => {
+      return {value: item.code, text: `${item.zhName} (+${item.dialCode})`};
+    });
+    const selected = this.state.selectedCountry;
+    const number = this.state.phoneNumber;
+
+    return (
+      <div className="form-group">
+        <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+          联系电话
+        </label>
+        <div className="col-sm-1 col-md-2">
+          <Chosen selected={selected ? [selected] : []} style={{width: "100%"}} placeholder={"国家"}
+                  onChange={this.onUpdateCountry} options={countryOptions}/>
+        </div>
+        <TextEditor placeholder="请输入电话号码" inputClassName="col-xs-6" onSubmit={this.onUpdateNumber}
+                    visibleEditAnchor={true} label={number ? number.toString() : ""}/>
+      </div>);
+  }
+});
+
+// umeditor是否初始化
+let umeditorInit = false;
+
 export const AccountBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
@@ -23,20 +99,35 @@ export const AccountBasic = React.createClass({
   },
 
   componentDidUpdate() {
-    const um = UM.getEditor('ueContainer');
+    if (!this.data.subsReady) {
+      return;
+    }
+
+    let um = null;
+    if (!umeditorInit) {
+      $("div.tab-content").focus();
+      // 初始化desc页面的um插件
+      UM.delEditor('ueContainer');
+      um = UM.getEditor('ueContainer');
+      $("#ueContainer").blur(() => {
+        if (this.data.subsReady) {
+          console.log('um update');
+          const desc = um.getContent();
+          const doc = {"desc.body": desc};
+          Meteor.call("marketplace.seller.update", Meteor.userId(), doc);
+        }
+      });
+      umeditorInit = true;
+    } else {
+      um = UM.getEditor("ueContainer");
+    }
+
     const desc = this.data.sellerInfo.desc || {};
     um.setContent(desc.body || "");
   },
 
   componentDidMount() {
-    // 初始化desc页面的um插件
-    UM.delEditor('ueContainer');
-    const um = UM.getEditor('ueContainer');
-    $("#ueContainer").blur(function (evt) {
-      const desc = um.getContent();
-      const doc = {"desc.body": desc};
-      Meteor.call("marketplace.seller.update", Meteor.userId(), doc);
-    });
+
   },
 
   // TextEditor中用户按下Esc, 取消编辑操作的事件
@@ -75,8 +166,20 @@ export const AccountBasic = React.createClass({
   },
 
   getMeteorData() {
-    Meteor.subscribe('basicUserInfo');
-    Meteor.subscribe('sellerInfo');
+    const subsManager = BraavosCore.SubsManager;
+    subsManager.subscribe("basicUserInfo");
+    subsManager.subscribe("sellerInfo");
+    subsManager.subscribe("countries");
+
+    const subsReady = subsManager.ready();
+
+    const allCountries = BraavosCore.Database.Braavos.Country.find({}, {
+      fields: {code: 1, dialCode: 1, zhName: 1},
+      sort: {pinyin: 1}
+    }).fetch();
+    const cn = _.find(allCountries, item => item.code == "CN");
+    const others = _.filter(allCountries, item => item.code != "CN");
+    const countries = Array.prototype.concat([cn], others);
 
     const userId = parseInt(Meteor.userId());
     const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: userId}) || {};
@@ -91,20 +194,18 @@ export const AccountBasic = React.createClass({
     }
 
     const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({sellerId: userId}) || {};
-    if (!sellerInfo.contact) {
-      sellerInfo.contact = {number: ""};
-    }
-
     return {
       userInfo: userInfo,
-      sellerInfo: sellerInfo
+      sellerInfo: sellerInfo,
+      countries: countries,
+      subsReady: subsReady
     };
   },
 
   // 更新商户的语言选项
-  handleUpdateLang(evt) {
-    const selected = evt.selected;
-    const deselected = evt.deselected;
+  handleUpdateLang(event) {
+    const selected = event.selected;
+    const deselected = event.deselected;
 
     if (selected) {
       Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "add", selected);
@@ -112,6 +213,18 @@ export const AccountBasic = React.createClass({
     if (deselected) {
       Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "remove", deselected);
     }
+  },
+
+  // 更新电话信息
+  handleUpdatePhone({countryCode, dialCode, number}) {
+    if (countryCode && dialCode && number)
+      Meteor.call("marketplace.seller.update", Meteor.userId(), {
+        phone: [{
+          countryCode: countryCode,
+          dialCode: dialCode,
+          number: number
+        }]
+      });
   },
 
   // 上传头像
@@ -244,6 +357,10 @@ export const AccountBasic = React.createClass({
   },
 
   render() {
+    if (!this.data.subsReady) {
+      return <div></div>;
+    }
+
     const prefix = 'accountInfo.basicTab';
 
     const avatarModal = this.state.showAvatarModal ?
@@ -256,8 +373,12 @@ export const AccountBasic = React.createClass({
       :
       <div />;
 
-
     const textFields = this._buildTextFieldsConfig();
+
+    const phone = _.first((this.data.sellerInfo || {}).phone || [{}]);
+    const phoneEditor =
+      <PhoneEditor countries={this.data.countries} phoneNumber={phone.number} selectedCountry={phone.countryCode || "CN"}
+                   onUpdatePhone={this.handleUpdatePhone}/>;
 
     return (
       <div className="account-basic-wrap row">
@@ -289,6 +410,8 @@ export const AccountBasic = React.createClass({
                       options={[{value: "zh", text: "中文"}, {value: "en", text: "英文"}, {value: "local", text: "当地语言"}]}/>
             </div>
           </div>
+          <hr />
+          {phoneEditor}
           <hr />
           {this._buildTextField(textFields.email)}
           <hr />
