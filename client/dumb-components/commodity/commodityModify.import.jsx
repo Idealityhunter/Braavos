@@ -186,11 +186,21 @@ const commodityModify = React.createClass({
         const countryIndex = $('.form-group.address>select.country-select').val();
         const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
         const countryEn = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).attr('data-en');
+        const country = {
+          className: 'com.lvxingpai.model.geo.Country',
+          zhName: countryZh,
+        };
+        countryEn && _.extend(country, {enName: countryEn});
 
         // 获取locality选中的option对应的值
         const localityIndex = $('.form-group.address>select.locality-select').val();
         const localityZh = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).text();
         const localityEn = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).attr('data-en');
+        const locality = {
+          className: 'com.lvxingpai.model.geo.Locality',
+          zhName: localityZh
+        };
+        localityEn && _.extend(locality, {enName: localityEn});
 
         // 获取category选中的option对应的值
         const categoryIndex = $('.form-group.category>select').val();
@@ -214,16 +224,8 @@ const commodityModify = React.createClass({
 
         const commodityInfo = {
           title: $('.form-group.title>input').val(),
-          country: {
-            className: 'com.lvxingpai.model.geo.Country',
-            zhName: countryZh,
-            enName: countryEn
-          },
-          locality: {
-            className: 'com.lvxingpai.model.geo.Locality',
-            zhName: localityZh,
-            enName: localityEn
-          },
+          country: country,
+          locality: locality,
           address: $('.form-group.address>input').val(),
           category: [category],
           timeCost: $('.form-group.cost-time>input').val(),
@@ -293,10 +295,12 @@ const commodityModify = React.createClass({
           images : images
         };
 
+        $('.submit-waiting').show();
         // TODO 提交并验证
         // 编辑和添加的不同
         if (self.props.commodityId) {
           Meteor.call('commodity.update', Meteor.userId(), commodityInfo, self.props.commodityId, function(err, res){
+            $('.submit-waiting').hide();
             // TODO 回调结果反应
             if (err){
               swal("编辑商品失敗!", "", "error");
@@ -315,6 +319,7 @@ const commodityModify = React.createClass({
           });
         } else {
           Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
+            $('.submit-waiting').hide();
             // TODO 回调结果反应
             if (err){
               swal("添加商品失敗!!", "", "error");
@@ -366,6 +371,47 @@ const commodityModify = React.createClass({
     return ;
   },
 
+  styles:{
+    shadowLayer: {
+      opacity: 1.04,
+      display: 'block',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      position: 'fixed',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      zIndex: 10000
+    },
+    loadingBoard: {
+      display: 'block',
+      backgroundColor: 'rgba(255,255,255,.7)',
+      width: 220,
+      marginTop: -57,
+      marginLeft: -130,
+      backgroundColor: 'white',
+      fontFamily: "'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      padding: 20,
+      borderRadius: 5,
+      textAlign: 'center',
+      position: 'fixed',
+      left: '50%',
+      top: '50%',
+      overflow: 'hidden',
+      zIndex: 99999
+    },
+    loadingLabel: {
+      paddingBottom: 15
+    },
+    spinnerGroup: {
+      height: 60,
+      width: 70
+    },
+    spinnerItem: {
+      margin: '0 3px'
+    }
+  },
+
   render() {
     const prefix = 'commodities.modify.';
     return (
@@ -404,6 +450,19 @@ const commodityModify = React.createClass({
           </div>
           <div className="traffic">
             <CommodityModifyTraffic trafficInfo={this.props.trafficInfo || []}/>
+          </div>
+        </div>
+        <div className="submit-waiting" style={{display: 'none'}}>
+          <div className="shadow-layer" style={this.styles.shadowLayer}></div>
+          <div className="loading-board" style={this.styles.loadingBoard}>
+            <div class="loading-label" style={this.styles.loadingLabel}>正在提交中，请稍候...</div>
+            <div className="sk-spinner sk-spinner-wave" style={this.styles.spinnerGroup}>
+              <div className="sk-rect1" style={this.styles.spinnerItem}></div>
+              <div className="sk-rect2" style={this.styles.spinnerItem}></div>
+              <div className="sk-rect3" style={this.styles.spinnerItem}></div>
+              <div className="sk-rect4" style={this.styles.spinnerItem}></div>
+              <div className="sk-rect5" style={this.styles.spinnerItem}></div>
+            </div>
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ Meteor.publish("commodities", function (options) {
     return memo;
   }, {});
   if (options && options.createTime){
-    // TODO 转化成ISODate
+    // 转化成Date对象
     options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
     options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
   }
