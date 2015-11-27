@@ -9,6 +9,12 @@ const Misc = CoreModel.Misc;
 
 // 电话号码
 Misc.PhoneNumber = new SimpleSchema({
+  // 哪个国家
+  countryCode: {
+    type: String,
+    regEx: /^[A-Z]{2}$/i,
+    defaultValue: "CN"
+  },
   // 国家代码
   dialCode: {
     type: Number,

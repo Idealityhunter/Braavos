@@ -10,7 +10,7 @@
 Meteor.publish('basicUserInfo', function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database['Yunkai']['UserInfo'];
-  return coll.find({userId: userId}, {nickName: 1, userId: 1, signature: 1, avatar: 1, gender: 1, tel: 1});
+  return coll.find({userId: userId}, {fields: {nickName: 1, userId: 1, signature: 1, avatar: 1, gender: 1, tel: 1}});
 });
 
 /**
@@ -19,12 +19,12 @@ Meteor.publish('basicUserInfo', function () {
 Meteor.publish("sellerInfo", function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Seller;
-  const allowedFields = ["sellerId", "desc", "images", "lang", "serviceZone", "shopTitle", "contact", "address", "email"];
+  const allowedFields = ["sellerId", "desc", "images", "lang", "serviceZone", "name", "address", "email", "phone"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({sellerId: userId}, fields);
+  return coll.find({sellerId: userId}, {fields: fields});
 });
 
 
@@ -44,7 +44,7 @@ Meteor.publish("commodities", function (options) {
     options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
     options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
   }
-  return coll.find(_.extend({'seller.sellerId': userId}, options), fields);
+  return coll.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
 });
 
 
@@ -59,8 +59,8 @@ Meteor.publish("commodityInfo", function (commodityId) {
       memo[f] = 1;
   return memo;
 }, {});
-  return coll.find({commodityId: commodityId, 'seller.sellerId': userId}, fields);
-})
+  return coll.find({commodityId: commodityId, 'seller.sellerId': userId}, {fields: fields});
+});
 
 
 /**
@@ -68,12 +68,12 @@ Meteor.publish("commodityInfo", function (commodityId) {
  */
 Meteor.publish("countries", function () {
   const coll = BraavosCore.Database.Braavos.Country;
-  const allowedFields = ["zhName", "pinyin", "code"];
+  const allowedFields = ["zhName", "enName", "pinyin", "code", "dialCode"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({}, fields, {sort: {'pinyin': 1}});
+  return coll.find({}, {fields: fields, sort: {pinyin: 1}});
 });
 
 /**
@@ -86,5 +86,5 @@ Meteor.publish("localities", function (country) {
     memo[f] = 1;
     return memo;
   }, {});
-  return coll.find({'country.zhName': country}, fields, {sort: {'enName': 1}});
+  return coll.find({'country.zhName': country}, {fields: fields, sort: {enName: 1}});
 });

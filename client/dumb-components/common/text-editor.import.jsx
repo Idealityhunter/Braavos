@@ -36,6 +36,10 @@ export const TextEditor = React.createClass({
     // 标签的数据
     label: React.PropTypes.string,
 
+    style: React.PropTypes.object,
+    className: React.PropTypes.string,
+    inputClassName: React.PropTypes.string,
+
     // 编辑框文字变化的回调
     onChange: React.PropTypes.func,
     // 点击事件的回调
@@ -84,19 +88,22 @@ export const TextEditor = React.createClass({
     }
   },
 
+  _selAll() {
+    const inputNode = ReactDOM.findDOMNode(this.refs['text-input']);
+    const len = this.props.label.length * 2;
+    setTimeout(() => {
+      inputNode.setSelectionRange(0, len);
+      inputNode.focus();
+    }, 10);
+  },
+
   onClick() {
     // 准备进入编辑状态
     this.setState({editing: true, text: this.props.label, original: this.props.label});
     if (this.props.onClick) {
       this.props.onClick();
     }
-
-    setTimeout(() => {
-      const inputNode = ReactDOM.findDOMNode(this.refs['text-input']);
-      const len = this.state.text.length * 2;
-      inputNode.setSelectionRange(0, len);
-      inputNode.focus();
-    }, 10);
+    this._selAll();
   },
 
   onFocus() {
@@ -112,8 +119,8 @@ export const TextEditor = React.createClass({
     if (this._submitText && shouldSubmit && this.props.onSubmit) {
       this.props.onSubmit({value: submitText});
     }
-    setTimeout(()=>{
-      this.setState({editing: false, lastSubmit: submitText});
+    setTimeout(() => {
+      this.setState({showOverlay: false, editing: false, lastSubmit: submitText});
     }, 10);
   },
 
@@ -177,8 +184,8 @@ export const TextEditor = React.createClass({
              onChange={this.onChange}/>;
 
     return (
-      <div>
-        <div className="col-xs-6 col-sm-7 col-md-8" ref="textField">
+      <div style={this.props.style || {}} className={this.props.className || ""}>
+        <div className={this.props.inputClassName || "col-xs-6 col-sm-7 col-md-8"} ref="textField">
           <div className="form-control no-border height-auto cursor-pointer"
                style={textAreaStyle}
                onClick={this.onClick}>
