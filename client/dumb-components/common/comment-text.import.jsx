@@ -2,7 +2,9 @@
 
 const commentText = React.createClass({
   style: {
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
+    color: 'darksalmon',
+    fontSize: 12
   },
   render() {
     return (

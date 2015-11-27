@@ -33,19 +33,25 @@ const commodityPlansModal = React.createClass({
   },
 
   componentDidMount() {
-    const node = ReactDOM.findDOMNode(this.refs["haha"]);
-    $(".input-daterange").children('input[name=start]').on('change', function(evt){
-      console.log(`jQuery: ${evt}`);
-    });
+    // TODO 监听daterange的变化
+    //const node = ReactDOM.findDOMNode(this.refs["haha"]);
+    //$(".input-daterange").children('input[name=start]').on('change', function(evt){
+    //  console.log(`jQuery: ${evt}`);
+    //});
   },
 
   // 每次新增一条pricing的时候,都需要重新绑定一次datepicker plugin
   componentDidUpdate(){
+    const self = this;
     // repaint之后再绑定事件
+    // TODO 这里其实重复执行了很多次!
     window.requestAnimationFrame(function() {
+      console.log('update');
       $('.commodity-basic-datepicker .input-daterange').datepicker({
         format: 'yyyy-mm-dd',
         keyboardNavigation: false,
+        // TODO 当plan状态为view时不应该可以操作daterange...
+        //enableOnReadonly: self.props.plan.status != 'edit',
         forceParse: false,
         autoclose: true,
         language: 'zh'
@@ -221,8 +227,8 @@ const commodityPlansModal = React.createClass({
           {(this.props.plan.status == 'edit') ? <div className="plus" onClick={this._handleAddPricing}>+</div> : ''}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this._handleClose}>Cancel</Button>
-          {(this.props.plan.status == 'edit') ? <Button bsStyle="primary" onClick={this._handleSubmit}>Submit</Button> : ''}
+          <Button onClick={this._handleClose}>取消</Button>
+          {(this.props.plan.status == 'edit') ? <Button bsStyle="primary" onClick={this._handleSubmit}>确认</Button> : ''}
         </Modal.Footer>
       </Modal>
     );
