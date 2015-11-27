@@ -227,8 +227,8 @@ const commodityPlansModal = React.createClass({
           {(this.props.plan.status == 'edit') ? <div className="plus" onClick={this._handleAddPricing}>+</div> : ''}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this._handleClose}>Cancel</Button>
-          {(this.props.plan.status == 'edit') ? <Button bsStyle="primary" onClick={this._handleSubmit}>Submit</Button> : ''}
+          <Button onClick={this._handleClose}>取消</Button>
+          {(this.props.plan.status == 'edit') ? <Button bsStyle="primary" onClick={this._handleSubmit}>确认</Button> : ''}
         </Modal.Footer>
       </Modal>
     );

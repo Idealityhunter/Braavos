@@ -11,9 +11,6 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
-  placeholders: {
-    introduction: '请添加商品介绍，您可粘贴图片或编辑文字描述'
-  },
   getInitialState(){
     return {
       plans: this.props.plans || []
@@ -349,7 +346,7 @@ const commodityModify = React.createClass({
     const um = UM.getEditor('ueContainer');
     um.ready(function(){
       //设置编辑器的内容
-      um.setContent((self.props.desc && self.props.desc.body) ? self.props.desc.body : self.placeholders.introduction);
+      um.setContent((self.props.desc && self.props.desc.body) ? self.props.desc.body : '');
     });
 
     // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证

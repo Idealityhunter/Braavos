@@ -235,7 +235,7 @@ var commodity = React.createClass({
                   <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
                 </div>
               </div>
-              <div className="col-sm-3">
+              <div className="col-sm-4">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></label>
                   <div className="input-daterange input-group">
