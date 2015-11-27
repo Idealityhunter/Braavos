@@ -228,8 +228,14 @@ export const AccountBasic = React.createClass({
           Meteor.call("marketplace.seller.update", Meteor.userId(), {email: [event.value]})
         },
         validator: value => {
-          const ctx = CoreModel.Marketplace.Seller.newContext();
-          return ctx.validateOne({email: [value]}, "email")
+          const schema = new SimpleSchema({
+            email: {
+              type: String,
+              regEx: SimpleSchema.RegEx.Email
+            }
+          });
+          const ctx = schema.newContext();
+          return ctx.validateOne({email: value}, "email")
         },
         label: _.first(this.data.sellerInfo.email || []),
         overlayMessage: "请输入正确的email地址"

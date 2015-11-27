@@ -84,19 +84,22 @@ export const TextEditor = React.createClass({
     }
   },
 
-  onClick() {
-    // 准备进入编辑状态
-    this.setState({editing: true, text: this.props.label, original: this.props.label});
-    if (this.props.onClick) {
-      this.props.onClick();
-    }
-
+  _selAll() {
     setTimeout(() => {
       const inputNode = ReactDOM.findDOMNode(this.refs['text-input']);
       const len = this.state.text.length * 2;
       inputNode.setSelectionRange(0, len);
       inputNode.focus();
     }, 10);
+  },
+
+  onClick() {
+    // 准备进入编辑状态
+    this.setState({editing: true, text: this.props.label, original: this.props.label});
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+    this._selAll();
   },
 
   onFocus() {
@@ -112,8 +115,8 @@ export const TextEditor = React.createClass({
     if (this._submitText && shouldSubmit && this.props.onSubmit) {
       this.props.onSubmit({value: submitText});
     }
-    setTimeout(()=>{
-      this.setState({editing: false, lastSubmit: submitText});
+    setTimeout(() => {
+      this.setState({showOverlay: false, editing: false, lastSubmit: submitText});
     }, 10);
   },
 
