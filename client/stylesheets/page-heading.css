@@ -338,12 +338,6 @@ textarea{
     border-style: dashed;
 }
 
-/*表单中的注释样式*/
-.comment-text{
-    color: darksalmon;
-    font-size: 12px;
-}
-
 
 /*商品信息中的日历样式*/
 /*.calendar-container{*/

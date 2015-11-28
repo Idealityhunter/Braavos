@@ -64,7 +64,7 @@ var commodity = React.createClass({
       };
       if ($('.input-daterange>input[name=end]').val()){
         _.extend(createTimeRange.createTime, {
-          '$lte': $('.input-daterange>input[name=end]').val()
+          '$lte': moment($('.input-daterange>input[name=end]').val()).add(1, 'day').format('YYYY-MM-DD')
         });
       };
     };
@@ -94,17 +94,14 @@ var commodity = React.createClass({
 
   // 重置筛选条件,并且展示所有商品
   _handleReset(){
-    // TODO 清空3个选择条件的数据 => 是否需要展示全部
+    // 清空3个选择条件的数据
+    // TODO 是否需要展示全部
     $('#commodity-id').val('');
-    $('.input-daterange').datepicker({
-      format: 'yyyy-mm-dd',
-      keyboardNavigation: false,
-      forceParse: false,
-      autoclose: true,
-      language: 'zh'
-    });
     $('.input-daterange>input[name=start]').val('');
     $('.input-daterange>input[name=end]').val('');
+    $('.input-daterange input').each(function (){
+      $(this).datepicker("clearDates");
+    });
     $('#commodity-status').val('0');
   },
 
@@ -182,11 +179,11 @@ var commodity = React.createClass({
     let i = 0;
     const commodityList = this.data.commodities.map(commodity =>
       <tr key={commodity.key} data-id={i} style={(commodity.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
-        <td>{++i}</td>
+        <td data-value={++i}>{i}</td>
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
-        <td>￥{commodity.price}{commodity.plans.length>1 ? '起' : ''}</td>
+        <td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>
         <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
         <td>
           {
@@ -235,7 +232,7 @@ var commodity = React.createClass({
                   <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
                 </div>
               </div>
-              <div className="col-sm-3">
+              <div className="col-sm-4">
                 <div className="form-group">
                   <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></label>
                   <div className="input-daterange input-group">
@@ -276,11 +273,12 @@ var commodity = React.createClass({
                   <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
                     <thead>
                       <tr>
-                        <th data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
+                        {/*TODO 并没有起到作用!!! => 貌似是react将数字转成了id*/}
+                        <th data-breakpoints="xs sm" data-type="numeric" data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
                         <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-                        <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
+                        <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
                         <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
                         {/*
                           <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
