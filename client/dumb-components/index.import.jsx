@@ -190,7 +190,7 @@ const index = React.createClass({
       display: 'block',
       backgroundColor: 'rgba(255,255,255,.7)',
       width: 220,
-      marginTop: -60,
+      marginTop: -100,
       marginLeft: -100,
       fontFamily: "'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
       padding: 20,
