@@ -34,7 +34,7 @@ Meteor.publish("sellerInfo", function () {
 Meteor.publish("commodities", function (options) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Commodity;
-  const allowedFields = ["commodityId", "title", "desc", "seller"];
+  const allowedFields = ["commodityId", "title", "seller", "cover", "createTime", "status", "price", "plans"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
@@ -43,7 +43,7 @@ Meteor.publish("commodities", function (options) {
     // 转化成Date对象
     options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
     options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
-  }
+  };
   return coll.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
 });
 
