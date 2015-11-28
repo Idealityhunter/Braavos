@@ -48,14 +48,29 @@ const PhoneEditor = React.createClass({
 
   // 更新电话号码
   onUpdateNumber(event) {
-    const number = parseInt(event.value);
-    if (number && !isNaN(number)) {
+    const number = this.formatNumber(event.value);
+    if (number) {
       this.setState({phoneNumber: number});
       const countryCode = this.state.selectedCountry;
       if (countryCode) {
         this.onUpdatePhone(countryCode, number);
       }
     }
+  },
+
+  // 从text中提出电话号码
+  formatNumber(text) {
+    // 去除所有的括号, 空格, 句点等符号
+    const number = parseInt(text.replace(/[\(\)\s\.\-]+/g, ""));
+    if (number && !isNaN(number) && number >= 1000) {
+      return number;
+    } else {
+      return null;
+    }
+  },
+
+  numberValidator(value) {
+    return !!this.formatNumber(value);
   },
 
   render() {
@@ -76,7 +91,8 @@ const PhoneEditor = React.createClass({
                   onChange={this.onUpdateCountry} options={countryOptions}/>
         </div>
         <TextEditor placeholder="请输入电话号码" inputClassName="col-xs-6" onSubmit={this.onUpdateNumber}
-                    visibleEditAnchor={true} label={number ? number.toString() : ""}/>
+                    visibleEditAnchor={true} label={number ? number.toString() : ""}
+                    validator={this.numberValidator} overlayMessage={"请输入正确格式的电话号码"}/>
       </div>);
   }
 });
