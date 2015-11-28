@@ -140,7 +140,7 @@ const commodityPlans = React.createClass({
 
     // 非state存储的编辑结果的获取
     const title = $trElement.children('.title').children('input').val();
-    const marketPrice = parseInt($trElement.children('.market-price').children('input').val());
+    let marketPrice = $trElement.children('.market-price').children('input').val();
     //const price = $trElement.children('.price').children('input').val();
     //const stock = $trElement.children('.stock').children('input').val();
 
@@ -152,7 +152,9 @@ const commodityPlans = React.createClass({
     if (marketPrice == ''){
       swal('请输入市场价!', '', 'error');
       return ;
-    };
+    } else {
+      marketPrice = parseInt(marketPrice);
+    }
     if (copyPlan[arrayIndex].modalPricing.length == 0){
       swal('请添加套餐的售价信息!', '', 'error');
       return ;

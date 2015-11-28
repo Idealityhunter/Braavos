@@ -11,6 +11,7 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  submitLock: false,
   getInitialState(){
     return {
       plans: this.props.plans || []
@@ -119,36 +120,94 @@ const commodityModify = React.createClass({
         return true;
       },
       onFinishing: function (event, currentIndex) {
+        if (self.submitLock)
+          return;
+        else
+          self.submitLock = true;
+        $('.submit-waiting').show();
         // TODO 验证和提交
         //$(".body:eq(" + newIndex + ") .error", form).removeClass("error")
 
         // 当前若是在最后一页则无需检查,可以直接提交
         if (currentIndex < 4){
-          // TODO 在其它的页面的提交需要做检查
-          if (!$('.form-group.title>input').val()
-            || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
-            || !$('.form-group.cost-time>input').val()
-            || self.state.plans.length <= 0){
-            // TODO 弹窗提示?还是别的?
-            $(".steps>ul>li:eq(0)").addClass("error");
-            location.hash = "steps-uid-0-t-0";
-            if (currentIndex != 0)
-              return true;
-            else
-              return false;
-          };
-          if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
-            // TODO 弹窗提示?还是别的?
-            //$(".steps>ul>li:eq(2)").addClass("error");
-            //location.hash = "steps-uid-0-t-2";
+          // 在其它的页面的提交需要做检查
+
+          // 第一页的基本信息的检查
+          //if (!$('.form-group.title>input').val()
+          //  || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
+          //  || !$('.form-group.cost-time>input').val()
+          //  || self.state.plans.length <= 0){
+          //  $(".steps>ul>li:eq(0)").addClass("error");
+          //  location.hash = "steps-uid-0-t-0";
+          //  if (currentIndex != 0)
+          //    return true;
+          //  else{
+          //    $('.submit-waiting').hide();
+          //    return false;
+          //  }
+          //};
+          if (!$('.form-group.title>input').val()){
+            $('.submit-waiting').hide();
+            swal('请填写商品名称!', '', 'error');
+            $('.form-group.title>input').addClass('error');
             return false;
           };
-          if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
-            // TODO 弹窗提示?还是别的?
-            //$(".steps>ul>li:eq(3)").addClass("error");
-            //location.hash = "steps-uid-0-t-3";
+          if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0){
+            $('.submit-waiting').hide();
+            swal('请添加商品图片!', '', 'error');
             return false;
           };
+          if (!$('.form-group.cost-time>input').val()){
+            $('.submit-waiting').hide();
+            swal('请填写游玩时长!', '', 'error');
+            $('.form-group.cost-time>input').addClass('error');
+            return false;
+          };
+          if (self.state.plans.length <= 0){
+            $('.submit-waiting').hide();
+            swal('请添加套餐信息!', '', 'error');
+            return false;
+          };
+
+          // 第三页的购买须知的检查
+          //if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
+          //  // TODO 弹窗提示?还是别的?
+          //  //$(".steps>ul>li:eq(2)").addClass("error");
+          //  //location.hash = "steps-uid-0-t-2";
+          //  return false;
+          //};
+          if (!$('.form-group.charge-include>textarea').val()){
+            $('.submit-waiting').hide();
+            swal('请填写费用包含项目!', '', 'error');
+            $('.form-group.charge-include>textarea').addClass('error');
+            return false;
+          }
+          if (!$('.form-group.usage>textarea').val()){
+            $('.submit-waiting').hide();
+            swal('请填写商品使用方法!', '', 'error');
+            $('.form-group.usage>textarea').addClass('error');
+            return false;
+          }
+
+          // 第四页的预定退改流程的检查
+          //if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
+          //  // TODO 弹窗提示?还是别的?
+          //  //$(".steps>ul>li:eq(3)").addClass("error");
+          //  //location.hash = "steps-uid-0-t-3";
+          //  return false;
+          //};
+          if (!$('.form-group.book>textarea').val()){
+            $('.submit-waiting').hide();
+            swal('请填写预订流程!', '', 'error');
+            $('.form-group.book>textarea').addClass('error');
+            return false;
+          }
+          if (!$('.form-group.unbook>textarea').val()){
+            $('.submit-waiting').hide();
+            swal('请填写退订和改订的相关规定!', '', 'error');
+            $('.form-group.unbook>textarea').addClass('error');
+            return false;
+          }
         };
 
         // 获取填写的信息
@@ -292,8 +351,6 @@ const commodityModify = React.createClass({
           images : images
         };
 
-        $('.submit-waiting').show();
-        // TODO 提交并验证
         // 编辑和添加的不同
         if (self.props.commodityId) {
           Meteor.call('commodity.update', Meteor.userId(), commodityInfo, self.props.commodityId, function(err, res){
@@ -312,7 +369,9 @@ const commodityModify = React.createClass({
               }, function(){
                 FlowRouter.go('commodities');
               })
-            }
+            };
+            // 以免不点击swal导致不跳转
+            setTimeout(FlowRouter.go('commodities'), 500);
           });
         } else {
           Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
@@ -331,13 +390,15 @@ const commodityModify = React.createClass({
               }, function(){
                 FlowRouter.go('commodities');
               })
-            }
+            };
+            // 以免不点击swal导致不跳转
+            setTimeout(FlowRouter.go('commodities'), 500);
           });
         }
 
         // steps插件在return false时,title的样式会有不同
         // return true;
-        return false;
+        // return false;
       }
     });
 
