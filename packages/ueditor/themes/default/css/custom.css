@@ -14,8 +14,8 @@
     box-sizing: content-box;
 }
 
-/*解决被steps的样式覆盖的问题*/
-.edui-container li{
+/*解决emotion的表情被steps的样式覆盖的问题*/
+.edui-container .edui-tab-nav li{
     list-style: none;
 }
 
