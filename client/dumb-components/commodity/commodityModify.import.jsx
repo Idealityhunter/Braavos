@@ -147,23 +147,27 @@ const commodityModify = React.createClass({
           //  }
           //};
           if (!$('.form-group.title>input').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写商品名称!', '', 'error');
             $('.form-group.title>input').addClass('error');
             return false;
           };
           if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请添加商品图片!', '', 'error');
             return false;
           };
           if (!$('.form-group.cost-time>input').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写游玩时长!', '', 'error');
             $('.form-group.cost-time>input').addClass('error');
             return false;
           };
           if (self.state.plans.length <= 0){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请添加套餐信息!', '', 'error');
             return false;
@@ -177,12 +181,14 @@ const commodityModify = React.createClass({
           //  return false;
           //};
           if (!$('.form-group.charge-include>textarea').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写费用包含项目!', '', 'error');
             $('.form-group.charge-include>textarea').addClass('error');
             return false;
           }
           if (!$('.form-group.usage>textarea').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写商品使用方法!', '', 'error');
             $('.form-group.usage>textarea').addClass('error');
@@ -197,12 +203,14 @@ const commodityModify = React.createClass({
           //  return false;
           //};
           if (!$('.form-group.book>textarea').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写预订流程!', '', 'error');
             $('.form-group.book>textarea').addClass('error');
             return false;
           }
           if (!$('.form-group.unbook>textarea').val()){
+            self.submitLock = false;
             $('.submit-waiting').hide();
             swal('请填写退订和改订的相关规定!', '', 'error');
             $('.form-group.unbook>textarea').addClass('error');
@@ -357,9 +365,12 @@ const commodityModify = React.createClass({
             $('.submit-waiting').hide();
             // TODO 回调结果反应
             if (err){
+              self.submitLock = false;
               swal("编辑商品失敗!", "", "error");
+              return ;
             };
             if (res){
+              self.submitLock = false;
               swal({
                 title: "成功编辑商品!",
                 type: "success",
@@ -368,19 +379,25 @@ const commodityModify = React.createClass({
                 closeOnConfirm: true
               }, function(){
                 FlowRouter.go('commodities');
-              })
+              });
+
+              // 以免不点击swal导致不跳转
+              setTimeout(FlowRouter.go('commodities'), 500);
+
+              return ;
             };
-            // 以免不点击swal导致不跳转
-            setTimeout(FlowRouter.go('commodities'), 500);
           });
         } else {
           Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function(err, res){
             $('.submit-waiting').hide();
             // TODO 回调结果反应
             if (err){
+              self.submitLock = false;
               swal("添加商品失敗!!", "", "error");
+              return ;
             };
             if (res){
+              self.submitLock = false;
               swal({
                 title: "成功添加商品!",
                 type: "success",
@@ -389,10 +406,12 @@ const commodityModify = React.createClass({
                 closeOnConfirm: true
               }, function(){
                 FlowRouter.go('commodities');
-              })
+              });
+
+              // 以免不点击swal导致不跳转
+              setTimeout(FlowRouter.go('commodities'), 500);
+              return ;
             };
-            // 以免不点击swal导致不跳转
-            setTimeout(FlowRouter.go('commodities'), 500);
           });
         }
 
