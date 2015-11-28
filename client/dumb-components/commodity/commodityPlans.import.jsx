@@ -389,8 +389,8 @@ const commodityPlans = React.createClass({
         </div>
         <div className="inline price">
           {(this.state.dateRequired)
-            ? <input className="inline" type='text' placeholder="售价￥" value={this.state.addPlan.modalPrice} onClick={this._handleShowModal} style={{padding: 6}}/>
-            : <input className="inline" type='text' placeholder="售价￥" defaultValue={this.state.addPlan.modalPrice} style={{padding: 6}}/>
+            ? <input className="inline" type='text' placeholder="售价￥" tabIndex="-1" value={this.state.addPlan.modalPrice} onClick={this._handleShowModal} style={{padding: 6}}/>
+            : <input className="inline" type='text' placeholder="售价￥" tabIndex="-1" defaultValue={this.state.addPlan.modalPrice} style={{padding: 6}}/>
             }
           <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
         </div>

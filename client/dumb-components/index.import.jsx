@@ -5,7 +5,7 @@ var FormattedNumber = ReactIntl.FormattedNumber;
 var FormattedMessage = ReactIntl.FormattedMessage;
 var FormattedRelative = ReactIntl.FormattedRelative;
 
-const test = React.createClass({
+const index = React.createClass({
   mixins: [IntlMixin],
 
   getInitialState() {
@@ -64,4 +64,4 @@ const test = React.createClass({
 
 
 //<FormattedNumber locales={['en-US']} local='en-US' value={1000} style="currency" currency="USD" />
-export const Test = test;
+export const Index = index;

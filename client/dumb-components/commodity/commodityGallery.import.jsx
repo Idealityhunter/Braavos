@@ -52,6 +52,7 @@ let commodityGallery = React.createClass({
 
     if ($(e.target).hasClass('left')) {
       if (!scrollLeft) return;
+      // scroll right
       this.setState({
         leftImages: this.state.leftImages - 1
       });
@@ -59,6 +60,7 @@ let commodityGallery = React.createClass({
         marginLeft: '+=90px'
       });
     } else {
+      // scroll left
       if (!scrollRight) return;
       this.setState({
         leftImages: this.state.leftImages + 1
@@ -142,7 +144,7 @@ let commodityGallery = React.createClass({
   },
 
   // 上传图片
-  changeImage(evt) {
+  uploadImage(evt) {
     const file = evt.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -151,6 +153,17 @@ let commodityGallery = React.createClass({
           showUploadModal: true,
           uploadModalImageSrc: reader.result
         });
+
+        // 当plus按钮要被挤掉的时候
+        if (this.state.leftImages + 4 == this.state.images.length + 1){
+          // scroll left
+          this.setState({
+            leftImages: this.state.leftImages + 1
+          });
+          $('.scroll-wrap').animate({
+            marginLeft: '-=90px'
+          }, 200);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -298,7 +311,7 @@ let commodityGallery = React.createClass({
               {imgList}
               <div className="select-frame img-wrap inline">
                 <label className="plus cursor-pointer" htmlFor="upload-file-input">+</label>
-                <input id="upload-file-input" className="hidden" type="file" onChange={this.changeImage}
+                <input id="upload-file-input" className="hidden" type="file" onChange={this.uploadImage}
                        preloading={this.state.imagePreloading}/>
               </div>
             </div>

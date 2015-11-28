@@ -1,5 +1,5 @@
 import {MainLayout} from '/client/main-layout';
-import {Test} from '/client/dumb-components/test';
+import {Index} from '/client/dumb-components/index';
 import {Register} from '/client/dumb-components/common/register';
 import {RegistrationLayout} from "/client/common/registration"
 import {Login} from '/client/dumb-components/common/login';
@@ -33,7 +33,7 @@ FlowRouter.route('/', {
   triggersEnter: [loginCheck],
   action() {
     //ReactLayout.render();
-    ReactLayout.render(MainLayout, _.extend({content: <Test {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData));
   }
 });
 
@@ -117,7 +117,7 @@ FlowRouter.route('/orders', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Test {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData));
   }
 });
 
