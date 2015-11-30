@@ -8,6 +8,8 @@ import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Finance} from '/client/dumb-components/finance/finance';
 
+import {StepsDemo} from "/client/components/steps/steps"
+
 // 初始化Sub Manager
 BraavosCore.SubsManager = {
   geo: new SubsManager(),
@@ -36,6 +38,12 @@ FlowRouter.route('/', {
   action() {
     //ReactLayout.render();
     ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData));
+  }
+});
+
+FlowRouter.route('/test', {
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <StepsDemo />}, intlData));
   }
 });
 
