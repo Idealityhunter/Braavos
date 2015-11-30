@@ -9,17 +9,19 @@ import {CommodityModify} from '/client/dumb-components/commodity/commodityModify
 import {Finance} from '/client/dumb-components/finance/finance';
 
 // 初始化Sub Manager
-BraavosCore.SubsManager = new SubsManager();
-const subsManager = BraavosCore.SubsManager;
-subsManager.subscribe("countries");
+BraavosCore.SubsManager = {
+  geo: new SubsManager(),
+  account: new SubsManager()
+};
+BraavosCore.SubsManager.geo.subscribe("countries");
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
   if (!Meteor.userId()) {
     redirect('login');
   }
-  subsManager.subscribe("basicUserInfo");
-  subsManager.subscribe("sellerInfo");
+  BraavosCore.SubsManager.account.subscribe("basicUserInfo");
+  BraavosCore.SubsManager.account.subscribe("sellerInfo");
 }
 
 const intlData = BraavosCore.IntlData.zh;
