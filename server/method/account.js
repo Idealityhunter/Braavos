@@ -4,6 +4,8 @@
  * Created by zephyre on 10/22/15.
  */
 
+const Int64 = Meteor.npmRequire('node-int64');
+
 Meteor.methods({
   /**
    * 生成一个注册token
@@ -61,6 +63,16 @@ Meteor.methods({
     } catch (err) {
       console.log(`Failed to create user: ${err}`);
       throw err;
+    }
+  },
+
+  // 更改密码
+  "account.changePassword": (oldPassword, newPassword) => {
+    const client = BraavosCore.Thrift.Yunkai.client;
+    const userId = parseInt(Meteor.userId());
+    if (userId && !isNaN(userId)) {
+      console.log(userId);
+      client.resetPassword(new Int64(userId), oldPassword, newPassword);
     }
   }
 });
