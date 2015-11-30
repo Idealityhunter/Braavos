@@ -1,4 +1,5 @@
 import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
+import {TextField} from "/client/components/textfield/textfield"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedNumber = ReactIntl.FormattedNumber;
@@ -14,8 +15,15 @@ const test = React.createClass({
     return {
       lat: lat,
       lng: lng,
-      location: [lat, lng]
+      location: [lat, lng],
+      showOverlay: false,
+      ovverlayMessage: "输入错误",
+      tfValue: ""
     }
+  },
+
+  onTextFieldChange(event) {
+    this.setState({tfValue: event.value, showOverlay: event.value.length >= 3});
   },
 
   onChange(evt) {
@@ -46,6 +54,9 @@ const test = React.createClass({
   render() {
     return (
       <div>
+        <TextField value={this.state.tfValue} onChange={this.onTextFieldChange} showOverlay={this.state.showOverlay}
+                   labelClassName="col-xs-1" wrapperClassName="col-xs-3"
+                   overlayMessage="输入错误" label="输入" placeholder="请输入详细信息"/>
         {/*
          <div className="essay-contents">
          <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
@@ -56,7 +67,7 @@ const test = React.createClass({
          <button onClick={this.onClick}>Click</button>
          <GoogleMapComponent lat={this.state.location[0]} lng={this.state.location[1]}/>
          </div>
-        */}
+         */}
       </div>
     );
   }
