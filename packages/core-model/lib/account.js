@@ -27,9 +27,8 @@ Account.Token = new SimpleSchema({
    * 20: 修改密码时的token
    */
   tokenType: {
-    type: Number,
-    min: 1,
-    max: 100
+    type: String,
+    allowedValues: ["register"]
   },
 
   /**
