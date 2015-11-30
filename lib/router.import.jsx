@@ -35,7 +35,7 @@ FlowRouter.route('/', {
   triggersEnter: [loginCheck],
   action() {
     //ReactLayout.render();
-    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData, {documentTitle: "首页"}));
   }
 });
 
@@ -82,7 +82,7 @@ FlowRouter.route('/commodities', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Commodity {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Commodity {...intlData} />}, intlData, {documentTitle: "商品管理"}));
   }
 });
 
@@ -91,7 +91,7 @@ FlowRouter.route('/commodities/add', {
   name: 'commodityAdd',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData, {documentTitle: "商品添加"}));
   }
 });
 
@@ -104,7 +104,7 @@ FlowRouter.route('/commodities/editor', {
     Meteor.call('commodity.editor.checkCommodityId', commodityId, (err, ret) => {
       const isValid = (!err && ret.valid);
       if (isValid) {
-        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData));
+        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
       }
@@ -119,7 +119,7 @@ FlowRouter.route('/orders', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData, {documentTitle: "订单管理"}));
   }
 });
 
@@ -130,7 +130,7 @@ FlowRouter.route('/finance', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData, {documentTitle: "财务管理"}));
   }
 });
 
@@ -141,6 +141,6 @@ FlowRouter.route('/account', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData));
+    ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData, {documentTitle: "账户信息"}));
   }
 });
