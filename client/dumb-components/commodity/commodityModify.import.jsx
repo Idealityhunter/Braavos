@@ -532,7 +532,7 @@ const commodityModify = React.createClass({
         <div className="submit-waiting" style={{display: 'none'}}>
           <div className="shadow-layer" style={this.styles.shadowLayer}></div>
           <div className="loading-board" style={this.styles.loadingBoard}>
-            <div class="loading-label" style={this.styles.loadingLabel}>正在提交中，请稍候...</div>
+            <div className="loading-label" style={this.styles.loadingLabel}>正在提交中，请稍候...</div>
             <div className="sk-spinner sk-spinner-wave" style={this.styles.spinnerGroup}>
               <div className="sk-rect1" style={this.styles.spinnerItem}></div>
               <div className="sk-rect2" style={this.styles.spinnerItem}></div>
