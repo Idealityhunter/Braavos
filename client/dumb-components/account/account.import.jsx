@@ -18,18 +18,12 @@ var account = React.createClass({
         <div className="tabs-container">
           <ul className="nav nav-tabs">
             <li className="active"><a data-toggle="tab" href="#tab-1"><FormattedMessage message={this.getIntlMessage(prefix + 'basic')}/></a></li>
-            <li><a data-toggle="tab" href="#tab-2"><FormattedMessage message={this.getIntlMessage(prefix + 'finance')} /></a></li>
             <li><a data-toggle="tab" href="#tab-3"><FormattedMessage message={this.getIntlMessage(prefix + 'security')} /></a></li>
           </ul>
           <div className="tab-content">
             <div id="tab-1" className="tab-pane active">
               <div className="panel-body">
                 <AccountBasic {...intlData} />
-              </div>
-            </div>
-            <div id="tab-2" className="tab-pane">
-              <div className="panel-body">
-                <AccountFinance />
               </div>
             </div>
             <div id="tab-3" className="tab-pane">
