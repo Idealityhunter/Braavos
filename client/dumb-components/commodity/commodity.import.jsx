@@ -238,11 +238,6 @@ var commodity = React.createClass({
       <div className="commodity-mngm-wrap">
         <Breadcrumb />
 
-        {/*测试footble的绑定事件
-          <Button bsStyle="primary" bsSize="large" onClick={() => $('.footable').footable()} active>Bind Event</Button>
-          <Button bsStyle="primary" bsSize="large">Test Attribute</Button>
-         */}
-
         <div className="wrapper wrapper-content animated fadeInRight ecommerce">
           <div className="ibox-content m-b-sm border-bottom">
             <div className="row">

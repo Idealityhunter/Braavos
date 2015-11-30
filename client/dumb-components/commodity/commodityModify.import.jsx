@@ -502,7 +502,7 @@ const commodityModify = React.createClass({
           <h3><FormattedMessage message={this.getIntlMessage(prefix + 'traffic')}/></h3>
           <div className="basic">
             <CommodityModifyBasic
-              handleChildSubmitState={this.handleChildSubmitState.bind(this)}
+              handleChildSubmitState={this.handleChildSubmitState}
               title={this.props.title || []}
               cover={this.props.cover || ''}
               images={this.props.images || []}
