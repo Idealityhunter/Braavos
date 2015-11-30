@@ -1,0 +1,9 @@
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.jcrop-keymgr {
+    display: none;
+    left: -9999px;
+    opacity: 0;
+}

@@ -1,4 +1,38 @@
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+
 let topBar = React.createClass({
+  mixins: [IntlMixin],
+
+  componentDidMount() {
+    // Toggle left navigation
+    $('#navbar-minimalize').on('click', function (event) {
+      event.preventDefault();
+
+      // Toggle special class
+      $("body").toggleClass("mini-navbar");
+
+      // Enable smoothly hide/show menu
+      if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+        // Hide menu in order to smoothly turn on when maximize menu
+        $('#side-menu').hide();
+        // For smoothly turn on menu
+        setTimeout(
+          function () {
+            $('#side-menu').fadeIn(500);
+          }, 100);
+      } else if ($('body').hasClass('fixed-sidebar')) {
+        $('#side-menu').hide();
+        setTimeout(
+          function () {
+            $('#side-menu').fadeIn(500);
+          }, 300);
+      } else {
+        // Remove all inline style from jquery fadeIn function to reset menu state
+        $('#side-menu').removeAttr('style');
+      }
+    });
+  },
   render() {
     return (
       <nav className="navbar navbar-static-top" role="navigation" style={{marginBottom: 0}}>
@@ -6,16 +40,11 @@ let topBar = React.createClass({
           <a id="navbar-minimalize" className="minimalize-styl-2 btn btn-primary " href="#">
             <i className="fa fa-bars"></i>
           </a>
-          <form role="search" className="navbar-form-custom" action="search_results">
-            <div className="form-group">
-              <input type="text" placeholder="Search for something..." className="form-control" name="top-search" id="top-search" />
-            </div>
-          </form>
+
         </div>
         <ul className="nav navbar-top-links navbar-right">
-          <li>
-            <span className="m-r-sm text-muted welcome-message"> Welcome to INSPINIA+ Admin Theme.</span>
-          </li>
+          {/*消息提示*/}
+          {/*
           <li className="dropdown">
             <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
               <i className="fa fa-envelope"></i>
@@ -70,6 +99,9 @@ let topBar = React.createClass({
               </li>
             </ul>
           </li>
+          */}
+          {/*系统提示*/}
+          {/*
           <li className="dropdown">
             <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
               <i className="fa fa-bell"></i>  <span className="label label-primary">8</span>
@@ -112,9 +144,11 @@ let topBar = React.createClass({
               </li>
             </ul>
           </li>
+           */}
           <li>
-            <a href="#">
-              <i className="fa fa-sign-out"></i> Log out
+            <a href={FlowRouter.path('logout')}>
+              <i className="fa fa-sign-out"></i>
+              <FormattedMessage message={this.getIntlMessage('login.logout')}/>
             </a>
           </li>
           <li>

@@ -1,0 +1,9 @@
+{
+	"name": "jquery-jcrop",
+	"description": "jQuery Jcrop package for Meteor",
+	"homepage": "https://github.com/waltyuyu/meteor-jquery-jcrop",
+	"author": "waltyuyu",
+	"version": "0.0.3",
+	"git": "https://github.com/waltyuyu/meteor-jquery-jcrop.git",
+	"packages": {}
+}

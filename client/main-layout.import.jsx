@@ -1,5 +1,5 @@
-import {LeftSiderBar} from './dumb-components/common/left-siderbar';
-import {TopBar} from './dumb-components/common/topbar';
+import {LeftSiderBar} from '/client/dumb-components/common/left-siderbar';
+import {TopBar} from '/client/dumb-components/common/topbar';
 
 
 let mainLayout = React.createClass({
@@ -11,14 +11,16 @@ let mainLayout = React.createClass({
     });
   },
   render() {
+    const intlData = _.pick(this.props, 'locales', 'messages', 'format');
+
     return (
       <div id="wrapper">
         {/*左侧菜单栏*/}
-        <LeftSiderBar />
+        <LeftSiderBar {...intlData} />
 
         <div id="page-wrapper" className="gray-bg">
           {/*顶部导航栏*/}
-          <TopBar />
+          <TopBar {...intlData} />
           {this.props.content}
         </div>
       </div>

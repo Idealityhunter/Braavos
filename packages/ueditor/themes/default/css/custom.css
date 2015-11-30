@@ -1,0 +1,25 @@
+
+/*umeditor图片样式*/
+#ueContainer img:not(.loadingclass){
+    width: 100%;
+    height: auto;
+}
+
+/*表情样式*/
+#ueContainer img[src$=".gif"]{
+    width: auto;
+}
+
+#ueContainer{
+    box-sizing: content-box;
+}
+
+/*解决emotion的表情被steps的样式覆盖的问题*/
+.edui-container .edui-tab-nav li{
+    list-style: none;
+}
+
+/*解决image-scale的bug*/
+.edui-scale{
+    box-sizing: content-box;
+}

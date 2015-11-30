@@ -16,13 +16,14 @@
     outline: 0;
 }
 
-.wizard ul,
-.tabcontrol ul
-{
-    list-style: none !important;
-    padding: 0;
-    margin: 0;
-}
+/*会影响内部的样式*/
+/*.wizard ul,*/
+/*.tabcontrol ul*/
+/*{*/
+    /*list-style: none !important;*/
+    /*padding: 0;*/
+    /*margin: 0;*/
+/*}*/
 
 .wizard ul > li,
 .tabcontrol ul > li

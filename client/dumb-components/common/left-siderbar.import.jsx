@@ -1,40 +1,138 @@
+var IntlMixin = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+
 let leftSiderBar = React.createClass({
+  mixins: [IntlMixin, ReactMeteorData],
+
+  getMeteorData() {
+    const handle = Meteor.subscribe('basicUserInfo');
+
+    let userInfo;
+    if (handle.ready()) {
+      const userId = parseInt(Meteor.userId());
+      userInfo = BraavosCore.Database['Yunkai']['UserInfo'].findOne({userId: userId});
+    }
+
+    if (!userInfo) {
+      userInfo = {};
+    }
+
+    // TODO 需要更细致的处理图像的方法. 考虑各种情况, 比如avatar是一个key等.
+    if (userInfo && userInfo.avatar) {
+      // 假如是新的avtar结构,要做特殊处理
+      userInfo.avatar.url && (userInfo.avatar = userInfo.avatar.url);
+      userInfo.avatar += '?imageView2/2/w/48/h/48';
+    } else {
+      userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
+    }
+    return {
+      userInfo: userInfo
+    };
+  },
+
   componentDidMount() {
     $('#side-menu').metisMenu();
   },
+
   render() {
+    let prefix = 'mainLayout.leftSideBar.';
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
           <ul className="nav metismenu" id="side-menu">
+
             {/*头像部分*/}
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <span><img alt="image" className="img-circle" src="img/profile_small.jpg" /></span>
+                <span><img alt="image" width="48px" className="img-circle" src={this.data.userInfo.avatar}/></span>
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
-                      <strong className="font-bold">David Williams</strong>
+                      <strong className="font-bold">{this.data.userInfo.nickName}</strong>
                     </span>
-                    <span className="text-muted text-xs block">Art Director
+                    <span className="text-muted text-xs block">普通商户
                       <b className="caret"></b>
                     </span>
                   </span>
                 </a>
                 <ul className="dropdown-menu animated fadeInRight m-t-xs">
-                  <li><a href="profile.html">Profile</a></li>
-                  <li><a href="contacts.html">Contacts</a></li>
-                  <li><a href="mailbox.html">Mailbox</a></li>
+                  <li>
+                    <a href={FlowRouter.path('account')}>
+                      <FormattedMessage message={this.getIntlMessage(`${prefix}accountInfo`)}/>
+                    </a>
+                  </li>
+                  {/*<li><a href="contacts.html">Contacts</a></li>*/}
+                  {/*<li><a href="mailbox.html">Mailbox</a></li>*/}
                   <li className="divider"></li>
-                  <li><a href="login.html">Logout</a></li>
+                  <li>
+                    <a href={FlowRouter.path('logout')}>
+                      <FormattedMessage message={this.getIntlMessage('login.logout')}/>
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div className="logo-element">
                 IN+
               </div>
             </li>
+
+            {/*首页*/}
+            <li className={ActiveRoute.name('home') ? "active" : ""}>
+              <a href={FlowRouter.path('home')}>
+                <i className="fa fa-diamond"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
+                </span>
+              </a>
+            </li>
+
+            {/*商品管理*/}
+            <li className={ActiveRoute.name('commodities') ? "active" : ""}>
+              <a href={FlowRouter.path('commodities')}>
+                <i className="fa fa-shopping-cart"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodities')}/>
+                </span>
+              </a>
+            </li>
+
+            {/*订单管理*/}
+            {/*
+            <li className={ActiveRoute.name('orders') ? "active" : ""}>
+              <a href={FlowRouter.path('orders')}>
+                <i className="fa fa-tags"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'orders')}/>
+                </span>
+              </a>
+            </li>
+             */}
+
+            {/*财务管理*/}
+            {/*
+            <li className={ActiveRoute.name('finance') ? "active" : ""}>
+              <a href={FlowRouter.path('finance')}>
+                <i className="fa fa-database"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'finance')}/>
+                </span>
+              </a>
+            </li>
+             */}
+
+            {/*账户信息*/}
+            <li className={ActiveRoute.name('account') ? "active" : ""}>
+              <a href={FlowRouter.path('account')}>
+                <i className="fa fa-user"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
+                </span>
+              </a>
+            </li>
+
             {/*Dashboards*/}
-            <li className="active">
+            {/*
+            <li>
               <a href="#">
                 <i className="fa fa-th-large"></i>
                 <span className="nav-label">Dashboards</span>
@@ -42,12 +140,15 @@ let leftSiderBar = React.createClass({
               </a>
               <ul className="nav nav-second-level collapse">
                 <li><a href="#">Dashboard v.1</a></li>
-                <li className="active"><a href="dashboard_2.html">Dashboard v.2</a></li>
+                <li><a href="dashboard_2.html">Dashboard v.2</a></li>
                 <li><a href="dashboard_3.html">Dashboard v.3</a></li>
                 <li><a href="dashboard_4_1.html">Dashboard v.4</a></li>
               </ul>
             </li>
+             */}
+
             {/*Menu Levels*/}
+            {/*
             <li>
               <a href="#">
                 <i className="fa fa-sitemap"></i>
@@ -67,6 +168,7 @@ let leftSiderBar = React.createClass({
                 <li><a href="#">Second Level Item</a></li>
               </ul>
             </li>
+            */}
           </ul>
         </div>
       </nav>

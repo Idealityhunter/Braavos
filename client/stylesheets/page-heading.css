@@ -1,0 +1,369 @@
+
+/*initial*/
+textarea{
+    resize: none;
+}
+
+/*for breadcrumbs*/
+.page-heading .breadcrumb > li + li:before, .page-heading .breadcrumb > span + li:before{
+    content: '\00a0>\00a0';
+}
+
+/*for account basic*/
+.modify-text{
+    /*TODO */
+}
+
+.avatar img{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.account-basic-wrap .no-border{
+    border: none;
+}
+
+@media (max-width: 767px) {
+    .account-basic-wrap hr{
+        margin: 10px 3% 20px 1%;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .account-basic-wrap hr{
+        margin: 10px 5% 20px 3%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .account-basic-wrap hr{
+        margin: 10px 7% 20px 5%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .account-basic-wrap hr{
+        margin: 10px 10% 20px 7%;
+    }
+}
+
+.account-basic-wrap .height-auto{
+    height: auto;
+}
+
+
+
+.account-finance-wrap ul.bank-account-list{
+    list-style: none;
+}
+
+.account-finance-wrap h4, .account-finance-wrap ul, .account-finance-wrap li div{
+    vertical-align: top;
+    display: inline-block;
+}
+
+.account-finance-wrap li div{
+    margin-right: 20px;
+    margin-bottom: 15px;
+}
+
+.account-finance-wrap .bank-select-frame{
+    border: 1px dashed #ccc;
+    width: 100px;
+    height: 100px;
+    margin: 20px 0 20px 80px;
+}
+
+.account-finance-wrap .bank-select-frame .plus{
+    margin-top: 15px;
+    text-align: center;
+    font-size: 35px;
+    color: #ddd;
+    line-height: 1.2;
+}
+
+.account-finance-wrap .delete{
+    color: red;
+}
+
+.account-finance-wrap .bank-select-frame a{
+    display: block;
+    margin: 0px auto;
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+}
+
+/*commodity*/
+.commodity-modify-wrap label, .account-security-wrap label{
+    margin: 2px 20px;
+    font-size: 16px;
+    font-family: sans-serif;
+    width: 80px;
+}
+
+.commodity-modify-wrap textarea{
+    width: 600px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/*for the steps header*/
+.commodity-modify-wrap .wizard > .steps > ul > li{
+    width: 20%;
+}
+
+.commodity-modify-wrap .steps-container{
+    margin-top: 20px;
+}
+
+/*hack for the auto height*/
+.commodity-modify-wrap .wizard > .content > .body{
+    position: static;
+}
+
+.commodity-basic-form-wrap, .account-password-wrap{
+    margin-left: 80px;
+}
+
+.commodity-basic-form-wrap label, .account-security-wrap .form-group label{
+    font-weight: normal;
+    font-size: 14px;
+    margin: 5px 10px 0 0;
+    width: auto;
+}
+
+.commodity-basic-form-wrap .label-text{
+    width: 70px;
+}
+
+.commodity-basic-form-wrap select{
+    margin-right: 10px;
+    width: 20%;
+    display: inline-block;
+}
+
+
+.commodity-basic-form-wrap .table>tbody>tr>td{
+    border-color: #999;
+}
+
+.commodity-basic-form-wrap .table>tbody>tr{
+    border: 1px solid #999;
+}
+
+.commodity-basic-plan table{
+    width: auto;
+}
+
+/*基本信息中plan-wrap的样式*/
+/*.plan-wrap{*/
+    /*text-align: center;*/
+/*}*/
+
+.plan-wrap>div{
+    margin-right: 16px;
+}
+
+.plan-wrap .title{
+    width: 250px;
+}
+.plan-wrap .market-price{
+    width: 110px;
+}
+.plan-wrap .price{
+    width: 150px;
+}
+.plan-wrap .stock{
+    width: 130px;
+}
+.plan-wrap .controller{
+    width: 200px;
+}
+
+.commodity-modify-wrap .plan-list{
+    margin-bottom: 20px;
+    width: 800px;
+}
+
+.commodity-modify-wrap .plan-wrap{
+    border: 1px solid #aaa;
+    border-bottom: none;
+    padding: 5px;
+    width: 800px;
+}
+
+.commodity-modify-wrap .plan-wrap:last-child{
+    border-bottom: 1px solid #aaa;
+}
+
+/*基本信息中addPlan的样式*/
+.commodity-modify-wrap .commodity-add{
+    margin-left: 6px;
+}
+
+.commodity-modify-wrap .commodity-add>div{
+    margin-right: 16px;
+    vertical-align: top;
+}
+
+.commodity-modify-wrap .commodity-basic-plan .title>input{
+    width: 250px;
+    text-align: center;
+}
+.commodity-modify-wrap .commodity-basic-plan .market-price>input{
+    width: 110px;
+    text-align: center;
+}
+.commodity-modify-wrap .commodity-basic-plan .price>input{
+    width: 150px;
+    text-align: center;
+}
+.commodity-modify-wrap .commodity-basic-plan .stock>input{
+    width: 130px;
+    text-align: center;
+}
+
+/*datapicker在modal中的用法*/
+.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top, .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom{
+    z-index: 100000 !important;
+}
+
+/*基本信息中modal中商品价格*/
+.modal-body .commodity-basic-price{
+    width: 80px;
+    vertical-align: top;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.modal-body .plus{
+    border: 1px dashed #bbb;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.modal-body .fa-minus-circle{
+    font-size: 20px;
+    vertical-align: top;
+    margin-top: 6px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/*commodity modify basic*/
+.gallery-wrap .img-view{
+    text-align: center;
+    width: 500px;
+    margin-bottom: 20px;
+}
+
+
+.gallery-wrap .middle-view{
+    width: 360px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.gallery-wrap .scroll-view{
+    margin-left: 35px;
+}
+
+.gallery-wrap .scroll-wrap{
+   width: auto;
+   height: 100px;
+   margin-left: 0;
+}
+
+.gallery-wrap .img-wrap{
+    width: 80px;
+    margin-left: 10px;
+    vertical-align: top;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.gallery-wrap .img-wrap img.active{
+    border: 1px solid #ff3333;
+}
+.gallery-wrap .img-wrap img{
+    width: 80px;
+    height: 80px;
+}
+
+.gallery-wrap .img-wrap.select-frame{
+    height: 80px;
+    text-align: center;
+    border: 1px dotted #888;
+}
+
+.gallery-wrap .img-wrap.select-frame .plus{
+    font-size: 40px;
+    width: 80px;
+    margin: 0;
+    height: 80px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.gallery-wrap .ctl-btn{
+    vertical-align: top;
+    border-radius: 2px;
+    border: 1px solid #aaa;
+    display: inline-block;
+    width: 20px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 20px;
+    color: #999;
+    cursor: pointer;
+    text-align: center;
+    margin-left: 10px;
+    background-color: #f8f8f8;
+}
+
+.gallery-wrap .ctl-btn.frozen{
+    border-color: #ccc;
+    color: #ccc;
+    cursor: default;
+    background-color: #f4f4f4;
+    border-style: dashed;
+}
+
+
+/*商品信息中的日历样式*/
+/*.calendar-container{*/
+    /*background-color: #fff;*/
+    /*position: absolute;*/
+    /*top: -10000px;*/
+/*}*/
+
+/*商品管理中的placeholder*/
+
+input.placeholder::-moz-placeholder, textarea.placeholder::-moz-placeholder{
+    color: #DDDDDD;
+    text-indent: 5px; /* 没有用 */
+    opacity: 1!important;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder:-ms-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}
+input.placeholder::-moz-placeholder, textarea.placeholder::-webkit-input-placeholder {
+    color: #DDDDDD;
+    text-indent: 5px;
+}
+
+
+/*商品编辑页面中的文本框的错误处理样式*/
+input.error, textarea.error{
+    border: 1px solid red !important;
+}
