@@ -7,8 +7,6 @@ let topBar = React.createClass({
   componentDidMount() {
     // Toggle left navigation
     $('#navbar-minimalize').on('click', function (event) {
-      console.log('click');
-      console.log(event);
       event.preventDefault();
 
       // Toggle special class

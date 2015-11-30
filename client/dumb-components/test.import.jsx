@@ -1,5 +1,4 @@
 import {GoogleMapComponent} from '/client/dumb-components/common/googlemaps';
-import {TextField} from "/client/components/textfield/textfield"
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedNumber = ReactIntl.FormattedNumber;
@@ -54,9 +53,6 @@ const test = React.createClass({
   render() {
     return (
       <div>
-        <TextField value={this.state.tfValue} onChange={this.onTextFieldChange} showOverlay={this.state.showOverlay}
-                   labelClassName="col-xs-1" wrapperClassName="col-xs-3"
-                   overlayMessage="输入错误" label="输入" placeholder="请输入详细信息"/>
         {/*
          <div className="essay-contents">
          <script id="ueContainer" name="content" type="text/plain" style={{height: 400}}></script>
