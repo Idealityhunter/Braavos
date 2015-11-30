@@ -10,7 +10,7 @@ Meteor.methods({
   /**
    * 生成一个注册token
    */
-  'account.register.genToken': () => {
+  'account.register.genToken': (tokenType) => {
     const Token = BraavosCore.Database.Braavos.Token;
 
     const uuid = Meteor.uuid();
@@ -19,7 +19,7 @@ Meteor.methods({
     const timestamp = new Date();
     // 默认情况下有效期为7天
     const expire = new Date(timestamp.getTime() + 7 * 24 * 3600 * 1000);
-    Token.insert({token: uuid, timestamp: timestamp, expire: expire});
+    Token.insert({token: uuid, tokenType: tokenType, timestamp: timestamp, expire: expire});
 
     return uuid;
   },
@@ -29,11 +29,6 @@ Meteor.methods({
    * @param token
    */
   'account.register.checkToken': (token) => {
-    // TODO 魔术token
-    if (token == 'lxp0601') {
-      return {valid: true};
-    }
-
     const ret = BraavosCore.Database.Braavos.Token.findOne(
       {token: token, valid: true, expire: {'$gt': new Date()}});
     return {valid: Boolean(ret)};

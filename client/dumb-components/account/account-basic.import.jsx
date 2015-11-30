@@ -188,12 +188,8 @@ export const AccountBasic = React.createClass({
   },
 
   getMeteorData() {
-    const subsManager = BraavosCore.SubsManager;
-    subsManager.subscribe("basicUserInfo");
-    subsManager.subscribe("sellerInfo");
-    subsManager.subscribe("countries");
-
-    const subsReady = subsManager.ready();
+    const subsManager = BraavosCore.SubsManager.account;
+    const subsReady = subsManager.ready() && BraavosCore.SubsManager.geo.ready();
 
     const allCountries = BraavosCore.Database.Braavos.Country.find({}, {
       fields: {code: 1, dialCode: 1, zhName: 1},

@@ -183,7 +183,30 @@ var commodity = React.createClass({
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
-        <td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>
+        {/*<td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>*/}
+        <td>
+          ￥{commodity.price}
+          {(commodity.plans.length > 1
+            && _.reduce(commodity.plans, (memo, f) => {
+              return {
+                diff: memo.diff || memo.price != f.price,
+                price: f.price
+              }
+            }, {
+              diff: false,
+              price: commodity.plans[0].price
+            }).diff
+            || _.reduce(commodity.plans[0].pricing, (memo, f) => {
+              return {
+                diff: memo.diff || memo.price != f.price,
+                price: f.price
+              }
+            }, {
+              diff: false,
+              price: commodity.plans[0].pricing[0].price
+            }).diff)
+            ? '起' : ''}
+        </td>
         <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
         <td>
           {
