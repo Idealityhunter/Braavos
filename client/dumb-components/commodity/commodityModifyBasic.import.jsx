@@ -28,17 +28,15 @@ const commodityModifyBasic = React.createClass({
 
   // 获取country和locality列表的数据
   getMeteorData() {
-    const handleCountry = Meteor.subscribe('countries');
-    let countries = [];
-    if(handleCountry.ready()) {
-      countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
-    };
+    const subsManager = BraavosCore.SubsManager.geo;
 
-    const handleLocality = Meteor.subscribe('localities', this.state.country);
+    let countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
     let localities = [];
-    if(handleLocality.ready()) {
-      localities = BraavosCore.Database.Braavos.Locality.find({}, {sort: {'enName': 1}}).fetch();
-    };
+    subsManager.subscribe("localities", this.state.country);
+    if (subsManager.ready()) {
+      localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country},
+        {sort: {'enName': 1}}).fetch();
+    }
 
     return {
       countries: countries,
@@ -74,11 +72,13 @@ const commodityModifyBasic = React.createClass({
     };
 
     // 根据chosen的选择更新state
+    $('.country-select').off('change');
     $('.country-select').on('change', function(evt, params) {
       self.setState({
         country: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
       })
     });
+    $('.locality-select').off('change');
     $('.locality-select').on('change', function(evt, params) {
       self.setState({
         locality: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
