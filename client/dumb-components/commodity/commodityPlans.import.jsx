@@ -95,7 +95,7 @@ const commodityPlans = React.createClass({
   _handleAddPlan(e) {
     e.preventDefault();
     const addForm = $(e.target).parents('.commodity-add')[0];
-    const addPlan = {
+    let addPlan = {
       title: $(addForm).children('.title').children('input').val(),
       marketPrice: parseInt($(addForm).children('.market-price').children('input').val()),
       price: parseInt($(addForm).children('.price').children('input').val()),
@@ -110,6 +110,10 @@ const commodityPlans = React.createClass({
     };
 
     if (Match.test(_.extend(_.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
+      addPlan.pricing = addPlan.pricing.map(pricing => _.extend(pricing, {
+        price: parseInt(pricing.price),
+        timeRange: pricing.timeRange.map(date => (date != null) ? moment(date).format('YYYY-MM-DD') : null)
+      }));
       let copyPlan = this.state.plans.slice().concat(addPlan);
 
       // 提交修改给父组件
@@ -292,44 +296,6 @@ const commodityPlans = React.createClass({
     const prefix = 'commodities.modify.';
 
     let i = 0;//从1开始,0表示添加的input
-    //const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
-    //  <tr className="plan-wrap" data-id={++i} key={plan.planId}>
-    //    <td className="title">
-    //      <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title} style={{padding: 6}}/>
-    //    </td>
-    //    <td className="market-price">
-    //      <NumberInput className="inline" placeholder="市场价￥" value={plan.marketPrice} style={{padding: 6}}/>
-    //    </td>
-    //    <td className="price">
-    //      {(this.state.dateRequired)
-    //        ? <input className="inline" type='text' placeholder="售价￥" value={plan.modalPrice} onClick={this._handleShowModal} style={{padding: 6}}/>
-    //        : <input className="inline" type='text' placeholder="售价￥" defaultValue={plan.price} style={{padding: 6}}/>
-    //      }
-    //      <i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} style={{marginLeft: -20}} onClick={this._handleShowModal}/>
-    //    </td>
-    //    {/*
-    //     <td className="stock">
-    //     <input className="inline" type='text' placeholder="库存" defaultValue={plan.stock}/>
-    //     </td>
-    //    */}
-    //    <td className="controller">
-    //      <button className="" onClick={this._handleSubmitEdit} style={{marginRight:10, padding: 6}}>确定</button>
-    //      <button className="" onClick={this._handleCancelEdit} style={{padding: 6}}>取消</button>
-    //    </td>
-    //  </tr>
-    //) : (
-    //  <tr className="plan-wrap" data-id={++i} key={plan.planId}>
-    //    <td className="title">{plan.title}</td>
-    //    <td className="market-price">市场价￥{plan.marketPrice}</td>
-    //    <td className="price">售价￥{plan.price}{(plan.pricing.length > 1) ? '起' : ''}<i className={"fa fa-calendar cursor-pointer calender-price" + ((this.state.dateRequired) ? "" : " hidden")} onClick={this._handleShowModal} style={{marginLeft: 2}}/></td>
-    //    {/*<td className="stock">库存{plan.stock}</td>*/}
-    //    <td className="controller">
-    //      <button className="" style={{marginRight: 10, padding: 6}} onClick={this._handleModify}>修改</button>
-    //      <button className="" style={{marginRight: 10, padding: 6}} onClick={this._handleDelete}>删除</button>
-    //      <button className="" style={{marginRight: 10, padding: 6}} onClick={this._handleCopy}>复制</button>
-    //    </td>
-    //  </tr>
-    //));
     const planList = this.state.plans.map(plan => (plan.status == 'edit') ? (
       <div className="plan-wrap" data-id={++i} key={plan.planId}>
         <div className="title inline">
@@ -423,16 +389,7 @@ const commodityPlans = React.createClass({
               </label>
               <CommentText text='是否需要游客在预定时指定他的使用日期'/>
              */}
-
           </div>
-          {/*
-          table写法
-           <table className="table">
-           <tbody>
-           {planList}
-           </tbody>
-           </table>
-          */}
           <div className="plan-list">
             {planList}
           </div>

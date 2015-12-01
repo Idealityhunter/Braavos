@@ -1,0 +1,405 @@
+/*
+    Common
+*/
+
+.zephyre-wizard,
+.zephyre-tabcontrol
+{
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
+
+.zephyre-wizard a,
+.zephyre-tabcontrol a
+{
+    outline: 0;
+}
+
+.zephyre-wizard ul,
+.zephyre-tabcontrol ul
+{
+    list-style: none !important;
+    padding: 0;
+    margin: 0;
+}
+
+.zephyre-wizard ul > li,
+.zephyre-tabcontrol ul > li
+{
+    display: block;
+    padding: 0;
+}
+
+/* Accessibility */
+.zephyre-wizard > .steps .current-info,
+.zephyre-tabcontrol > .steps .current-info
+{
+    position: absolute;
+    left: -999em;
+}
+
+.zephyre-wizard > .content > .title,
+.zephyre-tabcontrol > .content > .title
+{
+    position: absolute;
+    left: -999em;
+}
+
+
+
+/*
+    Wizard
+*/
+
+.zephyre-wizard > .steps
+{
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.zephyre-wizard.vertical > .steps
+{
+    display: inline;
+    float: left;
+    width: 30%;
+}
+
+.zephyre-wizard > .steps .number
+{
+    font-size: 1.429em;
+}
+
+.zephyre-wizard > .steps > div > nav > ul > li
+{
+    width: 20%;
+}
+
+.zephyre-wizard > .steps > div > nav > ul > li,
+.zephyre-wizard > .actions > ul > li
+{
+    float: left;
+}
+
+.zephyre-wizard.vertical > .steps > div > nav > ul > li
+{
+    float: none;
+    width: 100%;
+}
+
+.zephyre-wizard > .steps li > a,
+.zephyre-wizard > .steps li > a:hover,
+.zephyre-wizard > .steps li > a:active,
+.zephyre-wizard > .steps li > a:focus
+{
+    display: block;
+    width: auto;
+    margin: 0 0.5em 0.5em;
+    padding: 1em 1em;
+    text-decoration: none;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.zephyre-wizard > .steps li.disabled > a,
+.zephyre-wizard > .steps li.disabled > a:hover,
+.zephyre-wizard > .steps li.disabled > a:active,
+.zephyre-wizard > .steps li.disabled > a:focus
+{
+    background: #eee;
+    color: #aaa;
+    cursor: default;
+}
+
+.zephyre-wizard > .steps li.current > a,
+.zephyre-wizard > .steps li.current > a:hover,
+.zephyre-wizard > .steps li.current > a:active,
+.zephyre-wizard > .steps li.current > a:focus
+{
+    background: #1AB394;
+    color: #fff;
+    cursor: default;
+}
+
+.zephyre-wizard > .steps li.done > a,
+.zephyre-wizard > .steps li.done > a:hover,
+.zephyre-wizard > .steps li.done > a:active,
+.zephyre-wizard > .steps li.done > a:focus
+{
+    background: #6FD1BD;
+    color: #fff;
+}
+
+.zephyre-wizard > .steps li.error > a,
+.zephyre-wizard > .steps li.error > a:hover,
+.zephyre-wizard > .steps li.error > a:active,
+.zephyre-wizard > .steps li.error > a:focus
+{
+    background: #ED5565;
+    color: #fff;
+}
+
+.zephyre-wizard > .content
+{
+    background: #eee;
+    display: block;
+    margin: 0.5em;
+    min-height: 35em;
+    overflow: hidden;
+    position: relative;
+    width: auto;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.zephyre-wizard.vertical > .content
+{
+    display: inline;
+    float: left;
+    margin: 0 2.5% 0.5em 2.5%;
+    width: 65%;
+}
+
+.zephyre-wizard > .content > .body
+{
+    float: left;
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    padding: 2.5%;
+}
+
+.zephyre-wizard > .content > .body ul
+{
+    list-style: disc !important;
+}
+
+.zephyre-wizard > .content > .body ul > li
+{
+    display: list-item;
+}
+
+.zephyre-wizard > .steps > div > nav > ul > li > a
+{
+    font-weight: normal;
+}
+
+.zephyre-wizard > .content > .body > iframe
+{
+    border: 0 none;
+    width: 100%;
+    height: 100%;
+}
+
+.zephyre-wizard > .content > .body input
+{
+    display: block;
+    border: 1px solid #ccc;
+}
+
+.zephyre-wizard > .content > .body input[type="checkbox"]
+{
+    display: inline-block;
+}
+
+.zephyre-wizard > .content > .body input.error
+{
+    background: rgb(251, 227, 228);
+    border: 1px solid #fbc2c4;
+    color: #8a1f11;
+}
+
+.zephyre-wizard > .content > .body label
+{
+    display: inline-block;
+    margin-bottom: 0.5em;
+}
+
+.zephyre-wizard > .content > .body label.error
+{
+    color: #8a1f11;
+    display: inline-block;
+    margin-left: 1.5em;
+}
+
+.zephyre-wizard > .actions
+{
+    position: relative;
+    display: block;
+    text-align: right;
+    width: 100%;
+}
+
+.zephyre-wizard.vertical > .actions
+{
+    display: inline;
+    float: right;
+    margin: 0 2.5%;
+    width: 95%;
+}
+
+.zephyre-wizard > .actions > ul
+{
+    display: inline-block;
+    text-align: right;
+}
+
+.zephyre-wizard > .actions > ul > li
+{
+    margin: 0 0.5em;
+}
+
+.zephyre-wizard.vertical > .actions > ul > li
+{
+    margin: 0 0 0 1em;
+}
+
+.zephyre-wizard > .actions a,
+.zephyre-wizard > .actions a:hover,
+.zephyre-wizard > .actions a:active,
+.zephyre-wizard > .actions a:focus
+{
+    background: #1AB394;
+    color: #fff;
+    display: block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.zephyre-wizard > .actions .disabled a,
+.zephyre-wizard > .actions .disabled a:hover,
+.zephyre-wizard > .actions .disabled a:active,
+.zephyre-wizard > .actions .disabled a:focus
+{
+    background: #eee;
+    color: #aaa;
+}
+
+.zephyre-wizard > .loading
+{
+}
+
+.zephyre-wizard > .loading .spinner
+{
+}
+
+
+
+/*
+    Tabcontrol
+*/
+
+.zephyre-tabcontrol > .steps
+{
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.zephyre-tabcontrol > .steps > ul
+{
+    position: relative;
+    margin: 6px 0 0 0;
+    top: 1px;
+    z-index: 1;
+}
+
+.zephyre-tabcontrol > .steps > ul > li
+{
+    float: left;
+    margin: 5px 2px 0 0;
+    padding: 1px;
+
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.zephyre-tabcontrol > .steps > ul > li:hover
+{
+    background: #edecec;
+    border: 1px solid #bbb;
+    padding: 0;
+}
+
+.zephyre-tabcontrol > .steps > ul > li.current
+{
+    background: #fff;
+    border: 1px solid #bbb;
+    border-bottom: 0 none;
+    padding: 0 0 1px 0;
+    margin-top: 0;
+}
+
+.zephyre-tabcontrol > .steps > ul > li > a
+{
+    color: #5f5f5f;
+    display: inline-block;
+    border: 0 none;
+    margin: 0;
+    padding: 10px 30px;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.zephyre-tabcontrol > .steps > ul > li > a:hover
+{
+    text-decoration: none;
+}
+
+.zephyre-tabcontrol > .steps > ul > li.current > a
+{
+    padding: 15px 30px 10px 30px;
+}
+
+.zephyre-tabcontrol > .content
+{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 35em;
+    overflow: hidden;
+    border-top: 1px solid #bbb;
+    padding-top: 20px;
+}
+
+.zephyre-tabcontrol > .content > .body
+{
+    float: left;
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    padding: 2.5%;
+}
+
+.zephyre-tabcontrol > .content > .body ul
+{
+    list-style: disc !important;
+}
+
+.zephyre-tabcontrol > .content > .body ul > li
+{
+    display: list-item;
+}
+
+/*add*/
+.zephyre-wizard > .steps .tab-content{
+    background: #eee;
+}
+.zephyre-wizard > .actions{
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
