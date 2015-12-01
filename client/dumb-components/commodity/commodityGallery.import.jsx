@@ -161,7 +161,8 @@ let commodityGallery = React.createClass({
         }
       };
       reader.readAsDataURL(file);
-    }
+    };
+    $(evt.target).val('');
   },
 
   // 关闭上传图片的modal
@@ -248,7 +249,7 @@ let commodityGallery = React.createClass({
     focusImg: {
       width: 250,
       height: 250,
-      display: 'block',
+      display: 'inline-block',
       border: '1px solid rgb(170, 170, 170)',
       margin: '0px auto'
     },
@@ -294,9 +295,6 @@ let commodityGallery = React.createClass({
       </div>
     );
 
-    const imageInput = (this.state.imagePreloading)
-      ? <input id="upload-file-input" className="hidden" onChange={this._handlePreloading}/>
-      : <input id="upload-file-input" className="hidden" type="file" onChange={this.uploadImage}/>
     return (
       <div className="gallery-wrap">
         <div className="col-xs-6 col-sm-7 col-md-8">
@@ -317,7 +315,7 @@ let commodityGallery = React.createClass({
               {imgList}
               <div className="select-frame img-wrap inline">
                 <label className="plus cursor-pointer" htmlFor="upload-file-input">+</label>
-                {imageInput}
+                <input id="upload-file-input" className="hidden" type="file" onChange={this.uploadImage}/>
               </div>
             </div>
           </div>
