@@ -33,29 +33,27 @@ const commodityPlansModal = React.createClass({
   },
 
   componentDidMount() {
-    // TODO 监听daterange的变化
-    //const node = ReactDOM.findDOMNode(this.refs["haha"]);
-    //$(".input-daterange").children('input[name=start]').on('change', function(evt){
-    //  console.log(`jQuery: ${evt}`);
-    //});
+    $('.commodity-basic-datepicker .input-daterange').datepicker({
+      format: 'yyyy-mm-dd',
+      keyboardNavigation: false,
+      // TODO 当plan状态为view时不应该可以操作daterange...
+      //enableOnReadonly: self.props.plan.status != 'edit',
+      forceParse: false,
+      autoclose: true,
+      language: 'zh'
+    });
   },
 
   // 每次新增一条pricing的时候,都需要重新绑定一次datepicker plugin
   componentDidUpdate(){
-    const self = this;
-    // repaint之后再绑定事件
-    // TODO 这里其实重复执行了很多次!
-    window.requestAnimationFrame(function() {
-      console.log('update');
-      $('.commodity-basic-datepicker .input-daterange').datepicker({
-        format: 'yyyy-mm-dd',
-        keyboardNavigation: false,
-        // TODO 当plan状态为view时不应该可以操作daterange...
-        //enableOnReadonly: self.props.plan.status != 'edit',
-        forceParse: false,
-        autoclose: true,
-        language: 'zh'
-      });
+    $('.commodity-basic-datepicker .input-daterange').datepicker({
+      format: 'yyyy-mm-dd',
+      keyboardNavigation: false,
+      // TODO 当plan状态为view时不应该可以操作daterange...
+      //enableOnReadonly: self.props.plan.status != 'edit',
+      forceParse: false,
+      autoclose: true,
+      language: 'zh'
     });
   },
 
