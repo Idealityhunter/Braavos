@@ -4,7 +4,7 @@ import {CommodityModifyIntroduction} from '/client/dumb-components/commodity/com
 import {CommodityModifyInstruction} from '/client/dumb-components/commodity/commodityModifyInstruction';
 import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityModifyBook';
 import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
-import {Steps} from "/client/components/steps/steps"
+import {Steps} from "/client/components/steps/steps";
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -747,7 +747,7 @@ const commodityModify = React.createClass({
           // 以免不点击swal导致不跳转
           setTimeout(FlowRouter.go('commodities'), 500);
 
-          return;
+          return true;
         }
       });
     } else {
@@ -775,7 +775,7 @@ const commodityModify = React.createClass({
 
           // 以免不点击swal导致不跳转
           setTimeout(FlowRouter.go('commodities'), 500);
-          return;
+          return true;
         }
       });
     }
