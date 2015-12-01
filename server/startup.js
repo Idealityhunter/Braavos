@@ -11,16 +11,14 @@ function resolveEtcdData() {
   const url = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
 
   const services = new EtcdHelper.EtcdServiceBuilder(url)
-    .addEntry(['mongo-production', 'mongo'])
-    .addEntry('yunkai')
+    .addEntry(['mongo-dev', 'mongo'])
+    .addEntry(['yunkai-dev', 'yunkai'])
     .addEntry('smscenter')
     .addEntry('idgen')
     .addEntry(['hedy-base', 'hedy'])
-    .addEntry('hedy')
+    .addEntry(['hedy-dev', 'hedy'])
     .build();
-  const config = new EtcdHelper.EtcdConfigBuilder(url)
-    .addEntry(['braavos-base', 'braavos'])
-    .addEntry(['braavos-production', 'braavos']).build();
+  const config = new EtcdHelper.EtcdConfigBuilder(url).addEntry('braavos').build();
   BraavosCore.RootConf = _.extend(services, config);
 }
 

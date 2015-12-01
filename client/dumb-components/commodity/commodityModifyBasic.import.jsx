@@ -29,6 +29,7 @@ const commodityModifyBasic = React.createClass({
   // 获取country和locality列表的数据
   getMeteorData() {
     const subsManager = BraavosCore.SubsManager.geo;
+    subsManager.subscribe("countries");
 
     let countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
     let localities = [];
