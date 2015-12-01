@@ -90,10 +90,14 @@ let login = React.createClass({
                 <FormattedMessage message={this.getIntlMessage('welcome')}/>
               </h2>
             </div>
+            {/*
+             <p>
+             <FormattedMessage message={this.getIntlMessage('login.login')}/>
+             </p>
+            */}
             <p>
-              <FormattedMessage message={this.getIntlMessage('login.login')}/>
+              <br/>
             </p>
-
             {failureBanner}
 
             <form className="m-t" role="form">
@@ -112,11 +116,13 @@ let login = React.createClass({
                 <FormattedMessage message={this.getIntlMessage('login.login')}/>
               </button>
 
-              <a href="#">
-                <small>
-                  <FormattedMessage message={this.getIntlMessage('login.forgetPassword')}/>
-                </small>
-              </a>
+              {/*
+               <a href="#">
+               <small>
+               <FormattedMessage message={this.getIntlMessage('login.forgetPassword')}/>
+               </small>
+               </a>
+              */}
             </form>
           </div>
         </div>

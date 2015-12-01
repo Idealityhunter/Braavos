@@ -12,6 +12,7 @@ let mainLayout = React.createClass({
   },
   render() {
     const intlData = _.pick(this.props, 'locales', 'messages', 'format');
+    document.title = this.props.documentTitle ? `${this.props.documentTitle}-旅行派|商户管理平台` : '旅行派|商户管理平台';
 
     return (
       <div id="wrapper">
