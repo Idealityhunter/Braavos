@@ -11,8 +11,11 @@ export const Steps = React.createClass({
     return {
       // 当前位于第几步
       currentStep: 0,
-      // 最远解锁了第几步
-      furthestStep: 0,
+      // 每个step的状态, 取值为: normal, disabled, error
+      stepsStatus: _.range(this.props.steps.length).map((val) => val == 0 ? "normal" : "disabled"),
+      // 是否允许按钮的点击事件
+      enablePrev: true,
+      enableNext: true
     }
   },
 
@@ -38,41 +41,136 @@ export const Steps = React.createClass({
   },
 
   // 点击任意tab时触发
-  onSelect(key) {
-    // 判断key是否过远, 并且是否允许跳转
-    if (key <= this.state.furthestStep && (!this.props.willGoStep || this.props.willGoStep(key))) {
-      this.setState({currentStep: key});
-      if (this.props.didGoStep) {
-        this.props.didGoStep(key);
+  // * targetStep 被点击的tab的key
+  onSelect(targetStep) {
+    // 当前的key
+    const currentStep = this.state.currentStep;
+    const stepsStatus = this.state.stepsStatus;
+
+    // 如果key过远, 直接拒绝
+    if (stepsStatus[targetStep] == "disabled") {
+      this.setState({currentStep: currentStep});
+      return;
+    }
+
+    // 是否允许跳转(默认为允许)
+    const policy = !!this.props.willGoStep ? this.props.willGoStep(currentStep, targetStep) : "allow";
+    if (policy == "deny" || policy == "error") {
+      const state = {currentStep: currentStep};
+      if (policy == "error") {
+        stepsStatus[currentStep] = "error";
+        state.stepsStatus = stepsStatus;
       }
-      if (this.state.furthestStep < key) {
-        this.setState({furthestStep: key});
+      this.setState(state);
+    } else if (policy == "allow") {
+      stepsStatus[currentStep] = "normal";
+      if (stepsStatus[targetStep] == "disabled") {
+        stepsStatus[targetStep] = "normal";
+      }
+      this.setState({stepsStatus: stepsStatus, currentStep: targetStep});
+      if (this.props.didGoStep) {
+        this.props.didGoStep(currentStep, targetStep);
       }
     }
   },
 
   // 点击"上一步"时触发
   onPreviousStep() {
-    const current = this.state.currentStep;
-    if (current >= 1 && (!this.props.willPreviousStep || this.props.willPreviousStep(current))) {
-      this.setState({currentStep: current - 1});
+    if (!this.state.enablePrev) return;
+
+    // 当前的key
+    const currentStep = this.state.currentStep;
+    const stepsStatus = this.state.stepsStatus;
+    const targetStep = currentStep - 1;
+
+    // 直接拒绝
+    if (stepsStatus[targetStep] == "disabled") {
+      this.setState({currentStep: currentStep});
+      return;
+    }
+
+    // 是否允许跳转(默认为允许)
+    const policy = !!this.props.willPreviousStep ? this.props.willPreviousStep(currentStep) : "allow";
+    if (policy == "deny" || policy == "error") {
+      const state = {currentStep: currentStep};
+      if (policy == "error") {
+        stepsStatus[currentStep] = "error";
+        state.stepsStatus = stepsStatus;
+      }
+      this.setState(state);
+    } else if (policy == "allow") {
+      stepsStatus[currentStep] = "normal";
+      if (stepsStatus[targetStep] == "disabled") {
+        stepsStatus[targetStep] = "normal";
+      }
+      const enablePrev = targetStep >= 1;
+      const enableNext = targetStep <= stepsStatus.length - 2;
+      setTimeout(() => {
+        this.setState({enablePrev: enablePrev, enableNext: enableNext})
+      }, 200);
+
+      this.setState({stepsStatus: stepsStatus, currentStep: targetStep, enableNext: false, enablePrev: false});
       if (this.props.didPreviousStep) {
-        this.props.didPreviousStep(current - 1);
+        this.props.didPreviousStep(targetStep);
       }
     }
   },
 
   // 点击"下一步"时触发
-  onNextStep(event) {
-    const current = this.state.currentStep;
-    const stepsCnt = this.props.steps.length;
-    if (current <= stepsCnt - 2 && (!this.props.willNextStep || this.props.willNextStep(current))) {
-      this.setState({currentStep: current + 1});
-      if (this.state.furthestStep < current + 1) {
-        this.setState({furthestStep: current + 1});
+  onNextStep() {
+    if (!this.state.enableNext) return;
+
+    // 当前的key
+    const currentStep = this.state.currentStep;
+    const stepsStatus = this.state.stepsStatus;
+    const targetStep = currentStep + 1;
+
+    // 是否允许跳转(默认为允许)
+    const policy = !!this.props.willNextStep ? this.props.willNextStep(currentStep) : "allow";
+    if (policy == "deny" || policy == "error") {
+      const state = {currentStep: currentStep};
+      if (policy == "error") {
+        stepsStatus[currentStep] = "error";
+        state.stepsStatus = stepsStatus;
       }
+      this.setState(state);
+    } else if (policy == "allow") {
+      stepsStatus[currentStep] = "normal";
+      if (stepsStatus[targetStep] == "disabled") {
+        stepsStatus[targetStep] = "normal";
+      }
+      const enablePrev = targetStep >= 1;
+      const enableNext = targetStep <= stepsStatus.length - 2;
+      setTimeout(() => {
+        this.setState({enablePrev: enablePrev, enableNext: enableNext})
+      }, 200);
+
+      this.setState({stepsStatus: stepsStatus, currentStep: targetStep, enablePrev: false, enableNext: false});
       if (this.props.didNextStep) {
-        this.props.didNextStep(current + 1);
+        this.props.didNextStep(targetStep);
+      }
+    }
+  },
+
+  // 点击"完成"时触发
+  onFinish() {
+    // 当前的key
+    const currentStep = this.state.currentStep;
+    const stepsStatus = this.state.stepsStatus;
+
+    const policy = !!this.props.willFinish ? this.props.willFinish(currentStep) : "allow";
+    const state = {currentStep: currentStep};
+    if (policy == "deny" || policy == "error") {
+      if (policy == "error") {
+        stepsStatus[currentStep] = "error";
+        state.stepsStatus = stepsStatus;
+      }
+      this.setState(state);
+    } else if (policy == "allow") {
+      stepsStatus[currentStep] = "normal";
+      this.setState(state);
+      if (this.props.didFinish) {
+        this.props.didFinish(currentStep);
       }
     }
   },
@@ -81,24 +179,24 @@ export const Steps = React.createClass({
     // 生成导航列表
     const stepsCount = this.props.steps.length;
     const stepNavTabs = [];
+    const current = this.state.currentStep;
+    const stepsStatus = this.state.stepsStatus;
     for (let i = 0; i < stepsCount; i++) {
       const {title, body} = this.props.steps[i];
-      const current = this.state.currentStep;
-      const furthest = this.state.furthestStep;
+
       // 确定样式
       let cl;
-      if (i < current) {
-        cl = "done";
-      } else if (i == current) {
-        cl = "current";
-      } else if (i <= furthest) {
-        cl = "done";
-      }
-      else {
+      const status = stepsStatus[i];
+      if (status == "error") {
+        cl = "error";
+      } else if (status == "disabled") {
         cl = "disabled";
+      } else if (status == "normal") {
+        cl = i == current ? "current" : "done";
       }
+
       const item =
-        <Tab eventKey={i} tabClassName={cl} title={`${i+1}. ${title}`}>
+        <Tab key={`${i}`} eventKey={i} tabClassName={cl} title={`${i+1}. ${title}`}>
           <div className="panel-body">
             {body}
           </div>
@@ -106,7 +204,6 @@ export const Steps = React.createClass({
         </Tab>;
       stepNavTabs.push(item);
     }
-
 
     return (
       <div className="zephyre-wizard clearfix">
@@ -117,13 +214,18 @@ export const Steps = React.createClass({
         </div>
         <div className="actions clearfix">
           <ul>
-            <li className={this.state.currentStep >= 1 ? "" : "disabled"} onClick={this.onPreviousStep}>
+            <li key="prev" className={current >= 1 ? "" : "disabled"}
+                onClick={this.onPreviousStep}>
               <a href="javascript:void(0)">上一步</a>
             </li>
-            <li className={this.state.currentStep <= this.props.steps.length - 2 ? "" : "disabled"}
+            <li key="next"
+                className={current <= stepsCount - 2 ? "" : "disabled"}
                 onClick={this.onNextStep}>
-              <a href="javascript:void(0)">下一步</a></li>
-            <li><a href="javascript:void(0)">完成</a></li>
+              <a href="javascript:void(0)">下一步</a>
+            </li>
+            <li key="finish" onClick={this.onFinish}>
+              <a href="javascript:void(0)">完成</a>
+            </li>
           </ul>
         </div>
       </div>
