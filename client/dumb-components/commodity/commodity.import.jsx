@@ -183,7 +183,30 @@ var commodity = React.createClass({
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
-        <td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>
+        {/*<td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>*/}
+        <td>
+          ￥{commodity.price}
+          {(commodity.plans.length > 1
+            && _.reduce(commodity.plans, (memo, f) => {
+              return {
+                diff: memo.diff || memo.price != f.price,
+                price: f.price
+              }
+            }, {
+              diff: false,
+              price: commodity.plans[0].price
+            }).diff
+            || _.reduce(commodity.plans[0].pricing, (memo, f) => {
+              return {
+                diff: memo.diff || memo.price != f.price,
+                price: f.price
+              }
+            }, {
+              diff: false,
+              price: commodity.plans[0].pricing[0].price
+            }).diff)
+            ? '起' : ''}
+        </td>
         <td>{moment(commodity.createTime).format('YYYY-MM-DD')}</td>
         <td>
           {
@@ -214,11 +237,6 @@ var commodity = React.createClass({
     return (
       <div className="commodity-mngm-wrap">
         <Breadcrumb />
-
-        {/*测试footble的绑定事件
-          <Button bsStyle="primary" bsSize="large" onClick={() => $('.footable').footable()} active>Bind Event</Button>
-          <Button bsStyle="primary" bsSize="large">Test Attribute</Button>
-         */}
 
         <div className="wrapper wrapper-content animated fadeInRight ecommerce">
           <div className="ibox-content m-b-sm border-bottom">

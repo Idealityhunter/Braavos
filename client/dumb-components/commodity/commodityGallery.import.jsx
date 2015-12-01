@@ -3,11 +3,6 @@ import {ImageCropper} from "/client/common/image-cropper"
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
-//let images = [{
-//    src: 'http://webapplayers.com/inspinia_admin-v2.3/img/gallery/2s.jpg',
-//    main: true
-//  }];
-
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
   getInitialState() {
@@ -166,7 +161,8 @@ let commodityGallery = React.createClass({
         }
       };
       reader.readAsDataURL(file);
-    }
+    };
+    $(evt.target).val('');
   },
 
   // 关闭上传图片的modal
@@ -241,11 +237,19 @@ let commodityGallery = React.createClass({
     })
   },
 
+  _handlePreloading(e){
+    swal({
+      title: '图片正在上传中',
+      type: 'success',
+      timer: 1000
+    })
+  },
+
   styles: {
     focusImg: {
       width: 250,
       height: 250,
-      display: 'block',
+      display: 'inline-block',
       border: '1px solid rgb(170, 170, 170)',
       margin: '0px auto'
     },
@@ -311,8 +315,7 @@ let commodityGallery = React.createClass({
               {imgList}
               <div className="select-frame img-wrap inline">
                 <label className="plus cursor-pointer" htmlFor="upload-file-input">+</label>
-                <input id="upload-file-input" className="hidden" type="file" onChange={this.uploadImage}
-                       preloading={this.state.imagePreloading}/>
+                <input id="upload-file-input" className="hidden" type="file" onChange={this.uploadImage}/>
               </div>
             </div>
           </div>

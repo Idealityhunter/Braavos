@@ -29,6 +29,7 @@ const commodityModifyBasic = React.createClass({
   // 获取country和locality列表的数据
   getMeteorData() {
     const subsManager = BraavosCore.SubsManager.geo;
+    subsManager.subscribe("countries");
 
     let countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
     let localities = [];
@@ -259,7 +260,7 @@ const commodityModifyBasic = React.createClass({
             <NumberInput className="inline placeholder" style={{width:50, padding:6}}
                          value={this.props.timeCost || ''}
                          placeholder=''
-                         onChange={this._handleClearErrorClass.bind(this)}
+                         onChange={this._handleClearErrorClass.bind(null, this)}
             />
             <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
@@ -286,7 +287,7 @@ const commodityModifyBasic = React.createClass({
         <label className="">预定设置<span style={this.styles.asterisk}>*</span></label>
         <CommodityPlans
           plans={this.props.plans}
-          handleSubmitState={this.props.handleChildSubmitState.bind(this)}
+          handleSubmitState={this.props.handleChildSubmitState}
         />
       </div>
     );

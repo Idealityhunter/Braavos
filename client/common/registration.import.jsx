@@ -431,7 +431,9 @@ export const RegistrationLayout = React.createClass({
         <div className="middle-box loginscreen text-center animated fadeInDown"
              style={{width: "440px", minWidth: "440px"}}>
           <div style={{marginBottom: "50px"}}>
-            <h2>欢迎来到Braavos</h2>
+            <h2>
+              <FormattedMessage message={this.getIntlMessage('welcome')}/>
+            </h2>
           </div>
           <Tabs defaultActiveKey={1}>
             <Tab eventKey={1} title="已有旅行派账号">

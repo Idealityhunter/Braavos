@@ -6,7 +6,7 @@
 BraavosCore.IntlData.zh = {
   locales: ['zh-CN'],
   messages: {
-    welcome: '欢迎来到Braavos',
+    welcome: '欢迎来到商家管理系统',
     dialog: {
       ok: "确定",
       cancel: "取消"

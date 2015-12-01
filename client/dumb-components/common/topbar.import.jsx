@@ -151,11 +151,13 @@ let topBar = React.createClass({
               <FormattedMessage message={this.getIntlMessage('login.logout')}/>
             </a>
           </li>
-          <li>
-            <a className="right-sidebar-toggle">
-              <i className="fa fa-tasks"></i>
-            </a>
-          </li>
+          {/*
+           <li>
+           <a className="right-sidebar-toggle">
+           <i className="fa fa-tasks"></i>
+           </a>
+           </li>
+          */}
         </ul>
       </nav>
     );
