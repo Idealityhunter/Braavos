@@ -88,10 +88,10 @@
     width: 100%;
 }
 
-.zephyre-wizard > .steps a,
-.zephyre-wizard > .steps a:hover,
-.zephyre-wizard > .steps a:active,
-.zephyre-wizard > .steps a:focus
+.zephyre-wizard > .steps li > a,
+.zephyre-wizard > .steps li > a:hover,
+.zephyre-wizard > .steps li > a:active,
+.zephyre-wizard > .steps li > a:focus
 {
     display: block;
     width: auto;
@@ -104,39 +104,39 @@
     border-radius: 5px;
 }
 
-.zephyre-wizard > .steps .disabled a,
-.zephyre-wizard > .steps .disabled a:hover,
-.zephyre-wizard > .steps .disabled a:active,
-.zephyre-wizard > .steps .disabled a:focus
+.zephyre-wizard > .steps li.disabled > a,
+.zephyre-wizard > .steps li.disabled > a:hover,
+.zephyre-wizard > .steps li.disabled > a:active,
+.zephyre-wizard > .steps li.disabled > a:focus
 {
     background: #eee;
     color: #aaa;
     cursor: default;
 }
 
-.zephyre-wizard > .steps .current a,
-.zephyre-wizard > .steps .current a:hover,
-.zephyre-wizard > .steps .current a:active,
-.zephyre-wizard > .steps .current a:focus
+.zephyre-wizard > .steps li.current > a,
+.zephyre-wizard > .steps li.current > a:hover,
+.zephyre-wizard > .steps li.current > a:active,
+.zephyre-wizard > .steps li.current > a:focus
 {
     background: #1AB394;
     color: #fff;
     cursor: default;
 }
 
-.zephyre-wizard > .steps .done a,
-.zephyre-wizard > .steps .done a:hover,
-.zephyre-wizard > .steps .done a:active,
-.zephyre-wizard > .steps .done a:focus
+.zephyre-wizard > .steps li.done > a,
+.zephyre-wizard > .steps li.done > a:hover,
+.zephyre-wizard > .steps li.done > a:active,
+.zephyre-wizard > .steps li.done > a:focus
 {
     background: #6FD1BD;
     color: #fff;
 }
 
-.zephyre-wizard > .steps .error a,
-.zephyre-wizard > .steps .error a:hover,
-.zephyre-wizard > .steps .error a:active,
-.zephyre-wizard > .steps .error a:focus
+.zephyre-wizard > .steps li.error > a,
+.zephyre-wizard > .steps li.error > a:hover,
+.zephyre-wizard > .steps li.error > a:active,
+.zephyre-wizard > .steps li.error > a:focus
 {
     background: #ED5565;
     color: #fff;
@@ -392,4 +392,14 @@
 .zephyre-tabcontrol > .content > .body ul > li
 {
     display: list-item;
+}
+
+/*add*/
+.zephyre-wizard > .steps .tab-content{
+    background: #eee;
+}
+.zephyre-wizard > .actions{
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+    margin-bottom: 20px;
 }

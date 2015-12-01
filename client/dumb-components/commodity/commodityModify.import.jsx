@@ -839,6 +839,7 @@ const commodityModify = React.createClass({
     return (
       <div className="commodity-modify-wrap">
         <Pageheading root="首页" category="商品管理" title={this.props.commodityId ? "编辑商品" : "添加商品"}/>
+        <br/>
         <Steps steps={[
           {title: this.getIntlMessage(prefix + 'basic'), body: basicStep},
           {title: this.getIntlMessage(prefix + 'introduction'), body: introductionStep},
@@ -847,6 +848,7 @@ const commodityModify = React.createClass({
           {title: this.getIntlMessage(prefix + 'traffic'), body: trafficStep}
           ]} willNextStep={this.willNextStep} willPreviousStep={this.willPreviousStep} willGoStep={this.willGoStep} willFinish={this.willFinish}/>
         {submitLoading}
+        <br/>
       </div>
     );
   }
