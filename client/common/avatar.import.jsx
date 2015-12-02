@@ -53,7 +53,10 @@ export const Avatar = React.createClass({
   onChange(evt) {
     if (this.props.onChange) {
       this.props.onChange(evt);
-    }
+    };
+
+    // 每上传一次都要清空一次内容,否则下次不会触发change事件
+    $(evt.target).val('');
   },
 
   render() {

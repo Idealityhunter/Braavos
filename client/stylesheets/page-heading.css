@@ -9,11 +9,6 @@ textarea{
     content: '\00a0>\00a0';
 }
 
-/*for account basic*/
-.modify-text{
-    /*TODO */
-}
-
 .avatar img{
     width: 120px;
     height: 120px;
@@ -108,19 +103,6 @@ textarea{
     vertical-align: top;
 }
 
-/*for the steps header*/
-.commodity-modify-wrap .wizard > .steps > ul > li{
-    width: 20%;
-}
-
-.commodity-modify-wrap .steps-container{
-    margin-top: 20px;
-}
-
-/*hack for the auto height*/
-.commodity-modify-wrap .wizard > .content > .body{
-    position: static;
-}
 
 .commodity-basic-form-wrap, .account-password-wrap{
     margin-left: 80px;
@@ -144,23 +126,7 @@ textarea{
 }
 
 
-.commodity-basic-form-wrap .table>tbody>tr>td{
-    border-color: #999;
-}
-
-.commodity-basic-form-wrap .table>tbody>tr{
-    border: 1px solid #999;
-}
-
-.commodity-basic-plan table{
-    width: auto;
-}
-
 /*基本信息中plan-wrap的样式*/
-/*.plan-wrap{*/
-    /*text-align: center;*/
-/*}*/
-
 .plan-wrap>div{
     margin-right: 16px;
 }
@@ -204,7 +170,7 @@ textarea{
 
 .commodity-modify-wrap .commodity-add>div{
     margin-right: 16px;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .commodity-modify-wrap .commodity-basic-plan .title>input{
@@ -339,15 +305,7 @@ textarea{
 }
 
 
-/*商品信息中的日历样式*/
-/*.calendar-container{*/
-    /*background-color: #fff;*/
-    /*position: absolute;*/
-    /*top: -10000px;*/
-/*}*/
-
 /*商品管理中的placeholder*/
-
 input.placeholder::-moz-placeholder, textarea.placeholder::-moz-placeholder{
     color: #DDDDDD;
     text-indent: 5px; /* 没有用 */

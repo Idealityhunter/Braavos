@@ -29,6 +29,7 @@ const commodityModifyBasic = React.createClass({
   // 获取country和locality列表的数据
   getMeteorData() {
     const subsManager = BraavosCore.SubsManager.geo;
+    subsManager.subscribe("countries");
 
     let countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
     let localities = [];
@@ -51,13 +52,20 @@ const commodityModifyBasic = React.createClass({
     }
   },
 
-  // 每次数据更新, 应该重新绑定一下scountry-elect
-  componentDidUpdate(){
+  _handleChosenUpdate(){
     const self = this;
     // 绑定chosen插件或者更新数据
     if ($(".country-select").next('.chosen-container').length <= 0){
       $('.country-select').chosen({
         no_results_text: '没有找到这个国家'
+      });
+
+      // 根据chosen的选择更新state
+      $('.country-select').off('change');
+      $('.country-select').on('change', function(evt, params) {
+        self.setState({
+          country: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
+        })
       });
     } else{
       $(".country-select").trigger("chosen:updated");
@@ -67,40 +75,26 @@ const commodityModifyBasic = React.createClass({
       $('.locality-select').chosen({
         no_results_text: '没有找到这个目的地'
       });
+
+      $('.locality-select').off('change');
+      $('.locality-select').on('change', function(evt, params) {
+        self.setState({
+          locality: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
+        })
+      });
     } else{
       $(".locality-select").trigger("chosen:updated");
     };
 
-    // 根据chosen的选择更新state
-    $('.country-select').off('change');
-    $('.country-select').on('change', function(evt, params) {
-      self.setState({
-        country: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
-      })
-    });
-    $('.locality-select').off('change');
-    $('.locality-select').on('change', function(evt, params) {
-      self.setState({
-        locality: evt.target[params.selected].label || evt.target[params.selected].innerText || evt.target[params.selected].innerHTML
-      })
-    });
+  },
 
-    //window.requestAnimationFrame(function() {
-    //  $('.country-select').next('.chosen-container').remove();
-    //  $('.country-select').chosen({});
-    //  $('.locality-select').next('.chosen-container').remove();
-    //  $('.locality-select').chosen({});
-    //  $('.country-select').next('.chosen-container').children('.chosen-single').children('span')[0].addEventListener("DOMSubtreeModified", function(e){
-    //    const $country = $(this);
-    //    if ($country.text()){
-    //      // 当修改完成时才setState,中间为空时不触发
-    //      self.setState({
-    //        country: $country.text()
-    //      });
-    //      //Meteor.subscribe('localities', self.state.country);
-    //    }
-    //  }, false);
-    //});
+  componentDidMount(){
+    this._handleChosenUpdate();
+  },
+
+  // 每次数据更新, 应该重新绑定一下scountry-elect
+  componentDidUpdate(){
+    this._handleChosenUpdate();
   },
 
   // 修改国家时,触发更新locality的数据
@@ -259,7 +253,7 @@ const commodityModifyBasic = React.createClass({
             <NumberInput className="inline placeholder" style={{width:50, padding:6}}
                          value={this.props.timeCost || ''}
                          placeholder=''
-                         onChange={this._handleClearErrorClass.bind(this)}
+                         onChange={this._handleClearErrorClass.bind(null, this)}
             />
             <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
           </div>
@@ -286,7 +280,7 @@ const commodityModifyBasic = React.createClass({
         <label className="">预定设置<span style={this.styles.asterisk}>*</span></label>
         <CommodityPlans
           plans={this.props.plans}
-          handleSubmitState={this.props.handleChildSubmitState.bind(this)}
+          handleSubmitState={this.props.handleChildSubmitState}
         />
       </div>
     );

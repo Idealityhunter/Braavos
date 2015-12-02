@@ -185,6 +185,42 @@ const index = React.createClass({
       });
   },
 
+  componentDidMount(){
+    var domAnimator = new DomAnimator();
+    // Awesome monkeys from http://www.geocities.ws/SoHo/7373/zoo.html
+    var frame1 = ['       .-"-.       ',
+      '     _/.-.-.\\_     ',
+      '    ( ( o o ) )    ',
+      '     |/  "  \\|     ',
+      "      \\'/^\\'/      ",
+      '      /`\\ /`\\      ',
+      '     /  /|\\  \\     ',
+      '    ( (/ T \\) )    ',
+      '     \\__/^\\__/     '];
+    var frame2 = ['       .-"-.       ',
+      '     _/_-.-_\\_     ',
+      '    / __> <__ \\    ',
+      '   / //  "  \\\\ \\   ',
+      "  / / \\'---'/ \\ \\  ",
+      '  \\ \\_/`"""`\\_/ /  ',
+      '   \\           /   ',
+      '    \\         /    ',
+      '     |   .   |     ']
+    var frame3 = ['       .-"-.       ',
+      '     _/_-.-_\\_     ',
+      '    /|( o o )|\\    ',
+      '   | //  "  \\\\ |   ',
+      "  / / \\'---'/ \\ \\  ",
+      '  \\ \\_/`"""`\\_/ /  ',
+      '   \\           /   ',
+      '    \\         /    ',
+      '     |   .   |     ']
+    domAnimator.addFrame(frame1);
+    domAnimator.addFrame(frame2);
+    domAnimator.addFrame(frame3);
+    domAnimator.animate(1000);
+  },
+
   styles: {
     centerBlock: {
       display: 'block',
