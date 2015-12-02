@@ -10,17 +10,22 @@ function resolveEtcdData() {
   // 通过环境变量获得etcd地址, 默认为localhost:2379
   const url = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
 
-  const services = new EtcdHelper.EtcdServiceBuilder(url)
-    .addEntry(['mongo-production', 'mongo'])
-    .addEntry('yunkai')
-    .addEntry('smscenter')
-    .addEntry('idgen')
-    .addEntry(['hedy-base', 'hedy'])
-    .addEntry('hedy')
-    .build();
-  const config = new EtcdHelper.EtcdConfigBuilder(url)
-    .addEntry(['braavos-base', 'braavos'])
-    .addEntry(['braavos-production', 'braavos']).build();
+  // 获取相关服务
+  const servicesBuilder = _.reduce(Meteor.settings.etcd.services, (memo, f) => {
+    return (_.keys(f).length > 1)
+      ? memo.addEntry(_.values(f))
+      : memo.addEntry(_.values(f)[0]);
+  }, new EtcdHelper.EtcdServiceBuilder(url));
+  const services = servicesBuilder.build();
+
+  // 获取其它配置
+  const configBuilder = _.reduce(Meteor.settings.etcd.config, (memo, f) => {
+    return (_.keys(f).length > 1)
+      ? memo.addEntry(_.values(f))
+      : memo.addEntry(_.values(f)[0]);
+  }, new EtcdHelper.EtcdConfigBuilder(url));
+  const config = configBuilder.build();
+
   BraavosCore.RootConf = _.extend(services, config);
 }
 
