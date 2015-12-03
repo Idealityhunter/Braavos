@@ -10,7 +10,7 @@
 Meteor.publish('basicUserInfo', function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database['Yunkai']['UserInfo'];
-  return coll.find({userId: userId}, {fields: {nickName: 1, userId: 1, signature: 1, avatar: 1, gender: 1, tel: 1}});
+  return coll.find({userId: userId}, {fields: {nickName: 1, userId: 1, signature: 1, avatar: 1, gender: 1, tel: 1, roles: 1}});
 });
 
 /**
@@ -27,24 +27,43 @@ Meteor.publish("sellerInfo", function () {
   return coll.find({sellerId: userId}, {fields: fields});
 });
 
-
 /**
  * 发布商品列表信息
+ * options: {
+ *  isAdmin: boolean, 决定获取所有数据还是seller.sellerId: Meteor.userId()
+ *  createTime:
+ *  status:
+ *  seller.sellerId:
+ *  commodityId:
+ * }
  */
 Meteor.publish("commodities", function (options) {
   const userId = parseInt(this.userId);
-  const coll = BraavosCore.Database.Braavos.Commodity;
+  const commodityColl = BraavosCore.Database.Braavos.Commodity;
+
+  // fields获取
   const allowedFields = ["commodityId", "title", "seller", "cover", "createTime", "status", "price", "plans"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
   }, {});
+
+  // 时间条件格式化
   if (options && options.createTime){
-    // 转化成Date对象
     options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
     options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
   };
-  return coll.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
+
+  // 假如带有admin标志
+  if (options.isAdmin) {
+    options = _.omit(options, 'isAdmin');
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+    if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
+      return commodityColl.find(options, {fields: fields});
+    };
+  };
+
+  return commodityColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
 });
 
 
