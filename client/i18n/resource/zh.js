@@ -72,6 +72,8 @@ BraavosCore.IntlData.zh = {
       },
       label: {
         number: '序号',
+        sellerId: '商家编号',
+        sellerName: '商家名称',
         commodityId: '商品编号',
         createdDate: '创建时间',
         status: '状态',
