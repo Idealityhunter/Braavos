@@ -611,7 +611,9 @@ const commodityModify = React.createClass({
     const countryIndex = $('.form-group.address>select.country-select').val();
     const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
     const countryEn = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).attr('data-en');
+    const countryId = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).attr('data-id');
     const country = {
+      _id: new Meteor.Collection.ObjectID(countryId),
       className: 'com.lvxingpai.model.geo.Country',
       zhName: countryZh,
     };
@@ -621,7 +623,9 @@ const commodityModify = React.createClass({
     const localityIndex = $('.form-group.address>select.locality-select').val();
     const localityZh = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).text();
     const localityEn = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).attr('data-en');
+    const localityId = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).attr('data-id');
     const locality = {
+      _id: new Meteor.Collection.ObjectID(localityId),
       className: 'com.lvxingpai.model.geo.Locality',
       zhName: localityZh
     };
