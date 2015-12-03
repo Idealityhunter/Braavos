@@ -183,10 +183,10 @@ const index = React.createClass({
       .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
         $(this).removeClass('animated bounceOutLeft');
       });
-  },
 
-  componentDidMount(){
+    // DOM特效
     var domAnimator = new DomAnimator();
+
     // Awesome monkeys from http://www.geocities.ws/SoHo/7373/zoo.html
     var frame1 = ['       .-"-.       ',
       '     _/.-.-.\\_     ',

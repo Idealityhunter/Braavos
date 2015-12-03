@@ -46,14 +46,17 @@ const commodityPlansModal = React.createClass({
 
   // 每次新增一条pricing的时候,都需要重新绑定一次datepicker plugin
   componentDidUpdate(){
-    $('.commodity-basic-datepicker .input-daterange').datepicker({
-      format: 'yyyy-mm-dd',
-      keyboardNavigation: false,
-      // TODO 当plan状态为view时不应该可以操作daterange...
-      //enableOnReadonly: self.props.plan.status != 'edit',
-      forceParse: false,
-      autoclose: true,
-      language: 'zh'
+    // TODO (奇怪...)假如不用requestAnimationFrame的话,新增加的pricing文本框就会绑定不上datepicker
+    window.requestAnimationFrame(function() {
+      $('.commodity-basic-datepicker .input-daterange').datepicker({
+        format: 'yyyy-mm-dd',
+        keyboardNavigation: false,
+        // TODO 当plan状态为view时不应该可以操作daterange...
+        //enableOnReadonly: self.props.plan.status != 'edit',
+        forceParse: false,
+        autoclose: true,
+        language: 'zh'
+      });
     });
   },
 
