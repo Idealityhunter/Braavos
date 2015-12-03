@@ -654,7 +654,6 @@ const commodityModify = React.createClass({
     const commodityInfo = {
       title: $('.form-group.title>input').val(),
       country: country,
-      locality: locality,
       address: $('.form-group.address>input').val(),
       category: [category],
       timeCost: $('.form-group.cost-time>input').val(),
@@ -723,6 +722,8 @@ const commodityModify = React.createClass({
       cover: cover,
       images: images
     };
+
+    !!locality.zhName && (commodityInfo['locality'] = locality);
 
     // 编辑和添加的不同
     if (this.props.commodityId) {
