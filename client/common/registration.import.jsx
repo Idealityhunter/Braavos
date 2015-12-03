@@ -284,6 +284,13 @@ const ProfileEditor = React.createClass({
     }
   },
 
+  handleKeyDown(e) {
+    if (e.keyCode == 13){
+      e.preventDefault();
+      this.onCreateSeller();
+    }
+  },
+
   render() {
     return (
       <Modal show={this.props.showModal} onHide={this.props.onHide} bsSize="medium" ref="modal">
@@ -292,10 +299,9 @@ const ProfileEditor = React.createClass({
         </Modal.Header>
 
         <form className="form-horizontal" style={{padding: "20px"}}>
-
-          <Input type="text" label="商户名称" labelClassName="col-xs-2" wrapperClassName="col-xs-8"
-                 value={this.state.sellerName} onChange={this.onInputChange.bind(this, "sellerName")}
-                 placeholder=""/>
+           <Input type="text" label="商户名称" labelClassName="col-xs-2" wrapperClassName="col-xs-8"
+           value={this.state.sellerName} onChange={this.onInputChange.bind(this, "sellerName")}
+           placeholder="" onKeyDown={this.handleKeyDown}/>
 
           {/*<div id="avatar-box" className="hidden" style={{position: "relative", minHeight: "140px"}}>
            <Input type="text" label="用户头像" labelClassName="col-xs-2" wrapperClassName="col-xs-8 hidden"
