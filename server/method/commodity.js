@@ -36,7 +36,7 @@ Meteor.methods({
 
 
   // 添加商品
-  'commodity.insert': function (userId, doc) {
+  'commodity.insert': (userId, doc) => {
     const collCommodity = BraavosCore.Database.Braavos.Commodity;
     const uid = parseInt(userId);
     if (isNaN(uid)) return;

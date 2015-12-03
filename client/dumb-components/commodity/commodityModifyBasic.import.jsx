@@ -161,7 +161,7 @@ const commodityModifyBasic = React.createClass({
 
     // 根据data生成country的select组件
     i = 0;
-    const countryOptionList = this.data.countries.map(country => (<option value={i++} data-en={country.enName}>{country.zhName}</option>));
+    const countryOptionList = this.data.countries.map(country => (<option value={i++} data-id={country._id._str} data-en={country.enName}>{country.zhName}</option>));
     const countrySelect = (
       <select name="" id=""
               className="country-select form-control"
@@ -175,7 +175,7 @@ const commodityModifyBasic = React.createClass({
 
     // 根据data生成locality的select组件
     let j = 0;
-    const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-en={locality.enName}>{locality.zhName}</option>));
+    const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-id={locality._id._str} data-en={locality.enName}>{locality.zhName}</option>));
     const localitySelect = (
       <select name="" id=""
               className="locality-select form-control"
