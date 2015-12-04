@@ -259,8 +259,8 @@ var commodity = React.createClass({
         <tr>
           {/*TODO 并没有起到作用!!! => 貌似是react将数字转成了id*/}
           <th data-breakpoints="xs sm" data-type="numeric" data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
-          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerId')}/></th> : ''}
-          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerName')}/></th> : ''}
+          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerId')}/></th> : <th className='hidden'></th>}
+          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerName')}/></th> : <th className='hidden'></th>}
           <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
           <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
           <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
@@ -281,8 +281,8 @@ var commodity = React.createClass({
     const commodityList = this.data.commodities.map(commodity =>
       <tr key={commodity.key} data-id={i} style={(commodity.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
         <td data-value={++i}>{i}</td>
-        {(this.data.isAdmin) ? <td>{commodity.seller.sellerId}</td> : ''}
-        {(this.data.isAdmin) ? <td>{commodity.seller.name}</td> : ''}
+        {(this.data.isAdmin) ? <td>{commodity.seller.sellerId}</td> : <td className='hidden'></td>}
+        {(this.data.isAdmin) ? <td>{commodity.seller.name}</td> : <td className='hidden'></td>}
         <td>{commodity.commodityId}</td>
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
