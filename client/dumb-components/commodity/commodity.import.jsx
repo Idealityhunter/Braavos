@@ -112,6 +112,7 @@ var commodity = React.createClass({
     // 清空3个选择条件的数据
     // TODO 是否需要展示全部
     $('#commodity-id').val('');
+    $('#seller-id').val('');
     $('.input-daterange>input[name=start]').val('');
     $('.input-daterange>input[name=end]').val('');
     $('.input-daterange input').each(function (){
