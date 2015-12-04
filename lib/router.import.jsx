@@ -103,13 +103,14 @@ FlowRouter.route('/commodities/add', {
   }
 });
 
-FlowRouter.route('/commodities/editor', {
+FlowRouter.route('/commodities/editor/:commodityId', {
   name: 'commodityEditor',
   triggersEnter: [loginCheck],
   action(param, queryParam) {
-    const commodityId = queryParam.commodityId;
+    const commodityId = param.commodityId;
+    const isAdmin = queryParam.isAdmin;
     // 检查token是否是当前用户的商品
-    Meteor.call('commodity.editor.checkCommodityId', commodityId, (err, ret) => {
+    Meteor.call('commodity.editor.checkCommodityId', {commodityId: commodityId, isAdmin: isAdmin}, (err, ret) => {
       const isValid = (!err && ret.valid);
       if (isValid) {
         ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));

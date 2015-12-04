@@ -54,8 +54,10 @@ var commodity = React.createClass({
   },
 
   componentDidUpdate(){
-    const self = this;
-    $('.footable').trigger('footable_redraw');
+    const footable = $('.footable');
+    //footable.footable();
+    //footable.trigger('footable_initialize'); //Reinitialize
+    footable.trigger('footable_redraw'); //Redraw the table
   },
 
   // 商品筛选结果的更新
@@ -170,7 +172,7 @@ var commodity = React.createClass({
   _handleEditCommodity(e){
     const curIndex = $(e.target).parents('tr').attr('data-id');
     const curCommodityId = this.data.commodities[curIndex].commodityId;
-    FlowRouter.go(`/commodities/editor?commodityId=${curCommodityId}`);
+    FlowRouter.go(`/commodities/editor/${curCommodityId}?isAdmin=${!!this.data.isAdmin}`);
   },
 
   styles: {
@@ -260,8 +262,8 @@ var commodity = React.createClass({
           {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerId')}/></th> : ''}
           {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerName')}/></th> : ''}
           <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
-          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
-          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
+          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
+          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
           <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
           <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
           {/*

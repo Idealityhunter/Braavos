@@ -9,12 +9,12 @@ Meteor.methods({
      * 检查commodity是否为当前用户所有
      * @param commodityId
      */
-    'commodity.editor.checkCommodityId': (commodityId) => {
+    'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
       const userId = parseInt(Meteor.userId());
-      const ret = BraavosCore.Database.Braavos.Commodity.findOne({
-        commodityId: parseInt(commodityId),
-        'seller.sellerId': userId
-      });
+      const options = {commodityId: parseInt(commodityId)};
+      if (!isAdmin) options['seller.sellerId'] = userId;
+
+      const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
       return {
         valid: Boolean(ret),
         commodityInfo: ret
