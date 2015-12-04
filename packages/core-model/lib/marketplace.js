@@ -349,6 +349,24 @@ Marketplace.Prepay = new SimpleSchema({
   }
 });
 
+// 订单的操作日志，比如: 创建订单, 支付, 申请退款等
+Marketplace.OrderActivity = new SimpleSchema({
+  // 操作发生的时间
+  timestamp: {
+    type: Date
+  },
+  // 分别对应于: 创建订单/取消订单/支付订单/商户发货/订单过期/订单完成/退款相关
+  action: {
+    type: String,
+    allowedValues: ["create", "cancel", "pay", "commit", "expire", "finish", "refund"]
+  },
+  // 附加数据
+  data: {
+    type: Object,
+    optional: true
+  }
+});
+
 // 订单
 Marketplace.Order = new SimpleSchema({
   // 订单编号
@@ -418,6 +436,10 @@ Marketplace.Order = new SimpleSchema({
     type: String,
     allowedValues: ["pending", "paid", "committed", "finished", "cancelled", "expired", "refundApplied", "refunded"]
   },
+  // 订单的操作日志
+  activities: {
+    type: [Marketplace.OrderActivity]
+  },
   // 附言
   comment: {
     type: String,
@@ -434,4 +456,3 @@ Marketplace.Order = new SimpleSchema({
     optional: true
   }
 });
-
