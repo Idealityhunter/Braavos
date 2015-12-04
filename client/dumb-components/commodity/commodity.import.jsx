@@ -1,4 +1,4 @@
-import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
+import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap"
 import {NumberInput} from '/client/common/numberInput';
 
@@ -385,7 +385,7 @@ var commodity = React.createClass({
 
     return (
       <div className="commodity-mngm-wrap">
-        <Breadcrumb />
+        <BraavosBreadcrumb />
 
         <div className="wrapper wrapper-content animated fadeInRight ecommerce">
           {filter}

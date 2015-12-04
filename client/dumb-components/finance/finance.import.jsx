@@ -1,5 +1,3 @@
-import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
-
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
 
@@ -87,7 +85,6 @@ var finance = React.createClass({
   render() {
     return (
       <div className="finance-mngm-wrap">
-        <Breadcrumb />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
