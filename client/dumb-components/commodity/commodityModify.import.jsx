@@ -5,6 +5,7 @@ import {CommodityModifyInstruction} from '/client/dumb-components/commodity/comm
 import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityModifyBook';
 import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
 import {Steps} from "/client/components/steps/steps";
+import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -844,7 +845,8 @@ const commodityModify = React.createClass({
       </div>;
     return (
       <div className="commodity-modify-wrap">
-        <Pageheading root="首页" category="商品管理" title={this.props.commodityId ? "编辑商品" : "添加商品"}/>
+        {/*<Pageheading root="首页" category="商品管理" title={this.props.commodityId ? "编辑商品" : "添加商品"}/>*/}
+        <Breadcrumb />
         <br/>
         <Steps steps={[
           {title: this.getIntlMessage(prefix + 'basic'), body: basicStep},
