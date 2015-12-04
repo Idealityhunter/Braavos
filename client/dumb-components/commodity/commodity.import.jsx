@@ -54,8 +54,10 @@ var commodity = React.createClass({
   },
 
   componentDidUpdate(){
-    const self = this;
-    $('.footable').trigger('footable_redraw');
+    const footable = $('.footable');
+    //footable.footable();
+    //footable.trigger('footable_initialize'); //Reinitialize
+    footable.trigger('footable_redraw'); //Redraw the table
   },
 
   // 商品筛选结果的更新
