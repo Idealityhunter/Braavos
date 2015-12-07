@@ -53,7 +53,7 @@ Meteor.methods({
 
     _.extend(doc, {
       commodityId: commodityId,
-      seller: _.pick(_.extend(collSeller.findOne({'sellerId': uid}), {
+      seller: _.pick(_.extend(collSeller.findOne({'sellerId': userId}), {
         'userInfo': userInfo
       }), 'sellerId', 'name', 'userInfo') || {},
       status: 'review',
