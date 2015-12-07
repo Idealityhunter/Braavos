@@ -729,7 +729,7 @@ const commodityModify = React.createClass({
     // 编辑和添加的不同
     if (this.props.commodityId) {
       const self = this;
-      Meteor.call('commodity.update', Meteor.userId(), commodityInfo, this.props.commodityId, function (err, res) {
+      Meteor.call('commodity.update', this.props.seller.sellerId, commodityInfo, this.props.commodityId, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.submit-waiting').hide();
