@@ -64,9 +64,13 @@ Meteor.methods({
 
   // 编辑商品
   'commodity.update': function (doc, commodityId) {
-    // 只能编辑自己的商品
-    const userId = parseInt(Meteor.userId());
+    // 暂时可以编辑他人的商品
     const collCommodity = BraavosCore.Database.Braavos.Commodity;
-    return collCommodity.update({'seller.sellerId': userId, commodityId: commodityId}, {$set: doc});
+    return collCommodity.update({commodityId: commodityId}, {$set: doc});
+
+    // 只能编辑自己的商品
+    //const userId = parseInt(Meteor.userId());
+    //const collCommodity = BraavosCore.Database.Braavos.Commodity;
+    //return collCommodity.update({'seller.sellerId': userId, commodityId: commodityId}, {$set: doc});
   }
 });
