@@ -1,11 +1,10 @@
-import {Pageheading} from '/client/dumb-components/common/pageheading';
 import {CommodityModifyBasic} from '/client/dumb-components/commodity/commodityModifyBasic';
 import {CommodityModifyIntroduction} from '/client/dumb-components/commodity/commodityModifyIntroduction';
 import {CommodityModifyInstruction} from '/client/dumb-components/commodity/commodityModifyInstruction';
 import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityModifyBook';
 import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
 import {Steps} from "/client/components/steps/steps";
-import {Breadcrumb} from '/client/dumb-components/common/breadcrumb';
+import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -730,7 +729,7 @@ const commodityModify = React.createClass({
     // 编辑和添加的不同
     if (this.props.commodityId) {
       const self = this;
-      Meteor.call('commodity.update', Meteor.userId(), commodityInfo, this.props.commodityId, function (err, res) {
+      Meteor.call('commodity.update', commodityInfo, this.props.commodityId, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.submit-waiting').hide();
@@ -759,7 +758,7 @@ const commodityModify = React.createClass({
       });
     } else {
       const self = this;
-      Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function (err, res) {
+      Meteor.call('commodity.insert', commodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.submit-waiting').hide();
@@ -845,8 +844,7 @@ const commodityModify = React.createClass({
       </div>;
     return (
       <div className="commodity-modify-wrap">
-        {/*<Pageheading root="首页" category="商品管理" title={this.props.commodityId ? "编辑商品" : "添加商品"}/>*/}
-        <Breadcrumb />
+        <BraavosBreadcrumb />
         <br/>
         <Steps steps={[
           {title: this.getIntlMessage(prefix + 'basic'), body: basicStep},

@@ -98,6 +98,7 @@ FlowRouter.route('/commodities', {
 FlowRouter.route('/commodities/add', {
   name: 'commodityAdd',
   parent: 'commodities',
+  title: '添加',
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData, {documentTitle: "商品添加"}));
@@ -107,6 +108,7 @@ FlowRouter.route('/commodities/add', {
 FlowRouter.route('/commodities/editor/:commodityId', {
   name: 'commodityEditor',
   parent: 'commodities',
+  title: '编辑',
   triggersEnter: [loginCheck],
   action(param, queryParam) {
     const commodityId = param.commodityId;

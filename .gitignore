@@ -11,3 +11,6 @@ lib/*.js.map
 
 node_modules/*
 packages/*/.npm
+
+# Meteor settings
+settings.json
