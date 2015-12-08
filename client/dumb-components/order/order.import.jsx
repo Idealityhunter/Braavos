@@ -1,8 +1,9 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap";
+import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
 
-var IntlMixin = ReactIntl.IntlMixin;
-var FormattedMessage = ReactIntl.FormattedMessage;
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
 
 // 补全underscore的语法
 _.findIndex || ( _.findIndex = (arr, cal) => {
@@ -16,12 +17,14 @@ _.findIndex || ( _.findIndex = (arr, cal) => {
   }).flag;
 });
 
-var order = React.createClass({
+const order = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState(){
     return {
-      options: {}
+      showCloseModal: false,
+      options: {},
+      curOrderId: ''
     }
   },
 
@@ -69,7 +72,7 @@ var order = React.createClass({
     footable.trigger('footable_redraw'); //Redraw the table
   },
 
-  // 商品筛选结果的更新
+  // 订单筛选结果的更新
   _handleFilter(){
     const searchId = $('#order-search').val()
       ? {'searchId': $('#order-search').val()}
@@ -96,7 +99,7 @@ var order = React.createClass({
     });
   },
 
-  // 重置筛选条件,并且展示所有商品
+  // 重置筛选条件,并且展示所有订单
   _handleReset(){
     // 清空2个选择条件的数据
     $('#order-search').val('');
@@ -107,64 +110,35 @@ var order = React.createClass({
     });
   },
 
-  // 下架商品
-  _handleDropCommodity(e){
-    const self = this;
-    e.preventDefault();
-    const curIndex = $(e.target).parents('tr').attr('data-id');
-    swal({
-      title: "确认下架?",
-      text: "",
-      type: "warning",
-      showCancelButton: true,
-      cancelButtonText: "取消",
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "下架",
-      closeOnConfirm: false
-    }, function () {
-      Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'disabled', function (err, res) {
-        if (err) {
-          // 下架失敗
-          swal("下架失败!", "", "error");
-        }
-        ;
-        if (res) {
-          // 下架成功
-          swal("下架成功", "", "success");
-        }
-      });
-    });
+  // 关闭closeModal
+  _handleCloseOrderModal(){
+    this.setState({
+      showCloseModal: false
+    })
   },
 
-  // 上架商品
-  _handlePubCommodity(e){
-    const self = this;
-    e.preventDefault();
-    const curIndex = $(e.target).parents('tr').attr('data-id');
-    Meteor.call('commodity.status.update', self.data.commodities[curIndex].commodityId, 'pub', function (err, res) {
-      if (err) {
-        // 上架失败
-        swal("上架失败!", "", "error");
-      }
-      ;
-      if (res) {
-        // 上架成功
-        swal("上架成功!", "", "success");
+  // 提交关闭操作
+  _handleSubmitCloseOrder(orderId, e){
+    // TODO 获取关闭交易的理由,并提交
+    //const reason = $('#order-close-modal').children('.reason>select').val();
+    //console.log(reason);
+
+    this._handleCloseOrderModal();
+    Meteor.call('order.close', orderId, (err, res) => {
+      if (err){
+        // TODO 错误处理
+      } else{
+        // TODO 关闭交易成功
       }
     });
   },
 
-  // 编辑商品
-  _handleEditCommodity(e){
-    const curIndex = $(e.target).parents('tr').attr('data-id');
-    const curCommodityId = this.data.commodities[curIndex].commodityId;
-    FlowRouter.go(`/commodities/editor/${curCommodityId}?isAdmin=${!!this.data.isAdmin}`);
-  },
-
-  // 关闭订单处理
+  // 点击'关闭'
   _handleCloseOrder(orderId, e){
-    console.log(e);
-    console.log(orderId);
+    this.setState({
+      curOrderId: orderId,
+      showCloseModal: true
+    });
   },
 
   // 获取操作的展示
@@ -347,21 +321,18 @@ var order = React.createClass({
         <tr key={order.key} style={(order.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
           <td style={{textAlign:'center'}}>{order.orderId}</td>
           <td data-value={order.commodity.commodityId} style={{textAlign:'center'}}>
-            <span>{order.commodity.title}</span>
-            <br/>
-            <span>商品编号: {order.commodity.commodityId}</span>
+            <p>{order.commodity.title}</p>
+            <p>商品编号: {order.commodity.commodityId}</p>
           </td>
           <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
           <td>{order.totalPrice}</td>
           <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
           <td style={{color: '#333', textAlign: 'center'}}>
             {this._getTradeStatusHtml(order)}
-          </td>s
+          </td>
           <td style={{textAlign:'center'}}>
-            <span>{`${order.contact.surname}${order.contact.givenName}`}</span>
-            <br/>
-            <span>{`手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</span>
-            <br/>
+            <p>{`${order.contact.surname}${order.contact.givenName}`}</p>
+            <p>{`手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
             <a href="">留言</a>
           </td>
           <td style={{color: '#333', textAlign: 'center'}}>
@@ -382,7 +353,7 @@ var order = React.createClass({
       <tfoot>
         <tr>
           {/*<td colSpan={this.data.isAdmin ? "10" : "8"}>*/}
-          <td colSpan="6">
+          <td colSpan="8">
             <ul className="pagination pull-right"></ul>
           </td>
         </tr>
@@ -412,6 +383,11 @@ var order = React.createClass({
           {filter}
           {orderTable}
         </div>
+        <OrderCloseModal
+          showModal={this.state.showCloseModal}
+          handleClose={this._handleCloseOrderModal}
+          handleSubmit={this._handleSubmitCloseOrder.bind(this, this.state.curOrderId)}
+        />
       </div>
     );
   }
