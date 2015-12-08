@@ -847,11 +847,11 @@ const commodityModify = React.createClass({
         <BraavosBreadcrumb />
         <br/>
         <Steps steps={[
-          {title: this.getIntlMessage(prefix + 'basic'), body: basicStep},
-          {title: this.getIntlMessage(prefix + 'introduction'), body: introductionStep},
-          {title: this.getIntlMessage(prefix + 'instruction'), body: instructionStep},
-          {title: this.getIntlMessage(prefix + 'book'), body: bookStep},
-          {title: this.getIntlMessage(prefix + 'traffic'), body: trafficStep}
+          {title: this.getIntlMessage(`${prefix}basic`), body: basicStep},
+          {title: this.getIntlMessage(`${prefix}introduction`), body: introductionStep},
+          {title: this.getIntlMessage(`${prefix}instruction`), body: instructionStep},
+          {title: this.getIntlMessage(`${prefix}book`), body: bookStep},
+          {title: this.getIntlMessage(`${prefix}traffic`), body: trafficStep}
           ]} willNextStep={this.willNextStep} willPreviousStep={this.willPreviousStep} willGoStep={this.willGoStep} willFinish={this.willFinish}/>
         {submitLoading}
         <br/>

@@ -325,7 +325,7 @@ var order = React.createClass({
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaseQuantity`)}/>
           </th>
           <th data-hide="phone">
-            <FormattedMessage message={this.getIntlMessage(prefix + 'label.totalAdvancePayment')}/>
+            <FormattedMessage message={this.getIntlMessage(`${prefix}label.totalAdvancePayment`)}/>
           </th>
           <th data-hide="phone" style={{textAlign:'center'}}>
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.createdDate`)}/>
@@ -337,7 +337,7 @@ var order = React.createClass({
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaser`)}/>
           </th>
           <th className="text-right" data-sort-ignore="true">
-            <FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/>
+            <FormattedMessage message={this.getIntlMessage(`${prefix}label.action`)}/>
           </th>
         </tr>
       </thead>;

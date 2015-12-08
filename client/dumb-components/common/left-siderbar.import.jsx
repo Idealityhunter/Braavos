@@ -35,7 +35,7 @@ let leftSiderBar = React.createClass({
   },
 
   render() {
-    let prefix = 'mainLayout.leftSideBar.';
+    const prefix = 'mainLayout.leftSideBar.';
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -81,7 +81,7 @@ let leftSiderBar = React.createClass({
               <a href={FlowRouter.path('home')}>
                 <i className="fa fa-diamond"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'homepage')}/>
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}homepage`)}/>
                 </span>
               </a>
             </li>
@@ -91,7 +91,7 @@ let leftSiderBar = React.createClass({
               <a href={FlowRouter.path('commodities')}>
                 <i className="fa fa-shopping-cart"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'commodities')}/>
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}commodities`)}/>
                 </span>
               </a>
             </li>
@@ -101,7 +101,7 @@ let leftSiderBar = React.createClass({
               <a href={FlowRouter.path('orders')}>
                 <i className="fa fa-tags"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'orders')}/>
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}orders`)}/>
                 </span>
               </a>
             </li>
@@ -112,7 +112,7 @@ let leftSiderBar = React.createClass({
               <a href={FlowRouter.path('finance')}>
                 <i className="fa fa-database"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'finance')}/>
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}finance`)}/>
                 </span>
               </a>
             </li>
@@ -123,7 +123,7 @@ let leftSiderBar = React.createClass({
               <a href={FlowRouter.path('account')}>
                 <i className="fa fa-user"/>
                 <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(prefix + 'accountInfo')}/>
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}accountInfo`)}/>
                 </span>
               </a>
             </li>
