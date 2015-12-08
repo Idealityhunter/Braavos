@@ -119,17 +119,28 @@ const order = React.createClass({
 
   // 提交关闭操作
   _handleSubmitCloseOrder(orderId, e){
-    // TODO 获取关闭交易的理由,并提交
-    //const reason = $('#order-close-modal').children('.reason>select').val();
-    //console.log(reason);
+    const self = this;
+    swal({
+      title: "确认关闭该交易?",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonText: "取消",
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "确认关闭",
+      closeOnConfirm: true
+    }, () => {
+      // TODO 获取关闭交易的理由,并提交
+      //const reason = $('#order-close-modal').children('.reason>select').val();
+      //console.log(reason);
 
-    this._handleCloseOrderModal();
-    Meteor.call('order.close', orderId, (err, res) => {
-      if (err){
-        // TODO 错误处理
-      } else{
-        // TODO 关闭交易成功
-      }
+      self._handleCloseOrderModal();
+      Meteor.call('order.close', orderId, (err, res) => {
+        if (err){
+          // TODO 错误处理
+        } else{
+          // TODO 关闭交易成功
+        }
+      });
     });
   },
 
