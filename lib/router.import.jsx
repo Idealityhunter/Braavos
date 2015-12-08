@@ -6,6 +6,7 @@ import {Login} from '/client/dumb-components/common/login';
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
+import {Order} from '/client/dumb-components/order/order';
 import {Finance} from '/client/dumb-components/finance/finance';
 
 import {StepsDemo} from "/client/components/steps/steps"
@@ -132,7 +133,7 @@ FlowRouter.route('/orders', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData, {documentTitle: "订单管理"}));
+    ReactLayout.render(MainLayout, _.extend({content: <Order {...intlData} />}, intlData, {documentTitle: "订单管理"}));
   }
 });
 

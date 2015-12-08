@@ -104,6 +104,23 @@ BraavosCore.IntlData.zh = {
           }
         },
       }
+    },
+    orders: {
+      label: {
+        search: '搜索',
+        createdDate: '下单时间',
+        orderId: '订单号',
+        commodity: '商品',
+        purchaseQuantity: '购买数量',
+        totalAdvancePayment: '预支付总价',
+        tradeStatus: '交易状态',
+        purchaser: '买家',
+        action: '操作'
+      },
+      btn:{
+        query: '查询',
+        reset: '重置'
+      }
     }
   }
 };

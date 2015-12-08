@@ -194,7 +194,7 @@ var commodity = React.createClass({
   },
 
   render() {
-    let prefix = 'commodities.';
+    const prefix = 'commodities.';
 
     // 筛选控制
     const filter =
@@ -264,7 +264,7 @@ var commodity = React.createClass({
           <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
           <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
           <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-          <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
+          <th data-hide="phone" data-type="numeric"><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
           <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
           {/*
            <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
@@ -287,7 +287,7 @@ var commodity = React.createClass({
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
         {/*<td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>*/}
-        <td>
+        <td data-value={commodity.price}>
           ￥{commodity.price}
           {(commodity.plans.length > 1
             && _.reduce(commodity.plans, (memo, f) => {

@@ -72,6 +72,7 @@ function initMongo() {
     {collName: 'Token', schema: Schema.Account.Token},
     {collName: "Seller", schema: Schema.Marketplace.Seller},
     {collName: "Commodity", schema: Schema.Marketplace.Commodity},
+    {collName: "Order", schema: Schema.Marketplace.Order},
     {collName: "Country", schema: Schema.Marketplace.Country},
     {collName: "Locality", schema: Schema.Marketplace.Locality}
   ]);
