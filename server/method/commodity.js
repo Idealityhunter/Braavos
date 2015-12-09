@@ -34,32 +34,43 @@ Meteor.methods({
     };
   },
 
-
   // 添加商品
-  'commodity.insert': (userId, doc) => {
+  'commodity.insert': (doc) => {
+    const userId = parseInt(Meteor.userId());
     const collCommodity = BraavosCore.Database.Braavos.Commodity;
-    const uid = parseInt(userId);
-    if (isNaN(uid)) return;
 
-    // TODO 获取 seller信息
+    // 获取 seller信息
     const collSeller = BraavosCore.Database.Braavos.Seller;
     const collUserInfo = BraavosCore.Database.Yunkai.UserInfo;
 
     const commodityId = Meteor.call('commodity.insert.generateCommodityId');
-    const userInfo = _.pick(collUserInfo.findOne({'userId': uid}), 'nickName', 'userId', 'avatar');
+    const userInfo = _.pick(collUserInfo.findOne({'userId': userId}), 'nickName', 'userId', 'avatar');
     if (_.isString(userInfo.avatar)){
       userInfo.avatar = {
         url: userInfo.avatar
       }
     };
+
     _.extend(doc, {
       commodityId: commodityId,
-      seller: _.pick(_.extend(collSeller.findOne({'sellerId': uid}), {
+      seller: _.pick(_.extend(collSeller.findOne({'sellerId': userId}), {
         'userInfo': userInfo
       }), 'sellerId', 'name', 'userInfo') || {},
       status: 'review',
       createTime: new Date()
     });
     return collCommodity.insert(doc);
+  },
+
+  // 编辑商品
+  'commodity.update': function (doc, commodityId) {
+    // 暂时可以编辑他人的商品
+    const collCommodity = BraavosCore.Database.Braavos.Commodity;
+    return collCommodity.update({commodityId: commodityId}, {$set: doc});
+
+    // 只能编辑自己的商品
+    //const userId = parseInt(Meteor.userId());
+    //const collCommodity = BraavosCore.Database.Braavos.Commodity;
+    //return collCommodity.update({'seller.sellerId': userId, commodityId: commodityId}, {$set: doc});
   }
 });
