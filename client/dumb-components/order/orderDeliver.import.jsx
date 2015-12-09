@@ -81,7 +81,7 @@ const orderDeliver = React.createClass({
     const self = this;
     const planTitle = this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(self.data.orderInfo.commodity.plans, (memo, f) => {
         return (self.data.orderInfo.planId == f.planId) ? f.title : memo
-      }, '');
+      }, '-');
 
     return (
       <div className='order-deliver-wrap'>
@@ -98,15 +98,15 @@ const orderDeliver = React.createClass({
               </p>
               <p>
                 <label style={this.styles.label}>使用日期:</label>
-                {this.data.orderInfo.rendezvousTime && moment(this.data.orderInfo.rendezvousTime).format('YYYY-MM-DD') || ''}
+                {this.data.orderInfo.rendezvousTime && moment(this.data.orderInfo.rendezvousTime).format('YYYY-MM-DD') || '-'}
               </p>
               <p>
                 <label style={this.styles.label}>买家备注:</label>
-                {this.data.orderInfo.comment}
+                {this.data.orderInfo.comment || '-'}
               </p>
               <p>
                 <label style={this.styles.label}>联系方式:</label>
-                {this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}, ${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`)}
+                {this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}, ${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`) || '-'}
               </p>
             </div>
 
