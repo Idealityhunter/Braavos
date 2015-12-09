@@ -8,6 +8,7 @@ import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
 import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
+import {OrderRefundLack} from '/client/dumb-components/order/orderRefundLack';
 import {Finance} from '/client/dumb-components/finance/finance';
 
 import {StepsDemo} from "/client/components/steps/steps"
@@ -143,14 +144,39 @@ FlowRouter.route('/orders', {
 });
 
 // 订单管理 -> 发货页面
-FlowRouter.route('/orders/deliver/:orderId', {
+FlowRouter.route('/orders/:orderId/deliver', {
   name: 'deliver',
   title: '发货',
   parent: 'orders',
   triggersEnter: [loginCheck],
   action(param, queryParam) {
+    // TODO 先loading,然后获取数据再进去!然后判断status状态是否是paid状态
     const orderId = param.orderId;
     ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
+  }
+});
+
+// 订单管理 -> 退款页面
+FlowRouter.route('/orders/:orderId/refund/:refundExcuse', {
+  name: 'refund',
+  title: '退款',
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param, queryParam) {
+    const orderId = param.orderId;
+    // TODO 先loading,然后获取数据再进去!然后判断status状态是否是...状态
+    switch(param.refundExcuse){
+      case 'lack':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundLack {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
+      //case 'lack':
+      //  ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
+      //case 'lack':
+      //  ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
+      default:
+        // TODO default处理? 何时做
+        return ;
+    };
+
   }
 });
 

@@ -1,5 +1,5 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
-import {Modal, Button} from "/lib/react-bootstrap";
+import {Button} from "/lib/react-bootstrap";
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -27,23 +27,28 @@ const orderDeliver = React.createClass({
   },
 
   _handleSubmit(e){
-    // TODO 确认发货
+    // 确认发货
     this.setState({
       submitting: true
     });
 
     Meteor.call('order.commit', this.data.orderInfo.orderId, (err, res) => {
       if (err){
-        // TODO 错误处理
+        // 错误处理
+        swal({
+          title: "确认发货失败!",
+          timer: 1000
+        });
+
         this.setState({
           submitting: false
-        })
+        });
       } else{
-        // TODO 发货确认成功
+        // 发货确认成功
         swal({
           title: "确认发货成功!",
           text: "2s后跳转到订单管理页面",
-          timer: 2000,
+          timer: 1500,
           showConfirmButton: false
         });
         Meteor.setTimeout(() => FlowRouter.go("orders"), 2000);
@@ -78,9 +83,8 @@ const orderDeliver = React.createClass({
   },
 
   render() {
-    const self = this;
-    const planTitle = this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(self.data.orderInfo.commodity.plans, (memo, f) => {
-        return (self.data.orderInfo.planId == f.planId) ? f.title : memo
+    const planTitle = this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
+        return (this.data.orderInfo.planId == f.planId) ? f.title : memo
       }, '-');
 
     return (

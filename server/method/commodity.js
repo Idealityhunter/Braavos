@@ -5,21 +5,21 @@
  */
 
 Meteor.methods({
-    /**
-     * 检查commodity是否为当前用户所有
-     * @param commodityId
-     */
-    'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
-      const userId = parseInt(Meteor.userId());
-      const options = {commodityId: parseInt(commodityId)};
-      if (!isAdmin) options['seller.sellerId'] = userId;
+  /**
+   * 检查commodity是否为当前用户所有
+   * @param commodityId
+   */
+  'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
+    const userId = parseInt(Meteor.userId());
+    const options = {commodityId: parseInt(commodityId)};
+    if (!isAdmin) options['seller.sellerId'] = userId;
 
-      const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
-      return {
-        valid: Boolean(ret),
-        commodityInfo: ret
-      };
-    },
+    const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
+    return {
+      valid: Boolean(ret),
+      commodityInfo: ret
+    };
+  },
 
   // 生成commodityId
   'commodity.insert.generateCommodityId': () => {

@@ -111,14 +111,14 @@ const order = React.createClass({
   },
 
   // 关闭closeModal
-  _handleCloseOrderModal(){
+  _handleCloseOrderModalClose(){
     this.setState({
       showCloseModal: false
     })
   },
 
   // 提交关闭操作
-  _handleSubmitCloseOrder(orderId, e){
+  _handleCloseOrderModalSubmit(reason){
     const self = this;
     swal({
       title: "确认关闭该交易?",
@@ -128,12 +128,10 @@ const order = React.createClass({
       confirmButtonColor: "#DD6B55",
       confirmButtonText: "确认关闭",
     }, () => {
-      // TODO 获取关闭交易的理由,并提交
-      //const reason = $('#order-close-modal').children('.reason>select').val();
-      //console.log(reason);
+      // TODO 获取关闭交易的理由reason,并提交
 
-      self._handleCloseOrderModal();
-      Meteor.call('order.close', orderId, (err, res) => {
+      self._handleCloseOrderModalClose();
+      Meteor.call('order.close', self.state.orderId, reason, (err, res) => {
         if (err){
           // TODO 错误处理
         } else{
@@ -162,9 +160,9 @@ const order = React.createClass({
       case 'paid':
         return [
           <br/>,
-          <a href={`/orders/deliver/${order.orderId}`}>发货</a>,
+          <a href={`/orders/${order.orderId}/deliver`}>发货</a>,
           <br/>,
-          <a href="">缺货退款</a>
+          <a href={`/orders/${order.orderId}/refund/lack`}>缺货退款</a>
         ]
       case 'refundApplied':
         // 是否已发货
@@ -173,7 +171,7 @@ const order = React.createClass({
             <br/>,
             <a href="">退款处理</a>,
             <br/>,
-            <a href={`/orders/deliver/${order.orderId}`}>发货</a>
+            <a href={`/orders/${order.orderId}/deliver`}>发货</a>
           ]
           : [
             <br/>,
@@ -395,8 +393,8 @@ const order = React.createClass({
         </div>
         <OrderCloseModal
           showModal={this.state.showCloseModal}
-          handleClose={this._handleCloseOrderModal}
-          handleSubmit={this._handleSubmitCloseOrder.bind(this, this.state.curOrderId)}
+          handleClose={this._handleCloseOrderModalClose}
+          handleSubmit={this._handleCloseOrderModalSubmit}
         />
       </div>
     );

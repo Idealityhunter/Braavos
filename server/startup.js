@@ -92,7 +92,7 @@ function initYunkaiService() {
   const Yunkai = module.Yunkai;
   const YunkaiTypes = module.YunkaiTypes;
 
-  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword'];
+  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword', 'verifyCredential'];
   const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {transport: 'framed'});
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }

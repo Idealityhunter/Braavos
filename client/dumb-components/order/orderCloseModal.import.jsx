@@ -5,6 +5,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const orderCloseModal = React.createClass({
   mixins: [IntlMixin],
+
+  _handleSubmit(e) {
+    const reason = $('#order-close-modal').children('.reason>select').val();
+    this.props.handleSubmit(reason);
+  },
+
   styles: {
     notice: {
       border: '1px solid orange',
@@ -66,7 +72,7 @@ const orderCloseModal = React.createClass({
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button bsStyle="primary" onClick={this.props.handleSubmit}>确定</Button>
+          <Button bsStyle="primary" onClick={this._handleSubmit}>确定</Button>
           <Button onClick={this.props.handleClose}>取消</Button>
         </Modal.Footer>
       </Modal>

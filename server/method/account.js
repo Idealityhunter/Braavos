@@ -69,5 +69,21 @@ Meteor.methods({
       console.log(userId);
       client.resetPassword(new Int64(userId), oldPassword, newPassword);
     }
+  },
+
+  // 用户进行重要操作时需要重新验证身份
+  "account.verifyCredential": (password) => {
+    const client = BraavosCore.Thrift.Yunkai.client;
+    const userId = parseInt(Meteor.userId());
+    try {
+      const verify = client.verifyCredential(userId, password);
+      if (!verify){
+        console.log(`Failed in verify credential: user=${userId} password=${password}`);
+      };
+      return verify;
+    } catch (err) {
+      console.log(`Failed to verify credential: user=${userId} password=${password}`);
+      throw err;
+    }
   }
 });
