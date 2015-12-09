@@ -11,6 +11,11 @@ Package.describe({
   documentation: 'README.md'
 });
 
+Npm.depends({
+  "thrift": "0.9.3",
+  "generic-pool": "2.2.1"
+});
+
 Package.onUse(function(api) {
   api.versionsFrom('1.2.0.2');
   api.use('ecmascript');
