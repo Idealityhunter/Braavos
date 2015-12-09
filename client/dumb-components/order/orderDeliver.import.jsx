@@ -89,24 +89,53 @@ const orderDeliver = React.createClass({
 
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
-            <h4>收货人信息</h4>
+            <h4>商品订单信息</h4>
 
             <div className="gray-bg" style={this.styles.orderContent}>
+              <p>
+                <label style={this.styles.label}>商品名:</label>
+                {this.data.orderInfo.commodity && this.data.orderInfo.commodity.title || '-'}
+              </p>
               <p>
                 <label style={this.styles.label}>所选套餐:</label>
                 {planTitle}
               </p>
               <p>
-                <label style={this.styles.label}>使用日期:</label>
-                {this.data.orderInfo.rendezvousTime && moment(this.data.orderInfo.rendezvousTime).format('YYYY-MM-DD') || '-'}
+                <label style={this.styles.label}>购买数量:</label>
+                {this.data.orderInfo.quantity || '-'}
+              </p>
+              <p>
+                <label style={this.styles.label}>支付总价:</label>
+                {/*
+                 this.data.orderInfo.totalPrice || '-'
+                 this.data.orderInfo.paymentInfo || '-'
+                 this.data.orderInfo.totalPrice * this.data.orderInfo.discount || '-'
+                */}
+              </p>
+              <p>
+                <label style={this.styles.label}>订单号:</label>
+                {this.data.orderInfo.orderId || '-'}
+              </p>
+            </div>
+
+            <h4>买家信息</h4>
+
+            <div className="gray-bg" style={this.styles.orderContent}>
+              <p>
+                <label style={this.styles.label}>买家姓名:</label>
+                {this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}
+              </p>
+              <p>
+                <label style={this.styles.label}>联系方式:</label>
+                {this.data.orderInfo.contact && (`+${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`) || '-'}
               </p>
               <p>
                 <label style={this.styles.label}>买家备注:</label>
                 {this.data.orderInfo.comment || '-'}
               </p>
               <p>
-                <label style={this.styles.label}>联系方式:</label>
-                {this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}, ${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`) || '-'}
+                <label style={this.styles.label}>使用日期:</label>
+                {this.data.orderInfo.rendezvousTime && moment(this.data.orderInfo.rendezvousTime).format('YYYY-MM-DD') || '-'}
               </p>
             </div>
 

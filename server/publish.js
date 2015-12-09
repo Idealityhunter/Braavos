@@ -180,7 +180,7 @@ Meteor.publish("orders", function (options) {
 Meteor.publish("orderInfo", function (orderId) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Order;
-  const allowedFields = ["orderId", "commodity", "contact", "rendezvousTime", "comment", "planId"];
+  const allowedFields = ["orderId", "commodity", "contact", "rendezvousTime", "quantity", "totalPrice", "comment", "planId", "discount", "paymentInfo"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
