@@ -751,7 +751,7 @@ const commodityModify = React.createClass({
           });
 
           // 以免不点击swal导致不跳转
-          setTimeout(FlowRouter.go('commodities'), 500);
+          Meteor.setTimeout(() => FlowRouter.go('commodities'), 500);
 
           return true;
         }
@@ -780,7 +780,7 @@ const commodityModify = React.createClass({
           });
 
           // 以免不点击swal导致不跳转
-          setTimeout(FlowRouter.go('commodities'), 500);
+          Meteor.setTimeout(() => FlowRouter.go('commodities'), 500);
           return true;
         }
       });

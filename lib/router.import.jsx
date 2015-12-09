@@ -7,6 +7,7 @@ import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
+import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
 import {Finance} from '/client/dumb-components/finance/finance';
 
 import {StepsDemo} from "/client/components/steps/steps"
@@ -102,7 +103,9 @@ FlowRouter.route('/commodities/add', {
   title: '添加',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData, {documentTitle: "商品添加"}));
+    ReactLayout.render(MainLayout, _.extend({
+      content: <CommodityModify {...intlData} />
+    }, intlData, {documentTitle: "商品添加"}));
   }
 });
 
@@ -118,7 +121,9 @@ FlowRouter.route('/commodities/editor/:commodityId', {
     Meteor.call('commodity.editor.checkCommodityId', {commodityId: commodityId, isAdmin: isAdmin}, (err, ret) => {
       const isValid = (!err && ret.valid);
       if (isValid) {
-        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
+        ReactLayout.render(MainLayout, _.extend({
+          content: <CommodityModify {...intlData} {...ret.commodityInfo}/>
+        }, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
       }
@@ -134,6 +139,18 @@ FlowRouter.route('/orders', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Order {...intlData} />}, intlData, {documentTitle: "订单管理"}));
+  }
+});
+
+// 订单管理 -> 发货页面
+FlowRouter.route('/orders/deliver/:orderId', {
+  name: 'deliver',
+  title: '发货',
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param, queryParam) {
+    const orderId = param.orderId;
+    ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
   }
 });
 

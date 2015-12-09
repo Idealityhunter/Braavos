@@ -127,7 +127,6 @@ const order = React.createClass({
       cancelButtonText: "取消",
       confirmButtonColor: "#DD6B55",
       confirmButtonText: "确认关闭",
-      closeOnConfirm: true
     }, () => {
       // TODO 获取关闭交易的理由,并提交
       //const reason = $('#order-close-modal').children('.reason>select').val();
@@ -163,7 +162,7 @@ const order = React.createClass({
       case 'paid':
         return [
           <br/>,
-          <a href="">发货</a>,
+          <a href={`/orders/deliver/${order.orderId}`}>发货</a>,
           <br/>,
           <a href="">缺货退款</a>
         ]
@@ -174,7 +173,7 @@ const order = React.createClass({
             <br/>,
             <a href="">退款处理</a>,
             <br/>,
-            <a href="">发货</a>
+            <a href={`/orders/deliver/${order.orderId}`}>发货</a>
           ]
           : [
             <br/>,

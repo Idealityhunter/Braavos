@@ -169,6 +169,25 @@ Meteor.publish("orders", function (options) {
   //  };
   //};
 
+  // TODO 只发布自己的订单
   //return commodityColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
   return orderColl.find(_.extend({}, options), {fields: fields});
+});
+
+/**
+ * 发布订单信息
+ */
+Meteor.publish("orderInfo", function (orderId) {
+  const userId = parseInt(this.userId);
+  const coll = BraavosCore.Database.Braavos.Order;
+  const allowedFields = ["orderId", "commodity", "contact", "rendezvousTime", "comment", "planId"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+
+  return coll.find({orderId: parseInt(orderId)}, {fields: fields});
+
+  // TODO 只发布自己的订单
+  //return coll.find({orderId: parseInt(orderId), 'commodity.seller.sellerId': userId}, {fields: fields});
 });
