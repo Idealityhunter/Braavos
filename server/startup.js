@@ -61,7 +61,7 @@ function initMongo() {
       const c = new Mongo.Collection(collName, {_driver: driver, idGeneration: "MONGO"});
       if (schema) {
         c.attachSchema(schema);
-      };
+      }
       BraavosCore.Database[confKey][alias ? alias : collName] = c;
     });
 
@@ -93,7 +93,7 @@ function initYunkaiService() {
   const YunkaiTypes = module.YunkaiTypes;
 
   const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword'];
-  const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {transport: 'framed'});
+  const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {name: 'yunkai', transport: 'framed'});
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }
 
