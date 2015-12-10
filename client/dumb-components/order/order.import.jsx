@@ -45,7 +45,10 @@ const order = React.createClass({
     let orders = [];
     if (handleOrder.ready()) {
       //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
-      orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {createTime: -1}}).fetch();
+
+      //TODO 最好是按照更新时间来排序吧
+      //orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {createTime: -1}}).fetch();
+      orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {status: -1}}).fetch();
       orders = orders.map(order => _.extend(order, {
         key: Meteor.uuid()
       }));
@@ -162,14 +165,14 @@ const order = React.createClass({
           <br/>,
           <a href={`/orders/${order.orderId}/deliver`}>发货</a>,
           <br/>,
-          <a href={`/orders/${order.orderId}/refund/lack`}>缺货退款</a>
+          <a href={`/orders/${order.orderId}/refund/paid`}>缺货退款</a>
         ]
       case 'refundApplied':
         // 是否已发货
         return (_.findIndex(order.activities, (activity) => {activity.action == 'commit'}) == -1)
           ? [
             <br/>,
-            <a href="">退款处理</a>,
+            <a href={`/orders/${order.orderId}/refund/applied`}>退款处理</a>,
             <br/>,
             <a href={`/orders/${order.orderId}/deliver`}>发货</a>
           ]
@@ -207,7 +210,7 @@ const order = React.createClass({
             <p>待退款</p>,
             <p>(卖家已发货)</p>
           ]
-      case 'cancelled':
+      case 'canceled':
         // TODO 谁取消的
         return [
           <p>已关闭</p>,

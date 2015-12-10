@@ -47,6 +47,7 @@ const orderRefundModal = React.createClass({
           <Input
             type="password"
             value={this.state.password}
+            autoComplete="off"
             groupClassName="group-class"
             labelClassName="label-class"
             onChange={this._handlePasswordChange} />

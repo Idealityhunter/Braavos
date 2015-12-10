@@ -1,16 +1,23 @@
+// 商家在用户'申请退款'后, 选择退款的页面
+
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
-import {Modal, Button} from "/lib/react-bootstrap";
+import {Modal, Button, Input} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
+import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-const orderRefundLack = React.createClass({
+const orderRefundApplied = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState(){
     return {
-      showRefundModal: false
+      submitting: false,
+      showRefundModal: false,
+      agreeRefund: true,
+      // TODO 控制退款金额的变化,以便于modal中使用
+      //refundMoney: ''
     }
   },
 
@@ -58,7 +65,7 @@ const orderRefundLack = React.createClass({
       }
 
       // 密码正确, 取消订单
-      Meteor.call('order.cancel', self.data.orderInfo.orderId, (err, res) => {
+      Meteor.call('order.refunded', self.data.orderInfo.orderId, (err, res) => {
         if (err || !res) {
           // 密码验证失败处理
           swal('退款失败', '', 'error');
@@ -77,13 +84,41 @@ const orderRefundLack = React.createClass({
   },
 
   // 打开退款弹层
-  _handleSubmit(e){
+  _handleSubmitRefund(e){
     this.setState({
       showRefundModal: true
     });
   },
 
+  // 拒绝退款
+  _handleSubmitReject(e){
+    this.setState({
+      submitting: true
+    });
+    Meteor.call('order.reject', (err, res) => {
+      if (err || !res) {
+        swal('拒绝失败', '', 'error');
+      } else{
+        swal({
+          title: "退款已拒绝",
+          text: `拒绝原因: `,
+          timer: 1500,
+          showConfirmButton: false
+        }, () => FlowRouter.go("orders"));
+        Meteor.setTimeout(() => {
+          swal.close();
+          FlowRouter.go("orders");
+        }, 2000);
+      }
+    });
+  },
+
   styles: {
+    countDown: {
+      marginLeft: 30,
+      backgroundColor: 'coral',
+      padding: '5px 10px'
+    },
     asterisk: {
       color: 'coral',
       verticalAlign: 'text-top',
@@ -105,6 +140,15 @@ const orderRefundLack = React.createClass({
       border: '1px solid #ccc',
       padding: 10,
       margin: 10
+    },
+    totalPrice: {
+      width: 70,
+      textAlign: 'right'
+    },
+    submitBtn: {
+      marginRight: 15,
+      marginBottom: 30,
+      verticalAlign: 'top'
     },
     marginRight: {
       marginRight: 15,
@@ -131,7 +175,7 @@ const orderRefundLack = React.createClass({
       verticalAlign: 'top'
     },
     submitLoading: {
-      padding: '8px 14px',
+      padding: '8px 0px',
       backgroundColor: '#1ab394',
       borderRadius: 3,
       boxSizing: 'content-box',
@@ -146,53 +190,65 @@ const orderRefundLack = React.createClass({
 
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
-            <h3>缺货退款</h3>
+            <div>
+              <h3 className="inline">请处理退款</h3>
+              <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>
+            </div>
+
             <ol style={this.styles.ol}>
-              <li>买家已经付款, 你还未做任何处理。</li>
-              <li>如果您想取消交易, 可以退款给买家。</li>
-              <li>您还可以 <a href={`/orders/${this.data.orderInfo.orderId}/deliver`}>发货</a>。</li>
+              <li>您已经发货, 买家申请了退款。</li>
+              <li>如果您同意退款, 系统审核后, 将钱款退还给买家。</li>
+              <li>如果您拒绝退款, 请输入拒绝原因, 避免与买家发生交易冲突。</li>
+              <li>如果您在买家申退后48小时内未做处理, 系统将自动退款给买家。</li>
             </ol>
 
             <hr style={this.styles.hr}/>
+
+            <div>
+              <Button bsStyle={this.state.agreeRefund ? 'primary' : 'default'} onClick={() => this.setState({agreeRefund: true})} style={this.styles.submitBtn}>同意退款申请</Button>
+              <Button bsStyle={this.state.agreeRefund ? 'default' : 'primary'} onClick={() => this.setState({agreeRefund: false})}>拒绝退款申请</Button>
+            </div>
+
             <label style={this.styles.marginRight}>买家:</label>
             <span style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
             <label style={this.styles.marginRight}>实付金额:</label>
-            <span>{/*
-             this.data.orderInfo.totalPrice || '-'
-             this.data.orderInfo.paymentInfo || '-'
-             this.data.orderInfo.totalPrice * this.data.orderInfo.discount || '-'
-             */} 元</span>
 
-            <div>
-              <label style={this.styles.label}>退款金额</label>
-              <span>¥ {/*
-               this.data.orderInfo.totalPrice || '-'
-               this.data.orderInfo.paymentInfo || '-'
-               this.data.orderInfo.totalPrice * this.data.orderInfo.discount || '-'
-               */}</span>
-            </div>
+            <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
+
+            {(this.state.agreeRefund)
+              ? <div>
+                  <label style={this.styles.label}>退款金额</label>
+                  <NumberInput value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+                </div>
+              : <div><br/></div>//留一行空白
+            }
+
 
             <span style={this.styles.asterisk}>*</span>备注
             <textarea style={this.styles.textarea}></textarea>
 
             <div style={this.styles.buttonGroup}>
-              <Button bsStyle="primary" onClick={this._handleSubmit}>退款</Button>
-              <div className={this.state.submitting ? 'la-ball-fall' : 'la-ball-fall hidden'} style={this.styles.submitLoading}>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
+              {(this.state.agreeRefund)
+                ? <Button bsStyle="primary" onClick={this._handleSubmitRefund}>退款</Button>
+                : [
+                  <Button bsStyle="primary" onClick={this._handleSubmitReject} className={this.state.submitting ? 'hidden' : ''}>确定</Button>,
+                  <div className={this.state.submitting ? 'la-ball-fall inline' : 'la-ball-fall hidden'} style={this.styles.submitLoading}>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                ]
+              }
               <Button onClick={this._handleCancel} style={this.styles.cancelBtn}>取消</Button>
             </div>
           </div>
         </div>
-
         {this.state.showRefundModal
           ? <OrderRefundModal
-              showModal={this.state.showRefundModal}
-              handleClose={this._handleRefundModalClose}
-              handleSubmit={this._handleRefundModalSubmit}
-            />
+          showModal={this.state.showRefundModal}
+          handleClose={this._handleRefundModalClose}
+          handleSubmit={this._handleRefundModalSubmit}
+          />
           : <div />
         }
 
@@ -201,4 +257,4 @@ const orderRefundLack = React.createClass({
   }
 })
 
-export const OrderRefundLack = orderRefundLack;
+export const OrderRefundApplied = orderRefundApplied;
