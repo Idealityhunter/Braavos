@@ -49,16 +49,27 @@ Meteor.methods({
   },
 
   // 新建用户
-  "account.createUser": (email, password) => {
+  "account.createUser": (email, password, options) => {
     const client = BraavosCore.Thrift.Yunkai.client;
     try {
-      const user = client.createUserPoly("email", email, password, null);
+      const miscInfo = {};
+      if (options.nickname) {
+        miscInfo[BraavosCore.Thrift.Yunkai.types.UserInfoProp["NICK_NAME"]] = options.nickname
+      }
+      console.log(`account.createUser: miscInfo: ${miscInfo}`);
+      const user = client.createUserPoly("email", email, password, miscInfo);
       user.userId = parseInt(user.userId.toString());
       return user;
     } catch (err) {
       console.log(`Failed to create user: ${err}`);
       throw err;
     }
+  },
+
+  // 检查email是否有效
+  "account.checkEmailAvailability": function (email) {
+    const ret = BraavosCore.Database.Yunkai.UserInfo.findOne({email: email.trim()}, {userId: 1});
+    return !ret;
   },
 
   // 更改密码
