@@ -165,20 +165,20 @@ const order = React.createClass({
           <br/>,
           <a href={`/orders/${order.orderId}/deliver`}>发货</a>,
           <br/>,
-          <a href={`/orders/${order.orderId}/refund/paid`}>缺货退款</a>
+          <a href={`/orders/${order.orderId}/refund/cancel`}>缺货退款</a>
         ]
       case 'refundApplied':
         // 是否已发货
-        return (_.findIndex(order.activities, (activity) => {activity.action == 'commit'}) == -1)
+        return (_.findIndex(order.activities, (activity) => activity.action == 'commit') == -1)
           ? [
             <br/>,
-            <a href={`/orders/${order.orderId}/refund/applied`}>退款处理</a>,
+            <a href={`/orders/${order.orderId}/refund/paid`}>退款处理</a>,
             <br/>,
             <a href={`/orders/${order.orderId}/deliver`}>发货</a>
           ]
           : [
             <br/>,
-            <a href="">退款处理</a>
+            <a href={`/orders/${order.orderId}/refund/committed`}>退款处理</a>
           ]
       default :
         return ;
@@ -201,7 +201,7 @@ const order = React.createClass({
         return '已成功的订单'
       case 'refundApplied':
         // 是否已发货
-        return (_.findIndex(order.activities, (activity) => {activity.action == 'commit'}) == -1)
+        return (_.findIndex(order.activities, (activity) => activity.action == 'commit') == -1)
           ? [
             <p>待退款</p>,
             <p>(买家已付款)</p>
@@ -329,30 +329,30 @@ const order = React.createClass({
 
     // 商品列表行
     const orderList = this.data.orders.map(order =>
-        <tr key={order.key} style={(order.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
-          <td style={{textAlign:'center'}}>{order.orderId}</td>
-          <td data-value={order.commodity.commodityId} style={{textAlign:'center'}}>
-            <p>{order.commodity.title}</p>
-            <p>商品编号: {order.commodity.commodityId}</p>
-          </td>
-          <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
-          <td>{order.totalPrice}</td>
-          <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
-          <td style={{color: '#333', textAlign: 'center'}}>
-            {this._getTradeStatusHtml(order)}
-          </td>
-          <td style={{textAlign:'center'}}>
-            <p>{`${order.contact.surname}${order.contact.givenName}`}</p>
-            <p>{`手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
-            <a href="">留言</a>
-          </td>
-          <td style={{color: '#333', textAlign: 'center'}}>
-            <div className="btn-group">
-              <a href="">订单详情</a>
-              {this._getActionHtml(order)}
-            </div>
-          </td>
-        </tr>
+      <tr key={order.key} style={(order.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
+        <td style={{textAlign:'center'}}>{order.orderId}</td>
+        <td data-value={order.commodity.commodityId} style={{textAlign:'center'}}>
+          <p>{order.commodity.title}</p>
+          <p>商品编号: {order.commodity.commodityId}</p>
+        </td>
+        <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
+        <td>{order.totalPrice}</td>
+        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
+        <td style={{color: '#333', textAlign: 'center'}}>
+          {this._getTradeStatusHtml(order)}
+        </td>
+        <td style={{textAlign:'center'}}>
+          <p>{`${order.contact.surname}${order.contact.givenName}`}</p>
+          <p>{`手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
+          <a href="">留言</a>
+        </td>
+        <td style={{color: '#333', textAlign: 'center'}}>
+          <div className="btn-group">
+            <a href="">订单详情</a>
+            {this._getActionHtml(order)}
+          </div>
+        </td>
+      </tr>
     );
 
     const orderTableBody =

@@ -8,8 +8,9 @@ import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
 import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
+import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel';
 import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
-import {OrderRefundApplied} from '/client/dumb-components/order/orderRefundApplied';
+import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
 
 import {StepsDemo} from "/client/components/steps/steps"
@@ -163,9 +164,9 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
   name: 'refund',
   title:  param => {
     switch (param.refundStatus){
-      case 'paid':
+      case 'cancel':
         return '缺货退款'
-      case 'applied':
+      case 'paid':
         return '退款'
       case 'committed':
         return '退款处理'
@@ -180,14 +181,17 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
     // TODO 先loading,然后获取数据再进去!然后判断status状态是否是...状态
 
     switch(param.refundStatus){
+      // 主动退款
+      case 'cancel':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCancel {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-缺货退款"}));
+        return ;
+      // 已支付状态下转入的申请退款状态
       case 'paid':
-        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundPaid {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-缺货退款"}));
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundPaid {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
         return ;
-      case 'applied':
-        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundApplied {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
-        return ;
-      //case 'lack':
-      //  ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
+      // 已发货状态下转入的申请退款状态
+      case 'committed':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCommitted {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款处理"}));
       default:
         // TODO default处理? 何时做
         return ;

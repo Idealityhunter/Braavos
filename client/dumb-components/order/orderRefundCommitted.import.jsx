@@ -1,4 +1,4 @@
-// 商家在用户'申请退款'后, 选择退款的页面
+// 已发货的商家在用户'申请退款'后, 选择退款的页面
 
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Modal, Button, Input} from "/lib/react-bootstrap";
@@ -8,7 +8,7 @@ import {NumberInput} from '/client/common/numberInput';
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-const orderRefundApplied = React.createClass({
+const orderRefundCommitted = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState(){
@@ -64,13 +64,13 @@ const orderRefundApplied = React.createClass({
         return ;
       }
 
-      // 密码正确, 取消订单
+      // 密码正确, 进行退款
       Meteor.call('order.refunded', self.data.orderInfo.orderId, (err, res) => {
         if (err || !res) {
-          // 密码验证失败处理
+          // 退款失败处理
           swal('退款失败', '', 'error');
         } else{
-          // 取消订单成功
+          // 退款成功
           swal({
             title: "退款成功!",
             text: "2s后跳转到订单管理页面",
@@ -134,12 +134,6 @@ const orderRefundApplied = React.createClass({
       marginTop: 30,
       marginBottom: 30,
       borderStyle: 'dashed'
-    },
-    content: {
-      backgroundColor: 'white',
-      border: '1px solid #ccc',
-      padding: 10,
-      margin: 10
     },
     totalPrice: {
       width: 70,
@@ -257,4 +251,4 @@ const orderRefundApplied = React.createClass({
   }
 })
 
-export const OrderRefundApplied = orderRefundApplied;
+export const OrderRefundCommitted = orderRefundCommitted;

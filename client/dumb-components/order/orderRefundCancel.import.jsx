@@ -1,14 +1,13 @@
-// 未发货的商家在用户'申请退款'后, 选择退款的页面
+// 商家在用户'支付后', 因缺货等原因, 而选择退款的页面
 
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Modal, Button} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
-import {NumberInput} from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-const orderRefundPaid = React.createClass({
+const orderRefundCancel = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState(){
@@ -60,19 +59,19 @@ const orderRefundPaid = React.createClass({
         return ;
       }
 
-      // 密码正确, 进行退款
-      Meteor.call('order.refunded', self.data.orderInfo.orderId, (err, res) => {
+      // 密码正确, 取消订单
+      Meteor.call('order.cancel', self.data.orderInfo.orderId, (err, res) => {
         if (err || !res) {
-          // 退款失败处理
+          // 密码验证失败处理
           swal('退款失败', '', 'error');
         } else{
           // 取消订单成功
           swal({
-              title: "退款成功!",
-              text: `退款金额${self.data.orderInfo.totalPrice}元`,
-              timer: 1000
-            }, () =>
-              FlowRouter.go("orders")
+            title: "退款成功!",
+            text: `退款金额${self.data.orderInfo.totalPrice}元`,
+            timer: 1000
+          }, () =>
+            FlowRouter.go("orders")
           );
           Meteor.setTimeout(() => {
             swal.close();
@@ -91,11 +90,6 @@ const orderRefundPaid = React.createClass({
   },
 
   styles: {
-    countDown: {
-      marginLeft: 30,
-      backgroundColor: 'coral',
-      padding: '5px 10px'
-    },
     asterisk: {
       color: 'coral',
       verticalAlign: 'text-top',
@@ -111,10 +105,6 @@ const orderRefundPaid = React.createClass({
       marginTop: 30,
       marginBottom: 30,
       borderStyle: 'dashed'
-    },
-    totalPrice: {
-      width: 70,
-      textAlign: 'right'
     },
     marginRight: {
       marginRight: 15,
@@ -149,15 +139,11 @@ const orderRefundPaid = React.createClass({
 
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
-            <div>
-              <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>
-            </div>
-
+            <h3>缺货退款</h3>
             <ol style={this.styles.ol}>
-              <li>买家已经付款, 你对订单还未做任何处理, 买家申请了退款。</li>
-              <li>如果您在买家申退后48小时内未做处理, 系统将自动退款给买家。</li>
-              <li>如果您拒绝退款, 您可以选择 <a href={`/orders/${this.data.orderInfo.orderId}/deliver`}>发货</a>。</li>
+              <li>买家已经付款, 你还未做任何处理。</li>
+              <li>如果您想取消交易, 可以退款给买家。</li>
+              <li>您还可以 <a href={`/orders/${this.data.orderInfo.orderId}/deliver`}>发货</a>。</li>
             </ol>
 
             <hr style={this.styles.hr}/>
@@ -168,7 +154,7 @@ const orderRefundPaid = React.createClass({
 
             <div>
               <label style={this.styles.label}>退款金额</label>
-              <NumberInput value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+              <span>{this.data.orderInfo.totalPrice || '-'} 元</span>
             </div>
 
             <span style={this.styles.asterisk}>*</span>备注
@@ -183,10 +169,10 @@ const orderRefundPaid = React.createClass({
 
         {this.state.showRefundModal
           ? <OrderRefundModal
-          showModal={this.state.showRefundModal}
-          handleClose={this._handleRefundModalClose}
-          handleSubmit={this._handleRefundModalSubmit}
-          />
+              showModal={this.state.showRefundModal}
+              handleClose={this._handleRefundModalClose}
+              handleSubmit={this._handleRefundModalSubmit}
+            />
           : <div />
         }
 
@@ -195,4 +181,4 @@ const orderRefundPaid = React.createClass({
   }
 })
 
-export const OrderRefundPaid = orderRefundPaid;
+export const OrderRefundCancel = orderRefundCancel;

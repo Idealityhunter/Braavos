@@ -141,7 +141,7 @@ Meteor.publish("orders", function (options) {
   const orderColl = BraavosCore.Database.Braavos.Order;
 
   // fields获取
-  const allowedFields = ["orderId", "commodity", "quantity", "paymentInfo", "createTime", "status", "contact"];
+  const allowedFields = ["orderId", "commodity", "quantity", "paymentInfo", "createTime", "status", "contact", "activities"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
