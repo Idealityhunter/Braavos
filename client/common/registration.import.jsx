@@ -103,6 +103,8 @@ const SignupWoLxp = React.createClass({
     return {
       // 登录用户名(目前仅支持email)
       name: "",
+      // 用户昵称
+      nickname: "",
       // 密码
       password1: "",
       // 密码确认
@@ -113,8 +115,12 @@ const SignupWoLxp = React.createClass({
       passwordNotAgree: false,
       // 哪一次输入的密码不符合, password1还是password2?
       passwordNotAgreeIndex: null,
+      // email地址是否可用
+      emailAvailable: true,
       // 登录名不符合要求
       invalidName: false,
+      // 昵称不符合要求
+      invalidNickname: false,
       // 密码不符合要求
       invalidPassword: false,
       // 哪一次输入的密码不正确, password1还是password2?
@@ -127,6 +133,19 @@ const SignupWoLxp = React.createClass({
   propTypes: {
     onCreateUser: React.PropTypes.func
   },
+
+  _schema: (function () {
+    return new SimpleSchema({
+      email: {
+        type: String,
+        regEx: SimpleSchema.RegEx.Email
+      },
+      nickname: {
+        type: String,
+        regEx: /^[\x21-\x7e\u4e00-\u9fa5]{2,32}$/
+      }
+    });
+  })(),
 
   // 初始化overlay
   // * state: 使用哪个state来控制状态
@@ -171,6 +190,18 @@ const SignupWoLxp = React.createClass({
     return {result: result, state: state};
   },
 
+  // 聚焦到某个input输入框
+  _focusInput(refName) {
+    setTimeout(() => {
+      const inputNode = ReactDOM.findDOMNode(this.refs[refName]);
+      const len = 1000;
+      const input = $(inputNode).find("input")[0];
+      //const input = $(inputNode).find("input[type=password]")[0];
+      input.setSelectionRange(0, len);
+      input.focus();
+    }, 10);
+  },
+
   onInputPassword(source, evt) {
     // 只处理密码
     if (!_.contains(["password1", "password2"], source)) {
@@ -182,22 +213,95 @@ const SignupWoLxp = React.createClass({
   },
 
   onInputChange(source, evt) {
-    const sourceList = ["name", "sellerName"];
-    if (_.contains(sourceList, source)) {
-      const state = {};
-      state[source] = evt.target.value;
-      this.setState(state);
+    const sourceList = ["name", "nickname"];
+    if (!_.contains(sourceList, source)) {
+      return;
     }
+
+    // 清除overlay状态
+    const state = {
+      invalidName: false,
+      invalidNickname: false,
+      emailAvailable: true
+    };
+    const value = evt.target.value.trim();
+    state[source] = value;
+
+    // 有效性检查
+    if (source === "name") {
+      const ret = this._checkEmailInput(value);
+      if (!ret) {
+        state.invalidName = true
+      }
+    } else if (source === "nickname") {
+      const ret = this._checkNickname(value);
+      if (!ret) {
+        state.invalidNickname = true
+      }
+    }
+
+    this.setState(state);
   },
 
   onCreateUser(evt) {
+    const email = this.state.name.trim();
+    const nickname = this.state.nickname.trim();
+
     // 输入有效性检查
-    if (this.state.invalidPassword || this.state.passwordNotAgree) {
+    // 检查密码
+    for (const val of ["password1", "password2"]) {
+      const state = this._checkPassword(val, this.state[val]).state;
+      if (state.invalidPassword || state.passwordNotAgree) {
+        this.setState(state);
+        return;
+      }
+    }
+    // 检查其它输入
+    if (!this._checkEmailInput(email)) {
+      this.setState({invalidName: true});
+      this._focusInput("emailInput");
       return;
     }
-    if (this.props.onCreateUser) {
-      this.props.onCreateUser({email: this.state.name.trim(), password: this.state.password1.trim()});
+    if (!this._checkNickname(nickname)) {
+      this.setState({invalidNickname: true});
+      this._focusInput("nicknameInput");
+      return;
     }
+
+    this._checkEmailAvailability(email, (err, ret) => {
+      if (err || !ret) {
+        this.setState({emailAvailable: false});
+        this._focusInput("emailInput");
+      } else {
+        // 通过有效性检查, 开始创建用户
+        if (this.props.onCreateUser) {
+          this.props.onCreateUser({
+            email: email,
+            nickname: nickname,
+            password: this.state.password1.trim()
+          });
+        }
+      }
+    })
+  },
+
+  // 检查email输入
+  _checkEmailInput(email) {
+    const objToValidate = {email: email};
+    const ctx = this._schema.newContext();
+    return ctx.validateOne(objToValidate, "email")
+  },
+
+  // 检查email是否有效
+  _checkEmailAvailability(email, callback) {
+    Meteor.call("account.checkEmailAvailability", email, callback);
+  },
+
+  // 检查昵称输入
+  _checkNickname(nickname) {
+    const objToValidate = {nickname: nickname};
+    const ctx = this._schema.newContext();
+    return ctx.validateOne(objToValidate, "nickname");
   },
 
   render() {
@@ -249,10 +353,30 @@ const SignupWoLxp = React.createClass({
       <div style={{padding: "20px"}}>
         <form className="form-horizontal">
           <div>
-            <Input type="text" label="账户名" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
-                   value={this.state.name} onChange={this.onInputChange.bind(this, "name")}
+            <Input type="text" label="Email" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
+                   value={this.state.name} onChange={this.onInputChange.bind(this, "name")} ref="emailInput"
                    placeholder="请输入email地址"
             />
+            {this.state.invalidName || !this.state.emailAvailable ?
+            <Overlay show={true} placement="right" target={() => ReactDOM.findDOMNode(this.refs["emailInput"])}>
+              <Tooltip id={Meteor.uuid()}>
+                {this.state.invalidName ? "请输入正确的email地址" : "该email地址已经被注册"}
+              </Tooltip>
+            </Overlay> :
+            <div></div>}
+          </div>
+          <div>
+            <Input type="text" label="昵称" labelClassName="col-xs-3" wrapperClassName="col-xs-9"
+                   value={this.state.nickname} onChange={this.onInputChange.bind(this, "nickname")}
+                   ref="nicknameInput" placeholder="请输入昵称"
+            />
+            {this.state.invalidNickname ?
+            <Overlay show={true} placement="right" target={() => ReactDOM.findDOMNode(this.refs["nicknameInput"])}>
+              <Tooltip id={Meteor.uuid()}>
+                请输入正确的用户昵称
+              </Tooltip>
+            </Overlay> :
+            <div></div>}
           </div>
           {passwordInputs[0]}
           {passwordInputs[1]}
@@ -285,7 +409,7 @@ const ProfileEditor = React.createClass({
   },
 
   handleKeyDown(e) {
-    if (e.keyCode == 13){
+    if (e.keyCode == 13) {
       e.preventDefault();
       this.onCreateSeller();
     }
@@ -299,9 +423,9 @@ const ProfileEditor = React.createClass({
         </Modal.Header>
 
         <form className="form-horizontal" style={{padding: "20px"}}>
-           <Input type="text" label="商户名称" labelClassName="col-xs-2" wrapperClassName="col-xs-8"
-           value={this.state.sellerName} onChange={this.onInputChange.bind(this, "sellerName")}
-           placeholder="" onKeyDown={this.handleKeyDown}/>
+          <Input type="text" label="商户名称" labelClassName="col-xs-2" wrapperClassName="col-xs-8"
+                 value={this.state.sellerName} onChange={this.onInputChange.bind(this, "sellerName")}
+                 placeholder="" onKeyDown={this.handleKeyDown}/>
 
           {/*<div id="avatar-box" className="hidden" style={{position: "relative", minHeight: "140px"}}>
            <Input type="text" label="用户头像" labelClassName="col-xs-2" wrapperClassName="col-xs-8 hidden"
@@ -403,18 +527,25 @@ export const RegistrationLayout = React.createClass({
     login(this.state.username, this.state.password);
   },
 
-  // 创建旅行派账户
+  // 创建旅行派账户和卖家账户
   handleCreateUser(user) {
     // 创建用户
-    const email = user.email;
-    const password = user.password;
-    Meteor.call("account.createUser", email, password, (err, ret) => {
+    const {email, password, nickname} = user;
+    Meteor.call("account.createUser", email, password, {nickname: nickname}, (err, ret) => {
       if (err) {
         console.log(`Failed to create user: ${err}`);
       } else {
-        console.log(`Created new user: ${ret}`);
-        this.setState({userId: ret.userId, username: email, password: password});
-        this.showProfileEditor();
+        console.log(`Created new user`);
+        const {userId, nickName: nickname} = ret;
+
+        Meteor.call("marketplace.createSeller", {
+          sellerId: userId,
+          name: nickname
+        }, (err, ret) => {
+          if (!err && ret) {
+            login(email, password);
+          }
+        });
       }
     })
   },
@@ -442,11 +573,11 @@ export const RegistrationLayout = React.createClass({
             </h2>
           </div>
           <Tabs defaultActiveKey={1}>
-            <Tab eventKey={1} title="已有旅行派账号">
-              <SignupWithLxp onBindAccount={this.onBindAccount}/>
-            </Tab>
-            <Tab eventKey={2} title="没有旅行派账号">
+            <Tab eventKey={1} title="注册旅行派账号">
               <SignupWoLxp onCreateUser={this.handleCreateUser}/>
+            </Tab>
+            <Tab eventKey={2} title="已有旅行派账号">
+              <SignupWithLxp onBindAccount={this.onBindAccount}/>
             </Tab>
           </Tabs>
         </div>
