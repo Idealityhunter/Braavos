@@ -20,6 +20,7 @@ Meteor.methods({
         createTime: new Date()
       };
       BraavosCore.Database.Braavos.Seller.insert(sellerInfo);
+      return sellerInfo;
     }
   }
 });
