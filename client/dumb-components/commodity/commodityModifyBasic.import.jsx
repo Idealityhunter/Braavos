@@ -21,7 +21,7 @@ const commodityModifyBasic = React.createClass({
 
   getInitialState(){
     return {
-      country: this.props.country && this.props.country.zhName || '阿尔巴尼亚',//阿尔巴尼亚是为了第一次添加时的locality的获取
+      country: this.props.country && this.props.country.zhName || '中国',//阿尔巴尼亚是为了第一次添加时的locality的获取
       locality: this.props.locality && this.props.locality.zhName || ''
     }
   },
@@ -30,17 +30,29 @@ const commodityModifyBasic = React.createClass({
   getMeteorData() {
     const subsManager = BraavosCore.SubsManager.geo;
     subsManager.subscribe("countries");
+    const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
 
-    let countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+    // 对顺序作优先级处理
+    //const defaultCountriesName = ['菲律宾', '韩国', '日本', '台湾', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '中国'];
+    const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列'];
+    const defaultCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) != -1);
+    let tempCountries = [];
+    if (defaultCountries.length > 0){
+      for (let index in defaultCountriesName){
+        const tempCountry = _.find(defaultCountries, defaultCountry => defaultCountry.zhName == defaultCountriesName[index]);
+        if (tempCountry) tempCountries.push(tempCountry);
+      }
+    }
+    const restCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) == -1);
+
     let localities = [];
     subsManager.subscribe("localities", this.state.country);
     if (subsManager.ready()) {
-      localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country},
-        {sort: {'enName': 1}}).fetch();
+      localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country}, {sort: {'enName': 1}}).fetch();
     }
 
     return {
-      countries: countries,
+      countries: Array.prototype.concat(tempCountries, restCountries),
       localities: localities
     }
   },
@@ -161,7 +173,7 @@ const commodityModifyBasic = React.createClass({
 
     // 根据data生成country的select组件
     i = 0;
-    const countryOptionList = this.data.countries.map(country => (<option value={i++} data-id={country._id._str} data-en={country.enName}>{country.zhName}</option>));
+    const countryOptionList = this.data.countries.map(country => <option value={i++} data-id={country._id._str} data-en={country.enName}>{country.zhName}</option>);
     const countrySelect = (
       <select name="" id=""
               className="country-select form-control"
