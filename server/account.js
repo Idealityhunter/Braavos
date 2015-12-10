@@ -40,7 +40,7 @@ Accounts.registerLoginHandler('password', function (loginRequest) {
       token: stampedToken.token
     };
   } catch (err) {
-    console.log(`Login failed: user=${user}`);
+    console.log(`Login failed: user=${user}, err=${err}`);
     return undefined;
     //return {error: err.toString()};
   }

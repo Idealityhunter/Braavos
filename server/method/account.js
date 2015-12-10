@@ -43,7 +43,7 @@ Meteor.methods({
       const sellerInfo = userInfo ? BraavosCore.Database.Braavos.Seller.findOne({sellerId: userId}) : undefined;
       return {user: {userId: userId, nickname: userInfo.nickName, avatar: userInfo.avatar}, seller: sellerInfo}
     } catch (err) {
-      console.log(`Login failed: user=${user}`);
+      console.log(`Login failed: user=${user}, err=${err}`);
       throw err;
     }
   },
