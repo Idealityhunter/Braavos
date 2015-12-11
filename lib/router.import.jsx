@@ -7,6 +7,7 @@ import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
+import {OrderInfo} from '/client/dumb-components/order/orderInfo';
 import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
 import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel';
 import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
@@ -145,17 +146,26 @@ FlowRouter.route('/orders', {
   }
 });
 
+// 订单详情
+FlowRouter.route('/orders/:orderId', {
+  name: 'order',
+  title: '订单详情',
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param) {
+    ReactLayout.render(MainLayout, _.extend({content: <OrderInfo {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-订单详情"}));
+  }
+});
+
 // 订单管理 -> 发货页面
 FlowRouter.route('/orders/:orderId/deliver', {
   name: 'deliver',
   title: '发货',
   parent: 'orders',
   triggersEnter: [loginCheck],
-  action(param, queryParam) {
+  action(param) {
     // TODO 先loading,然后获取数据再进去!然后判断status状态是否是paid状态
-
-    const orderId = param.orderId;
-    ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
+    ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
   }
 });
 
@@ -176,7 +186,7 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
   },
   parent: 'orders',
   triggersEnter: [loginCheck],
-  action(param, queryParam) {
+  action(param) {
     const orderId = param.orderId;
     // TODO 先loading,然后获取数据再进去!然后判断status状态是否是...状态
 

@@ -348,7 +348,7 @@ const order = React.createClass({
         </td>
         <td style={{color: '#333', textAlign: 'center'}}>
           <div className="btn-group">
-            <a href="">订单详情</a>
+            <a href={`/orders/${order.orderId}`}>订单详情</a>
             {this._getActionHtml(order)}
           </div>
         </td>
