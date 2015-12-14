@@ -4,6 +4,7 @@ import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Modal, Button} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
 import {NumberInput} from '/client/common/numberInput';
+import {PageLoading} from '/client/common/pageLoading';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -141,16 +142,76 @@ const orderRefundPaid = React.createClass({
     }
   },
 
-  render() {
-    return (
-      <div className='order-refund-lack-wrap'>
-        <BraavosBreadcrumb />
+  // TODO 重复的函数
+  // 获取倒计时字段
+  _getCountDown(status){
+    const self = this;
+    if (!this.interval){
+      const startTime = this._getActivityTime(this.data.orderInfo.activities, status);
+      // TODO 应该是startTime + 2days, 暂时是10days
+      console.log(startTime);
+      this.remainingSeconds = (moment(startTime).add(10, 'd').valueOf() - Date.now()) / 1000;
+      this.interval = Meteor.setInterval(() => {
+        self.remainingSeconds = self.remainingSeconds - 1;
+        self.forceUpdate();
+      }, 1000);
+    };
 
+    const timeArray = this._getDividedTime(this.remainingSeconds);
+    return `${this._getSpecifiedLengthTime(timeArray[0])}天${this._getSpecifiedLengthTime(timeArray[1])}小时${this._getSpecifiedLengthTime(timeArray[2])}分${this._getSpecifiedLengthTime(timeArray[3])}秒`;
+  },
+
+  // 获取行为的时间戳
+  _getActivityTime(activities, status){
+    let activity;
+    switch (status) {
+      case 'refundApply':
+        // 多次申请,只展示最后一次!
+        const activityArray = _.filter(activities, activity => activity.action == 'refund' && activity.data.type == 'apply');
+        if (activityArray.length > 0)
+          activity = activityArray[activityArray.length - 1];
+
+        return activity
+          ? activity.timestamp
+          : 0;
+      case 'paid':
+        activity = _.find(activities, activity => activity.action == 'pay');
+
+        return activity
+          ? activity.timestamp
+          : 0;
+      default: return 0;
+    }
+  },
+
+  // 将时间按照时间单位分割
+  _getDividedTime(t) {
+    return _.reduce([86400, 3600, 60, 1], function({components, remainder}, divider) {
+      const newRemainder = remainder % divider;
+      return {components: Array.prototype.concat(components, [parseInt(remainder / divider)]), remainder: newRemainder};
+    }, {components: [], remainder: t}).components;
+  },
+
+  // 获取指定长度的时间数字
+  _getSpecifiedLengthTime(str, length = 2){
+    let tempStr = str + '';
+    while (tempStr.length < length){
+      tempStr = '0' + tempStr;
+    };
+    return tempStr;
+  },
+
+  render() {
+    let content =
+      <PageLoading show={true} labelText='加载中...' showShadow={false} />;
+
+    if (this.data.orderInfo.status) {
+      content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
             <div>
               <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>
+              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>
             </div>
 
             <ol style={this.styles.ol}>
@@ -178,8 +239,12 @@ const orderRefundPaid = React.createClass({
               <Button onClick={this._handleCancel} style={this.styles.cancelBtn}>取消</Button>
             </div>
           </div>
-        </div>
-
+        </div>;
+    }
+    return (
+      <div className='order-refund-lack-wrap'>
+        <BraavosBreadcrumb />
+        {content}
         {this.state.showRefundModal
           ? <OrderRefundModal
           showModal={this.state.showRefundModal}
