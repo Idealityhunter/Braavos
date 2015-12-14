@@ -173,6 +173,8 @@ const commodityPlans = React.createClass({
       planId: copyPlan[arrayIndex].planId
     };
 
+    // TODO check商品的title长度
+
     _.extend(copyPlan[arrayIndex], editPlan);
     // 提交修改给父组件
     this.props.handleSubmitState(copyPlan);

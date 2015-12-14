@@ -16,13 +16,17 @@ const orderInfo = React.createClass({
     }
   },
 
+  componentWillUnmount: function() {
+    Meteor.clearInterval(this.interval);
+  },
+
   getMeteorData() {
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId);
     let orderInfo = {};
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-    }
+    };
 
     return {
       orderInfo: orderInfo
@@ -152,14 +156,71 @@ const orderInfo = React.createClass({
     return activity && activity.amount || order.totalPrice;
   },
 
+  // 将时间按照时间单位分割
+  _getDividedTime(t) {
+    return _.reduce([86400, 3600, 60, 1], function({components, remainder}, divider) {
+      const newRemainder = remainder % divider;
+      return {components: Array.prototype.concat(components, [parseInt(remainder / divider)]), remainder: newRemainder};
+    }, {components: [], remainder: t}).components;
+  },
+
+  // 获取指定长度的时间数字
+  _getSpecifiedLengthTime(str, length = 2){
+    let tempStr = str + '';
+    while (tempStr.length < length){
+      tempStr = '0' + tempStr;
+    };
+    return tempStr;
+  },
+
+  // 获取倒计时字段
+  _getCountDown(status){
+    const self = this;
+    if (!this.interval){
+      const startTime = this._getActivityTime(this.data.orderInfo.activities, status);
+      // TODO 应该是startTime + 2days, 暂时是10days
+      this.remainingSeconds = (moment(startTime).add(10, 'd').valueOf() - Date.now()) / 1000;
+      this.interval = Meteor.setInterval(() => {
+        self.remainingSeconds = self.remainingSeconds - 1;
+        self.forceUpdate();
+      }, 1000);
+    };
+
+    const timeArray = this._getDividedTime(this.remainingSeconds);
+    return `${this._getSpecifiedLengthTime(timeArray[0])}天${this._getSpecifiedLengthTime(timeArray[1])}小时${this._getSpecifiedLengthTime(timeArray[2])}分${this._getSpecifiedLengthTime(timeArray[3])}秒`;
+  },
+
+  // 获取行为的时间戳
+  _getActivityTime(activities, status){
+    let activity;
+    switch (status) {
+      case 'refundApply':
+        // 多次申请,只展示最后一次!
+        const activityArray = _.filter(activities, activity => activity.action == 'refund' && activity.data.type == 'apply');
+        if (activityArray.length > 0)
+          activity = activityArray[activityArray.length - 1];
+
+        return activity
+          ? activity.timestamp
+          : 0;
+      case 'paid':
+        activity = _.find(activities, activity => activity.action == 'pay');
+
+        return activity
+          ? activity.timestamp
+          : 0;
+      default: return 0;
+    }
+  },
+
   // 获取与订单状态相关的组件
   _getComponentByStatus(order){
     const orderBtnSet = [
       <Button bsStyle="primary" style={this.styles.button} onClick={this._handleCloseOrder}>关闭交易</Button>,
-      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${this.data.order.orderId}/deliver`)}}>发货</Button>,
-      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${this.data.order.orderId}/refund/cancel`)}}>缺货退款</Button>,
-      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${this.data.order.orderId}/refund/paid`)}}>退款</Button>,
-      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${this.data.order.orderId}/refund/committed`)}}>退款处理</Button>
+      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/deliver`)}}>发货</Button>,
+      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/refund/cancel`)}}>缺货退款</Button>,
+      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/refund/paid`)}}>退款</Button>,
+      <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/refund/committed`)}}>退款处理</Button>
     ];
 
     // TODO 按照时间顺序排序
@@ -176,7 +237,7 @@ const orderInfo = React.createClass({
         return {
           statusLabel: '待发货(买家已付款)',
           btnGroup: [orderBtnSet[1], orderBtnSet[2]],
-          countdown: <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>,
+          countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('paid')}</span>,
           dateList: [
             this._getActivity(order.activities, 'create'),
             this._getActivity(order.activities, 'pay')
@@ -211,7 +272,8 @@ const orderInfo = React.createClass({
           ? {
             statusLabel: '待退款(买家已付款)',
             btnGroup: [orderBtnSet[3], orderBtnSet[1]],
-            countdown: <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>,
+            //countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown( this._getActivityTime(order.activities, 'refundApply') )}</span>,
+            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
             dateList: [
               this._getActivity(order.activities, 'create'),
               this._getActivity(order.activities, 'pay'),
@@ -222,7 +284,7 @@ const orderInfo = React.createClass({
           : {
             statusLabel: '待退款(卖家已发货)',
             btnGroup: [orderBtnSet[4]],
-            countdown: <span style={this.styles.countDown}>倒计时: **天**小时**分**秒</span>,
+            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
             dateList: [
               this._getActivity(order.activities, 'create'),
               this._getActivity(order.activities, 'pay'),
@@ -316,6 +378,7 @@ const orderInfo = React.createClass({
   },
 
   render() {
+    //console.log(new Date());
     let content =
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
