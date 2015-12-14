@@ -61,19 +61,18 @@ const orderRefundPaid = React.createClass({
       }
 
       // 密码正确, 进行退款
-      Meteor.call('order.refunded', self.data.orderInfo.orderId, (err, res) => {
+      const amount = $('.refund-amount').children('input').val();
+      Meteor.call('order.refunded', self.data.orderInfo.orderId, amount, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
         } else{
           // 取消订单成功
           swal({
-              title: "退款成功!",
-              text: `退款金额${self.data.orderInfo.totalPrice}元`,
-              timer: 1000
-            }, () =>
-              FlowRouter.go("orders")
-          );
+            title: "退款成功!",
+            text: `退款金额${amount}元`,
+            timer: 1500
+          }, () => FlowRouter.go("orders"));
           Meteor.setTimeout(() => {
             swal.close();
             FlowRouter.go("orders");
@@ -166,7 +165,7 @@ const orderRefundPaid = React.createClass({
             <label style={this.styles.marginRight}>实付金额:</label>
             <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
 
-            <div>
+            <div className='refund-amount'>
               <label style={this.styles.label}>退款金额</label>
               <NumberInput value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
             </div>

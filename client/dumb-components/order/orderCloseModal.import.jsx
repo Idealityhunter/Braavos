@@ -7,7 +7,8 @@ const orderCloseModal = React.createClass({
   mixins: [IntlMixin],
 
   _handleSubmit(e) {
-    const reason = $('#order-close-modal').children('.reason>select').val();
+    const reasonIndex = $('#order-close-modal').find('.reason>select').val();
+    const reason = $($('#order-close-modal').find('.reason>select>option')[parseInt(reasonIndex)]).text();
     this.props.handleSubmit(reason);
   },
 

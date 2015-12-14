@@ -65,7 +65,8 @@ const orderRefundCommitted = React.createClass({
       }
 
       // 密码正确, 进行退款
-      Meteor.call('order.refunded', self.data.orderInfo.orderId, (err, res) => {
+      const amount = $('.refund-amount').children('input').val();
+      Meteor.call('order.refunded', self.data.orderInfo.orderId, amount, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
@@ -73,11 +74,14 @@ const orderRefundCommitted = React.createClass({
           // 退款成功
           swal({
             title: "退款成功!",
-            text: "2s后跳转到订单管理页面",
+            text: `退款金额${amount}元`,
             timer: 1500,
             showConfirmButton: false
           });
-          Meteor.setTimeout(() => FlowRouter.go("orders"), 2000);
+          Meteor.setTimeout(() => {
+            swal.close();
+            FlowRouter.go("orders");
+          }, 2000);
         }
       })
     })
@@ -95,13 +99,15 @@ const orderRefundCommitted = React.createClass({
     this.setState({
       submitting: true
     });
-    Meteor.call('order.reject', (err, res) => {
+
+    const reason = $('textarea').val();
+    Meteor.call('order.reject', this.data.orderInfo.orderId, reason, (err, res) => {
       if (err || !res) {
         swal('拒绝失败', '', 'error');
       } else{
         swal({
           title: "退款已拒绝",
-          text: `拒绝原因: `,
+          text: `拒绝原因: ${reason}`,
           timer: 1500,
           showConfirmButton: false
         }, () => FlowRouter.go("orders"));
@@ -210,7 +216,7 @@ const orderRefundCommitted = React.createClass({
             <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
 
             {(this.state.agreeRefund)
-              ? <div>
+              ? <div className='refund-amount'>
                   <label style={this.styles.label}>退款金额</label>
                   <NumberInput value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
                 </div>

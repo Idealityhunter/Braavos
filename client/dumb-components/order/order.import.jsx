@@ -131,12 +131,12 @@ const order = React.createClass({
       confirmButtonColor: "#DD6B55",
       confirmButtonText: "确认关闭",
     }, () => {
-      // TODO 获取关闭交易的理由reason,并提交
-
+      // 获取关闭交易的理由reason,并提交
       self._handleCloseOrderModalClose();
-      Meteor.call('order.close', self.state.orderId, reason, (err, res) => {
+      Meteor.call('order.close', self.state.curOrderId, reason, (err, res) => {
         if (err){
-          // TODO 错误处理
+          // 错误处理
+          swal('关闭交易失败', '', 'warning');
         } else{
           // TODO 关闭交易成功
         }
@@ -185,6 +185,12 @@ const order = React.createClass({
     }
   },
 
+  // 获取退款数额
+  _getRefundAmount(order){
+    const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
+    return activity && activity.amount || order.totalPrice;
+  },
+
   // 获取交易状态的展示
   _getTradeStatusHtml(order) {
     switch (order.status){
@@ -211,22 +217,30 @@ const order = React.createClass({
             <p>(卖家已发货)</p>
           ]
       case 'canceled':
-        // TODO 谁取消的
-        return [
-          <p>已关闭</p>,
-          <p>(交易取消)</p>
-        ]
+        // 是否已支付
+        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
+          ? [
+            <p>已关闭</p>,
+            <p>(交易取消)</p>
+          ]
+          : [
+            <p>已关闭</p>,
+            <p>(已退款{order.totalPrice}元)</p>
+          ]
       case 'expired':
-        // TODO 分辨是谁过期!
-        return [
-          <p>已关闭</p>,
-          <p>(买家支付过期)</p>
-        ]
+        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
+          ? [
+            <p>已关闭</p>,
+            <p>(买家支付过期)</p>
+          ]
+          : [
+            <p>已关闭</p>,
+            <p>(已退款{order.totalPrice}元)</p>
+          ]
       case 'refunded':
-        // TODO 从order.activities中获取退款金额
         return [
           <p>已关闭</p>,
-          <p>(已退款...元)</p>
+          <p>(已退款{this._getRefundAmount(order)}元)</p>
         ]
       default:
         // TODO 待做(会有哪些可能性?)
@@ -309,7 +323,7 @@ const order = React.createClass({
           <th data-hide="phone" data-type="numeric" style={{textAlign:'center'}}>
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaseQuantity`)}/>
           </th>
-          <th data-hide="phone">
+          <th data-hide="phone" data-type="numeric">
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.totalAdvancePayment`)}/>
           </th>
           <th data-hide="phone" style={{textAlign:'center'}}>
@@ -336,7 +350,7 @@ const order = React.createClass({
           <p>商品编号: {order.commodity.commodityId}</p>
         </td>
         <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
-        <td>{order.totalPrice}</td>
+        <td data-value={order.totalPrice}>{order.totalPrice}</td>
         <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
         <td style={{color: '#333', textAlign: 'center'}}>
           {this._getTradeStatusHtml(order)}

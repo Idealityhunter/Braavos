@@ -60,7 +60,8 @@ const orderRefundCancel = React.createClass({
       }
 
       // 密码正确, 取消订单
-      Meteor.call('order.cancel', self.data.orderInfo.orderId, (err, res) => {
+      const reason = $('textarea').val();
+      Meteor.call('order.cancel', self.data.orderInfo.orderId, reason, (err, res) => {
         if (err || !res) {
           // 密码验证失败处理
           swal('退款失败', '', 'error');
