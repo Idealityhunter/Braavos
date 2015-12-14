@@ -6,6 +6,12 @@ import {Login} from '/client/dumb-components/common/login';
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
+import {Order} from '/client/dumb-components/order/order';
+import {OrderInfo} from '/client/dumb-components/order/orderInfo';
+import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
+import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel';
+import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
+import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
 
 import {StepsDemo} from "/client/components/steps/steps"
@@ -101,7 +107,9 @@ FlowRouter.route('/commodities/add', {
   title: '添加',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} />}, intlData, {documentTitle: "商品添加"}));
+    ReactLayout.render(MainLayout, _.extend({
+      content: <CommodityModify {...intlData} />
+    }, intlData, {documentTitle: "商品添加"}));
   }
 });
 
@@ -117,7 +125,9 @@ FlowRouter.route('/commodities/editor/:commodityId', {
     Meteor.call('commodity.editor.checkCommodityId', {commodityId: commodityId, isAdmin: isAdmin}, (err, ret) => {
       const isValid = (!err && ret.valid);
       if (isValid) {
-        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
+        ReactLayout.render(MainLayout, _.extend({
+          content: <CommodityModify {...intlData} {...ret.commodityInfo}/>
+        }, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
       }
@@ -132,7 +142,70 @@ FlowRouter.route('/orders', {
   parent: 'home',
   triggersEnter: [loginCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Index {...intlData} />}, intlData, {documentTitle: "订单管理"}));
+    ReactLayout.render(MainLayout, _.extend({content: <Order {...intlData} />}, intlData, {documentTitle: "订单管理"}));
+  }
+});
+
+// 订单详情
+FlowRouter.route('/orders/:orderId', {
+  name: 'order',
+  title: '订单详情',
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param) {
+    ReactLayout.render(MainLayout, _.extend({content: <OrderInfo {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-订单详情"}));
+  }
+});
+
+// 订单管理 -> 发货页面
+FlowRouter.route('/orders/:orderId/deliver', {
+  name: 'deliver',
+  title: '发货',
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param) {
+    // TODO 先loading,然后获取数据再进去!然后判断status状态是否是paid状态
+    ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
+  }
+});
+
+// 订单管理 -> 退款页面
+FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
+  name: 'refund',
+  title:  param => {
+    switch (param.refundStatus){
+      case 'cancel':
+        return '缺货退款'
+      case 'paid':
+        return '退款'
+      case 'committed':
+        return '退款处理'
+      default:
+        return '退款'
+    };
+  },
+  parent: 'orders',
+  triggersEnter: [loginCheck],
+  action(param) {
+    const orderId = param.orderId;
+    // TODO 先loading,然后获取数据再进去!然后判断status状态是否是...状态
+
+    switch(param.refundStatus){
+      // 主动退款
+      case 'cancel':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCancel {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-缺货退款"}));
+        return ;
+      // 已支付状态下转入的申请退款状态
+      case 'paid':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundPaid {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
+        return ;
+      // 已发货状态下转入的申请退款状态
+      case 'committed':
+        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCommitted {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款处理"}));
+      default:
+        // TODO default处理? 何时做
+        return ;
+    };
   }
 });
 

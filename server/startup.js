@@ -72,6 +72,7 @@ function initMongo() {
     {collName: 'Token', schema: Schema.Account.Token},
     {collName: "Seller", schema: Schema.Marketplace.Seller},
     {collName: "Commodity", schema: Schema.Marketplace.Commodity},
+    {collName: "Order", schema: Schema.Marketplace.Order},
     {collName: "Country", schema: Schema.Marketplace.Country},
     {collName: "Locality", schema: Schema.Marketplace.Locality}
   ]);
@@ -91,7 +92,7 @@ function initYunkaiService() {
   const Yunkai = module.Yunkai;
   const YunkaiTypes = module.YunkaiTypes;
 
-  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword'];
+  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword', 'verifyCredential'];
   const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {name: 'yunkai', transport: 'framed'});
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }

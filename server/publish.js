@@ -107,3 +107,87 @@ Meteor.publish("localities", function (country) {
   }, {});
   return coll.find({'country.zhName': country}, {fields: fields, sort: {enName: 1}});
 });
+
+
+/**
+ * 发布订单列表信息
+ * options: {
+ //*  isAdmin: boolean, 决定获取所有数据还是seller.sellerId: Meteor.userId()
+ *  createTime:
+ *  status:
+ *  contact.sellerId:
+ *  contact.tel:
+      // 哪个国家
+      countryCode: {
+        type: String,
+        regEx: /^[A-Z]{2}$/i,
+        defaultValue: "CN"
+      },
+      // 国家代码
+      dialCode: {
+        type: Number,
+        min: 1,
+        defaultValue: 86
+      },
+      // 国内代码
+      number: {
+        type: Number,
+        min: 1
+      }:
+ *  orderId:
+ * }
+ */
+Meteor.publish("orders", function (options) {
+  const orderColl = BraavosCore.Database.Braavos.Order;
+
+  // fields获取
+  const allowedFields = ["orderId", "commodity", "quantity", "paymentInfo", "createTime", "status", "contact", "activities", "discount", "totalPrice"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+
+  // 时间条件格式化
+  if (options && options.createTime){
+    options.createTime['$lte'] && (options.createTime['$lte'] = new Date(options.createTime['$lte']));
+    options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
+  };
+
+  // 手机号或者订单号的条件判断
+  if (options.searchId) {
+    const searchId = options.searchId;
+    options = _.omit(options, 'searchId');
+    return orderColl.find({$or: [_.extend({orderId: parseInt(searchId)}, options), _.extend({'contact.tel.number': parseInt(searchId)}, options)]}, {fields: fields});
+  };
+
+  // 假如带有admin标志
+  //if (options.isAdmin) {
+  //  options = _.omit(options, 'isAdmin');
+  //  const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+  //  if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
+  //    return commodityColl.find(options, {fields: fields});
+  //  };
+  //};
+
+  // TODO 只发布自己的订单
+  //return commodityColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
+  return orderColl.find(_.extend({}, options), {fields: fields});
+});
+
+/**
+ * 发布订单信息
+ */
+Meteor.publish("orderInfo", function (orderId) {
+  const userId = parseInt(this.userId);
+  const coll = BraavosCore.Database.Braavos.Order;
+  const allowedFields = ["orderId", "commodity", "contact", "rendezvousTime", "quantity", "totalPrice", "comment", "planId", "discount", "paymentInfo", "status", "travellers", "activities"];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+
+  return coll.find({orderId: parseInt(orderId)}, {fields: fields});
+
+  // TODO 只发布自己的订单
+  //return coll.find({orderId: parseInt(orderId), 'commodity.seller.sellerId': userId}, {fields: fields});
+});

@@ -362,7 +362,8 @@ Marketplace.OrderActivity = new SimpleSchema({
   },
   // 附加数据
   data: {
-    type: Object,
+    type: Object, // allowedKeys: ['userId'|'memo'|'amount']
+    blackbox: true,
     optional: true
   }
 });
@@ -434,7 +435,7 @@ Marketplace.Order = new SimpleSchema({
   // 分别为: 待付款, 已付款, 商户已确认, 订单完成, 已取消, 订单过期, 退款申请中, 退款完成
   status: {
     type: String,
-    allowedValues: ["pending", "paid", "committed", "finished", "cancelled", "expired", "refundApplied", "refunded"]
+    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "expired", "refundApplied", "refunded"]
   },
   // 订单的操作日志
   activities: {

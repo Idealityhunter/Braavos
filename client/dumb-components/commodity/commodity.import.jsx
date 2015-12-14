@@ -194,24 +194,24 @@ var commodity = React.createClass({
   },
 
   render() {
-    let prefix = 'commodities.';
+    const prefix = 'commodities.';
 
     // 筛选控制
     const filter =
       <div className="ibox-content m-b-sm border-bottom">
         <div className="row">
           <a href="/commodities/add" style={this.styles.addBtn}>
-            <Button bsStyle="info" bsSize="small"><FormattedMessage message={this.getIntlMessage(prefix + 'btn.addCommodity')}/></Button>
+            <Button bsStyle="info" bsSize="small"><FormattedMessage message={this.getIntlMessage(`${prefix}btn.addCommodity`)}/></Button>
           </a>
           <div className="col-sm-2">
             <div className="form-group">
-              <label className="control-label" htmlFor="commodity-id"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></label>
+              <label className="control-label" htmlFor="commodity-id"><FormattedMessage message={this.getIntlMessage(`${prefix}label.commodityId`)}/></label>
               <NumberInput id="commodity-id" name="commodity-id" value="" placeholder="商品编号" className="form-control"/>
             </div>
           </div>
           <div className="col-sm-4">
             <div className="form-group">
-              <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></label>
+              <label className="control-label" htmlFor="commodity-createdDate"><FormattedMessage message={this.getIntlMessage(`${prefix}label.createdDate`)}/></label>
               <div className="input-daterange input-group">
                 <input type="text" className="input-sm form-control" name="start" placeholder="" defaultValue=""
                        readOnly
@@ -227,7 +227,7 @@ var commodity = React.createClass({
           </div>
           <div className="col-sm-2">
             <div className="form-group">
-              <label className="control-label" htmlFor="commodity-status"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></label>
+              <label className="control-label" htmlFor="commodity-status"><FormattedMessage message={this.getIntlMessage(`${prefix}label.status`)}/></label>
               <select name="product-status" id="commodity-status" className="form-control" defaultValue="0">
                 <option value="0">全部</option>
                 <option value="1">已下架</option>
@@ -240,7 +240,7 @@ var commodity = React.createClass({
               ?
                 <div className="col-sm-2">
                   <div className="form-group">
-                    <label className="control-label" htmlFor="seller-id"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerId')}/></label>
+                    <label className="control-label" htmlFor="seller-id"><FormattedMessage message={this.getIntlMessage(`${prefix}label.sellerId`)}/></label>
                     <NumberInput id="seller-id" name="seller-id" value="" placeholder="商家编号" className="form-control"/>
                   </div>
                 </div>
@@ -248,8 +248,8 @@ var commodity = React.createClass({
           }
 
           <ButtonToolbar style={{marginTop:25}}>
-            <Button bsStyle="primary" bsSize="small" onClick={this._handleFilter} active><FormattedMessage message={this.getIntlMessage(prefix + 'btn.query')}/></Button>
-            <Button bsStyle="warning" bsSize="small" onClick={this._handleReset} active><FormattedMessage message={this.getIntlMessage(prefix + 'btn.reset')}/></Button>
+            <Button bsStyle="primary" bsSize="small" onClick={this._handleFilter} active><FormattedMessage message={this.getIntlMessage(`${prefix}btn.query`)}/></Button>
+            <Button bsStyle="warning" bsSize="small" onClick={this._handleReset} active><FormattedMessage message={this.getIntlMessage(`${prefix}btn.reset`)}/></Button>
           </ButtonToolbar>
         </div>
       </div>;
@@ -258,21 +258,21 @@ var commodity = React.createClass({
       <thead>
         <tr>
           {/*TODO 并没有起到作用!!! => 貌似是react将数字转成了id*/}
-          <th data-breakpoints="xs sm" data-type="numeric" data-toggle="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.number')}/></th>
-          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerId')}/></th> : <th className='hidden'></th>}
-          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.sellerName')}/></th> : <th className='hidden'></th>}
-          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityId')}/></th>
-          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityCover')}/></th>
-          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.commodityTitle')}/></th>
-          <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.price')}/></th>
-          <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.createdDate')}/></th>
+          <th data-breakpoints="xs sm" data-type="numeric" data-toggle="true"><FormattedMessage message={this.getIntlMessage(`${prefix}label.number`)}/></th>
+          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(`${prefix}label.sellerId`)}/></th> : <th className='hidden'></th>}
+          {(this.data.isAdmin) ? <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(`${prefix}label.sellerName`)}/></th> : <th className='hidden'></th>}
+          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(`${prefix}label.commodityId`)}/></th>
+          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(`${prefix}label.commodityCover`)}/></th>
+          <th data-hide="phone" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(`${prefix}label.commodityTitle`)}/></th>
+          <th data-hide="phone" data-type="numeric"><FormattedMessage message={this.getIntlMessage(`${prefix}label.price`)}/></th>
+          <th data-hide="phone" ><FormattedMessage message={this.getIntlMessage(`${prefix}label.createdDate`)}/></th>
           {/*
            <th data-hide="all"><FormattedMessage message={this.getIntlMessage(prefix + 'label.desc')}/></th>
            <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.stock')}/></th>
            <th data-hide="phone,tablet" ><FormattedMessage message={this.getIntlMessage(prefix + 'label.salesVolume')}/></th>
            */}
-          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(prefix + 'label.status')}/></th>
-          <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(prefix + 'label.action')}/></th>
+          <th data-hide="phone"><FormattedMessage message={this.getIntlMessage(`${prefix}label.status`)}/></th>
+          <th className="text-right" data-sort-ignore="true"><FormattedMessage message={this.getIntlMessage(`${prefix}label.action`)}/></th>
         </tr>
       </thead>;
 
@@ -287,7 +287,7 @@ var commodity = React.createClass({
         <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
         <td>{commodity.title}</td>
         {/*<td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>*/}
-        <td>
+        <td data-value={commodity.price}>
           ￥{commodity.price}
           {(commodity.plans.length > 1
             && _.reduce(commodity.plans, (memo, f) => {
