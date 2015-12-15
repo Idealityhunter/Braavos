@@ -277,10 +277,17 @@ const commodityModify = React.createClass({
           planId: plan.planId,
           price: plan.price,
           marketPrice: plan.marketPrice,
-          pricing: (timeRequired) ? plan.pricing : [{
-            price: plan.price,
-            timeRange: []
-          }],
+          pricing: (timeRequired)
+            ? _.map(plan.pricing, pricing => {
+              return {
+                price: parseFloat(pricing.price),
+                timeRange: pricing.timeRange
+              }
+            })
+            : [{
+              price: parseFloat(plan.price),
+              timeRange: []
+            }],
           title: plan.title,
           timeRequired: timeRequired//暂时全部一样
         }

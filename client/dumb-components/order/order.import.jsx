@@ -24,24 +24,25 @@ const order = React.createClass({
     return {
       showCloseModal: false,
       options: {},
-      curOrderId: ''
+      curOrderId: '',
+      activeStatus: 'all'
     }
   },
 
   getMeteorData() {
     let options = _.clone(this.state.options);
-    //const userId = parseInt(Meteor.userId());
-    //
-    //// 获取用户权限
-    //if (BraavosCore.SubsManager.account.ready()) {
-    //  const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-    //  const adminRole = 10;
-    //  const isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    //  if (isAdmin) options['isAdmin'] = true;
-    //}
+    const userId = parseInt(Meteor.userId());
+    let isAdmin = false;
+
+    // 获取用户权限
+    if (BraavosCore.SubsManager.account.ready()) {
+      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+      const adminRole = 10;
+      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
+    };
 
     // 获取商品信息
-    const handleOrder = Meteor.subscribe('orders', options);
+    const handleOrder = Meteor.subscribe('orders', options, isAdmin);
     let orders = [];
     if (handleOrder.ready()) {
       //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
@@ -53,6 +54,7 @@ const order = React.createClass({
         key: Meteor.uuid()
       }));
     }
+
     return {
       orders: orders,
       //isAdmin: options.isAdmin
@@ -98,7 +100,7 @@ const order = React.createClass({
     }
 
     this.setState({
-      options: _.extend(searchId, createTimeRange)
+      options: _.extend(this.state.options, searchId, createTimeRange)
     });
   },
 
@@ -248,6 +250,34 @@ const order = React.createClass({
     }
   },
 
+  // 响应statusTab的点击事件
+  _handleStatusFilter(status){
+    switch (status){
+      case 'all':
+        // 全部就置空
+        this.setState({options: {}});
+        break;
+      case 'closed':
+        // 关闭是取消,超时,退款完成的合并状态
+        this.setState({
+          options: {
+            status: {
+              $in: ['canceled', 'expired', 'refunded']
+            }
+          }
+        });
+        break;
+      default:
+        this.setState({
+          options: {
+            status: status
+          }
+        });
+        break;
+    };
+    this.setState({activeStatus: status});
+  },
+
   styles: {
     addBtn: {
       marginTop: 25,
@@ -263,6 +293,30 @@ const order = React.createClass({
     datepickerInput: {
       height: 35,
       backgroundColor: 'rgba(0,0,0,0)'
+    },
+    statusTableUl: {
+      display: 'inline-block',
+      margin: '0 15px',
+      padding: 0,
+      cursor: 'pointer'
+    },
+    statusTableLi: {
+      border: '1px solid #aaa',
+      borderBottom: 'none',
+      display: 'inline-block',
+      padding: '10px 20px'
+    },
+    statusTableLiActive: {
+      //border: '1px solid #1ab394',
+      border: '1px solid #18a689',
+      borderBottom: 'none',
+      //backgroundColor: '#1ab394',
+      backgroundColor: '#18a689',
+      color: 'white'
+    },
+    ibox: {
+      //border: '1px solid #1ab394'
+      border: '1px solid #18a689'
     }
   },
 
@@ -384,11 +438,24 @@ const order = React.createClass({
         </tr>
       </tfoot>;
 
+    // 过滤状态的tab
+    const statusTabList =
+      <ul style={this.styles.statusTableUl}>
+        <li onClick={this._handleStatusFilter.bind(this, 'all')} style={(this.state.activeStatus == 'all') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>全部订单</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'pending')} style={(this.state.activeStatus == 'pending') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>等待买家付款</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'paid')} style={(this.state.activeStatus == 'paid') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>待发货</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'committed')} style={(this.state.activeStatus == 'committed') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>已发货</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'finished')} style={(this.state.activeStatus == 'finished') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>已成功的订单</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'refundApplied')} style={(this.state.activeStatus == 'refundApplied') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>待退款</li>
+        <li onClick={this._handleStatusFilter.bind(this, 'closed')} style={(this.state.activeStatus == 'closed') ? _.extend({}, this.styles.statusTableLi, this.styles.statusTableLiActive) : this.styles.statusTableLi}>已关闭</li>
+      </ul>;
+
     // 商品表格
     const orderTable =
       <div className="row">
+        {statusTabList}
         <div className="col-lg-12">
-          <div className="ibox">
+          <div className="ibox" style={this.styles.ibox}>
             <div className="ibox-content">
               <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
                 {orderTableHead}
