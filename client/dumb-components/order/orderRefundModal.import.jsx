@@ -27,6 +27,9 @@ const orderRefundModal = React.createClass({
   styles: {
     marginBottom: {
       marginBottom: 15
+    },
+    label: {
+      marginRight: 15
     }
   },
 
@@ -43,6 +46,10 @@ const orderRefundModal = React.createClass({
           <Modal.Title id="contained-modal-title">退款确认</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <div style={this.styles.marginBottom}>
+            <label style={this.styles.label}>退款金额: </label>
+            ¥{this.props.amount}
+          </div>
           <div style={this.styles.marginBottom}>请输入登陆密码, 完成退款</div>
           <Input
             type="password"

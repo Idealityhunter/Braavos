@@ -83,11 +83,23 @@ const orderRefundPaid = React.createClass({
     })
   },
 
+  // 检查退款金额
+  _checkRefundAmount(amount){
+    return amount > 0 && amount <= this.data.orderInfo.totalPrice;
+  },
+
   // 打开退款弹层
-  _handleSubmit(e){
-    this.setState({
-      showRefundModal: true
-    });
+  _handleSubmitRefund(e){
+    const amount = $('.refund-amount').children('input').val();
+    if (this._checkRefundAmount(amount)){
+      this.setState({
+        amount: amount,
+        showRefundModal: true
+      });
+    } else {
+      // 不能少于0,不能多于支付金额
+      swal('请输入正确的退款金额','','warning');
+    }
   },
 
   styles: {
@@ -228,19 +240,19 @@ const orderRefundPaid = React.createClass({
 
             <div className='refund-amount'>
               <label style={this.styles.label}>退款金额</label>
-              <NumberInput value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+              <NumberInput numberType='float' value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
             </div>
 
             <span style={this.styles.asterisk}>*</span>备注
             <textarea style={this.styles.textarea}></textarea>
 
             <div style={this.styles.buttonGroup}>
-              <Button bsStyle="primary" onClick={this._handleSubmit}>退款</Button>
+              <Button bsStyle="primary" onClick={this._handleSubmitRefund}>退款</Button>
               <Button onClick={this._handleCancel} style={this.styles.cancelBtn}>取消</Button>
             </div>
           </div>
         </div>;
-    }
+    };
     return (
       <div className='order-refund-lack-wrap'>
         <BraavosBreadcrumb />
@@ -250,6 +262,7 @@ const orderRefundPaid = React.createClass({
           showModal={this.state.showRefundModal}
           handleClose={this._handleRefundModalClose}
           handleSubmit={this._handleRefundModalSubmit}
+          amount={this.state.amount}
           />
           : <div />
         }
