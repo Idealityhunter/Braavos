@@ -252,6 +252,7 @@ const commodityModifyBasic = React.createClass({
             </label>
             <NumberInput className="inline placeholder" style={{width:50, padding:6}}
                          value={this.props.timeCost || ''}
+                         numberType='float'
                          placeholder=''
                          onChange={this._handleClearErrorClass.bind(null, this)}
             />
