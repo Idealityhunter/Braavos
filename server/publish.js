@@ -137,7 +137,8 @@ Meteor.publish("localities", function (country) {
  *  orderId:
  * }
  */
-Meteor.publish("orders", function (options) {
+Meteor.publish("orders", function (options, isAdmin=false) {
+  const userId = parseInt(this.userId);
   const orderColl = BraavosCore.Database.Braavos.Order;
 
   // fields获取
@@ -161,23 +162,23 @@ Meteor.publish("orders", function (options) {
   };
 
   // 假如带有admin标志
-  //if (options.isAdmin) {
-  //  options = _.omit(options, 'isAdmin');
-  //  const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-  //  if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
-  //    return commodityColl.find(options, {fields: fields});
-  //  };
-  //};
+  if (isAdmin) {
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+    if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
+      return orderColl.find(options, {fields: fields});
+    };
+  };
 
   // TODO 只发布自己的订单
   //return commodityColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
-  return orderColl.find(_.extend({}, options), {fields: fields});
+  return orderColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
+  //return orderColl.find(_.extend({}, options), {fields: fields});
 });
 
 /**
  * 发布订单信息
  */
-Meteor.publish("orderInfo", function (orderId) {
+Meteor.publish("orderInfo", function (orderId, isAdmin=false) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Order;
   const allowedFields = ["orderId", "commodity", "contact", "rendezvousTime", "quantity", "totalPrice", "comment", "planId", "discount", "paymentInfo", "status", "travellers", "activities"];
@@ -186,8 +187,16 @@ Meteor.publish("orderInfo", function (orderId) {
     return memo;
   }, {});
 
-  return coll.find({orderId: parseInt(orderId)}, {fields: fields});
+  // 假如带有admin标志
+  if (isAdmin) {
+    const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+    if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
+      return coll.find({orderId: parseInt(orderId)}, {fields: fields});
+    };
+  };
 
-  // TODO 只发布自己的订单
-  //return coll.find({orderId: parseInt(orderId), 'commodity.seller.sellerId': userId}, {fields: fields});
+  //return coll.find({orderId: parseInt(orderId)}, {fields: fields});
+
+  // 只发布自己的订单
+  return coll.find({orderId: parseInt(orderId), 'commodity.seller.sellerId': userId}, {fields: fields});
 });

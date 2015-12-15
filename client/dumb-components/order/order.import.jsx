@@ -31,18 +31,18 @@ const order = React.createClass({
 
   getMeteorData() {
     let options = _.clone(this.state.options);
-    //const userId = parseInt(Meteor.userId());
-    //
-    //// 获取用户权限
-    //if (BraavosCore.SubsManager.account.ready()) {
-    //  const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-    //  const adminRole = 10;
-    //  const isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    //  if (isAdmin) options['isAdmin'] = true;
-    //}
+    const userId = parseInt(Meteor.userId());
+    let isAdmin = false;
+
+    // 获取用户权限
+    if (BraavosCore.SubsManager.account.ready()) {
+      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+      const adminRole = 10;
+      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
+    };
 
     // 获取商品信息
-    const handleOrder = Meteor.subscribe('orders', options);
+    const handleOrder = Meteor.subscribe('orders', options, isAdmin);
     let orders = [];
     if (handleOrder.ready()) {
       //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
@@ -54,6 +54,7 @@ const order = React.createClass({
         key: Meteor.uuid()
       }));
     }
+
     return {
       orders: orders,
       //isAdmin: options.isAdmin
@@ -99,7 +100,7 @@ const order = React.createClass({
     }
 
     this.setState({
-      options: _.extend(searchId, createTimeRange)
+      options: _.extend(this.state.options, searchId, createTimeRange)
     });
   },
 
@@ -293,7 +294,6 @@ const order = React.createClass({
       height: 35,
       backgroundColor: 'rgba(0,0,0,0)'
     },
-
     statusTableUl: {
       display: 'inline-block',
       margin: '0 15px',
