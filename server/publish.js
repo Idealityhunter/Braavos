@@ -142,7 +142,7 @@ Meteor.publish("orders", function (options, isAdmin=false) {
   const orderColl = BraavosCore.Database.Braavos.Order;
 
   // fields获取
-  const allowedFields = ["orderId", "commodity", "quantity", "paymentInfo", "createTime", "status", "contact", "activities", "discount", "totalPrice"];
+  const allowedFields = ["orderId", "commodity", "quantity", "paymentInfo", "createTime", "updateTime", "status", "contact", "activities", "discount", "totalPrice"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
@@ -154,11 +154,16 @@ Meteor.publish("orders", function (options, isAdmin=false) {
     options.createTime['$gte'] && (options.createTime['$gte'] = new Date(options.createTime['$gte']));
   };
 
+  if (options && options.updateTime){
+    options.updateTime['$lte'] && (options.updateTime['$lte'] = new Date(options.updateTime['$lte']));
+    options.updateTime['$gte'] && (options.updateTime['$gte'] = new Date(options.updateTime['$gte']));
+  };
+
   // 手机号或者订单号的条件判断
   if (options.searchId) {
     const searchId = options.searchId;
     options = _.omit(options, 'searchId');
-    return orderColl.find({$or: [_.extend({orderId: parseInt(searchId)}, options), _.extend({'contact.tel.number': parseInt(searchId)}, options)]}, {fields: fields});
+    return orderColl.find({$or: [_.extend({orderId: parseInt(searchId)}, options), _.extend({'contact.tel.number': parseInt(searchId)}, options), _.extend({'commodity.commodityId': parseInt(searchId)}, options)]}, {fields: fields});
   };
 
   // 假如带有admin标志

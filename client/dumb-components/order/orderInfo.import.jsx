@@ -163,7 +163,7 @@ const orderInfo = React.createClass({
   // 获取退款数额
   _getRefundAmount(order){
     const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-    return activity && activity.amount || order.totalPrice;
+    return activity && activity.data && activity.data.amount || order.totalPrice;
   },
 
   // 将时间按照时间单位分割
