@@ -170,8 +170,7 @@ Meteor.publish("orders", function (options, isAdmin=false) {
   };
 
   // TODO 只发布自己的订单
-  //return commodityColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
-  return orderColl.find(_.extend({'seller.sellerId': userId}, options), {fields: fields});
+  return orderColl.find(_.extend({'commodity.seller.sellerId': userId}, options), {fields: fields});
   //return orderColl.find(_.extend({}, options), {fields: fields});
 });
 
