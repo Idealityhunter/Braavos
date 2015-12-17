@@ -432,7 +432,7 @@ const orderInfo = React.createClass({
               <td style={this.styles.td}>{orderPlanTitle}</td>
               <td style={this.styles.td}>{orderInfo.quantity}</td>
               <td style={this.styles.td}>{orderInfo.totalPrice}</td>
-              <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD hh-mm')}</td>
+              <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD')}</td>
               <td style={this.styles.td}>
                 <p>{`${orderInfo.contact.surname}${orderInfo.contact.givenName}`}</p>
                 <p>{`手机: ${orderInfo.contact.tel.dialCode} ${orderInfo.contact.tel.number}`}</p>

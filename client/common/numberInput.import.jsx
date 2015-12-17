@@ -4,6 +4,7 @@ const numberInput = React.createClass({
     // 用于记录前一次的value
     this.originValue = this.props.value || '';
     this.numberType = this.props.numberType || 'integer';// 默认为正整数;还可以是float或者ID模式(开头可为0)
+    this.decimalDigits = this.props.decimalDigits || 15;// 小数位数, 默认为无限大(最多大概只能到15位 => js的原因)
     this.headZero = this.props.headZero || false;
     this.tailZero = this.props.tailZero || true;
 
@@ -39,7 +40,12 @@ const numberInput = React.createClass({
     // TODO 验证小数(可以有小数点, 结尾是否可以为0)
     switch (this.numberType){
       case 'float':
-        $(e.target).val( parseFloat($(e.target).val()) );
+        const number = $(e.target).val();
+        if (parseInt(number) == number){
+          $(e.target).val( parseFloat(number) );
+        }else{
+          $(e.target).val( Math.floor(parseFloat(number) * Math.pow(10, this.decimalDigits)) / Math.pow(10, this.decimalDigits));
+        };
         this.props.onChange && this.props.onChange(e);
         break;
       default :

@@ -292,7 +292,7 @@ const orderRefundCommitted = React.createClass({
             {(this.state.agreeRefund)
               ? <div className='refund-amount'>
                   <label style={this.styles.label}>退款金额</label>
-                  <NumberInput numberType='float' value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+                  <NumberInput numberType='float' decimalDigits={2} value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
                 </div>
               : <div><br/></div>//留一行空白
             }

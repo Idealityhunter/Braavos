@@ -156,7 +156,7 @@ const order = React.createClass({
       case 'pending':
         return [
           <br/>,
-          <a href="" onClick={this._handleCloseOrder.bind(this, order.orderId)}>关闭</a>
+          <a href="" onClick={this._handleCloseOrder.bind(this, order.orderId)}>关闭交易</a>
         ]
       case 'paid':
         return [
@@ -328,7 +328,7 @@ const order = React.createClass({
     const filter =
       <div className="ibox-content m-b-sm border-bottom">
         <div className="row">
-          <div className="col-sm-2">
+          <div className="col-sm-3">
             <div className="form-group">
               <label className="control-label" htmlFor="order-search">
                 <FormattedMessage message={this.getIntlMessage(`${prefix}label.search`)}/>
@@ -406,7 +406,7 @@ const order = React.createClass({
         </td>
         <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
         <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
-        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
+        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD hh:mm')}</td>
         <td style={{color: '#333', textAlign: 'center'}}>
           {this._getTradeStatusHtml(order)}
         </td>

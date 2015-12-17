@@ -199,7 +199,7 @@ const finance = React.createClass({
             </div>
           </div>
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-3">
           <div className="form-group">
             <label className="control-label" htmlFor="order-search">
               <FormattedMessage message={this.getIntlMessage(`${prefix}label.search`)}/>
