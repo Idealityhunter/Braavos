@@ -304,7 +304,7 @@ const commodityPlans = React.createClass({
           <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title} style={{padding: 6}}/>
         </div>
         <div className="market-price inline">
-          <NumberInput numberType='float' className="inline" placeholder="市场价￥" value={plan.marketPrice} style={{padding: 6}}/>
+          <NumberInput numberType='float' decimalDigits={2} className="inline" placeholder="市场价￥" value={plan.marketPrice} style={{padding: 6}}/>
         </div>
         <div className="price inline">
           {(this.state.dateRequired)
@@ -353,7 +353,7 @@ const commodityPlans = React.createClass({
           <input type='text' placeholder="套餐描述" value={this.state.addPlan.title} onChange={this._handleAddPlanTitleChange} style={{padding: 6}}/>
         </div>
         <div className="inline market-price">
-          <NumberInput numberType='float' placeholder="市场价￥" value={this.state.addPlan.marketPrice} style={{padding: 6}}/>
+          <NumberInput numberType='float' decimalDigits={2} placeholder="市场价￥" value={this.state.addPlan.marketPrice} style={{padding: 6}}/>
         </div>
         <div className="inline price">
           {(this.state.dateRequired)

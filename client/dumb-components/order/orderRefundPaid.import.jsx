@@ -240,7 +240,7 @@ const orderRefundPaid = React.createClass({
 
             <div className='refund-amount'>
               <label style={this.styles.label}>退款金额</label>
-              <NumberInput numberType='float' value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+              <NumberInput numberType='float' decimalDigits={2} value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
             </div>
 
             <span style={this.styles.asterisk}>*</span>备注

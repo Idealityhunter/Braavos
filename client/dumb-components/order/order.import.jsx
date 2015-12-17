@@ -45,19 +45,15 @@ const order = React.createClass({
     const handleOrder = Meteor.subscribe('orders', options, isAdmin);
     let orders = [];
     if (handleOrder.ready()) {
-      //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
-
-      //TODO 最好是按照更新时间来排序吧
-      //orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {createTime: -1}}).fetch();
-      orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {status: -1}}).fetch();
+      //最好是按照更新时间来排序吧
+      orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
       orders = orders.map(order => _.extend(order, {
         key: Meteor.uuid()
       }));
     }
 
     return {
-      orders: orders,
-      //isAdmin: options.isAdmin
+      orders: orders
     };
   },
 
@@ -160,7 +156,7 @@ const order = React.createClass({
       case 'pending':
         return [
           <br/>,
-          <a href="" onClick={this._handleCloseOrder.bind(this, order.orderId)}>关闭</a>
+          <a href="" onClick={this._handleCloseOrder.bind(this, order.orderId)}>关闭交易</a>
         ]
       case 'paid':
         return [
@@ -294,6 +290,11 @@ const order = React.createClass({
       height: 35,
       backgroundColor: 'rgba(0,0,0,0)'
     },
+    btnGroup: {
+      marginTop: 25,
+      marginRight: 30,
+      float: 'right'
+    },
     statusTableUl: {
       display: 'inline-block',
       margin: '0 15px',
@@ -327,12 +328,12 @@ const order = React.createClass({
     const filter =
       <div className="ibox-content m-b-sm border-bottom">
         <div className="row">
-          <div className="col-sm-2">
+          <div className="col-sm-3">
             <div className="form-group">
               <label className="control-label" htmlFor="order-search">
                 <FormattedMessage message={this.getIntlMessage(`${prefix}label.search`)}/>
               </label>
-              <input id="order-search" name="order-search" placeholder="订单号/买家名/手机号" className="form-control"/>
+              <input id="order-search" name="order-search" placeholder="订单号/手机号/商品编号" className="form-control"/>
             </div>
           </div>
           <div className="col-sm-4">
@@ -353,7 +354,7 @@ const order = React.createClass({
               </div>
             </div>
           </div>
-          <ButtonToolbar style={{marginTop:25}}>
+          <ButtonToolbar style={this.styles.btnGroup}>
             <Button bsStyle="primary" bsSize="small" onClick={this._handleFilter} active>
               <FormattedMessage message={this.getIntlMessage(`${prefix}btn.query`)}/>
             </Button>
@@ -397,15 +398,15 @@ const order = React.createClass({
 
     // 商品列表行
     const orderList = this.data.orders.map(order =>
-      <tr key={order.key} style={(order.status == 'disabled') ? {color: '#aaa'} : {color: '#333'}}>
+      <tr key={order.key}>
         <td style={{textAlign:'center'}}>{order.orderId}</td>
         <td data-value={order.commodity.commodityId} style={{textAlign:'center'}}>
           <p>{order.commodity.title}</p>
           <p>商品编号: {order.commodity.commodityId}</p>
         </td>
         <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
-        <td data-value={order.totalPrice}>{order.totalPrice}</td>
-        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD')}</td>
+        <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
+        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD hh:mm')}</td>
         <td style={{color: '#333', textAlign: 'center'}}>
           {this._getTradeStatusHtml(order)}
         </td>
@@ -471,7 +472,7 @@ const order = React.createClass({
       <div className="order-mngm-wrap">
         <BraavosBreadcrumb />
 
-        <div className="wrapper wrapper-content animated fadeInRight ecommerce">
+        <div className="wrapper wrapper-content animated fadeInRight">
           {filter}
           {orderTable}
         </div>

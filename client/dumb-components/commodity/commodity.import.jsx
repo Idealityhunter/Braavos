@@ -2,10 +2,10 @@ import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap"
 import {NumberInput} from '/client/common/numberInput';
 
-var IntlMixin = ReactIntl.IntlMixin;
-var FormattedMessage = ReactIntl.FormattedMessage;
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
 
-var commodity = React.createClass({
+const commodity = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
   getInitialState(){
@@ -190,6 +190,11 @@ var commodity = React.createClass({
     datepickerInput: {
       height: 35,
       backgroundColor: 'rgba(0,0,0,0)'
+    },
+    btnGroup: {
+      marginTop: 25,
+      marginRight: 30,
+      float: 'right'
     }
   },
 
@@ -247,7 +252,7 @@ var commodity = React.createClass({
               : ''
           }
 
-          <ButtonToolbar style={{marginTop:25}}>
+          <ButtonToolbar style={this.styles.btnGroup}>
             <Button bsStyle="primary" bsSize="small" onClick={this._handleFilter} active><FormattedMessage message={this.getIntlMessage(`${prefix}btn.query`)}/></Button>
             <Button bsStyle="warning" bsSize="small" onClick={this._handleReset} active><FormattedMessage message={this.getIntlMessage(`${prefix}btn.reset`)}/></Button>
           </ButtonToolbar>
@@ -387,7 +392,7 @@ var commodity = React.createClass({
       <div className="commodity-mngm-wrap">
         <BraavosBreadcrumb />
 
-        <div className="wrapper wrapper-content animated fadeInRight ecommerce">
+        <div className="wrapper wrapper-content animated fadeInRight">
           {filter}
           {commodityTable}
         </div>

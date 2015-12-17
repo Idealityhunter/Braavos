@@ -163,7 +163,7 @@ const orderInfo = React.createClass({
   // 获取退款数额
   _getRefundAmount(order){
     const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-    return activity && activity.amount || order.totalPrice;
+    return activity && activity.data && activity.data.amount || order.totalPrice;
   },
 
   // 将时间按照时间单位分割
@@ -432,7 +432,7 @@ const orderInfo = React.createClass({
               <td style={this.styles.td}>{orderPlanTitle}</td>
               <td style={this.styles.td}>{orderInfo.quantity}</td>
               <td style={this.styles.td}>{orderInfo.totalPrice}</td>
-              <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD hh-mm')}</td>
+              <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD')}</td>
               <td style={this.styles.td}>
                 <p>{`${orderInfo.contact.surname}${orderInfo.contact.givenName}`}</p>
                 <p>{`手机: ${orderInfo.contact.tel.dialCode} ${orderInfo.contact.tel.number}`}</p>

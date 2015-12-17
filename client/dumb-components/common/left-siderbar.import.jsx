@@ -107,7 +107,6 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*财务管理*/}
-            {/*
             <li className={ActiveRoute.name('finance') ? "active" : ""}>
               <a href={FlowRouter.path('finance')}>
                 <i className="fa fa-database"/>
@@ -116,7 +115,6 @@ let leftSiderBar = React.createClass({
                 </span>
               </a>
             </li>
-             */}
 
             {/*账户信息*/}
             <li className={ActiveRoute.name('account') ? "active" : ""}>
