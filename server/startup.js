@@ -53,7 +53,13 @@ function initMongo() {
     }
     const optionsStr = Object.keys(options).map(key=>`${key}=${options[key]}`).join('&');
     const url = `mongodb://${user}:${password}@${servers}/${db}?${optionsStr}`;
-    const driver = new MongoInternals.RemoteCollectionDriver(url);
+
+    // 确定OPLOG_URL
+    var connectionOptions = {};
+    if (process.env.MONGO_OPLOG_URL) {
+      connectionOptions.oplogUrl = process.env.MONGO_OPLOG_URL;
+    }
+    const driver = new MongoInternals.RemoteCollectionDriver(url, connectionOptions);
 
     BraavosCore.Database[confKey] = {};
 
