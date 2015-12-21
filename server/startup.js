@@ -107,18 +107,36 @@ function initYunkaiService() {
  * 初始化IdGen Thrift服务
  */
 function initIdGenService() {
+  // (Deprecated) Used Thrift Service
+  //const services = BraavosCore.RootConf.backends['idgen'];
+  //if (!Object.keys(services)) {
+  //  throw('Cannot find Idgen services.');
+  //}
+  //const {host, port} = services[Object.keys(services)[0]];
+  //const module = Npm.require('idgen');
+  //const IdGen = module.IdGen;
+  //const IdGenTypes = module.IdGenTypes;
+  //
+  //const apiSet = ['ping', 'generate', 'getCounter', 'resetCounter'];
+  //const client = ThriftHelper.createClient(IdGen, host, port, apiSet, {name: 'idgen', transport: 'framed'});
+  //BraavosCore.Thrift.IdGen = {types: IdGenTypes, client: client};
+
+  // (Recommended) Used Http Service
   const services = BraavosCore.RootConf.backends['idgen'];
+
   if (!Object.keys(services)) {
     throw('Cannot find Idgen services.');
-  }
+  };
   const {host, port} = services[Object.keys(services)[0]];
-  const module = Npm.require('idgen');
-  const IdGen = module.IdGen;
-  const IdGenTypes = module.IdGenTypes;
 
-  const apiSet = ['ping', 'generate', 'getCounter', 'resetCounter'];
-  const client = ThriftHelper.createClient(IdGen, host, port, apiSet, {name: 'idgen', transport: 'framed'});
-  BraavosCore.Thrift.IdGen = {types: IdGenTypes, client: client};
+  //const apiSet = ['ping', 'generate', 'getCounter', 'resetCounter'];
+  const apiSet = ['ping', 'generate'];
+  BraavosCore.Thrift.IdGen = {
+    client: {
+      generate: (generator) => HTTP.post(`http://${host}:${port}/generators/${generator}/ids`),
+      ping: () => HTTP.get(`http://${host}:${port}/ping`)
+    }
+  };
 }
 
 /**
