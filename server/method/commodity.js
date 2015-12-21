@@ -25,8 +25,14 @@ Meteor.methods({
   'commodity.insert.generateCommodityId': () => {
     const client = BraavosCore.Thrift.IdGen.client;
     try {
-      const int64_commodityId = client.generate('commodity');
-      return int64_commodityId.toNumber()
+      const result = client.generate('commodity');
+      if (result.statusCode == 200 && result.data && result.data.id){
+        return result.data.id
+      }else{
+        console.log(`Generate commodityId failed!`);
+        console.log(result);
+        return undefined;
+      }
     } catch(err) {
       console.log(`Generate commodityId failed!`);
       console.log(err);
