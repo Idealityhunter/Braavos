@@ -33,7 +33,17 @@ const commodity = React.createClass({
       //commodities = BraavosCore.Database.Braavos.Commodity.find(_.extend({'seller.sellerId': userId}, this.state.options), {sort: {createTime: -1}}).fetch();
       commodities = BraavosCore.Database.Braavos.Commodity.find({}, {sort: {createTime: -1}}).fetch();
       commodities = commodities.map(commodity => _.extend(commodity, {
-        key: Meteor.uuid()
+        key: Meteor.uuid(),
+        // 对所有的price进行换算处理
+        price: commodity.price / 100,
+        marketPrice: commodity.marketPrice / 100,
+        plan: commodity.plans.map(plan => _.extend(plan, {
+          price: plan.price / 100,
+          marketPrice: plan.marketPrice / 100,
+          pricing: plan.pricing.map(pricing => _.extend(pricing, {
+            price: pricing.price / 100
+          }))
+        }))
       }));
     }
     return {

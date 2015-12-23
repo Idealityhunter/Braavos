@@ -125,6 +125,21 @@ FlowRouter.route('/commodities/editor/:commodityId', {
     Meteor.call('commodity.editor.checkCommodityId', {commodityId: commodityId, isAdmin: isAdmin}, (err, ret) => {
       const isValid = (!err && ret.valid);
       if (isValid) {
+
+        // 注意!!! 修改了所有的price信息
+        ret.commodityInfo = _.extend(ret.commodityInfo, {
+          // 对所有的price进行换算处理
+          price: ret.commodityInfo.price / 100,
+          marketPrice: ret.commodityInfo.marketPrice / 100,
+          plan: ret.commodityInfo.plans.map(plan => _.extend(plan, {
+            price: plan.price / 100,
+            marketPrice: plan.marketPrice / 100,
+            pricing: plan.pricing.map(pricing => _.extend(pricing, {
+              price: pricing.price / 100
+            }))
+          }))
+        });
+
         ReactLayout.render(MainLayout, _.extend({
           content: <CommodityModify {...intlData} {...ret.commodityInfo}/>
         }, intlData, {documentTitle: "商品修改"}));

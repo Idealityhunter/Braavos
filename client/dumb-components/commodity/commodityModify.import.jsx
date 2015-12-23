@@ -270,22 +270,19 @@ const commodityModify = React.createClass({
         body: $('.form-group.traffic>textarea').val()
       }],
       desc: desc,
-      price: priceInfo.price,
-      marketPrice: priceInfo.marketPrice,
+      price: parseInt(priceInfo.price * 100),
+      marketPrice: parseInt(priceInfo.marketPrice * 100),
       plans: this.state.plans.map((plan) => {
         return {
           planId: plan.planId,
-          price: plan.price,
-          marketPrice: plan.marketPrice,
+          price: parseInt(plan.price * 100),
+          marketPrice: parseInt(plan.marketPrice * 100),
           pricing: (timeRequired)
-            ? _.map(plan.pricing, pricing => {
-              return {
-                price: parseFloat(pricing.price),
-                timeRange: pricing.timeRange
-              }
-            })
+            ? plan.pricing.map(pricing => _.extend(pricing, {
+              price: parseInt(pricing.price * 100)
+            }))
             : [{
-              price: parseFloat(plan.price),
+              price: parseInt(plan.price * 100),
               timeRange: []
             }],
           title: plan.title,
