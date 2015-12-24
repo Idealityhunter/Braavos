@@ -22,6 +22,8 @@ const numberInput = React.createClass({
         };
         break;
       case 'float':
+        // 中文句号的替换
+        $(e.target).val($(e.target).val().replace(/\。/, "."));
         if ((/^(\d*[\.]?\d*)$/).test($(e.target).val()) || $(e.target).val() == ''){
           this.originValue = $(e.target).val();
         } else {
@@ -44,7 +46,11 @@ const numberInput = React.createClass({
         if (parseInt(number) == number){
           $(e.target).val( parseFloat(number) );
         }else{
-          $(e.target).val( Math.floor(parseFloat(number) * Math.pow(10, this.decimalDigits)) / Math.pow(10, this.decimalDigits));
+          if (isNaN(parseFloat(number))){
+            $(e.target).val('');
+          }else{
+            $(e.target).val( Math.floor(parseFloat(number) * Math.pow(10, this.decimalDigits)) / Math.pow(10, this.decimalDigits));
+          }
         };
         this.props.onChange && this.props.onChange(e);
         break;
