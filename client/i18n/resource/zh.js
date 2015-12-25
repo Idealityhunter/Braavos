@@ -114,7 +114,8 @@ BraavosCore.IntlData.zh = {
         purchaseQuantity: '购买数量',
         totalAdvancePayment: '预支付总价',
         tradeStatus: '交易状态',
-        purchaser: '买家',
+        //purchaser: '买家',
+        contact: '联系人',
         action: '操作'
       },
       btn:{

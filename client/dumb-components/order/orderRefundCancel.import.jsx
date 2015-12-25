@@ -16,19 +16,31 @@ const orderRefundCancel = React.createClass({
     }
   },
 
+  // TODO 可复用
   getMeteorData() {
+    const userId = parseInt(Meteor.userId());
+    let isAdmin = false;
+
+    // 获取用户权限
+    if (BraavosCore.SubsManager.account.ready()) {
+      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+      const adminRole = 10;
+      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
+    };
+
     // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId);
-    let orderInfo = {};
+    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
+    let orderInfo;
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
+      if (orderInfo.totalPrice)
+        orderInfo.totalPrice = orderInfo.totalPrice / 100;
     }
 
     return {
-      orderInfo: orderInfo,
+      orderInfo: orderInfo || {},
     };
   },
-
   // 取消操作
   _handleCancel(e){
     FlowRouter.go('orders');

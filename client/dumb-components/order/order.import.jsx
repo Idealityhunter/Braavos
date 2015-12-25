@@ -48,7 +48,8 @@ const order = React.createClass({
       //最好是按照更新时间来排序吧
       orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
       orders = orders.map(order => _.extend(order, {
-        key: Meteor.uuid()
+        key: Meteor.uuid(),
+        totalPrice: order.totalPrice / 100
       }));
     }
 
@@ -388,7 +389,8 @@ const order = React.createClass({
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.tradeStatus`)}/>
           </th>
           <th data-hide="phone" style={{textAlign:'center'}}>
-            <FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaser`)}/>
+            {/*<FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaser`)}/>*/}
+            <FormattedMessage message={this.getIntlMessage(`${prefix}label.contact`)}/>
           </th>
           <th className="text-right" data-sort-ignore="true">
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.action`)}/>

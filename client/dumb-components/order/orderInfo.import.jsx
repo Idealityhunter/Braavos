@@ -20,6 +20,7 @@ const orderInfo = React.createClass({
     Meteor.clearInterval(this.interval);
   },
 
+  // TODO 可复用
   getMeteorData() {
     const userId = parseInt(Meteor.userId());
     let isAdmin = false;
@@ -33,13 +34,20 @@ const orderInfo = React.createClass({
 
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo = {};
+    let orderInfo;
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
+      if (orderInfo.totalPrice)
+        orderInfo.totalPrice = orderInfo.totalPrice / 100;
+
+      // TODO 待测试
+      const activity = _.find(orderInfo.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
+      if (activity && activity.data && activity.data.amount)
+        activity.data.amount = activity.data.amount / 100;
     };
 
     return {
-      orderInfo: orderInfo
+      orderInfo: orderInfo || {}
     };
   },
 
@@ -418,7 +426,7 @@ const orderInfo = React.createClass({
               <th>购买数量</th>
               <th>预支付总价</th>
               <th>使用时间</th>
-              <th>买家</th>
+              <th>联系人</th>
               <th>留言</th>
             </tr>
           </thead>
