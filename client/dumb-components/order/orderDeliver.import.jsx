@@ -46,7 +46,7 @@ const orderDeliver = React.createClass({
     });
 
     Meteor.call('order.commit', this.data.orderInfo.orderId, (err, res) => {
-      if (err){
+      if (err || !res){
         // 错误处理
         swal({
           title: "确认发货失败!",

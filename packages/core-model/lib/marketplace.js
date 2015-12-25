@@ -362,7 +362,7 @@ Marketplace.OrderActivity = new SimpleSchema({
   },
   // 附加数据
   data: {
-    type: Object, // allowedKeys: ['userId'|'memo'|'amount']
+    type: Object, // allowedKeys: ['userId'|'memo'|'amount'|'type: ["accept","reject","apply"] '|'reason']
     blackbox: true,
     optional: true
   }
