@@ -43,7 +43,7 @@ const order = React.createClass({
 
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orders', options, isAdmin);
-    let orders = [];
+    let orders;
     if (handleOrder.ready()) {
       //最好是按照更新时间来排序吧
       orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
@@ -54,7 +54,7 @@ const order = React.createClass({
     }
 
     return {
-      orders: orders
+      orders: orders || []
     };
   },
 
