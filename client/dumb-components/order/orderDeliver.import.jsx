@@ -86,6 +86,13 @@ const orderDeliver = React.createClass({
       marginRight: 10,
       marginBottom: 0
     },
+    span: {
+      display: 'inline-block',
+      width: 60,
+      paddingRight: 5,
+      textAlign: 'justify',
+      textAlignLast: 'justify'
+    },
     submitLoading: {
       padding: '8px 14px',
       backgroundColor: '#1ab394',
@@ -110,19 +117,27 @@ const orderDeliver = React.createClass({
 
             <div className="gray-bg" style={this.styles.orderContent}>
               <p>
-                <label style={this.styles.label}>商品名:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>商品名</span>:
+                </label>
                 {this.data.orderInfo.commodity && this.data.orderInfo.commodity.title || '-'}
               </p>
               <p>
-                <label style={this.styles.label}>所选套餐:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>所选套餐</span>:
+                </label>
                 {planTitle}
               </p>
               <p>
-                <label style={this.styles.label}>购买数量:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>购买数量</span>:
+                </label>
                 {this.data.orderInfo.quantity || '-'}
               </p>
               <p>
-                <label style={this.styles.label}>支付总价:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>支付总价</span>:
+                </label>
                 {this.data.orderInfo.totalPrice || '-'}
                 {/*
                  this.data.orderInfo.paymentInfo || '-'
@@ -130,7 +145,9 @@ const orderDeliver = React.createClass({
                 */}
               </p>
               <p>
-                <label style={this.styles.label}>订单号:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>订单号</span>:
+                </label>
                 {this.data.orderInfo.orderId || '-'}
               </p>
             </div>
@@ -139,19 +156,22 @@ const orderDeliver = React.createClass({
 
             <div className="gray-bg" style={this.styles.orderContent}>
               <p>
-                <label style={this.styles.label}>买家姓名:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>联系人</span>:
+                </label>
                 {this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}
+                {this.data.orderInfo.contact && (` , +${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`)}
               </p>
               <p>
-                <label style={this.styles.label}>联系方式:</label>
-                {this.data.orderInfo.contact && (`+${this.data.orderInfo.contact.tel.dialCode} ${this.data.orderInfo.contact.tel.number}`) || '-'}
-              </p>
-              <p>
-                <label style={this.styles.label}>买家备注:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>买家备注</span>:
+                </label>
                 {this.data.orderInfo.comment || '-'}
               </p>
               <p>
-                <label style={this.styles.label}>使用日期:</label>
+                <label style={this.styles.label}>
+                  <span style={this.styles.span}>使用日期</span>:
+                </label>
                 {this.data.orderInfo.rendezvousTime && moment(this.data.orderInfo.rendezvousTime).format('YYYY-MM-DD') || '-'}
               </p>
             </div>
