@@ -22,16 +22,29 @@ const orderRefundCommitted = React.createClass({
     }
   },
 
+  // TODO 可复用
   getMeteorData() {
+    const userId = parseInt(Meteor.userId());
+    let isAdmin = false;
+
+    // 获取用户权限
+    if (BraavosCore.SubsManager.account.ready()) {
+      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
+      const adminRole = 10;
+      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
+    };
+
     // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId);
-    let orderInfo = {};
+    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
+    let orderInfo;
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
+      if (orderInfo.totalPrice)
+        orderInfo.totalPrice = orderInfo.totalPrice / 100;
     }
 
     return {
-      orderInfo: orderInfo,
+      orderInfo: orderInfo || {},
     };
   },
 
@@ -67,7 +80,7 @@ const orderRefundCommitted = React.createClass({
 
       // 密码正确, 进行退款
       const amount = $('.refund-amount').children('input').val();
-      Meteor.call('order.refunded', self.data.orderInfo.orderId, amount, (err, res) => {
+      Meteor.call('order.refunded', self.data.orderInfo.orderId, parseInt(amount * 100), (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
