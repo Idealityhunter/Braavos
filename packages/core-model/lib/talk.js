@@ -73,3 +73,52 @@ Talk.Message = new SimpleSchema({
   }
 });
 
+/**
+ * 某个用户的聊天会话
+ */
+Talk.ConversationView = {
+  userId: {
+    type: [Number]
+  },
+
+  /**
+   * 对应的conversation的id, 类型为ObjectId
+   */
+  conversationId: {
+    type: Object
+  },
+
+  /**
+   * 修改时间
+   */
+  updateTime: {
+    type: [Date],
+    autoValue: function () {
+      return new Date();
+    }
+  },
+
+  /**
+   * 是否有新消息
+   */
+  notifyFlag: {
+    type: Boolean,
+    defaultValue: true
+  },
+
+  /**
+   * 最后一条消息
+   */
+  lastMessage: {
+    type: String,
+    max: 512,
+    optional: true
+  },
+
+  metadata: {
+    type: Object,  // { commodity: { commodityId: 100054 }}
+    blackbox: true,
+    optional: true
+  }
+};
+
