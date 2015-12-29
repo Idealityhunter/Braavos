@@ -17,7 +17,8 @@ BraavosCore.IntlData.zh = {
         commodities: '商品管理',
         orders: '订单管理',
         finance: '财务管理',
-        accountInfo: '账户信息'
+        accountInfo: '账户信息',
+        message: '消息'
       }
     },
     login: {

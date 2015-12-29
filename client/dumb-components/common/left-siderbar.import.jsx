@@ -126,6 +126,16 @@ let leftSiderBar = React.createClass({
               </a>
             </li>
 
+            {/*消息*/}
+            <li className={ActiveRoute.name('message') ? "active" : ""}>
+              <a href={FlowRouter.path('message')}>
+                <i className="fa fa-comments"/>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}message`)}/>
+                </span>
+              </a>
+            </li>
+
             {/*Dashboards*/}
             {/*
             <li>

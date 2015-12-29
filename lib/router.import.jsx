@@ -13,6 +13,7 @@ import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel
 import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
+import {Message} from '/client/dumb-components/message/message';
 
 import {StepsDemo} from "/client/components/steps/steps"
 
@@ -243,5 +244,16 @@ FlowRouter.route('/account', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData, {documentTitle: "账户信息"}));
+  }
+});
+
+// 账户信息
+FlowRouter.route('/message', {
+  name: 'message',
+  title: lsbMessages['message'],
+  parent: 'home',
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "消息"}));
   }
 });
