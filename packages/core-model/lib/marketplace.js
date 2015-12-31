@@ -327,6 +327,12 @@ Marketplace.Commodity = new SimpleSchema({
   updateTime: {
     type: Date,
     optional: true
+  },
+  // 商品的版本号
+  version: {
+    type: Number,
+    // 暂时先不做检测
+    optional: true
   }
 });
 

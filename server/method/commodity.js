@@ -44,6 +44,7 @@ Meteor.methods({
   'commodity.insert': (doc) => {
     const userId = parseInt(Meteor.userId());
     const collCommodity = BraavosCore.Database.Braavos.Commodity;
+    const collCommoditySnapshot = BraavosCore.Database.Braavos.CommoditySnapshot;
 
     // 获取 seller信息
     const collSeller = BraavosCore.Database.Braavos.Seller;
@@ -57,22 +58,33 @@ Meteor.methods({
       }
     };
 
+    const currentTime = new Date();
     _.extend(doc, {
       commodityId: commodityId,
       seller: _.pick(_.extend(collSeller.findOne({'sellerId': userId}), {
         'userInfo': userInfo
       }), 'sellerId', 'name', 'userInfo') || {},
       status: 'review',
-      createTime: new Date()
+      createTime: currentTime,
+      updateTime: currentTime,
+      version: currentTime.getTime()
     });
-    return collCommodity.insert(doc);
+
+    return collCommoditySnapshot.insert(doc) && collCommodity.insert(doc);
   },
 
   // 编辑商品
-  'commodity.update': function (doc, commodityId) {
+  'commodity.update': function (modDoc, resetDoc) {
     // 暂时可以编辑他人的商品
     const collCommodity = BraavosCore.Database.Braavos.Commodity;
-    return collCommodity.update({commodityId: commodityId}, {$set: doc});
+    const collCommoditySnapshot = BraavosCore.Database.Braavos.CommoditySnapshot;
+
+    const currentTime = new Date();
+    _.extend(modDoc, {
+      updateTime: currentTime,
+      version: currentTime.getTime()
+    });
+    return collCommoditySnapshot.insert(_.extend(resetDoc, modDoc)) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
 
     // 只能编辑自己的商品
     //const userId = parseInt(Meteor.userId());
