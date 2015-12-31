@@ -1,6 +1,7 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap";
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -100,12 +101,6 @@ const finance = React.createClass({
     $('.input-daterange input').each(function () {
       $(this).datepicker("clearDates");
     });
-  },
-
-  // 获取退款数额
-  _getRefundAmount(order){
-    const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-    return activity && activity.data && activity.data.amount || order.totalPrice;
   },
 
   // 获取交易状态的展示

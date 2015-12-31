@@ -3,12 +3,14 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Modal, Button} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
+import {PageLoading} from '/client/common/pageLoading';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const orderRefundCancel = React.createClass({
-  mixins: [IntlMixin, ReactMeteorData],
+  mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
   getInitialState(){
     return {
@@ -16,31 +18,10 @@ const orderRefundCancel = React.createClass({
     }
   },
 
-  // TODO 可复用
-  getMeteorData() {
-    const userId = parseInt(Meteor.userId());
-    let isAdmin = false;
-
-    // 获取用户权限
-    if (BraavosCore.SubsManager.account.ready()) {
-      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-      const adminRole = 10;
-      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    };
-
-    // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo;
-    if (handleOrder.ready()) {
-      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo.totalPrice)
-        orderInfo.totalPrice = orderInfo.totalPrice / 100;
-    }
-
-    return {
-      orderInfo: orderInfo || {},
-    };
+  getMeteorData(){
+    return this.getOrderInfo();
   },
+
   // 取消操作
   _handleCancel(e){
     FlowRouter.go('orders');
@@ -72,8 +53,8 @@ const orderRefundCancel = React.createClass({
       }
 
       // 密码正确, 取消订单
-      const reason = $('textarea').val();
-      Meteor.call('order.cancel', self.data.orderInfo.orderId, reason, (err, res) => {
+      const memo = $('textarea').val();
+      Meteor.call('order.cancelRefund', self.data.orderInfo.orderId, parseInt(self.data.orderInfo.totalPrice * 100), memo, (err, res) => {
         if (err || !res) {
           // 密码验证失败处理
           swal('退款失败', '', 'error');
@@ -146,10 +127,11 @@ const orderRefundCancel = React.createClass({
   },
 
   render() {
-    return (
-      <div className='order-refund-lack-wrap'>
-        <BraavosBreadcrumb />
+    let content =
+      <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
+    if (this.data.orderInfo.status) {
+      content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
             <h3>缺货退款</h3>
@@ -161,7 +143,8 @@ const orderRefundCancel = React.createClass({
 
             <hr style={this.styles.hr}/>
             <label style={this.styles.marginRight}>买家:</label>
-            <span style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
+            <span
+              style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
             <label style={this.styles.marginRight}>实付金额:</label>
             <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
 
@@ -179,6 +162,11 @@ const orderRefundCancel = React.createClass({
             </div>
           </div>
         </div>
+    };
+
+    return (
+      <div className='order-refund-lack-wrap'>
+        <BraavosBreadcrumb />
 
         {this.state.showRefundModal
           ? <OrderRefundModal
@@ -188,7 +176,6 @@ const orderRefundCancel = React.createClass({
             />
           : <div />
         }
-
       </div>
     )
   }

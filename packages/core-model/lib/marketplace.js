@@ -355,14 +355,19 @@ Marketplace.OrderActivity = new SimpleSchema({
   timestamp: {
     type: Date
   },
-  // 分别对应于: 创建订单/取消订单/支付订单/商户发货/订单过期/订单完成/退款相关
+  // 操作前的状态
+  prevStatus: {
+    type: String,
+    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "refundApplied", "refunded"]
+  },
+  // 分别对应于: 创建订单/取消订单/支付订单/商户发货/订单过期/订单完成/申请退款/退款/拒绝退款
   action: {
     type: String,
-    allowedValues: ["create", "cancel", "pay", "commit", "expire", "finish", "refund"]
+    allowedValues: ["create", "cancel", "pay", "commit", "expire", "finish", 'refundApply', 'refundApprove', 'refundDeny']
   },
   // 附加数据
   data: {
-    type: Object, // allowedKeys: ['userId'|'memo'|'amount'|'type: ["accept","reject","apply"] '|'reason']
+    type: Object, // allowedKeys: ['userId'|'memo'|'amount'|'reason']
     blackbox: true,
     optional: true
   }
@@ -432,10 +437,10 @@ Marketplace.Order = new SimpleSchema({
     optional: true
   },
   // 订单状态
-  // 分别为: 待付款, 已付款, 商户已确认, 订单完成, 已取消, 订单过期, 退款申请中, 退款完成
+  // 分别为: 待付款, 已付款, 商户已确认, 订单完成, 已取消, 退款申请中, 退款完成
   status: {
     type: String,
-    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "expired", "refundApplied", "refunded"]
+    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "refundApplied", "refunded"]
   },
   // 订单的操作日志
   activities: {
