@@ -371,7 +371,7 @@ const order = React.createClass({
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.purchaseQuantity`)}/>
           </th>
           <th data-hide="phone" data-type="numeric">
-            <FormattedMessage message={this.getIntlMessage(`${prefix}label.totalAdvancePayment`)}/>
+            <FormattedMessage message={this.getIntlMessage(`${prefix}label.orderTotalPrice`)}/>
           </th>
           <th data-hide="phone" style={{textAlign:'center'}}>
             <FormattedMessage message={this.getIntlMessage(`${prefix}label.createdDate`)}/>

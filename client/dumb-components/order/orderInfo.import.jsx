@@ -267,7 +267,7 @@ const orderInfo = React.createClass({
               <th>商品</th>
               <th>套餐</th>
               <th>购买数量</th>
-              <th>支付总价</th>
+              <th>订单总价</th>
               <th>使用时间</th>
               <th>联系人</th>
               <th>留言</th>

@@ -120,7 +120,7 @@ const orderDeliver = React.createClass({
               </p>
               <p>
                 <label style={this.styles.label}>
-                  <span style={this.styles.span}>支付总价</span>:
+                  <span style={this.styles.span}>订单总价</span>:
                 </label>
                 {this.data.orderInfo.totalPrice || '-'}
                 {/*
