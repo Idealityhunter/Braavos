@@ -1,11 +1,13 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Button} from "/lib/react-bootstrap";
+import {PageLoading} from '/client/common/pageLoading';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';// 包括getMeteorData
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const orderDeliver = React.createClass({
-  mixins: [IntlMixin, ReactMeteorData],
+  mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
   getInitialState(){
     return {
@@ -13,30 +15,8 @@ const orderDeliver = React.createClass({
     }
   },
 
-  // TODO 可复用
-  getMeteorData() {
-    const userId = parseInt(Meteor.userId());
-    let isAdmin = false;
-
-    // 获取用户权限
-    if (BraavosCore.SubsManager.account.ready()) {
-      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-      const adminRole = 10;
-      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    };
-
-    // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo;
-    if (handleOrder.ready()) {
-      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo.totalPrice)
-        orderInfo.totalPrice = orderInfo.totalPrice / 100;
-    }
-
-    return {
-      orderInfo: orderInfo || {},
-    };
+  getMeteorData(){
+    return this.getOrderInfo();
   },
 
   _handleSubmit(e){
@@ -103,14 +83,16 @@ const orderDeliver = React.createClass({
   },
 
   render() {
+    // 获取套餐名
     const planTitle = this.data.orderInfo && this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
         return (this.data.orderInfo.planId == f.planId) ? f.title : memo
       }, '-');
 
-    return (
-      <div className='order-deliver-wrap'>
-        <BraavosBreadcrumb />
+    let content =
+      <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
+    if (this.data.orderInfo.status) {
+      content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
             <h4>商品订单信息</h4>
@@ -142,7 +124,7 @@ const orderDeliver = React.createClass({
                 {/*
                  this.data.orderInfo.paymentInfo || '-'
                  this.data.orderInfo.totalPrice * this.data.orderInfo.discount || '-'
-                */}
+                 */}
               </p>
               <p>
                 <label style={this.styles.label}>
@@ -177,13 +159,20 @@ const orderDeliver = React.createClass({
             </div>
 
             <Button bsStyle="primary" onClick={this._handleSubmit} className={this.state.submitting ? 'hidden' : ''}>确认发货</Button>
-            <div className={this.state.submitting ? 'la-ball-fall' : 'la-ball-fall hidden'} style={this.styles.submitLoading}>
+            <div className={this.state.submitting ? 'la-ball-fall' : 'la-ball-fall hidden'}
+                 style={this.styles.submitLoading}>
               <div></div>
               <div></div>
               <div></div>
             </div>
           </div>
         </div>
+    };
+
+    return (
+      <div className='order-deliver-wrap'>
+        <BraavosBreadcrumb />
+        {content}
       </div>
     )
   }

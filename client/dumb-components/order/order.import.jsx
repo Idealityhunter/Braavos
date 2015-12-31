@@ -1,6 +1,7 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap";
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -18,7 +19,7 @@ _.findIndex || ( _.findIndex = (arr, cal) => {
 });
 
 const order = React.createClass({
-  mixins: [IntlMixin, ReactMeteorData],
+  mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
   getInitialState(){
     return {
@@ -184,12 +185,6 @@ const order = React.createClass({
     }
   },
 
-  // 获取退款数额
-  _getRefundAmount(order){
-    const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-    return activity && activity.amount || order.totalPrice;
-  },
-
   // 获取交易状态的展示
   _getTradeStatusHtml(order) {
     switch (order.status){
@@ -202,8 +197,6 @@ const order = React.createClass({
         ]
       case 'committed':
         return '已发货'
-      case 'finished':
-        return '已成功的订单'
       case 'refundApplied':
         // 是否已发货
         return (_.findIndex(order.activities, (activity) => activity.action == 'commit') == -1)
@@ -215,32 +208,30 @@ const order = React.createClass({
             <p>待退款</p>,
             <p>(卖家已发货)</p>
           ]
-      case 'canceled':
-        // 是否已支付
-        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
-          ? [
-            <p>已关闭</p>,
-            <p>(交易取消)</p>
-          ]
-          : [
-            <p>已关闭</p>,
-            <p>(已退款{order.totalPrice}元)</p>
-          ]
-      case 'expired':
-        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
-          ? [
-            <p>已关闭</p>,
-            <p>(买家支付过期)</p>
-          ]
-          : [
-            <p>已关闭</p>,
-            <p>(已退款{order.totalPrice}元)</p>
-          ]
       case 'refunded':
         return [
           <p>已关闭</p>,
           <p>(已退款{this._getRefundAmount(order)}元)</p>
         ]
+      case 'finished':
+        return '已成功的订单'
+      case 'canceled':
+        return (_.findIndex(order.activities, (activity) => activity.action == 'cancel') != -1)
+          // 区分 超时自动取消 or 商家/买家主动取消
+          ? (this._getActivityOperator(order.activities, 'cancel') == order.consumerId)
+            // 区分商家/买家取消
+            ? [
+              <p>已关闭</p>,
+              <p>(买家已取消交易)</p>
+            ]
+            : [
+              <p>已关闭</p>,
+              <p>(商家已取消交易)</p>
+            ]
+          : [
+            <p>已关闭</p>,
+            <p>(买家支付过期)</p>
+          ]
       default:
         // TODO 待做(会有哪些可能性?)
         return ''
@@ -255,11 +246,11 @@ const order = React.createClass({
         this.setState({options: {}});
         break;
       case 'closed':
-        // 关闭是取消,超时,退款完成的合并状态
         this.setState({
           options: {
             status: {
-              $in: ['canceled', 'expired', 'refunded']
+              // 关闭是取消,退款完成的合并状态
+              $in: ['canceled', 'refunded']
             }
           }
         });
@@ -399,31 +390,33 @@ const order = React.createClass({
       </thead>;
 
     // 商品列表行
-    const orderList = this.data.orders.map(order =>
-      <tr key={order.key}>
-        <td style={{textAlign:'center'}}>{order.orderId}</td>
-        <td data-value={order.commodity.commodityId} style={{textAlign:'center'}}>
-          <p>{order.commodity.title}</p>
-          <p>商品编号: {order.commodity.commodityId}</p>
-        </td>
-        <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
-        <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
-        <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD hh:mm')}</td>
-        <td style={{color: '#333', textAlign: 'center'}}>
-          {this._getTradeStatusHtml(order)}
-        </td>
-        <td style={{textAlign:'center'}}>
-          <p>{`${order.contact.surname}${order.contact.givenName}`}</p>
-          <p>{`手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
-          <a href="">留言</a>
-        </td>
-        <td style={{color: '#333', textAlign: 'center'}}>
-          <div className="btn-group">
-            <a href={`/orders/${order.orderId}`}>订单详情</a>
-            {this._getActionHtml(order)}
-          </div>
-        </td>
-      </tr>
+    const orderList = this.data.orders.map(order =>{
+      return (
+        <tr key={order.key}>
+          <td style={{textAlign:'center'}}>{order.orderId}</td>
+          <td data-value={order.commodity && order.commodity.commodityId} style={{textAlign:'center'}}>
+            <p>{order.commodity && order.commodity.title}</p>
+            <p>商品编号: {order.commodity && order.commodity.commodityId}</p>
+          </td>
+          <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
+          <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
+          <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD hh:mm')}</td>
+          <td style={{color: '#333', textAlign: 'center'}}>
+            {this._getTradeStatusHtml(order)}
+          </td>
+          <td style={{textAlign:'center'}}>
+            <p>{order.contact && `${order.contact.surname}${order.contact.givenName}`}</p>
+            <p>{order.contact && order.contact.tel && `手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
+            <a href="">留言</a>
+          </td>
+          <td style={{color: '#333', textAlign: 'center'}}>
+            <div className="btn-group">
+              <a href={`/orders/${order.orderId}`}>订单详情</a>
+              {this._getActionHtml(order)}
+            </div>
+          </td>
+        </tr>)
+      }
     );
 
     const orderTableBody =

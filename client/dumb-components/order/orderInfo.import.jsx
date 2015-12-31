@@ -2,12 +2,13 @@ import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Button, Table} from "/lib/react-bootstrap";
 import {PageLoading} from '/client/common/pageLoading';
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const orderInfo = React.createClass({
-  mixins: [IntlMixin, ReactMeteorData],
+  mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
   getInitialState(){
     return {
@@ -16,39 +17,12 @@ const orderInfo = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
-    Meteor.clearInterval(this.interval);
+  getMeteorData(){
+    return this.getOrderInfo();
   },
 
-  // TODO 可复用
-  getMeteorData() {
-    const userId = parseInt(Meteor.userId());
-    let isAdmin = false;
-
-    // 获取用户权限
-    if (BraavosCore.SubsManager.account.ready()) {
-      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-      const adminRole = 10;
-      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    };
-
-    // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo;
-    if (handleOrder.ready()) {
-      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo.totalPrice)
-        orderInfo.totalPrice = orderInfo.totalPrice / 100;
-
-      // TODO 待测试
-      const activity = _.find(orderInfo.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-      if (activity && activity.data && activity.data.amount)
-        activity.data.amount = activity.data.amount / 100;
-    };
-
-    return {
-      orderInfo: orderInfo || {}
-    };
+  componentWillUnmount: function() {
+    Meteor.clearInterval(this.interval);
   },
 
   // 点击'关闭交易'
@@ -96,143 +70,62 @@ const orderInfo = React.createClass({
     return (identity) ? identity.code || identity.number : '';
   },
 
-  // 根据不同的action获取相应的activity
-  _getActivity(activities, status){
-    let activity;
-    switch (status) {
+  // 根据不同的action获取相应展示的activity语句
+  _getActivityStatement(activity){
+    switch (activity.action) {
       case 'create':
-        activity = _.find(activities, activity => activity.action == status);
-        return activity
-          ? <p>订单创建时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
+        return <p>订单创建时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'pay':
-        activity = _.find(activities, activity => activity.action == status);
-        return activity
-          ? <p>订单支付时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
+        return <p>订单支付时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'commit':
-        activity = _.find(activities, activity => activity.action == status);
-        return activity
-          ? <p>订单发货时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
+        return <p>订单发货时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'cancel':
-        activity = _.find(activities, activity => activity.action == 'cancel');
-        return activity
-          ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
-            ? [
-              <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
-              <p>取消订单理由: {activity.data.memo}</p>
-            ]
-            : <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
+        return (activity.data && activity.data.reason && activity.data.reason.length > 0)
+          ? [
+            <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+            <p>取消订单理由: {activity.data.reason}</p>
+          ]
+          : <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'finish':
-        activity = _.find(activities, activity => activity.action == status);
-        return activity
-          ? <p>订单完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
-      // 暂时没有超时状态
+        return <p>订单完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'expire':
-        return;
+        return (activity.prevState == 'paid' || activity.prevState == 'refundApplied')
+          ? <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
+          : (activity.prevState == 'pending')
+            // 买家支付超时
+            ? [/**/]
+            : [];
       case 'refundApply':
-        // 多次申请,只展示最后一次!
-        const activityArray = _.filter(activities, activity => activity.action == 'refund' && activity.data.type == 'apply');
-        if (activityArray.length > 0)
-          activity = activityArray[activityArray.length - 1];
-        return activity
-          ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
+        return (activity.data && activity.data.reason && activity.data.reason.length > 0)
+          ? (activity.data.memo && activity.data.memo.length > 0)
             ? [
               <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
-              <p>申请退款理由: {activity.data.memo}</p>
+              <p>申请退款理由: {activity.data.reason}</p>,
+              <p>申请退款留言: {activity.data.memo}</p>
             ]
-            : <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
-      case 'refundAccept':
-        activity = _.find(activities, activity => activity.action == 'refund' && activity.data.type == 'accept');
-        return activity
-          ? <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
-      case 'refundReject':
-        activity = _.find(activities, activity => activity.action == 'refund' && activity.data.type == 'reject');
-        return activity
-          ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
-            ? [
-              <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
-              <p>拒绝退款理由: {activity.data.memo}</p>
+            : [
+              <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+              <p>申请退款理由: {activity.data.reason}</p>
             ]
-            : <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
-          : '';
+          : <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'refundApprove':
+        return <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'refundDeny':
+        return (activity.data && activity.data.memo && activity.data.memo.length > 0)
+          ? [
+            <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+            <p>拒绝退款理由: {activity.data.memo}</p>
+          ]
+          : <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
         break;
-      default :
+      default:
         return ;
-    }
-    return ;
-  },
-
-  // 获取退款数额
-  _getRefundAmount(order){
-    const activity = _.find(order.activities, activity => activity.action == 'refund' && activity.data && activity.data.type == 'accept');
-    return activity && activity.data && activity.data.amount || order.totalPrice;
-  },
-
-  // 将时间按照时间单位分割
-  _getDividedTime(t) {
-    return _.reduce([86400, 3600, 60, 1], function({components, remainder}, divider) {
-      const newRemainder = remainder % divider;
-      return {components: Array.prototype.concat(components, [parseInt(remainder / divider)]), remainder: newRemainder};
-    }, {components: [], remainder: t}).components;
-  },
-
-  // 获取指定长度的时间数字
-  _getSpecifiedLengthTime(str, length = 2){
-    let tempStr = str + '';
-    while (tempStr.length < length){
-      tempStr = '0' + tempStr;
-    };
-    return tempStr;
-  },
-
-  // 获取倒计时字段
-  _getCountDown(status){
-    const self = this;
-    if (!this.interval){
-      const startTime = this._getActivityTime(this.data.orderInfo.activities, status);
-      // TODO 应该是startTime + 2days, 暂时是10days
-      this.remainingSeconds = (moment(startTime).add(10, 'd').valueOf() - Date.now()) / 1000;
-      this.interval = Meteor.setInterval(() => {
-        self.remainingSeconds = self.remainingSeconds - 1;
-        self.forceUpdate();
-      }, 1000);
-    };
-
-    const timeArray = this._getDividedTime(this.remainingSeconds);
-    return `${this._getSpecifiedLengthTime(timeArray[0])}天${this._getSpecifiedLengthTime(timeArray[1])}小时${this._getSpecifiedLengthTime(timeArray[2])}分${this._getSpecifiedLengthTime(timeArray[3])}秒`;
-  },
-
-  // 获取行为的时间戳
-  _getActivityTime(activities, status){
-    let activity;
-    switch (status) {
-      case 'refundApply':
-        // 多次申请,只展示最后一次!
-        const activityArray = _.filter(activities, activity => activity.action == 'refund' && activity.data.type == 'apply');
-        if (activityArray.length > 0)
-          activity = activityArray[activityArray.length - 1];
-
-        return activity
-          ? activity.timestamp
-          : 0;
-      case 'paid':
-        activity = _.find(activities, activity => activity.action == 'pay');
-
-        return activity
-          ? activity.timestamp
-          : 0;
-      default: return 0;
     }
   },
 
   // 获取与订单状态相关的组件
   _getComponentByStatus(order){
+    const self = this;
     const orderBtnSet = [
       <Button bsStyle="primary" style={this.styles.button} onClick={this._handleCloseOrder}>关闭交易</Button>,
       <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/deliver`)}}>发货</Button>,
@@ -241,48 +134,25 @@ const orderInfo = React.createClass({
       <Button bsStyle="primary" style={this.styles.button} onClick={() => {FlowRouter.go(`/orders/${order.orderId}/refund/committed`)}}>退款处理</Button>
     ];
 
-    // TODO 按照时间顺序排序
+    // 按照时间顺序排序
     switch (order.status) {
       case 'pending':
         return {
           statusLabel: '等待买家付款',
           btnGroup: [orderBtnSet[0]],
-          dateList: [
-            this._getActivity(order.activities, 'create')
-          ]
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
       case 'paid':
         return {
           statusLabel: '待发货(买家已付款)',
           btnGroup: [orderBtnSet[1], orderBtnSet[2]],
           countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('paid')}</span>,
-          dateList: [
-            this._getActivity(order.activities, 'create'),
-            this._getActivity(order.activities, 'pay')
-          ]
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
       case 'committed':
         return {
           statusLabel: '已发货',
-          dateList: [
-            // 该情况下可能有两次commit => !!!拒绝退款的时候,转入commit!(要不这一步就不commit了!) => 可行?
-            this._getActivity(order.activities, 'create'),
-            this._getActivity(order.activities, 'pay'),
-            this._getActivity(order.activities, 'commit'),
-            this._getActivity(order.activities, 'refundApply'),
-            this._getActivity(order.activities, 'refundReject')
-          ]
-        }
-      case 'finished':
-        return {
-          statusLabel: '已成功的订单',
-          dateList: [
-            this._getActivity(order.activities, 'create'),
-            this._getActivity(order.activities, 'pay'),
-            this._getActivity(order.activities, 'commit'),
-            this._getActivity(order.activities, 'refundApply'),
-            this._getActivity(order.activities, 'refundReject')
-          ]
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
       case 'refundApplied':
         // 是否已发货
@@ -292,70 +162,41 @@ const orderInfo = React.createClass({
             btnGroup: [orderBtnSet[3], orderBtnSet[1]],
             //countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown( this._getActivityTime(order.activities, 'refundApply') )}</span>,
             countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
-            dateList: [
-              this._getActivity(order.activities, 'create'),
-              this._getActivity(order.activities, 'pay'),
-              this._getActivity(order.activities, 'refundApply'),
-              this._getActivity(order.activities, 'refundReject')
-            ]
+            dateList: order.activities.map(activity => self._getActivityStatement(activity))
           }
           : {
             statusLabel: '待退款(卖家已发货)',
             btnGroup: [orderBtnSet[4]],
             countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
-            dateList: [
-              this._getActivity(order.activities, 'create'),
-              this._getActivity(order.activities, 'pay'),
-              this._getActivity(order.activities, 'commit'),
-              this._getActivity(order.activities, 'refundApply'),
-              this._getActivity(order.activities, 'refundReject')
-            ]
-          }
-      case 'canceled':
-        // 是否已支付
-        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
-          ? {
-            statusLabel: '已关闭(交易取消)',
-            dateList: [
-              this._getActivity(order.activities, 'create'),
-              this._getActivity(order.activities, 'cancel')
-            ]
-          }
-          : {
-            statusLabel: `已关闭(退款${order.totalPrice}元)`,
-            dateList: [
-              this._getActivity(order.activities, 'create'),
-              this._getActivity(order.activities, 'cancel')
-            ]
-          }
-      case 'expired':
-        // 是否已支付
-        return (_.findIndex(order.activities, (activity) => activity.action == 'pay') == -1)
-          ? {
-            statusLabel: '已关闭(买家支付过期)',
-            dateList: [
-              this._getActivity(order.activities, 'create')
-            ]
-          }
-          : {
-            statusLabel: `已关闭(已退款${order.totalPrice}元)`,
-            dateList: [
-              this._getActivity(order.activities, 'create')
-            ]
+            dateList: order.activities.map(activity => self._getActivityStatement(activity))
           }
       case 'refunded':
         return {
           statusLabel: `已关闭(已退款${this._getRefundAmount(order)}元)`,
-          dateList: [
-            // 该情况可能会有拒绝退款的机会吗 ?好奇怪
-            this._getActivity(order.activities, 'create'),
-            this._getActivity(order.activities, 'pay'),
-            this._getActivity(order.activities, 'commit'),
-            this._getActivity(order.activities, 'refundApply'),
-            this._getActivity(order.activities, 'refundReject'),
-            this._getActivity(order.activities, 'refundAccept')
-          ]
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
+      case 'finished':
+        return {
+          statusLabel: '已成功的订单',
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
+        }
+      case 'canceled':
+        return (_.findIndex(order.activities, (activity) => activity.action == 'cancel') != -1)
+          // 区分 超时自动取消 or 商家/买家主动取消
+          ? (this._getActivityOperator(order.activities, 'cancel') == order.consumerId)
+            // 区分商家/买家取消
+            ? {
+              statusLabel: '已关闭(买家取消交易)',
+              dateList: order.activities.map(activity => self._getActivityStatement(activity))
+            }
+            : {
+              statusLabel: '已关闭(商家取消交易)',
+              dateList: order.activities.map(activity => self._getActivityStatement(activity))
+            }
+          : {
+            statusLabel: `已关闭(买家支付过期)`,
+            dateList: order.activities.map(activity => self._getActivityStatement(activity))
+          }
       default:
         return {}
     };
@@ -396,16 +237,18 @@ const orderInfo = React.createClass({
   },
 
   render() {
-    //console.log(new Date());
     let content =
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
     if (this.data.orderInfo.status) {
       const orderInfo = this.data.orderInfo;
+
+      // 获取套餐名
       const orderPlanTitle = orderInfo.planId && orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
           return (this.data.orderInfo.planId == f.planId) ? f.title : memo
         }, '-');
 
+      // 获取订单状态的展示
       const orderStatusComponent = this._getComponentByStatus(orderInfo);
 
       const orderHead =
