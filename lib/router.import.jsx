@@ -131,7 +131,7 @@ FlowRouter.route('/commodities/editor/:commodityId', {
             }))
           }))
         });
-        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} {...ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
+        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} commodityInfo={ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
       }

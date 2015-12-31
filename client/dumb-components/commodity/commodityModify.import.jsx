@@ -14,7 +14,7 @@ const commodityModify = React.createClass({
   submitLock: false,
   getInitialState(){
     return {
-      plans: this.props.plans || []
+      plans: this.props.commodityInfo && this.props.commodityInfo.plans || []
     }
   },
 
@@ -651,7 +651,7 @@ const commodityModify = React.createClass({
     //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
     const timeRequired = true;
 
-    const commodityInfo = {
+    const modCommodityInfo = {
       title: $('.form-group.title>input').val(),
       country: country,
       address: $('.form-group.address>input').val(),
@@ -728,12 +728,15 @@ const commodityModify = React.createClass({
     };
 
     // locality不为空时才添加
-    !!locality.zhName && (commodityInfo['locality'] = locality);
+    !!locality.zhName && (modCommodityInfo['locality'] = locality);
+
+    // 获取未被修改的数据
+    const restCommodityInfo = this.props.commodityInfo && _.omit(this.props.commodityInfo, Object.keys(modCommodityInfo)) || {};
 
     // 编辑和添加的不同
-    if (this.props.commodityId) {
+    if (this.props.commodityInfo) {
       const self = this;
-      Meteor.call('commodity.update', commodityInfo, this.props.commodityId, function (err, res) {
+      Meteor.call('commodity.update', modCommodityInfo, restCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.submit-waiting').hide();
@@ -762,7 +765,7 @@ const commodityModify = React.createClass({
       });
     } else {
       const self = this;
-      Meteor.call('commodity.insert', commodityInfo, function (err, res) {
+      Meteor.call('commodity.insert', modCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.submit-waiting').hide();
@@ -798,38 +801,38 @@ const commodityModify = React.createClass({
       <div className="basic">
         <CommodityModifyBasic
           handleChildSubmitState={this.handleChildSubmitState}
-          title={this.props.title || []}
-          cover={this.props.cover || ''}
-          images={this.props.images || []}
-          category={this.props.category || []}
-          country={this.props.country || {}}
-          locality={this.props.locality || {}}
-          address={this.props.address || ''}
-          timeCost={this.props.timeCost || ''}
-          plans={this.props.plans || []}
-          price={this.props.price || ''}
-          marketPrice={this.props.marketPrice || ''}
+          title={this.props.commodityInfo && this.props.commodityInfo.title || []}
+          cover={this.props.commodityInfo && this.props.commodityInfo.cover || ''}
+          images={this.props.commodityInfo && this.props.commodityInfo.images || []}
+          category={this.props.commodityInfo && this.props.commodityInfo.category || []}
+          country={this.props.commodityInfo && this.props.commodityInfo.country || {}}
+          locality={this.props.commodityInfo && this.props.commodityInfo.locality || {}}
+          address={this.props.commodityInfo && this.props.commodityInfo.address || ''}
+          timeCost={this.props.commodityInfo && this.props.commodityInfo.timeCost || ''}
+          plans={this.props.commodityInfo && this.props.commodityInfo.plans || []}
+          price={this.props.commodityInfo && this.props.commodityInfo.price || ''}
+          marketPrice={this.props.commodityInfo && this.props.commodityInfo.marketPrice || ''}
         />
       </div>;
 
     const introductionStep =
       <div className="introduction">
-        <CommodityModifyIntroduction desc={this.props.desc || {}}/>
+        <CommodityModifyIntroduction desc={this.props.commodityInfo && this.props.commodityInfo.desc || {}}/>
       </div>;
 
     const instructionStep =
       <div className="instruction">
-        <CommodityModifyInstruction notice={this.props.notice || []}/>
+        <CommodityModifyInstruction notice={this.props.commodityInfo && this.props.commodityInfo.notice || []}/>
       </div>;
 
     const bookStep =
       <div className="book">
-        <CommodityModifyBook refundPolicy={this.props.refundPolicy || []}/>
+        <CommodityModifyBook refundPolicy={this.props.commodityInfo && this.props.commodityInfo.refundPolicy || []}/>
       </div>;
 
     const trafficStep =
       <div className="traffic">
-        <CommodityModifyTraffic trafficInfo={this.props.trafficInfo || []}/>
+        <CommodityModifyTraffic trafficInfo={this.props.commodityInfo && this.props.commodityInfo.trafficInfo || []}/>
       </div>;
 
     const submitLoading =
