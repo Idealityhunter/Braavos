@@ -244,7 +244,7 @@ const orderInfo = React.createClass({
       const orderInfo = this.data.orderInfo;
 
       // 获取套餐名
-      const orderPlanTitle = orderInfo.planId && orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
+      const orderPlanTitle = orderInfo.plan && orderInfo.plan.title || orderInfo.planId && orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
           return (this.data.orderInfo.planId == f.planId) ? f.title : memo
         }, '-');
 

@@ -84,9 +84,11 @@ const orderDeliver = React.createClass({
 
   render() {
     // 获取套餐名
-    const planTitle = this.data.orderInfo && this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
+    const planTitle = this.data.orderInfo && (
+      this.data.orderInfo.plan && this.data.orderInfo.title || this.data.orderInfo.planId && this.data.orderInfo.commodity && _.reduce(this.data.orderInfo.commodity.plans, (memo, f) => {
         return (this.data.orderInfo.planId == f.planId) ? f.title : memo
-      }, '-');
+      }, '-')
+    );
 
     let content =
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;

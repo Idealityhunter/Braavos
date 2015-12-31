@@ -17,6 +17,8 @@ Meteor.startup(()=> {
   db.Commodity.attachSchema(schema.Marketplace.Commodity);
   db.Order = new Mongo.Collection("Order");
   db.Order.attachSchema(schema.Marketplace.Order);
+  db.CommoditySnapshot = new Mongo.Collection("CommoditySnapshot");
+  db.CommoditySnapshot.attachSchema(schema.Marketplace.Commodity);
   db.Country = new Mongo.Collection("Country");
   db.Country.attachSchema(schema.Geo.Country);
   db.Locality = new Mongo.Collection("Locality");
