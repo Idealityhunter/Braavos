@@ -18,7 +18,7 @@ export const OrderMixin = {
     let orderInfo;
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo.totalPrice)
+      if (orderInfo && orderInfo.totalPrice)
         orderInfo.totalPrice = orderInfo.totalPrice / 100;
     }
 
@@ -30,7 +30,7 @@ export const OrderMixin = {
   // 获取退款数额
   _getRefundAmount(order){
     const activity = _.find(order.activities, activity => activity.action == 'refundApprove');
-    return activity && activity.data && activity.data.amount || order.totalPrice;
+    return activity && activity.data && activity.data.amount / 100 || order.totalPrice;
   },
 
   // 获取activity的操作者

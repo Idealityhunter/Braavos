@@ -168,11 +168,13 @@ const orderRefundCancel = React.createClass({
       <div className='order-refund-lack-wrap'>
         <BraavosBreadcrumb />
 
+        {content}
         {this.state.showRefundModal
           ? <OrderRefundModal
               showModal={this.state.showRefundModal}
               handleClose={this._handleRefundModalClose}
               handleSubmit={this._handleRefundModalSubmit}
+              amount={this.data.orderInfo.totalPrice}
             />
           : <div />
         }
