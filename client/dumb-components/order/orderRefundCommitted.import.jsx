@@ -112,7 +112,7 @@ const orderRefundCommitted = React.createClass({
       } else{
         swal({
           title: "退款已拒绝",
-          text: `拒绝原因: ${reason}`,
+          text: `拒绝原因: ${memo}`,
           timer: 1500,
           showConfirmButton: false
         }, () => FlowRouter.go("orders"));
@@ -120,7 +120,11 @@ const orderRefundCommitted = React.createClass({
           swal.close();
           FlowRouter.go("orders");
         }, 2000);
-      }
+      };
+
+      this.setState({
+        submitting: false
+      });
     });
   },
 
