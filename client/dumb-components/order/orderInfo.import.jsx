@@ -90,7 +90,12 @@ const orderInfo = React.createClass({
         return <p>订单完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'expire':
         return (activity.prevState == 'paid' || activity.prevState == 'refundApplied')
-          ? <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
+          ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
+            ? [
+              <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+              <p>卖家退款说明: {activity.data.memo}</p>
+            ]
+            : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
           : (activity.prevState == 'pending')
             // 买家支付超时
             ? [/**/]
@@ -109,7 +114,12 @@ const orderInfo = React.createClass({
             ]
           : <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
       case 'refundApprove':
-        return <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+        return (activity.data && activity.data.memo && activity.data.memo.length > 0)
+          ? [
+            <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+            <p>卖家退款说明: {activity.data.memo}</p>
+          ]
+          : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
       case 'refundDeny':
         return (activity.data && activity.data.memo && activity.data.memo.length > 0)
           ? [

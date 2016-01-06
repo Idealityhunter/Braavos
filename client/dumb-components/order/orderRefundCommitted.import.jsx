@@ -18,8 +18,13 @@ const orderRefundCommitted = React.createClass({
       submitting: false,
       showRefundModal: false,
       agreeRefund: true,
+
       // TODO 控制退款金额的变化,以便于modal中使用
       //refundMoney: ''
+
+      // 存储备注信息
+      agreeMemo: '',
+      rejectMemo: ''
     }
   },
 
@@ -59,7 +64,8 @@ const orderRefundCommitted = React.createClass({
 
       // 密码正确, 进行退款
       const amount = $('.refund-amount').children('input').val();
-      Meteor.call('order.refundApprove', self.data.orderInfo.orderId, parseInt(amount * 100), self.data.orderInfo.status, (err, res) => {
+      const memo = $('textarea').val();
+      Meteor.call('order.refundApprove', self.data.orderInfo.orderId, parseInt(amount * 100), self.data.orderInfo.status, memo, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
@@ -192,6 +198,15 @@ const orderRefundCommitted = React.createClass({
     }
   },
 
+  // 选择同意还是拒绝
+  _changeRefundStatus(refundStatus){
+    if (refundStatus ^ this.state.agreeRefund){
+      this.setState({
+        agreeRefund: refundStatus
+      })
+    };
+  },
+
   render() {
     let content =
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
@@ -215,8 +230,8 @@ const orderRefundCommitted = React.createClass({
             <hr style={this.styles.hr}/>
 
             <div>
-              <Button bsStyle={this.state.agreeRefund ? 'primary' : 'default'} onClick={() => this.setState({agreeRefund: true})} style={this.styles.submitBtn}>同意退款申请</Button>
-              <Button bsStyle={this.state.agreeRefund ? 'default' : 'primary'} onClick={() => this.setState({agreeRefund: false})}>拒绝退款申请</Button>
+              <Button bsStyle={this.state.agreeRefund ? 'primary' : 'default'} onClick={() => this._changeRefundStatus(true)} style={this.styles.submitBtn}>同意退款申请</Button>
+              <Button bsStyle={this.state.agreeRefund ? 'default' : 'primary'} onClick={() => this._changeRefundStatus(false)}>拒绝退款申请</Button>
             </div>
 
             <label style={this.styles.marginRight}>买家:</label>
@@ -234,7 +249,11 @@ const orderRefundCommitted = React.createClass({
             }
 
             <span style={this.styles.asterisk}>*</span>备注
-            <textarea style={this.styles.textarea}></textarea>
+
+            {(this.state.agreeRefund)
+              ? <textarea style={this.styles.textarea} value={this.state.agreeMemo} onChange={(e) => this.setState({agreeMemo: e.target.value})}></textarea>
+              : <textarea style={this.styles.textarea} value={this.state.rejectMemo} onChange={(e) => this.setState({rejectMemo: e.target.value})}></textarea>
+            }
 
             <div style={this.styles.buttonGroup}>
               {(this.state.agreeRefund)
