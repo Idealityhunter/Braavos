@@ -12,10 +12,32 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  proptypes: {
+    title: React.PropTypes.String,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array,
+    category: React.PropTypes.Array,
+    country: React.PropTypes.Object,
+    locality: React.PropTypes.Object,
+    address: React.PropTypes.String,
+    timeCost: React.PropTypes.String,
+    plans: React.PropTypes.Array,
+    marketPrice: React.PropTypes.Number,
+    price: React.PropTypes.Number,
+    desc: React.PropTypes.Object,
+    notice: React.PropTypes.Array,
+    refundPolicy: React.PropTypes.Array,
+    trafficInfo: React.PropTypes.Array
+  },
+
+  // 控制'完成'动作
   submitLock: false,
+
   getInitialState(){
     return {
-      plans: this.props.commodityInfo && this.props.commodityInfo.plans || []
+      plans: this.props.commodityInfo && this.props.commodityInfo.plans || [],
+      images: this.props.commodityInfo && this.props.commodityInfo.images || [],
+      cover: this.props.commodityInfo && this.props.commodityInfo.cover || ''
     }
   },
 
@@ -31,6 +53,60 @@ const commodityModify = React.createClass({
     };
   },
 
+  // 添加图片
+  _handleAddImage(image){
+    let copyImages = this.state.images.slice();
+    if (copyImages.length == 0){
+      this.setState({
+        cover: image
+      });
+    };
+
+    copyImages.push(image);
+    this.setState({
+      images: copyImages
+    });
+  },
+
+  // 修改主图
+  _handleChangeCover(imageIndex){
+    // TODO 假如有两张一模一样的image在images,然后后一张被选为主图,则会出错
+    this.setState({
+      cover: this.state.images[imageIndex]
+    })
+  },
+
+  // 删除图片
+  _handleDeleteImage(imageIndex){
+    let copyImages = this.state.images.slice();
+
+    // 当为主图时的逻辑
+    if (_.isEqual(copyImages[imageIndex], this.state.cover)) {
+      if (copyImages.length > 1){
+        if (imageIndex != 0){
+          this.setState({
+            cover: copyImages[0]
+          });
+        } else{
+          this.setState({
+            cover: copyImages[1]
+          });
+        }
+      }else{
+        // 只有一张图时,cover也置空
+        this.setState({
+          cover: {}
+        })
+      }
+    }
+
+    copyImages.splice(imageIndex, 1);
+    this.setState({
+      images: copyImages
+    })
+  },
+
+  // 提交套餐信息的修改
   handleChildSubmitState(plans){
     this.setState({
       plans: plans
@@ -158,21 +234,6 @@ const commodityModify = React.createClass({
       marketPrice: Number.MAX_VALUE
     });
 
-    // 获取上传图片
-    const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
-    let images = [];
-    let cover = {};
-    for (i = 0; i < imageList.length; i++) {
-      if ($(imageList[i]).siblings('.fa-heart').length > 0)
-        cover = {
-          url: imageList[i].src.split('?')[0]//截取掉imageView等参数
-        }
-      images[i] = {
-        url: imageList[i].src.split('?')[0]
-      };
-    }
-    ;
-
     // 获取country选中的option对应的值
     const countryIndex = $('.form-group.address>select.country-select').val();
     const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
@@ -289,8 +350,8 @@ const commodityModify = React.createClass({
           timeRequired: timeRequired//暂时全部一样
         }
       }),
-      cover: cover,
-      images: images
+      cover: this.state.cover,
+      images: this.state.images
     };
 
     // locality不为空时才添加
@@ -366,10 +427,13 @@ const commodityModify = React.createClass({
     const basicStep =
       <div className="basic">
         <CommodityModifyBasic
+          addImage={this._handleAddImage}
+          changeCover={this._handleChangeCover}
+          deleteImage={this._handleDeleteImage}
           handleChildSubmitState={this.handleChildSubmitState}
+          cover={this.state.cover || ''}
+          images={this.state.images || []}
           title={this.props.commodityInfo && this.props.commodityInfo.title || []}
-          cover={this.props.commodityInfo && this.props.commodityInfo.cover || ''}
-          images={this.props.commodityInfo && this.props.commodityInfo.images || []}
           category={this.props.commodityInfo && this.props.commodityInfo.category || []}
           country={this.props.commodityInfo && this.props.commodityInfo.country || {}}
           locality={this.props.commodityInfo && this.props.commodityInfo.locality || {}}
