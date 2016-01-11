@@ -243,6 +243,13 @@ let commodityGallery = React.createClass({
   render() {
     const prefix = 'commodities.modify.basicTab.gallery';
 
+    const preloader = (
+      <div style={{display: this.state.imagePreloading ? "block" : "none"}}>
+        <img src="/images/spinner.gif"
+             style={this.styles.preloader}/>
+      </div>
+    );
+
     const focusImage = this.props.images[this.state.focusImageIndex];
     const focusImageHtml =
       <div className="img-view" style={{position:'relative'}}>
@@ -258,13 +265,6 @@ let commodityGallery = React.createClass({
         />
       {preloader}
     </div>;
-
-    const preloader = (
-      <div style={{display: this.state.imagePreloading ? "block" : "none"}}>
-        <img src="/images/spinner.gif"
-             style={this.styles.preloader}/>
-      </div>
-    );
 
     const uploadModal = this.state.showUploadModal ?
       <ImageCropper title={this.getIntlMessage(`${prefix}.cropUploadImage`)}
