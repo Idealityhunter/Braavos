@@ -11,10 +11,32 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  proptypes: {
+    title: React.PropTypes.String,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array,
+    category: React.PropTypes.Array,
+    country: React.PropTypes.Object,
+    locality: React.PropTypes.Object,
+    address: React.PropTypes.String,
+    timeCost: React.PropTypes.String,
+    plans: React.PropTypes.Array,
+    marketPrice: React.PropTypes.Number,
+    price: React.PropTypes.Number,
+    desc: React.PropTypes.Object,
+    notice: React.PropTypes.Array,
+    refundPolicy: React.PropTypes.Array,
+    trafficInfo: React.PropTypes.Array
+  },
+
+  // 控制'完成'动作
   submitLock: false,
+
   getInitialState(){
     return {
-      plans: this.props.commodityInfo && this.props.commodityInfo.plans || []
+      plans: this.props.commodityInfo && this.props.commodityInfo.plans || [],
+      images: this.props.commodityInfo && this.props.commodityInfo.images || [],
+      cover: this.props.commodityInfo && this.props.commodityInfo.cover || ''
     }
   },
 
@@ -30,400 +52,60 @@ const commodityModify = React.createClass({
     };
   },
 
-  componentDidMount (){
-    const self = this;
-    //$(".steps-container").steps({
-    //  headerTag: "h3",
-    //  bodyTag: "div",
-    //  transitionEffect: "fade",
-    //  autoFocus: true,
-    //  enableCancelButton: false,
-    //  enableKeyNavigation: false,
-    //  labels: {
-    //    finish: "完成",
-    //    next: "下一步",
-    //    previous: "上一步",
-    //    cancel: '取消'
-    //  },
-    //  onStepChanging: function (event, currentIndex, newIndex) {
-    //    if (currentIndex < newIndex) {
-    //      // TODO 验证当前tab的必要信息是否填充完毕
-    //      switch (currentIndex) {
-    //        case 0:
-    //        {
-    //          // 名称,图片,时长和套餐是必须的
-    //          //if (!$('.form-group.title>input').val()
-    //          //  || $('.gallery-wrap').find('.img-wrap').children('img').length <= 0
-    //          //  || !$('.form-group.cost-time>input').val()
-    //          //  || self.state.plans.length <= 0){
-    //          //  // TODO 弹窗提示?还是别的?
-    //          //  return false;
-    //          //}
-    //          if (!$('.form-group.title>input').val()) {
-    //            swal('请填写商品名称!', '', 'error');
-    //            $('.form-group.title>input').addClass('error');
-    //            return false;
-    //          }
-    //          ;
-    //          if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0) {
-    //            swal('请添加商品图片!', '', 'error');
-    //            return false;
-    //          }
-    //          ;
-    //          if (!$('.form-group.cost-time>input').val()) {
-    //            swal('请填写游玩时长!', '', 'error');
-    //            $('.form-group.cost-time>input').addClass('error');
-    //            return false;
-    //          }
-    //          ;
-    //          if (self.state.plans.length <= 0) {
-    //            swal('请添加套餐信息!', '', 'error');
-    //            return false;
-    //          }
-    //          ;
-    //          break;
-    //        }
-    //          ;
-    //        case 2:
-    //        {
-    //          // 费用包含和使用方法是必须的
-    //          //if (!$('.form-group.charge-include>textarea').val() || !$('.form-group.usage>textarea').val()){
-    //          //  // TODO 弹窗提示?还是别的?
-    //          //  return false;
-    //          //}
-    //          if (!$('.form-group.charge-include>textarea').val()) {
-    //            swal('请填写费用包含项目!', '', 'error');
-    //            $('.form-group.charge-include>textarea').addClass('error');
-    //            return false;
-    //          }
-    //          if (!$('.form-group.usage>textarea').val()) {
-    //            swal('请填写商品使用方法!', '', 'error');
-    //            $('.form-group.usage>textarea').addClass('error');
-    //            return false;
-    //          }
-    //          break;
-    //        }
-    //          ;
-    //        case 3:
-    //        {
-    //          // 预定和退改流程都是必须的
-    //          //if (!$('.form-group.book>textarea').val() || !$('.form-group.unbook>textarea').val()){
-    //          //  // TODO 弹窗提示?还是别的?
-    //          //  return false;
-    //          //}
-    //          if (!$('.form-group.book>textarea').val()) {
-    //            swal('请填写预订流程!', '', 'error');
-    //            $('.form-group.book>textarea').addClass('error');
-    //            return false;
-    //          }
-    //          if (!$('.form-group.unbook>textarea').val()) {
-    //            swal('请填写退订和改订的相关规定!', '', 'error');
-    //            $('.form-group.unbook>textarea').addClass('error');
-    //            return false;
-    //          }
-    //          break;
-    //        }
-    //          ;
-    //        default:
-    //          return true;
-    //      }
-    //    }
-    //    return true;
-    //  },
-    //  onFinishing: function (event, currentIndex) {
-    //    if (self.submitLock)
-    //      return;
-    //    else
-    //      self.submitLock = true;
-    //    $('.submit-waiting').show();
-    //    // TODO 验证和提交
-    //    //$(".body:eq(" + newIndex + ") .error", form).removeClass("error")
-    //
-    //    // 当前若是在最后一页则无需检查,可以直接提交
-    //    if (currentIndex < 4) {
-    //      // 第一页的基本信息的检查
-    //      if (!$('.form-group.title>input').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写商品名称!', '', 'error');
-    //        $('.form-group.title>input').addClass('error');
-    //        return false;
-    //      }
-    //      if ($('.gallery-wrap').find('.img-wrap').children('img').length <= 0) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请添加商品图片!', '', 'error');
-    //        return false;
-    //      }
-    //      if (!$('.form-group.cost-time>input').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写游玩时长!', '', 'error');
-    //        $('.form-group.cost-time>input').addClass('error');
-    //        return false;
-    //      }
-    //      if (self.state.plans.length <= 0) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请添加套餐信息!', '', 'error');
-    //        return false;
-    //      }
-    //
-    //      // 第三页的购买须知的检查
-    //      if (!$('.form-group.charge-include>textarea').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写费用包含项目!', '', 'error');
-    //        $('.form-group.charge-include>textarea').addClass('error');
-    //        return false;
-    //      }
-    //      if (!$('.form-group.usage>textarea').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写商品使用方法!', '', 'error');
-    //        $('.form-group.usage>textarea').addClass('error');
-    //        return false;
-    //      }
-    //
-    //      // 第四页的预定退改流程的检查
-    //      if (!$('.form-group.book>textarea').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写预订流程!', '', 'error');
-    //        $('.form-group.book>textarea').addClass('error');
-    //        return false;
-    //      }
-    //      if (!$('.form-group.unbook>textarea').val()) {
-    //        self.submitLock = false;
-    //        $('.submit-waiting').hide();
-    //        swal('请填写退订和改订的相关规定!', '', 'error');
-    //        $('.form-group.unbook>textarea').addClass('error');
-    //        return false;
-    //      }
-    //    }
-    //    ;
-    //
-    //    // 获取填写的信息
-    //    const priceInfo = _.reduce(self.state.plans, function (min, plan) {
-    //      if (plan.price < min.price) {
-    //        return {
-    //          price: plan.price,
-    //          marketPrice: plan.marketPrice
-    //        };
-    //      }
-    //      ;
-    //      return min;
-    //    }, {
-    //      price: Number.MAX_VALUE,
-    //      marketPrice: Number.MAX_VALUE
-    //    });
-    //
-    //    // 获取上传图片
-    //    const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
-    //    let images = [];
-    //    let cover = {};
-    //    for (i = 0; i < imageList.length; i++) {
-    //      if ($(imageList[i]).siblings('.fa-heart').length > 0)
-    //        cover = {
-    //          url: imageList[i].src.split('?')[0]//截取掉imageView等参数
-    //        }
-    //      images[i] = {
-    //        url: imageList[i].src.split('?')[0]
-    //      };
-    //    }
-    //    ;
-    //
-    //    // 获取country选中的option对应的值
-    //    const countryIndex = $('.form-group.address>select.country-select').val();
-    //    const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
-    //    const countryEn = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).attr('data-en');
-    //    const country = {
-    //      className: 'com.lvxingpai.model.geo.Country',
-    //      zhName: countryZh,
-    //    };
-    //    countryEn && _.extend(country, {enName: countryEn});
-    //
-    //    // 获取locality选中的option对应的值
-    //    const localityIndex = $('.form-group.address>select.locality-select').val();
-    //    const localityZh = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).text();
-    //    const localityEn = $($('.form-group.address>select.locality-select>option')[parseInt(localityIndex)]).attr('data-en');
-    //    const locality = {
-    //      className: 'com.lvxingpai.model.geo.Locality',
-    //      zhName: localityZh
-    //    };
-    //    localityEn && _.extend(locality, {enName: localityEn});
-    //
-    //    // 获取category选中的option对应的值
-    //    const categoryIndex = $('.form-group.category>select').val();
-    //    const category = $($('.form-group.category>select>option')[parseInt(categoryIndex)]).text();
-    //
-    //    // 获取RichText
-    //    const um = UM.getEditor('ueContainer');
-    //    const desc = {
-    //      title: '商品介绍',
-    //      //summary: $('.form-group.introduction>textarea').val(),
-    //      body: um.getContent()
-    //    };
-    //    // 截取summary, 保留所有空白符
-    //    const tmp = document.createElement("DIV");
-    //    tmp.innerHTML = desc.body;
-    //    desc.summary = (tmp.textContent || tmp.innerText || "").substring(0, 100);
-    //
-    //    // tips: 现在timeRequired默认为true且不可修改
-    //    //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
-    //    const timeRequired = true;
-    //
-    //    const commodityInfo = {
-    //      title: $('.form-group.title>input').val(),
-    //      country: country,
-    //      locality: locality,
-    //      address: $('.form-group.address>input').val(),
-    //      category: [category],
-    //      timeCost: $('.form-group.cost-time>input').val(),
-    //      //stockInfo: $('.form-group.cost-time>input').val(),
-    //      refundPolicy: [
-    //        {
-    //          // book
-    //          title: '预定流程',
-    //          summary: $('.form-group.book>textarea').val(),
-    //          body: $('.form-group.book>textarea').val()
-    //        },
-    //        {
-    //          // unbook
-    //          title: '退改流程',
-    //          summary: $('.form-group.unbook>textarea').val(),
-    //          body: $('.form-group.unbook>textarea').val()
-    //        }
-    //      ],
-    //      notice: [
-    //        {
-    //          // chargeInclude
-    //          title: '费用包含',
-    //          summary: $('.form-group.charge-include>textarea').val(),
-    //          body: $('.form-group.charge-include>textarea').val()
-    //        },
-    //        {
-    //          // chargeExcept
-    //          title: '费用不含',
-    //          summary: $('.form-group.charge-except>textarea').val(),
-    //          body: $('.form-group.charge-except>textarea').val()
-    //        },
-    //        {
-    //          // usage
-    //          title: '使用方法',
-    //          summary: $('.form-group.usage>textarea').val(),
-    //          body: $('.form-group.usage>textarea').val()
-    //        },
-    //        {
-    //          // attention
-    //          title: '注意事项',
-    //          summary: $('.form-group.attention>textarea').val(),
-    //          body: $('.form-group.attention>textarea').val()
-    //        }
-    //      ],
-    //      trafficInfo: [{
-    //        title: '交通提示',
-    //        summary: $('.form-group.traffic>textarea').val(),
-    //        body: $('.form-group.traffic>textarea').val()
-    //      }],
-    //      desc: desc,
-    //      price: priceInfo.price,
-    //      marketPrice: priceInfo.marketPrice,
-    //      plans: self.state.plans.map((plan) => {
-    //        return {
-    //          planId: plan.planId,
-    //          price: plan.price,
-    //          marketPrice: plan.marketPrice,
-    //          pricing: (timeRequired) ? plan.pricing : [{
-    //            price: plan.price,
-    //            timeRange: []
-    //          }],
-    //          title: plan.title,
-    //          timeRequired: timeRequired//暂时全部一样
-    //        }
-    //      }),
-    //      cover: cover,
-    //      images: images
-    //    };
-    //
-    //    // 编辑和添加的不同
-    //    if (self.props.commodityId) {
-    //      Meteor.call('commodity.update', Meteor.userId(), commodityInfo, self.props.commodityId, function (err, res) {
-    //        $('.submit-waiting').hide();
-    //        // TODO 回调结果反应
-    //        if (err) {
-    //          self.submitLock = false;
-    //          swal("编辑商品失敗!", "", "error");
-    //          return;
-    //        }
-    //        ;
-    //        if (res) {
-    //          self.submitLock = false;
-    //          swal({
-    //            title: "成功编辑商品!",
-    //            type: "success",
-    //            showCancelButton: false,
-    //            confirmButtonColor: "#AEDEF4",
-    //            closeOnConfirm: true
-    //          }, function () {
-    //            FlowRouter.go('commodities');
-    //          });
-    //
-    //          // 以免不点击swal导致不跳转
-    //          setTimeout(FlowRouter.go('commodities'), 500);
-    //
-    //          return;
-    //        }
-    //        ;
-    //      });
-    //    } else {
-    //      Meteor.call('commodity.insert', Meteor.userId(), commodityInfo, function (err, res) {
-    //        $('.submit-waiting').hide();
-    //        // TODO 回调结果反应
-    //        if (err) {
-    //          self.submitLock = false;
-    //          swal("添加商品失敗!!", "", "error");
-    //          return;
-    //        }
-    //        ;
-    //        if (res) {
-    //          self.submitLock = false;
-    //          swal({
-    //            title: "成功添加商品!",
-    //            type: "success",
-    //            showCancelButton: false,
-    //            confirmButtonColor: "#AEDEF4",
-    //            closeOnConfirm: true
-    //          }, function () {
-    //            FlowRouter.go('commodities');
-    //          });
-    //
-    //          // 以免不点击swal导致不跳转
-    //          setTimeout(FlowRouter.go('commodities'), 500);
-    //          return;
-    //        }
-    //        ;
-    //      });
-    //    }
-    //
-    //    // steps插件在return false时,title的样式会有不同
-    //    // return true;
-    //    // return false;
-    //  }
-    //});
+  // 添加图片
+  _handleAddImage(image){
+    let copyImages = this.state.images.slice();
+    if (copyImages.length == 0){
+      this.setState({
+        cover: image
+      });
+    };
 
-    // datepicker的绑定,要放在steps后,疑似steps改变了DOM结构,待考证
-    //$('.commodity-basic-datepicker .input-daterange').datepicker({
-    //  language: 'zh',
-    //  format: 'yyyy-mm-dd',
-    //  keyboardNavigation: false,
-    //  forceParse: false,
-    //  autoclose: true,
-    //  //language: 'en'
-    //  // TODO 待解决 => 希望能够展示中文的月份等信息
-    //});
+    copyImages.push(image);
+    this.setState({
+      images: copyImages
+    });
   },
 
+  // 修改主图
+  _handleChangeCover(imageIndex){
+    // TODO 假如有两张一模一样的image在images,然后后一张被选为主图,则会出错
+    this.setState({
+      cover: this.state.images[imageIndex]
+    })
+  },
+
+  // 删除图片
+  _handleDeleteImage(imageIndex){
+    let copyImages = this.state.images.slice();
+
+    // 当为主图时的逻辑
+    if (_.isEqual(copyImages[imageIndex], this.state.cover)) {
+      if (copyImages.length > 1){
+        if (imageIndex != 0){
+          this.setState({
+            cover: copyImages[0]
+          });
+        } else{
+          this.setState({
+            cover: copyImages[1]
+          });
+        }
+      }else{
+        // 只有一张图时,cover也置空
+        this.setState({
+          cover: {}
+        })
+      }
+    }
+
+    copyImages.splice(imageIndex, 1);
+    this.setState({
+      images: copyImages
+    })
+  },
+
+  // 提交套餐信息的修改
   handleChildSubmitState(plans){
     this.setState({
       plans: plans
@@ -592,21 +274,6 @@ const commodityModify = React.createClass({
       marketPrice: Number.MAX_VALUE
     });
 
-    // 获取上传图片
-    const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
-    let images = [];
-    let cover = {};
-    for (i = 0; i < imageList.length; i++) {
-      if ($(imageList[i]).siblings('.fa-heart').length > 0)
-        cover = {
-          url: imageList[i].src.split('?')[0]//截取掉imageView等参数
-        }
-      images[i] = {
-        url: imageList[i].src.split('?')[0]
-      };
-    }
-    ;
-
     // 获取country选中的option对应的值
     const countryIndex = $('.form-group.address>select.country-select').val();
     const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
@@ -723,8 +390,8 @@ const commodityModify = React.createClass({
           timeRequired: timeRequired//暂时全部一样
         }
       }),
-      cover: cover,
-      images: images
+      cover: this.state.cover,
+      images: this.state.images
     };
 
     // locality不为空时才添加
@@ -800,10 +467,13 @@ const commodityModify = React.createClass({
     const basicStep =
       <div className="basic">
         <CommodityModifyBasic
+          addImage={this._handleAddImage}
+          changeCover={this._handleChangeCover}
+          deleteImage={this._handleDeleteImage}
           handleChildSubmitState={this.handleChildSubmitState}
+          cover={this.state.cover || ''}
+          images={this.state.images || []}
           title={this.props.commodityInfo && this.props.commodityInfo.title || []}
-          cover={this.props.commodityInfo && this.props.commodityInfo.cover || ''}
-          images={this.props.commodityInfo && this.props.commodityInfo.images || []}
           category={this.props.commodityInfo && this.props.commodityInfo.category || []}
           country={this.props.commodityInfo && this.props.commodityInfo.country || {}}
           locality={this.props.commodityInfo && this.props.commodityInfo.locality || {}}
