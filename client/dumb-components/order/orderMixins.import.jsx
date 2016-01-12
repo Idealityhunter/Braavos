@@ -100,4 +100,24 @@ export const OrderMixin = {
     };
     return tempStr;
   },
+
+  // 根据订单是否已支付,返回number
+  _getEncodedNumber(order, number){
+    if (this._hasPaid(order))
+      return number;
+    else
+      return this._encodeNumber(number);
+  },
+
+  // 判断订单是否已支付
+  _hasPaid(order){
+    return (_.findIndex(order.activities, (activity) => activity.action == 'pay') != -1)
+  },
+
+  // 将number部分用*代替(仅保留前两位,后三位)
+  _encodeNumber(number){
+    if (number != null) number = number.toString();
+    const centerString = number.substring(2, number.length - 3).replace(/\w/ig, '*');
+    return number.substring(0, Math.min(2, number.length - 3)) + centerString + number.substring(Math.max(2, number.length - 3))
+  }
 };
