@@ -54,7 +54,7 @@ const orderRefundCancel = React.createClass({
 
       // 密码正确, 取消订单
       const memo = $('textarea').val();
-      Meteor.call('order.cancelRefund', self.data.orderInfo.orderId, parseInt(self.data.orderInfo.totalPrice * 100), memo, (err, res) => {
+      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(self.data.orderInfo.totalPrice * 100), memo, (err, res) => {
         if (err || !res) {
           // 密码验证失败处理
           swal('退款失败', '', 'error');
