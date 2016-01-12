@@ -45,6 +45,7 @@ const order = React.createClass({
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orders', options, isAdmin);
     let orders;
+    let ordersReady = false;
     if (handleOrder.ready()) {
       //最好是按照更新时间来排序吧
       orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
@@ -52,10 +53,12 @@ const order = React.createClass({
         key: Meteor.uuid(),
         totalPrice: order.totalPrice / 100
       }));
+      ordersReady = true;
     }
 
     return {
-      orders: orders || []
+      orders: orders || [],
+      ordersReady: ordersReady
     };
   },
 
@@ -310,6 +313,11 @@ const order = React.createClass({
     ibox: {
       //border: '1px solid #1ab394'
       border: '1px solid #18a689'
+    },
+    defaultSentence: {
+      color: '#aaa',
+      fontSize: 20,
+      textAlign: 'center'
     }
   },
 
@@ -390,7 +398,7 @@ const order = React.createClass({
       </thead>;
 
     // 商品列表行
-    const orderList = this.data.orders.map(order =>{
+    const orderList = this.data.orders.map(order => {
       return (
         <tr key={order.key}>
           <td style={{textAlign:'center'}}>{order.orderId}</td>
@@ -454,11 +462,16 @@ const order = React.createClass({
         <div className="col-lg-12">
           <div className="ibox" style={this.styles.ibox}>
             <div className="ibox-content">
-              <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
-                {orderTableHead}
-                {orderTableBody}
-                {orderTableFoot}
-              </table>
+              {this.data.orders.length == 0
+                ? this.data.ordersReady
+                  ? <div style={this.styles.defaultSentence}>未找到符合条件的订单</div>
+                  : <div style={this.styles.defaultSentence}>正在查询中 ...</div>
+                : <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
+                    {orderTableHead}
+                    {orderTableBody}
+                    {orderTableFoot}
+                  </table>
+              }
             </div>
           </div>
         </div>
