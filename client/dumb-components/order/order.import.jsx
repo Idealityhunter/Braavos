@@ -406,13 +406,14 @@ const order = React.createClass({
           </td>
           <td style={{textAlign:'center'}}>
             <p>{order.contact && `${order.contact.surname}${order.contact.givenName}`}</p>
-            <p>{order.contact && order.contact.tel && `手机: ${order.contact.tel.dialCode} ${order.contact.tel.number}`}</p>
-            <a href="">留言</a>
+            <p>{order.contact && order.contact.tel && `手机: ${order.contact.tel.dialCode} ${this._getEncodedNumber(order, order.contact.tel.number)}`}</p>
           </td>
           <td style={{color: '#333', textAlign: 'center'}}>
             <div className="btn-group">
               <a href={`/orders/${order.orderId}`}>订单详情</a>
               {this._getActionHtml(order)}
+              <br/>
+              <a href="">留言</a>
             </div>
           </td>
         </tr>)

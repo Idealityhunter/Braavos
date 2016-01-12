@@ -64,17 +64,17 @@ const orderInfo = React.createClass({
   },
 
   // 获取身份证/护照号码/入台证/港澳通行证
-  _getIdentityCode(traveller){
-    const identity = traveller.identities && traveller.identities[0] || {};
+  _getIdentityCode(order, traveller){
+    const identity = traveller && traveller.identities && traveller.identities[0] || {};
     switch (identity.idType) {
       case 'chineseID':
-        return `身份证 ${identity.number}`;
+        return `身份证 ${this._getEncodedNumber(order, identity.number)}`;
       case 'passport':
-        return `护照 ${identity.number}`;
+        return `护照 ${this._getEncodedNumber(order, identity.number)}`;
       case 'TaiwanPermit':
-        return `入台证 ${identity.number}`;
+        return `入台证 ${this._getEncodedNumber(order, identity.number)}`;
       case 'HK&MaPermit':
-        return `港澳通行证 ${identity.number}`;
+        return `港澳通行证 ${this._getEncodedNumber(order, identity.number)}`;
       default:
         return `无`;
     }
@@ -319,8 +319,8 @@ const orderInfo = React.createClass({
           <div style={this.styles.traveller}>
             <label style={this.styles.label}>旅客{++index}</label><span>{traveller.surname} {traveller.givenName}</span>
             <div>
-              <span style={this.styles.tel}>电话: {traveller.tel.dialCode} {traveller.tel.number}</span>
-              <span>证件: {this._getIdentityCode(traveller)}</span>
+              <span style={this.styles.tel}>电话: {traveller.tel.dialCode} {this._getEncodedNumber(orderInfo, traveller.tel.number)}</span>
+              <span>证件: {this._getIdentityCode(orderInfo, traveller)}</span>
             </div>
           </div>
         )
