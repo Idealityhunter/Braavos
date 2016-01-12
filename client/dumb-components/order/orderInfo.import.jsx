@@ -63,11 +63,21 @@ const orderInfo = React.createClass({
     });
   },
 
-  // 获取身份证/护照号码
+  // 获取身份证/护照号码/入台证/港澳通行证
   _getIdentityCode(traveller){
-    // 暂时把number给读取
-    const identity = _.find(traveller.identities, identity => identity.idType == 'passport');
-    return (identity) ? identity.code || identity.number : '';
+    const identity = traveller.identities && traveller.identities[0] || {};
+    switch (identity.idType) {
+      case 'chineseID':
+        return `身份证 ${identity.number}`;
+      case 'passport':
+        return `护照 ${identity.number}`;
+      case 'TaiwanPermit':
+        return `入台证 ${identity.number}`;
+      case 'HK&MaPermit':
+        return `港澳通行证 ${identity.number}`;
+      default:
+        return `无`;
+    }
   },
 
   // 根据不同的action获取相应展示的activity语句
@@ -310,7 +320,7 @@ const orderInfo = React.createClass({
             <label style={this.styles.label}>旅客{++index}</label><span>{traveller.surname} {traveller.givenName}</span>
             <div>
               <span style={this.styles.tel}>电话: {traveller.tel.dialCode} {traveller.tel.number}</span>
-              <span>证件: 护照 {this._getIdentityCode(traveller)}</span>
+              <span>证件: {this._getIdentityCode(traveller)}</span>
             </div>
           </div>
         )
