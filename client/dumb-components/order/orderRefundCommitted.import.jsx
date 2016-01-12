@@ -65,7 +65,7 @@ const orderRefundCommitted = React.createClass({
       // 密码正确, 进行退款
       const amount = $('.refund-amount').children('input').val();
       const memo = $('textarea').val();
-      Meteor.call('order.refundApprove', self.data.orderInfo.orderId, parseInt(amount * 100), self.data.orderInfo.status, memo, (err, res) => {
+      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount * 100), memo, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');

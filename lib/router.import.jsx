@@ -27,7 +27,7 @@ BraavosCore.SubsManager.geo.subscribe("countries");
 function loginCheck(context, redirect, stop) {
   if (!Meteor.userId()) {
     redirect('login');
-  }
+  };
   BraavosCore.SubsManager.account.subscribe("basicUserInfo");
   BraavosCore.SubsManager.account.subscribe("sellerInfo");
 }
