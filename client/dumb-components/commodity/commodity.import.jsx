@@ -294,7 +294,13 @@ var commodity = React.createClass({
         {(this.data.isAdmin) ? <td>{commodity.seller.sellerId}</td> : <td className='hidden'></td>}
         {(this.data.isAdmin) ? <td>{commodity.seller.name}</td> : <td className='hidden'></td>}
         <td>{commodity.commodityId}</td>
-        <td><img src={commodity.cover.url} alt="" style={{width: 100, height: 100}}/></td>
+        <td>
+          <img src={commodity.cover.cropHint
+                ? `${commodity.cover.url}?imageMogr2/crop/!${commodity.cover.cropHint.right - commodity.cover.cropHint.left}x${commodity.cover.cropHint.bottom - commodity.cover.cropHint.top}a${commodity.cover.cropHint.left}a${commodity.cover.cropHint.top}/thumbnail/200/200/`
+                : `${commodity.cover.url}?imageView2/2/w/200/h/200`
+               }
+               alt="" style={{width: 100, height: 100}}/>
+        </td>
         <td>{commodity.title}</td>
         {/*<td>￥{commodity.price}{commodity.plans.length > 1 ? '起' : ''}</td>*/}
         <td>

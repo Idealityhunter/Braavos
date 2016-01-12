@@ -92,6 +92,7 @@ export const ImageCropper = React.createClass({
 
   onOk() {
     if (this.props.onOk) {
+      // oSelection: original selection
       const oSelection = this._selConversion(this.state.selection);
       const imageNode = ReactDOM.findDOMNode(this.refs["image"]);
 
@@ -105,9 +106,11 @@ export const ImageCropper = React.createClass({
 
       this.props.onOk({
         target: this,
-        selection: this.state.selection, oSelection: oSelection,
+        selection: this.state.selection,
+        oSelection: oSelection,
         // crop后的数据
         croppedImage: canvas.toDataURL("image/png"),
+        oImage: this.props.imageSrc,
         imageNode: imageNode
       });
     }

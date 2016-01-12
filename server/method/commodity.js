@@ -84,7 +84,7 @@ Meteor.methods({
       updateTime: currentTime,
       version: currentTime.getTime()
     });
-    return collCommoditySnapshot.insert(_.extend(resetDoc, modDoc)) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
+    return collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
 
     // 只能编辑自己的商品
     //const userId = parseInt(Meteor.userId());

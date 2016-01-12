@@ -10,6 +10,24 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 const commodityModifyBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
+  proptypes: {
+    addImage: React.PropTypes.func,
+    changeCover: React.PropTypes.func,
+    deleteImage: React.PropTypes.func,
+    handleChildSubmitState: React.PropTypes.func,
+    title: React.PropTypes.String,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array,
+    category: React.PropTypes.Array,
+    country: React.PropTypes.Object,
+    locality: React.PropTypes.Object,
+    address: React.PropTypes.String,
+    timeCost: React.PropTypes.String,
+    plans: React.PropTypes.Array,
+    marketPrice: React.PropTypes.Number,
+    price: React.PropTypes.Number
+  },
+
   styles: {
     asterisk: {
       color: 'coral',
@@ -205,7 +223,13 @@ const commodityModifyBasic = React.createClass({
           <FormattedMessage message={this.getIntlMessage(prefix + 'commodityImages')}/>
           <span style={this.styles.asterisk}>*</span>
         </label>
-        <CommodityGallery images={this.props.images} cover={this.props.cover}/>
+        <CommodityGallery
+          addImage={this.props.addImage}
+          changeCover={this.props.changeCover}
+          deleteImage={this.props.deleteImage}
+          images={this.props.images}
+          cover={this.props.cover}
+        />
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className=""><FormattedMessage message={this.getIntlMessage(prefix + 'basicInfo')}/></label>
         <form className="form-horizontal commodity-basic-form-wrap">

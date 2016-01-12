@@ -7,6 +7,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityPlans = React.createClass({
   mixins: [IntlMixin],
+
+  proptypes: {
+    plans: React.PropTypes.Array,
+    handleSubmitState: React.PropTypes.func
+  },
+
   getInitialState(){
     return {
       // 会影响: 修改状态下的条款以及增加的项目(的calendar是否展示)
