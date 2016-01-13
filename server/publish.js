@@ -19,7 +19,7 @@ Meteor.publish('basicUserInfo', function () {
 Meteor.publish("sellerInfo", function () {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Seller;
-  const allowedFields = ["sellerId", "desc", "images", "lang", "serviceZone", "name", "address", "email", "phone"];
+  const allowedFields = ["sellerId", "desc", "images", "lang", "serviceZone", "services","name", "address", "email", "phone"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;

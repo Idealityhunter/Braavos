@@ -63,8 +63,11 @@ Marketplace.Seller = new SimpleSchema({
     optional: true
   },
   // 服务标签
+  // 包括: 语言帮助/行程规划/当地咨询
   services: {
     type: [String],
+    allowedValues: ["language", "plan", "consult"],
+    maxCount: 3,
     optional: true
   },
   // 银行账户
