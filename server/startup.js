@@ -157,10 +157,13 @@ function initKadira() {
 
 Meteor.startup(()=> {
   console.log('Server startup');
+
   // 获取etcd设置
   resolveEtcdData();
+
   // 数据库设置
   initMongo();
+
   // 初始化Yunkai
   initYunkaiService();
 

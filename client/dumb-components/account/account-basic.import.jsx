@@ -128,10 +128,13 @@ export const AccountBasic = React.createClass({
 
     let um = null;
     if (!umeditorFlags.init) {
+      // what does this mean?
       $("div.tab-content").focus();
+
       // 初始化desc页面的um插件
       UM.delEditor('ueContainer');
       um = UM.getEditor('ueContainer');
+
       $("#ueContainer").blur(() => {
         if (this.data.subsReady) {
           const desc = um.getContent();
