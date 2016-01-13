@@ -20,6 +20,8 @@ Meteor.methods({
         createTime: new Date()
       };
       BraavosCore.Database.Braavos.Seller.insert(sellerInfo);
+
+      Meteor.call('viae.marketplace.onCreateSeller', seller.sellerId);
       return sellerInfo;
     }
   },
