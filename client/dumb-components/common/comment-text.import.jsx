@@ -1,14 +1,17 @@
 
 
 const commentText = React.createClass({
-  style: {
+  styles: {
     verticalAlign: 'middle',
     color: 'darksalmon',
     fontSize: 12
   },
   render() {
     return (
-      <div className={this.props.inline ? 'comment-text inline' : 'comment-text'} style={this.style}>注：{this.props.text}</div>
+      <div className={this.props.inline ? 'comment-text inline' : 'comment-text'}
+           style={_.extend({}, this.styles, this.props.style)}>
+        注：{this.props.text}
+      </div>
     );
   }
 });
