@@ -274,6 +274,13 @@ const commodityModify = React.createClass({
     tmp.innerHTML = desc.body;
     desc.summary = (tmp.textContent || tmp.innerText || "").substring(0, 100);
 
+
+    // 调整images的顺序 => 将cover抽离出来,放在第一张
+    const copyImages = this.state.images.slice();
+    const coverIndex = _.findIndex(copyImages, image => _.isEqual(image, this.state.cover));
+    copyImages.splice(coverIndex, 1);
+    const images = [this.state.cover].concat(copyImages);
+
     // tips: 现在timeRequired默认为true且不可修改
     //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
     const timeRequired = true;
@@ -351,7 +358,7 @@ const commodityModify = React.createClass({
         }
       }),
       cover: this.state.cover,
-      images: this.state.images
+      images: images
     };
 
     // locality不为空时才添加
