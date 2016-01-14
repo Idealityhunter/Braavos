@@ -119,5 +119,69 @@ export const OrderMixin = {
     if (number != null) number = number.toString();
     const centerString = number.substring(2, number.length - 3).replace(/\w/ig, '*');
     return number.substring(0, Math.min(2, number.length - 3)) + centerString + number.substring(Math.max(2, number.length - 3))
+  },
+
+
+  // 根据不同的action获取相应展示的activity语句(用于info和refundCommit/refundPay页面)
+  _getActivityStatement(activity){
+    switch (activity.action) {
+      case 'create':
+        return <p>订单创建时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'pay':
+        return <p>订单支付时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'commit':
+        return <p>订单发货时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'cancel':
+        return (activity.data && activity.data.reason && activity.data.reason.length > 0)
+          ? [
+          <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>取消订单理由: {activity.data.reason}</p>
+        ]
+          : <p>取消订单时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'finish':
+        return <p>订单完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'expire':
+        return (activity.prevState == 'paid' || activity.prevState == 'refundApplied')
+          ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
+          ? [
+          <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>卖家退款说明: {activity.data.memo}</p>
+        ]
+          : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
+          : (activity.prevState == 'pending')
+          // 买家支付超时
+          ? [/**/]
+          : [];
+      case 'refundApply':
+        return (activity.data && activity.data.reason && activity.data.reason.length > 0)
+          ? (activity.data.memo && activity.data.memo.length > 0)
+          ? [
+          <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>申请退款理由: {activity.data.reason}</p>,
+          <p>申请退款留言: {activity.data.memo}</p>
+        ]
+          : [
+          <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>申请退款理由: {activity.data.reason}</p>
+        ]
+          : <p>申请退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+      case 'refundApprove':
+        return (activity.data && activity.data.memo && activity.data.memo.length > 0)
+          ? [
+          <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>卖家退款说明: {activity.data.memo}</p>
+        ]
+          : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>
+      case 'refundDeny':
+        return (activity.data && activity.data.memo && activity.data.memo.length > 0)
+          ? [
+          <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>,
+          <p>拒绝退款理由: {activity.data.memo}</p>
+        ]
+          : <p>拒绝退款时间: {moment(activity.timestamp).format('YYYY-MM-DD hh:mm')}</p>;
+        break;
+      default:
+        return ;
+    }
   }
 };
