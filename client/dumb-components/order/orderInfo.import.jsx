@@ -306,7 +306,7 @@ const orderInfo = React.createClass({
               <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD')}</td>
               <td style={this.styles.td}>
                 <p>{`${orderInfo.contact.surname}${orderInfo.contact.givenName}`}</p>
-                <p>{`手机: ${orderInfo.contact.tel.dialCode} ${orderInfo.contact.tel.number}`}</p>
+                <p>{`手机: ${orderInfo.contact.tel.dialCode} ${this._getEncodedNumber(orderInfo, orderInfo.contact.tel.number)}`}</p>
               </td>
               <td style={this.styles.td}>{orderInfo.comment ? orderInfo.comment : '-'}</td>
             </tr>
