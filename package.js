@@ -4,7 +4,7 @@ Package.describe({
   // Brief, one-line summary of the package.
   summary: "Schemas of Lvxingpai apps",
   // URL to the Git repository containing the source code for this package.
-  git: "",
+  git: "https://github.com/Lvxingpai/core-model-meteor",
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: "README.md"
@@ -16,7 +16,8 @@ Package.onUse(function (api) {
   api.use("aldeed:simple-schema");
   api.imply("aldeed:simple-schema");
 
-  api.addFiles(["core-model.js", "lib/geo.js", "lib/misc.js", "lib/finance.js", "lib/marketplace.js"], ["client", "server"]);
+  api.addFiles(["core-model.js", "lib/misc.js", "lib/geo.js", "lib/finance.js", "lib/account.js",
+    "lib/marketplace.js"], ["client", "server"]);
 
   api.export("CoreModel", ["client", "server"])
 });
