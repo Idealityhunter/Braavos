@@ -408,7 +408,7 @@ const order = React.createClass({
           </td>
           <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
           <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
-          <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD hh:mm')}</td>
+          <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD HH:mm')}</td>
           <td style={{color: '#333', textAlign: 'center'}}>
             {this._getTradeStatusHtml(order)}
           </td>
