@@ -71,9 +71,9 @@ const orderInfo = React.createClass({
         return `身份证 ${this._getEncodedNumber(order, identity.number)}`;
       case 'passport':
         return `护照 ${this._getEncodedNumber(order, identity.number)}`;
-      case 'TaiwanPermit':
+      case 'TWPermit':
         return `入台证 ${this._getEncodedNumber(order, identity.number)}`;
-      case 'HK&MaPermit':
+      case 'HMPermit':
         return `港澳通行证 ${this._getEncodedNumber(order, identity.number)}`;
       default:
         return `无`;
