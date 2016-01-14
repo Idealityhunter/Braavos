@@ -57,6 +57,7 @@ const orderInfo = React.createClass({
           // 错误处理
           swal('关闭交易失败', '', 'warning');
         } else{
+          Meteor.setTimeout(() => FlowRouter.go('commodities'), 500);
           // TODO 关闭交易成功
         }
       });
@@ -226,7 +227,7 @@ const orderInfo = React.createClass({
               <th>购买数量</th>
               <th>订单总价</th>
               <th>使用时间</th>
-              <th>联系人</th>
+              <th>联系人信息</th>
               <th>留言</th>
             </tr>
           </thead>

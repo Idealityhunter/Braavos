@@ -17,7 +17,9 @@ Meteor.methods({
         sellerId: seller.sellerId,
         userInfo: u,
         name: seller.name,
-        createTime: new Date()
+        createTime: new Date(),
+        // 默认选择支持中文
+        lang: ['zh']
       };
       BraavosCore.Database.Braavos.Seller.insert(sellerInfo);
 
