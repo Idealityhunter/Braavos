@@ -14,6 +14,8 @@ import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
 
+import {Page404} from '/client/dumb-components/page404';
+
 import {StepsDemo} from "/client/components/steps/steps"
 
 // 初始化Sub Manager
@@ -243,3 +245,12 @@ FlowRouter.route('/account', {
     ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData, {documentTitle: "账户信息"}));
   }
 });
+
+FlowRouter.notFound = {
+  subscriptions: function() {
+
+  },
+  action: function() {
+    ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
+  }
+};
