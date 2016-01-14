@@ -152,6 +152,10 @@ const orderRefundPaid = React.createClass({
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
     if (this.data.orderInfo.status) {
+      const activityArray = _.filter(this.data.orderInfo.activities, activity => activity.action == 'refundApply');
+      const orderRefundActivity = (activityArray.length > 0) ? activityArray[activityArray.length - 1] : {};
+      const orderRefundList = this._getActivityStatement(orderRefundActivity);
+
       content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
@@ -179,6 +183,8 @@ const orderRefundPaid = React.createClass({
 
             <span style={this.styles.asterisk}>*</span>备注
             <textarea style={this.styles.textarea}></textarea>
+
+            {orderRefundList}
 
             <div style={this.styles.buttonGroup}>
               <Button bsStyle="primary" onClick={this._handleSubmitRefund}>退款</Button>

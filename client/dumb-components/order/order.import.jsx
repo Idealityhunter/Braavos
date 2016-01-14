@@ -466,12 +466,15 @@ const order = React.createClass({
                 ? this.data.ordersReady
                   ? <div style={this.styles.defaultSentence}>未找到符合条件的订单</div>
                   : <div style={this.styles.defaultSentence}>正在查询中 ...</div>
-                : <table className="footable table table-stripped toggle-arrow-tiny" data-page-size="10">
-                    {orderTableHead}
-                    {orderTableBody}
-                    {orderTableFoot}
-                  </table>
+                : ''
               }
+              <table className="footable table table-stripped toggle-arrow-tiny"
+                     data-page-size="10"
+                     style={{display: (this.data.orders.length == 0) ? 'none' : ''}}>
+                {orderTableHead}
+                {orderTableBody}
+                {orderTableFoot}
+              </table>
             </div>
           </div>
         </div>

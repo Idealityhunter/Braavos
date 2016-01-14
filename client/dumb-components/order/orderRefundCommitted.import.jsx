@@ -212,6 +212,10 @@ const orderRefundCommitted = React.createClass({
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
     if (this.data.orderInfo.status) {
+      const activityArray = _.filter(this.data.orderInfo.activities, activity => activity.action == 'refundApply');
+      const orderRefundActivity = (activityArray.length > 0) ? activityArray[activityArray.length - 1] : {};
+      const orderRefundList = this._getActivityStatement(orderRefundActivity);
+
       content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
@@ -254,6 +258,8 @@ const orderRefundCommitted = React.createClass({
               ? <textarea style={this.styles.textarea} value={this.state.agreeMemo} onChange={(e) => this.setState({agreeMemo: e.target.value})}></textarea>
               : <textarea style={this.styles.textarea} value={this.state.rejectMemo} onChange={(e) => this.setState({rejectMemo: e.target.value})}></textarea>
             }
+
+            {orderRefundList}
 
             <div style={this.styles.buttonGroup}>
               {(this.state.agreeRefund)
