@@ -36,7 +36,8 @@ Meteor.methods({
     const url = `${apiHost}app/marketplace/orders/${orderId}/refund`;
     const options = {
       headers: {
-        UserId: userId
+        'X-Lvxingpai-Id': userId,
+        'Token': Meteor.settings.token
       },
       data: {
         refundFee: amount / 100,
