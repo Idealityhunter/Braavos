@@ -82,5 +82,26 @@ Meteor.methods({
     };
 
     sendTask(task, body);
-  }
+  },
+
+  // 确认发货,添加消息
+  'viae.marketplace.onCommitOrder': (order) => {
+    // 取出需要的订单信息
+    const simpleOrder = {
+      orderId: order.orderId,
+      consumerId: order.consumerId,
+      commodity: order.commodity
+    };
+
+    // 填充数据
+    const task = "viae.event.marketplace.onCommitOrder";
+    const body = {
+      task: task,
+      kwargs: {
+        order: simpleOrder
+      }
+    };
+
+    sendTask(task, body);
+  },
 });

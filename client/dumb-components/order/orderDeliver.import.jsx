@@ -25,7 +25,7 @@ const orderDeliver = React.createClass({
       submitting: true
     });
 
-    Meteor.call('order.commit', this.data.orderInfo.orderId, this.data.orderInfo.consumerId, this.data.orderInfo.commodity.title, (err, res) => {
+    Meteor.call('order.commit', this.data.orderInfo.orderId, this.data.orderInfo.consumerId, this.data.orderInfo.commodity.title, this.data.orderInfo, (err, res) => {
       if (err || !res){
         // 错误处理
         swal({
