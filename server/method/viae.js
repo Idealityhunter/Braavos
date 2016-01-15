@@ -89,9 +89,7 @@ Meteor.methods({
     // 取出需要的订单信息
     const simpleOrder = {
       orderId: order.orderId,
-      consumerId: order.consumerId,
-      commodity: order.commodity,
-      expireDate: order.expireDate
+      consumerId: order.consumerId
     };
 
     // 填充数据
@@ -100,6 +98,49 @@ Meteor.methods({
       task: task,
       kwargs: {
         order: simpleOrder
+      }
+    };
+
+    sendTask(task, body);
+  },
+
+  // 取消订单,添加消息
+  'viae.marketplace.onCancelOrder': (order, reason) => {
+    // 取出需要的订单信息
+    const simpleOrder = {
+      orderId: order.orderId,
+      consumerId: order.consumerId
+    };
+
+    // 填充数据
+    const task = "viae.event.marketplace.onCancelOrder";
+    const body = {
+      task: task,
+      kwargs: {
+        order: simpleOrder,
+        is_seller: true,
+        reason: reason
+      }
+    };
+
+    sendTask(task, body);
+  },
+
+  // 拒绝退款,添加消息
+  'viae.marketplace.onRefundDeny': (order, memo = '') => {
+    // 取出需要的订单信息
+    const simpleOrder = {
+      orderId: order.orderId,
+      consumerId: order.consumerId
+    };
+
+    // 填充数据
+    const task = "viae.event.marketplace.onRefundDeny";
+    const body = {
+      task: task,
+      kwargs: {
+        order: simpleOrder,
+        reason: memo
       }
     };
 
