@@ -136,7 +136,8 @@ const order = React.createClass({
     }, () => {
       // 获取关闭交易的理由reason,并提交
       self._handleCloseOrderModalClose();
-      Meteor.call('order.close', self.state.curOrderId, reason, (err, res) => {
+      const curOrder = _.find(self.data.orders, order => order.orderId == self.state.curOrderId);
+      Meteor.call('order.close', self.state.curOrderId, curOrder.consumerId, curOrder.commodity.title, reason, (err, res) => {
         if (err){
           // 错误处理
           swal('关闭交易失败', '', 'warning');
