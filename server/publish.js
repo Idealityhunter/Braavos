@@ -142,7 +142,7 @@ Meteor.publish("orders", function (options, isAdmin=false) {
   const orderColl = BraavosCore.Database.Braavos.Order;
 
   // fields获取
-  const allowedFields = ["orderId", "commodity", "consumerId", "quantity", "paymentInfo", "createTime", "updateTime", "status", "contact", "activities", "discount", "totalPrice"];
+  const allowedFields = ["orderId", "commodity", "consumerId", "quantity", "paymentInfo", "createTime", "updateTime", "expireDate", "status", "contact", "activities", "discount", "totalPrice"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;
@@ -185,7 +185,7 @@ Meteor.publish("orders", function (options, isAdmin=false) {
 Meteor.publish("orderInfo", function (orderId, isAdmin=false) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Order;
-  const allowedFields = ["orderId", "commodity", "consumerId", "contact", "rendezvousTime", "quantity", "totalPrice", "comment", "planId", "discount", "paymentInfo", "status", "travellers", "activities"];
+  const allowedFields = ["orderId", "commodity", "consumerId", "contact", "rendezvousTime", "expireDate", "quantity", "totalPrice", "comment", "planId", "discount", "paymentInfo", "status", "travellers", "activities"];
   const fields = _.reduce(allowedFields, (memo, f) => {
     memo[f] = 1;
     return memo;

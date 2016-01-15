@@ -90,7 +90,8 @@ Meteor.methods({
     const simpleOrder = {
       orderId: order.orderId,
       consumerId: order.consumerId,
-      commodity: order.commodity
+      commodity: order.commodity,
+      expireDate: order.expireDate
     };
 
     // 填充数据
