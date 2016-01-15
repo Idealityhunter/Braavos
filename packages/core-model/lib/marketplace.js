@@ -401,11 +401,6 @@ Marketplace.Order = new SimpleSchema({
     optional: true,
     blackbox: true
   },
-  // 选择的套餐
-  plan: {
-    type: Marketplace.CommodityPlan,
-    blackbox: true
-  },
   // 旅客信息
   travellers: {
     type: [Misc.RealNameInfo],

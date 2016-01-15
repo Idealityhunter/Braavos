@@ -112,7 +112,7 @@ const orderRefundCommitted = React.createClass({
     });
 
     const memo = $('textarea').val();
-    Meteor.call('order.refundDeny', this.data.orderInfo.orderId, memo, (err, res) => {
+    Meteor.call('order.refundDeny', this.data.orderInfo.orderId, this.data.orderInfo.consumerId, this.data.orderInfo.commodity.title, memo, (err, res) => {
       if (err || !res) {
         swal('拒绝失败', '', 'error');
       } else{
