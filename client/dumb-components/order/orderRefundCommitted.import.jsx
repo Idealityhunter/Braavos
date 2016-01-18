@@ -94,19 +94,30 @@ const orderRefundCommitted = React.createClass({
   // 打开退款弹层
   _handleSubmitRefund(e){
     const amount = $('.refund-amount').children('input').val();
-    if (this._checkRefundAmount(amount)){
-      this.setState({
-        amount: amount,
-        showRefundModal: true
-      });
-    } else {
+    if (! this._checkRefundAmount(amount)){
       // 不能少于0,不能多于支付金额
       swal('请输入正确的退款金额','','warning');
-    }
+      return false;
+    };
+
+    if ($('textarea').val().trim() == '') {
+      swal('请填写退款备注', '', 'error');
+      return false;
+    };
+
+    this.setState({
+      amount: amount,
+      showRefundModal: true
+    });
   },
 
   // 拒绝退款
   _handleSubmitReject(e){
+    if ($('textarea').val().trim() == '') {
+      swal('请填写拒绝退款的原因', '', 'error');
+      return false;
+    };
+
     this.setState({
       submitting: true
     });
@@ -221,7 +232,7 @@ const orderRefundCommitted = React.createClass({
           <div className="ibox-content" style={{padding: 30}}>
             <div>
               <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>
+              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 96)}</span>
             </div>
 
             <ol style={this.styles.ol}>

@@ -104,7 +104,7 @@ const orderInfo = React.createClass({
         return {
           statusLabel: '待发货(买家已付款)',
           btnGroup: [orderBtnSet[1], orderBtnSet[2]],
-          countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('paid')}</span>,
+          countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('paid', 24)}</span>,
           dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
       case 'committed':
@@ -118,14 +118,13 @@ const orderInfo = React.createClass({
           ? {
             statusLabel: '待退款(买家已付款)',
             btnGroup: [orderBtnSet[3], orderBtnSet[1]],
-            //countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown( this._getActivityTime(order.activities, 'refundApply') )}</span>,
-            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
+            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 72)}</span>,
             dateList: order.activities.map(activity => self._getActivityStatement(activity))
           }
           : {
             statusLabel: '待退款(卖家已发货)',
             btnGroup: [orderBtnSet[4]],
-            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>,
+            countdown: <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 96)}</span>,
             dateList: order.activities.map(activity => self._getActivityStatement(activity))
           }
       case 'refunded':

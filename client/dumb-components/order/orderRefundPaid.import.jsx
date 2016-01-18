@@ -77,22 +77,22 @@ const orderRefundPaid = React.createClass({
   },
 
   // 检查退款金额
-  _checkRefundAmount(amount){
-    return amount > 0 && amount <= this.data.orderInfo.totalPrice;
-  },
+  //_checkRefundAmount(amount){
+  //  return amount > 0 && amount <= this.data.orderInfo.totalPrice;
+  //},
 
   // 打开退款弹层
   _handleSubmitRefund(e){
     const amount = $('.refund-amount').children('input').val();
-    if (this._checkRefundAmount(amount)){
+    //if (this._checkRefundAmount(amount)){
       this.setState({
         amount: amount,
         showRefundModal: true
       });
-    } else {
-      // 不能少于0,不能多于支付金额
-      swal('请输入正确的退款金额','','warning');
-    }
+    //} else {
+    //  // 不能少于0,不能多于支付金额
+    //  swal('请输入正确的退款金额','','warning');
+    //}
   },
 
   styles: {
@@ -161,7 +161,7 @@ const orderRefundPaid = React.createClass({
           <div className="ibox-content" style={{padding: 30}}>
             <div>
               <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>
+              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 72)}</span>
             </div>
 
             <ol style={this.styles.ol}>
@@ -178,10 +178,10 @@ const orderRefundPaid = React.createClass({
 
             <div className='refund-amount'>
               <label style={this.styles.label}>退款金额</label>
-              <NumberInput numberType='float' decimalDigits={2} value={this.data.orderInfo.totalPrice} style={this.styles.totalPrice} autoComplete="off"/> 元
+              <span>{this.data.orderInfo.totalPrice || '-'} 元</span>
             </div>
 
-            <span style={this.styles.asterisk}>*</span>备注
+            <span>备注</span>
             <textarea style={this.styles.textarea}></textarea>
 
             {orderRefundList}
