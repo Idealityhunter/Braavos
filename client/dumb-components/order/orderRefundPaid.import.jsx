@@ -83,10 +83,10 @@ const orderRefundPaid = React.createClass({
 
   // 打开退款弹层
   _handleSubmitRefund(e){
-    const amount = $('.refund-amount').children('input').val();
+    //const amount = $('.refund-amount').children('input').val();
     //if (this._checkRefundAmount(amount)){
       this.setState({
-        amount: amount,
+        //amount: amount,
         showRefundModal: true
       });
     //} else {
@@ -202,7 +202,10 @@ const orderRefundPaid = React.createClass({
           showModal={this.state.showRefundModal}
           handleClose={this._handleRefundModalClose}
           handleSubmit={this._handleRefundModalSubmit}
-          amount={this.state.amount}
+          amount={
+            //this.state.amount
+            this.data.orderInfo.totalPrice
+          }
           />
           : <div />
         }
