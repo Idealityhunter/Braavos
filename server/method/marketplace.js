@@ -32,7 +32,7 @@ Meteor.methods({
   "marketplace.order.refundApi": (orderId, userId, amount, memo) => {
     // TODO 检测是否为本人(管理员也不能帮助退款!!!)
 
-    const apiHost = 'http://api-dev.lvxingpai.com/';
+    const apiHost = Meteor.settings.hanse;
     const url = `${apiHost}app/marketplace/orders/${orderId}/refund`;
     const options = {
       headers: {
