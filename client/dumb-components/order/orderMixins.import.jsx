@@ -42,12 +42,11 @@ export const OrderMixin = {
 
   /** 倒计时相关 **/
   // 获取倒计时字段
-  _getCountDown(status){
+  _getCountDown(status, hours){
     const self = this;
     if (!this.interval){
       const startTime = this._getActivityTime(this.data.orderInfo.activities, status);
-      // TODO 应该是startTime + 2days, 暂时是10days
-      this.remainingSeconds = (moment(startTime).add(10, 'd').valueOf() - Date.now()) / 1000;
+      this.remainingSeconds = (moment(startTime).add(hours, 'h').valueOf() - Date.now()) / 1000;
       this.interval = Meteor.setInterval(() => {
         self.remainingSeconds = self.remainingSeconds - 1;
         self.forceUpdate();

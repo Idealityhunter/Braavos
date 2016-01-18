@@ -221,7 +221,7 @@ const orderRefundCommitted = React.createClass({
           <div className="ibox-content" style={{padding: 30}}>
             <div>
               <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>
+              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 96)}</span>
             </div>
 
             <ol style={this.styles.ol}>
