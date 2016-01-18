@@ -78,6 +78,11 @@ const orderRefundCancel = React.createClass({
 
   // 打开退款弹层
   _handleSubmit(e){
+    if ($('textarea').val().trim() == '') {
+      swal('请输入未发货原因', '', 'error');
+      return false;
+    }
+
     this.setState({
       showRefundModal: true
     });
@@ -154,7 +159,7 @@ const orderRefundCancel = React.createClass({
             </div>
 
             <span style={this.styles.asterisk}>*</span>备注
-            <textarea style={this.styles.textarea}></textarea>
+            <textarea style={this.styles.textarea} placeholder="请填写未发货原因"></textarea>
 
             <div style={this.styles.buttonGroup}>
               <Button bsStyle="primary" onClick={this._handleSubmit}>退款</Button>
