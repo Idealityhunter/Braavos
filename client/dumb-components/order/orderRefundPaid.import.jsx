@@ -54,7 +54,8 @@ const orderRefundPaid = React.createClass({
       }
 
       // 密码正确, 进行退款
-      const amount = $('.refund-amount').children('input').val();
+      //const amount = $('.refund-amount').children('input').val();
+      const amount = self.data.orderInfo.totalPrice;
       const memo = $('textarea').val();
       Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount * 100), memo, (err, res) => {
         if (err || !res) {
