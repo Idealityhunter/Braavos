@@ -41,6 +41,9 @@ export const ImageCropper = React.createClass({
     }
   },
 
+  // jcrop对象
+  jcropper: {},
+
   // 图像宽度
   imageWidth: 0,
 
@@ -58,6 +61,14 @@ export const ImageCropper = React.createClass({
       // 裁剪信息: [left, top, width, height]
       selection: [0, 0, 0, 0]
     };
+  },
+
+  styles:{
+    options:{
+      textAlign: 'left',
+      width: 400,
+      verticalAlign: 'middle'
+    }
   },
 
   onClose() {
@@ -159,6 +170,7 @@ export const ImageCropper = React.createClass({
 
   // 图像加载完成以后的回调函数
   onImageLoaded() {
+    const self = this;
     const imageNode = ReactDOM.findDOMNode(this.refs["image"]);
     this.imageWidth = $(imageNode).prop("width");
     this.imageHeight = $(imageNode).prop("height");
@@ -178,6 +190,9 @@ export const ImageCropper = React.createClass({
       onChange: this.onChange,
       aspectRatio: this.props.aspectRatio
     }, function () {
+      // 保存句柄
+      self.jcropper = this;
+
       // 设置margin
       $(imageNode).siblings(".jcrop-holder").css("margin", "10px auto");
     });
@@ -195,8 +210,23 @@ export const ImageCropper = React.createClass({
              onLoad={this.onImageLoaded}
              style={{maxWidth:`${this.props.imageMaxWidth}px`, margin: "20px auto 20px"}}/>
         <Modal.Footer>
-          <Button onClick={this.onClose} style={btnStyle}>{this.props.cancelTitle}</Button>
-          <Button bsStyle="primary" onClick={this.onOk} style={btnStyle}>{this.props.okTitle}</Button>
+          <form className="form-horizontal">
+            <div className="inline" style={this.styles.options}>
+              <div>
+                <input type="radio" name="ratio" id="fixedRatio"
+                       defaultChecked={true}
+                       onChange={() => this.jcropper.setOptions({aspectRatio:2})}/>
+                <label htmlFor="fixedRatio">固定比例2:1(推荐)</label>
+              </div>
+              <div>
+                <input type="radio" name="ratio" id="dynamicRatio"
+                       onChange={() => this.jcropper.setOptions({aspectRatio:null})}/>
+                <label htmlFor="dynamicRatio">不定比例</label>
+              </div>
+            </div>
+            <Button onClick={this.onClose} style={btnStyle}>{this.props.cancelTitle}</Button>
+            <Button bsStyle="primary" onClick={this.onOk} style={btnStyle}>{this.props.okTitle}</Button>
+          </form>
         </Modal.Footer>
       </Modal>
     );
