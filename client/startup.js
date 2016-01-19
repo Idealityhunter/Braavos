@@ -28,3 +28,15 @@ Meteor.startup(()=> {
   yunkai.UserInfo.attachSchema(schema.Account.UserInfo);
 });
 
+// 补全underscore的语法
+_.findIndex || ( _.findIndex = (arr, cal) => {
+  return _.reduce(arr, (memo, arri) => {
+    memo.index ++;
+    if (cal(arri)) memo.flag = memo.index;
+    return memo
+  }, {
+    index: -1,
+    flag: -1
+  }).flag;
+});
+
