@@ -269,7 +269,9 @@ let commodityGallery = React.createClass({
     const uploadModal = this.state.showUploadModal ?
       <ImageCropper title={this.getIntlMessage(`${prefix}.cropUploadImage`)}
                     okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
-                    imageSrc={this.state.uploadModalImageSrc} showModal={true} aspectRatio={1}
+                    imageSrc={this.state.uploadModalImageSrc}
+                    showModal={true} aspectRatio={2}
+                    changeAspectRatio={true}
                     imageMaxWidth={500}
                     onOk={this.handleModifyImage}
                     onClose={this.handleCloseUploadModal}/>
