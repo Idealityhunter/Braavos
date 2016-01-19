@@ -6,18 +6,6 @@ import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-// 补全underscore的语法
-_.findIndex || ( _.findIndex = (arr, cal) => {
-  return _.reduce(arr, (memo, arri) => {
-    memo.index ++;
-    if (cal(arri)) memo.flag = memo.index;
-    return memo
-  }, {
-    index: -1,
-    flag: -1
-  }).flag;
-});
-
 const order = React.createClass({
   mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
