@@ -274,7 +274,8 @@ let commodityGallery = React.createClass({
                     changeAspectRatio={true}
                     imageMaxWidth={500}
                     onOk={this.handleModifyImage}
-                    onClose={this.handleCloseUploadModal}/>
+                    onClose={this.handleCloseUploadModal}
+                    onShadowClose={false}/>
       :
       <div />;
 
