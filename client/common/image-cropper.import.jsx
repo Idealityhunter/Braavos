@@ -10,14 +10,22 @@ export const ImageCropper = React.createClass({
   propTypes: {
     // 对话框的标题
     title: React.PropTypes.string.isRequired,
+
     // 图像数据(可以以base64编码的形式提供)
     imageSrc: React.PropTypes.string.isRequired,
+
     // 确认按钮的文本
     okTitle: React.PropTypes.string,
+
     // 取消按钮的文本
     cancelTitle: React.PropTypes.string,
+
     // 是否显示modal dialog
     showModal: React.PropTypes.bool,
+
+    // 是否点击阴影层就关闭
+    onShadowClose: React.PropTypes.bool,
+
     // 选择框的比例
     aspectRatio: React.PropTypes.number,
 
@@ -40,7 +48,8 @@ export const ImageCropper = React.createClass({
       imageMaxHeight: 480,
       aspectRatio: null,
       okTitle: "确认",
-      cancelTitle: "取消"
+      cancelTitle: "取消",
+      onShadowClose: true
     }
   },
 
@@ -82,7 +91,10 @@ export const ImageCropper = React.createClass({
     }
   },
 
-  onClose() {
+  onClose(e) {
+    if (!e && !this.props.onShadowClose){
+      return ;
+    };
     if (this.props.onClose) {
       const oSelection = this._selConversion(this.state.selection);
       this.props.onClose({target: this, selection: this.state.selection, oSelection: oSelection});
