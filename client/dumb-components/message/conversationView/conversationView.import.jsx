@@ -44,12 +44,12 @@ export const ConversationView = React.createClass({
   render(){
     return(
       <div style={this.styles.container} onClick={this._handleClickContainer}>
-        <img src={this.props.avatar} style={this.styles.avatar}/>
+        <img src={this.props.avatar || 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80'} style={this.styles.avatar}/>
         <div style={this.styles.summary}>
           <div>
             {/*长度未限制,因此可能会有bug*/
               //this.props.nickName
-              this.props.userId
+              this.props.conversationId._str
             }
             <span style={this.styles.time}>
               {

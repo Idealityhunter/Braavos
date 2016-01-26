@@ -45,9 +45,9 @@ function initMongo() {
    */
   const helper = (dbKey, confKey, colls) => {
     const conf = BraavosCore.RootConf.braavos;
-    const {db, user, password, replicaSet, readPreference} = conf['mongo'][dbKey];
+    const {db, user, password, replicaSet, readPreference, authSource} = conf['mongo'][dbKey];
 
-    const options = {readPreference: readPreference || 'primaryPreferred', authSource: db};
+    const options = {readPreference: readPreference || 'primaryPreferred', authSource: authSource || db};
     if (replicaSet) {
       options.replicaSet = replicaSet;
     }
@@ -162,6 +162,14 @@ Meteor.startup(()=> {
   console.log('Server startup');
   // 获取etcd设置
   resolveEtcdData();
+
+  BraavosCore.RootConf.braavos['mongo']['hedy'] = {
+    db: 'hedy',
+    user: 'hedy',
+    password: 'Im6weiV9eAf8',
+    replicaSet: 'foba'
+  };
+
   // 数据库设置
   initMongo();
   // 初始化Yunkai

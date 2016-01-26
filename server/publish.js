@@ -218,9 +218,9 @@ Meteor.publish("conversationViews", function (limit = 10) {
     return memo;
   }, {});
 
-  // TODO 只看自己的会话
-  //return coll.find({userId: userId}, {fields: fields, limit: limit});
-  return coll.find({}, {fields: fields, limit: limit});
+  // 只看自己的会话
+  return coll.find({userId: userId}, {fields: fields, limit: limit, sort: {updateTime: -1}});
+  //return coll.find({}, {fields: fields, limit: limit});
 });
 
 

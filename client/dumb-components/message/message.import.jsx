@@ -59,7 +59,7 @@ const message = React.createClass({
     };
 
     // 获取消息
-    const msgs = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(this.state.curConversation)}, {sort: {timestamp: 1}}).fetch() || [];
+    const msgs = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(this.state.curConversation)}, {sort: {updateTime: -1}}).fetch() || [];
     msgs.map((
       msg => _.extend(msg, {
         key: msg._id._str,
@@ -70,16 +70,17 @@ const message = React.createClass({
     ));
 
     // TODO 伪造两个conversationId
-    if (conversationViews.length > 1){
-      conversationViews[0].conversationId = new Meteor.Collection.ObjectID('558a3cc924aa9a0001f6d6d5');
-      conversationViews[1].conversationId = new Meteor.Collection.ObjectID('55af6698e21b840001f57026');
-    };
+    //if (conversationViews.length > 1){
+    //  conversationViews[0].conversationId = new Meteor.Collection.ObjectID('558a3cc924aa9a0001f6d6d5');
+    //  conversationViews[1].conversationId = new Meteor.Collection.ObjectID('55af6698e21b840001f57026');
+    //};
 
     const orderMsgs = BraavosCore.Database.Hedy.Message.find({msgType: 20}, {sort: {timestamp: -1}}).fetch() || [];
     orderMsgs.map((
       msg => _.extend(msg, {
         // TODO 暂时加20, 以区分正常聊天中的交易消息 => 当正常聊天中不展示以后,这里就可以删除了
-        key: msg._id._str + '20',
+        //key: msg._id._str + '20',
+        key: msg._id._str,
       })
     ));
 

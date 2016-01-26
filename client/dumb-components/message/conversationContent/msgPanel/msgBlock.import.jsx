@@ -77,7 +77,8 @@ export const MsgBlock = React.createClass({
       textContents: {
         display: 'inline-block',
         width: 230,
-        marginLeft: 10
+        marginLeft: 10,
+        verticalAlign: 'middle'
       }
     },
     image:{
