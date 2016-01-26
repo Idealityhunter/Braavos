@@ -15,6 +15,7 @@ Meteor.methods({
    */
   'talk.sendMsg': (sendType, receiver, contents, type = {msgType: 0, chatType: 'single'}) => {
     // TODO 可以不需要chatType => 使用conversation的时候
+
     const userId = parseInt(Meteor.userId());
     if (!type.msgType) type.msgType = 0;
     if (!type.chatType || type.chatType == 'single'){

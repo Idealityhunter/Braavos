@@ -22,7 +22,7 @@ const message = React.createClass({
       //curUser: undefined
       curConversation: '', // 当前的对话id
       msgSubOptions: {}, // 暂时只有limit
-      fakeMsgs: {},
+      fakeMsgs: [],
       //fakeMsgs: {
       //  [conversationName]: []
       //},
@@ -84,7 +84,7 @@ const message = React.createClass({
       selfInfo: selfInfo,//avatar, userId, nickName
       conversationViews: conversationViews,
       orderMsgs: orderMsgs,
-      msgs: msgs
+      msgs: msgs.concat(this.state.fakeMsgs)
       //msgs: msgs.push({
       //  "className" : "models.Message",
       //  "msgId" : 1,
@@ -102,6 +102,14 @@ const message = React.createClass({
     };
   },
 
+  // 添加pending消息
+  _appendPendingMsg(msg){
+    this.setState({
+      fakeMsgs: [].concat(this.state.fakeMsgs, msg)
+    });
+  },
+
+  // 修改订阅msg的数量限制
   _setMsgLimit(limit){
     const msgSubOptions = this.state.msgSubOptions;
     _.extend(msgSubOptions[this.state.curConversation], {limit: limit});
@@ -220,6 +228,7 @@ const message = React.createClass({
               changeConversation={this.state.changeConversation}
               changeCoversationState={this._changeCoversationState}
               curConversation={this.state.curConversation}
+              appendPendingMsg={this._appendPendingMsg}
             />
           </div>
         </div>;

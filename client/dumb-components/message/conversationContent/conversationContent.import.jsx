@@ -14,7 +14,8 @@ export const ConversationContent = React.createClass({
     setMsgLimit: React.PropTypes.func,
     changeConversation: React.PropTypes.bool,
     changeCoversationState: React.PropTypes.func,
-    curConversation: React.PropTypes.string
+    curConversation: React.PropTypes.string,
+    appendPendingMsg: React.PropTypes.func
   },
   styles: {
     noSelected: {
@@ -70,7 +71,10 @@ export const ConversationContent = React.createClass({
               changeConversation={this.props.changeConversation}
               changeCoversationState={this.props.changeCoversationState}
             />
-            <ConversationInput curConversation={this.props.curConversation}/>
+            <ConversationInput
+              curConversation={this.props.curConversation}
+              appendPendingMsg={this.props.appendPendingMsg}
+            />
           </div>
 
           {/*TODO 右侧的内容可缩回?*/}

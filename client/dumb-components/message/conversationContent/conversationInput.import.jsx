@@ -7,7 +7,11 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationInput = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
-    curConversation: React.PropTypes.string
+    // 当前所在conversation的conversationId
+    curConversation: React.PropTypes.string,
+
+    // 添加pending消息的句柄(发消息时使用)
+    appendPendingMsg: React.PropTypes.func
   },
   styles: {
     container: {
@@ -70,7 +74,13 @@ export const ConversationInput = React.createClass({
     const sendType = 2;
 
     // TODO 先添加fake消息
-    //this.props._addMsg();
+    this.props.appendPendingMsg({
+      contents: contents,
+      msgType: 0,
+      timestamp: Date.now(),
+      senderId: 100012
+    });
+
     Meteor.call('talk.sendMsg', sendType, conversationId, contents, (err, res) => {
       console.log(err);
       console.log(res);
