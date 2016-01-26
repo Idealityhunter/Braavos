@@ -1,11 +1,11 @@
-// 左侧的 Conversation View 列表
+// 系统消息中心
 
-import {ConversationView} from '/client/dumb-components/message/conversationView/conversationView';
+import {SystemMessage} from '/client/dumb-components/message/systemMessage/systemMessage';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-export const ConversationViewList = React.createClass({
+export const SystemMessagesList = React.createClass({
   mixins: [IntlMixin],
 
   // 滚轮的监测事件
@@ -21,30 +21,25 @@ export const ConversationViewList = React.createClass({
     container: {
       borderRight: '1px solid #ccc',
       display: 'inline-block',
-      width: 250,
+      width: 600,
       height: 598,
       boxSizing: 'border-box'
     },
     listWrap: {
-      width: 249,
+      width: 596,
       height: 594,
       marginTop: 2,
-      overflow: 'auto',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       boxSizing: 'border-box'
-    },
-    //暂时废弃,loading逻辑不容易实现
-    //spinner:{
-    //  margin: '15px auto',
-    //  width: 25,
-    //  height: 25
-    //}
+    }
   },
   render(){
     return (
       <div style={this.styles.container}>
         <div style={this.styles.listWrap} onScroll={this._handleScroll}>
-          {this.props.conversations.map(conversation =>
-            <ConversationView {... conversation} changeConversation={this.props.changeConversation}/>
+          {this.props.msgs.map(msg =>
+            <SystemMessage msg={msg}/>
           )}
         </div>
       </div>

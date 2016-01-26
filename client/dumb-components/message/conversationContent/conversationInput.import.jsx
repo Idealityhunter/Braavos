@@ -58,9 +58,25 @@ export const ConversationInput = React.createClass({
       backgroundSize: 'contain'
     }
   },
-  _sendMsg(e){
 
+  // 发送消息
+  _sendMsg(e){
+    // TODO 获取msgType
+    // TODO 获取chatType
+    // TODO 获取content
+    // TODO 获取 receiverId / groupId
+    const receiverId = 100004;
+    const contents = $('textarea').val();
+
+    // TODO 先添加fake消息
+    Meteor.call('talk.sendMsg', receiverId, contents, (err, res) => {
+      console.log(err);
+      console.log(res);
+      // TODO 假如发送失败,则显示发送失败,并且保留fake数据
+      // TODO 假如发送成功,则fake消息删除
+    });
   },
+
   render(){
     // 添加其它消息类型
     const toolBar =

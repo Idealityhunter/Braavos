@@ -3,7 +3,6 @@
  *
  * Created by zephyre on 12/26/15.
  */
-
 const Talk = CoreModel.Talk = {};
 
 /**
@@ -70,13 +69,20 @@ Talk.Message = new SimpleSchema({
   timestamp: {
     type: Number,
     min: 0
+  },
+
+  /**
+   * 已读该消息的用户集(目前只有orderMessage使用)
+   */
+  read: {
+    type: [Number]//userId
   }
 });
 
 /**
  * 某个用户的聊天会话
  */
-Talk.ConversationView = {
+Talk.ConversationView = new SimpleSchema({
   userId: {
     type: [Number]
   },
@@ -120,5 +126,5 @@ Talk.ConversationView = {
     blackbox: true,
     optional: true
   }
-};
+});
 

@@ -7,77 +7,49 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const MsgPanel = React.createClass({
   mixins: [IntlMixin],
-  getInitialState(){
-    return {
-      msgs: [{
-        // TODO conversation为ObjectID,记得转化
-        conversation : "558bd2dd24aa9a0001f6dc1b",
-        msgId : 6,
-        avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-        senderId : 100053,
-        receiverId : 100068,
-        chatType : "single",
-        contents : "******test******",
-        msgType : 0,
-        timestamp : 1437106632058,
-        targets : [100068, 100053]
-      }, {
-        // TODO conversation为ObjectID,记得转化
-        conversation : "558bd2dd24aa9a0001f6dc1b",
-        msgId : 6,
-        avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-        senderId : 100068,
-        receiverId : 100053,
-        chatType : "single",
-        contents : "******test******",
-        msgType : 0,
-        timestamp : 1437106632058,
-        targets : [100068, 100053]
-      }, {
-        // TODO conversation为ObjectID,记得转化
-        conversation : "558bd2dd24aa9a0001f6dc1b",
-        msgId : 6,
-        avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-        senderId : 100053,
-        receiverId : 100068,
-        chatType : "single",
-        contents : "******test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1**********test**阿里山放假安徽省地方1****",
-        msgType : 0,
-        timestamp : 1437106632058,
-        targets : [100068, 100053]
-      }, {
-        // TODO conversation为ObjectID,记得转化
-        conversation : "558bd2dd24aa9a0001f6dc1b",
-        msgId : 6,
-        avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-        senderId : 100068,
-        receiverId : 100053,
-        chatType : "single",
-        contents : "***阿里山放假安徽省地方1***test******",
-        msgType : 0,
-        timestamp : 1437106632058,
-        targets : [100068, 100053]
-      }, {
-        // TODO conversation为ObjectID,记得转化
-        conversation : "558bd2dd24aa9a0001f6dc1b",
-        msgId : 6,
-        avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-        senderId : 100053,
-        receiverId : 100068,
-        chatType : "single",
-        contents : "******test****阿里山放假安徽省地方1**",
-        msgType : 0,
-        timestamp : 1437106632058,
-        targets : [100068, 100053]
-      }]
+
+  componentDidMount(){
+    const node = this.getDOMNode();
+    const scrollEle = $(node).children();
+
+    // 进入页面时滚动条在底部
+    scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
+  },
+
+  // 滚轮的监测事件
+  _handleScroll(e){
+    if (e.target.scrollTop < 50){
+      this.props.setMsgLimit(this.props.limit + 10);
     }
   },
+
+  componentWillUpdate() {
+    const node = this.getDOMNode();
+    const scrollEle = $(node).children();
+
+    // 存储当前总高度
+    this.preScrollHeight = scrollEle[0].scrollHeight;
+  },
+
+  componentDidUpdate() {
+    const node = this.getDOMNode();
+    const scrollEle = $(node).children();
+
+    // 当前高度控制
+    scrollEle[0].scrollTop += (scrollEle[0].scrollHeight - this.preScrollHeight);
+
+    if (this.props.changeConversation){
+      scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
+      this.props.changeCoversationState();
+    };
+  },
+
   styles: {
     container: {
       width: 498,
       height: 350,
       boxSizing: 'border-box',
-      borderBottom: '1px solid #ccc',
+      borderBottom: '1px solid #ccc'
     },
     wrap: {
       width: 498,
@@ -90,11 +62,15 @@ export const MsgPanel = React.createClass({
     }
   },
   render(){
+    console.log(this.props.msgs);
     return (
       <div style={this.styles.container}>
-        <div style={this.styles.wrap}>
-          <TimeBlock timestamp={1437106632058} />
-          {this.state.msgs.map(msg => <MsgBlock {...msg}/>)}
+        <div style={this.styles.wrap} onScroll={this._handleScroll}>
+          {/*为了获取消息占的总高度*/}
+          <div>
+            <TimeBlock timestamp={1437106632058} />
+            {this.props.msgs.map(msg => <MsgBlock {...msg}/>)}
+          </div>
         </div>
       </div>
     )

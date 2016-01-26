@@ -26,5 +26,12 @@ Meteor.startup(()=> {
   const yunkai = BraavosCore.Database.Yunkai;
   yunkai.UserInfo = new Mongo.Collection("UserInfo");
   yunkai.UserInfo.attachSchema(schema.Account.UserInfo);
+
+  BraavosCore.Database.Hedy = {};
+  const hedy = BraavosCore.Database.Hedy;
+  hedy.ConversationView = new Mongo.Collection("ConversationView");
+  hedy.ConversationView.attachSchema(schema.Talk.ConversationView);
+  hedy.Message = new Mongo.Collection("Message");
+  hedy.Message.attachSchema(schema.Talk.Message);
 });
 

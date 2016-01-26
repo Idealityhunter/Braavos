@@ -83,6 +83,10 @@ function initMongo() {
     {collName: "Locality", schema: Schema.Marketplace.Locality}
   ]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}]);
+  helper('hedy', 'Hedy', [
+    {collName: 'Message', schema: Schema.Talk.Message},
+    {collName: 'ConversationView', schema: Schema.Talk.ConversationView}
+  ]);
 }
 
 /**

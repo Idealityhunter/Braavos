@@ -57,7 +57,12 @@ export const ConversationContent = React.createClass({
         <div>
           {/* center */}
           <div style={this.styles.center}>
-            <MsgPanel />
+            <MsgPanel
+              msgs={this.props.msgs}
+              setMsgLimit={this.props.setMsgLimit}
+              changeConversation={this.props.changeConversation}
+              changeCoversationState={this.props.changeCoversationState}
+            />
             <ConversationInput />
           </div>
 

@@ -36,18 +36,29 @@ export const ConversationView = React.createClass({
       overflow: 'hidden'
     }
   },
+
+  _handleClickContainer(e){
+    this.props.changeConversation(this.props.conversationId._str);
+  },
+
   render(){
     return(
-      <div style={this.styles.container}>
+      <div style={this.styles.container} onClick={this._handleClickContainer}>
         <img src={this.props.avatar} style={this.styles.avatar}/>
         <div style={this.styles.summary}>
           <div>
             {/*长度未限制,因此可能会有bug*/
-              this.props.nickName
+              //this.props.nickName
+              this.props.userId
             }
-            <span style={this.styles.time}>{this.props.time}</span>
+            <span style={this.styles.time}>
+              {
+                // TODO 更进一步 => 判断是否今天的消息,然后选择是否展示确切的日期
+                moment(this.props.updateTime).format('hh:mm')
+              }
+            </span>
           </div>
-          <p style={this.styles.digest}>{this.props.summary}</p>
+          <p style={this.styles.digest}>{this.props.lastMessage}</p>
         </div>
       </div>
     );

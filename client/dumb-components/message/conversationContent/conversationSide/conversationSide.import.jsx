@@ -17,24 +17,28 @@ export const ConversationSide = React.createClass({
         status: 'pengding'
       },
       orders: [{
+        key: 222,
         commodityTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         planTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         totalPrice: 125,
         orderId: 1451272257920,
         status: 'pengding'
       }, {
+        key: 223,
         commodityTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         planTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         totalPrice: 125,
         orderId: 1451272257920,
         status: 'pengding'
       }, {
+        key: 224,
         commodityTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         planTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         totalPrice: 125,
         orderId: 1451272257920,
         status: 'pengding'
       }, {
+        key: 225,
         commodityTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         planTitle: '济州岛Don&Dol烤肉店【黑猪肉套餐】',
         totalPrice: 125,

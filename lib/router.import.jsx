@@ -20,9 +20,17 @@ import {StepsDemo} from "/client/components/steps/steps"
 // 初始化Sub Manager
 BraavosCore.SubsManager = {
   geo: new SubsManager(),
-  account: new SubsManager()
+  account: new SubsManager(),
+  conversation: new SubsManager(),
+  orderMsg: new SubsManager()
 };
+
+BraavosCore.SubsManagerStubs = {};
+BraavosCore.SubsManagerStubs.conversation = [];
+BraavosCore.SubsManagerStubs.orderMsg = [];
+
 BraavosCore.SubsManager.geo.subscribe("countries");
+
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
@@ -31,6 +39,10 @@ function loginCheck(context, redirect, stop) {
   }
   BraavosCore.SubsManager.account.subscribe("basicUserInfo");
   BraavosCore.SubsManager.account.subscribe("sellerInfo");
+
+  // 存储conversationView的subscribe记录
+  BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
+  BraavosCore.SubsManagerStubs.orderMsg.push(BraavosCore.SubsManager.orderMsg.subscribe("orderMsgs"));
 }
 
 const intlData = BraavosCore.IntlData.zh;
