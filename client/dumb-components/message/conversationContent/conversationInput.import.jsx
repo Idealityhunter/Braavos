@@ -6,6 +6,9 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationInput = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    curConversation: React.PropTypes.string
+  },
   styles: {
     container: {
       width: 498,
@@ -61,15 +64,14 @@ export const ConversationInput = React.createClass({
 
   // 发送消息
   _sendMsg(e){
-    // TODO 获取msgType
-    // TODO 获取chatType
-    // TODO 获取content
-    // TODO 获取 receiverId / groupId
-    const receiverId = 100004;
+    // TODO 获取 msgType
+    const conversationId = this.props.curConversation;
     const contents = $('textarea').val();
+    const sendType = 2;
 
     // TODO 先添加fake消息
-    Meteor.call('talk.sendMsg', receiverId, contents, (err, res) => {
+    //this.props._addMsg();
+    Meteor.call('talk.sendMsg', sendType, conversationId, contents, (err, res) => {
       console.log(err);
       console.log(res);
       // TODO 假如发送失败,则显示发送失败,并且保留fake数据

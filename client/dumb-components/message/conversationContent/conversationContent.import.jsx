@@ -9,6 +9,13 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationContent = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    msgs: React.PropTypes.array,
+    setMsgLimit: React.PropTypes.func,
+    changeConversation: React.PropTypes.bool,
+    changeCoversationState: React.PropTypes.func,
+    curConversation: React.PropTypes.string
+  },
   styles: {
     noSelected: {
       // 额外的样式
@@ -63,7 +70,7 @@ export const ConversationContent = React.createClass({
               changeConversation={this.props.changeConversation}
               changeCoversationState={this.props.changeCoversationState}
             />
-            <ConversationInput />
+            <ConversationInput curConversation={this.props.curConversation}/>
           </div>
 
           {/*TODO 右侧的内容可缩回?*/}

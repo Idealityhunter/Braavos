@@ -5,6 +5,11 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationView = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    // todo conversation的其它属性
+    changeConversation: React.PropTypes.func,
+
+  },
   styles: {
     container:{
       borderBottom: '1px solid #ccc'
@@ -20,9 +25,16 @@ export const ConversationView = React.createClass({
     summary: {
       width: 160,
       display: 'inline-block',
-      padding: '15px 5px 10px',
+      padding: '12px 0 5px',
       overflow: 'hidden',
-      verticalAlign: 'top'
+      verticalAlign: 'middle'
+    },
+    name: {
+      display: 'inline-block',
+      width: 125,
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden'
     },
     time: {
       color: '#aaa',
@@ -38,7 +50,9 @@ export const ConversationView = React.createClass({
   },
 
   _handleClickContainer(e){
-    this.props.changeConversation(this.props.conversationId._str);
+    //TODO nickename
+    //this.props.changeConversation(this.props.conversationId._str, this.props.nickName);
+    this.props.changeConversation(this.props.conversationId._str, this.props.conversationId._str);
   },
 
   render(){
@@ -47,10 +61,12 @@ export const ConversationView = React.createClass({
         <img src={this.props.avatar || 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80'} style={this.styles.avatar}/>
         <div style={this.styles.summary}>
           <div>
-            {/*长度未限制,因此可能会有bug*/
-              //this.props.nickName
-              this.props.conversationId._str
-            }
+            <div style={this.styles.name} title={this.props.conversationId._str}>
+              {/*长度未限制,因此可能会有bug*/
+                //this.props.nickName
+                this.props.conversationId._str
+              }
+            </div>
             <span style={this.styles.time}>
               {
                 // TODO 更进一步 => 判断是否今天的消息,然后选择是否展示确切的日期

@@ -5,12 +5,21 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const TimeBlock = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    align: React.PropTypes.string,
+    timestamp: React.PropTypes.number//可以为其它格式的时间(对象/字符串)
+  },
+  getDefaultProps() {
+    return {
+      align: 'center'
+    }
+  },
   styles: {
     container: {
-      margin: 5,
+      margin: '5px 5px 0',
       color: '#bbb',
       fontSize: 12,
-      textAlign: 'center'
+      //textAlign: 'center'
     }
   },
   // TODO: 展示方式
@@ -20,8 +29,8 @@ export const TimeBlock = React.createClass({
   //   11:22
   render(){
     return (
-      <div style={this.styles.container}>
-        {moment(this.props.timestamp).format('YYYY-MM-DD hh-mm')}
+      <div style={_.extend({}, this.styles.container, {textAlign: this.props.align})}>
+        {moment(this.props.timestamp).format('YYYY-MM-DD HH:mm')}
       </div>
     )
   }

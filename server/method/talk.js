@@ -7,13 +7,16 @@
 Meteor.methods({
   /**
    *
-   * @param receiverId {String} 接收者Id/接收GroupId
+   * @param sendType {Number} 0/1/2分别代表发送给receiver/Group/Conversation
+   * @param receiver {String} 接收者Id/接收GroupId/接收的conversation
    * @param contents {Object} 消息内容
    * @param type {Object} key有 msgType(消息类型) 和 chatType(对话类型)
+   * @returns {*}
    */
-  'talk.sendMsg': (receiverId, contents, type = {msgType: 1, chatType: 'single'}) => {
+  'talk.sendMsg': (sendType, receiver, contents, type = {msgType: 0, chatType: 'single'}) => {
+    // TODO 可以不需要chatType => 使用conversation的时候
     const userId = parseInt(Meteor.userId());
-    if (!type.msgType) type.msgType = 1;
+    if (!type.msgType) type.msgType = 0;
     if (!type.chatType || type.chatType == 'single'){
       // 发送单聊消息
 
@@ -29,10 +32,23 @@ Meteor.methods({
         data: {
           sender: userId,
           chatType: "single",
-          receiver: receiverId,
           msgType: type.msgType,
           contents: contents
         }
+      };
+      switch (sendType){
+        case 0:
+          options.data.receiver = receiver;
+          break;
+        case 1:
+          options.data.receiverGroup = receiver;
+          break;
+        case 2:
+          options.data.conversation = receiver;
+          break;
+        default:
+          console.log('错误调用!');
+          return false;
       };
 
       // 发送请求

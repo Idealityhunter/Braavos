@@ -18,10 +18,14 @@ const message = React.createClass({
       conversationLimit: 15,
       activeStatus: 'message',
       //activeStatus: 'conversation', // 当前展示的是系统消息(message)还是对话(conversation)
-      curUser: '瓜西', // 当前对话的用户
+      curUser: '', // 当前对话的用户
       //curUser: undefined
       curConversation: '', // 当前的对话id
-      msgSubOptions: {} // 暂时只有limit
+      msgSubOptions: {}, // 暂时只有limit
+      fakeMsgs: {},
+      //fakeMsgs: {
+      //  [conversationName]: []
+      //},
     }
   },
 
@@ -46,7 +50,7 @@ const message = React.createClass({
 
     // 获取会话信息
     //const conversationViews = BraavosCore.SubsManager.conversation.ready() ? BraavosCore.Database.Hedy.ConversationView.find({'userId': userId}).fetch() : [];
-    const conversationViews = BraavosCore.Database.Hedy.ConversationView.find({}).fetch() || [];
+    const conversationViews = BraavosCore.Database.Hedy.ConversationView.find({'userId': userId}, {sort: {updateTime: -1}}).fetch() || [];
     conversationViews.map((
       conversationView => _.extend(conversationView, {key: conversationView._id._str})
     ));
@@ -59,7 +63,7 @@ const message = React.createClass({
     };
 
     // 获取消息
-    const msgs = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(this.state.curConversation)}, {sort: {updateTime: -1}}).fetch() || [];
+    const msgs = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(this.state.curConversation)}, {sort: {timestamp: 1}}).fetch() || [];
     msgs.map((
       msg => _.extend(msg, {
         key: msg._id._str,
@@ -69,17 +73,9 @@ const message = React.createClass({
       })
     ));
 
-    // TODO 伪造两个conversationId
-    //if (conversationViews.length > 1){
-    //  conversationViews[0].conversationId = new Meteor.Collection.ObjectID('558a3cc924aa9a0001f6d6d5');
-    //  conversationViews[1].conversationId = new Meteor.Collection.ObjectID('55af6698e21b840001f57026');
-    //};
-
     const orderMsgs = BraavosCore.Database.Hedy.Message.find({msgType: 20}, {sort: {timestamp: -1}}).fetch() || [];
     orderMsgs.map((
       msg => _.extend(msg, {
-        // TODO 暂时加20, 以区分正常聊天中的交易消息 => 当正常聊天中不展示以后,这里就可以删除了
-        //key: msg._id._str + '20',
         key: msg._id._str,
       })
     ));
@@ -88,20 +84,21 @@ const message = React.createClass({
       selfInfo: selfInfo,//avatar, userId, nickName
       conversationViews: conversationViews,
       orderMsgs: orderMsgs,
-      msgs: msgs.push({
-        "className" : "models.Message",
-        "msgId" : 1,
-        "senderId" : 201372,
-        "receiverId" : 210962,
-        "chatType" : "single",
-        "contents" : "{\n  \"title\" : \"巴厘岛婚纱摄影\",\n  \"commodityId\" : 100714,\n  \"price\" : 300,\n  \"image\" : \"http:\\/\\/7sbm17.com1.z0.glb.clouddn.com\\/commodity\\/images\\/79e2dc7a0c45f2ee063dfb8c7786fd4e\"\n}",
-        "msgType" : 19,
-        "timestamp" : 1453091845655,
-        "targets" : [
-          210962,
-          201372
-        ]
-      }) && msgs
+      msgs: msgs
+      //msgs: msgs.push({
+      //  "className" : "models.Message",
+      //  "msgId" : 1,
+      //  "senderId" : 201372,
+      //  "receiverId" : 210962,
+      //  "chatType" : "single",
+      //  "contents" : "{\n  \"title\" : \"巴厘岛婚纱摄影\",\n  \"commodityId\" : 100714,\n  \"price\" : 300,\n  \"image\" : \"http:\\/\\/7sbm17.com1.z0.glb.clouddn.com\\/commodity\\/images\\/79e2dc7a0c45f2ee063dfb8c7786fd4e\"\n}",
+      //  "msgType" : 19,
+      //  "timestamp" : 1453091845655,
+      //  "targets" : [
+      //    210962,
+      //    201372
+      //  ]
+      //}) && msgs
     };
   },
 
@@ -121,13 +118,14 @@ const message = React.createClass({
   },
 
   // 点击切换会话的触发事件
-  _changeConversation(conversationId){
+  _changeConversation(conversationId, user){
     if (!this.state.msgSubOptions[conversationId]){
       this.state.msgSubOptions[conversationId] = {limit: 10};
     };
 
     if (this.state.curConversation != conversationId){
       this.setState({
+        curUser: user,
         curConversation: conversationId,
         changeConversation: true
       });
@@ -187,20 +185,6 @@ const message = React.createClass({
   render() {
     const prefix = 'message.';
 
-    // Fake Data
-    //let conversations = [];
-    //const conversation = {
-    //  // TODO 更进一步 => 判断是否今天的消息,然后选择是否展示确切的日期
-    //  time: moment().format('hh:mm'),
-    //  avatar: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80',
-    //  nickName: '瓜西',
-    //  summary: '阿卡家连锁店返利卡公司付款拉高速'
-    //};
-    //
-    //for (let i = 0;i < 100;i++) {
-    //  conversations.push(conversation);
-    //}
-
     // tab首部
     const tabHeadList =
       <ul style={this.styles.tabHeadList}>
@@ -235,6 +219,7 @@ const message = React.createClass({
               setMsgLimit={this._setMsgLimit}
               changeConversation={this.state.changeConversation}
               changeCoversationState={this._changeCoversationState}
+              curConversation={this.state.curConversation}
             />
           </div>
         </div>;

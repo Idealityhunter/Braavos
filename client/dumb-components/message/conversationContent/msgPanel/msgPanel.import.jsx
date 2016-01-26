@@ -8,6 +8,13 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const MsgPanel = React.createClass({
   mixins: [IntlMixin],
 
+  propTypes: {
+    msgs: React.PropTypes.array,
+    setMsgLimit: React.PropTypes.func,
+    changeConversation: React.PropTypes.bool,
+    changeCoversationState: React.PropTypes.func
+  },
+
   componentDidMount(){
     const node = this.getDOMNode();
     const scrollEle = $(node).children();
@@ -62,13 +69,12 @@ export const MsgPanel = React.createClass({
     }
   },
   render(){
-    console.log(this.props.msgs);
     return (
       <div style={this.styles.container}>
         <div style={this.styles.wrap} onScroll={this._handleScroll}>
           {/*为了获取消息占的总高度*/}
           <div>
-            <TimeBlock timestamp={1437106632058} />
+            {/**<TimeBlock timestamp={1437106632058} />**/}
             {this.props.msgs.map(msg => <MsgBlock {...msg}/>)}
           </div>
         </div>

@@ -8,6 +8,13 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationViewList = React.createClass({
   mixins: [IntlMixin],
 
+  propTypes: {
+    conversations: React.PropTypes.array,
+    setConversationLimit: React.PropTypes.func,
+    changeConversation: React.PropTypes.func,
+    limit: React.PropTypes.number
+  },
+
   // 滚轮的监测事件
   _handleScroll(e){
     const $scrollEle = $(e.target);

@@ -1,5 +1,6 @@
 // '消息展板'中的 单个消息内容块
 import {Modal} from "/lib/react-bootstrap"
+import {TimeBlock} from '/client/dumb-components/message/conversationContent/msgPanel/timeBlock';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -15,10 +16,12 @@ export const MsgBlock = React.createClass({
   },
   styles: {
     leftContainer: {
-      textAlign: 'left'
+      textAlign: 'left',
+      marginBottom: 10
     },
     rightContainer: {
-      textAlign: 'right'
+      textAlign: 'right',
+      marginBottom: 10
     },
     avatar: {
       display: 'inline-block',
@@ -29,13 +32,13 @@ export const MsgBlock = React.createClass({
       verticalAlign: 'top'
     },
     bubble: {
-      display: 'inline-block',
+      //display: 'inline-block',
       border: '1px solid #ccc',
       padding: 10,
       position: 'relative',
       background: '#fff',
       borderRadius: 8,
-      marginTop: 15,
+      //marginTop: 15,
       maxWidth: 345,
       textAlign: 'left',
       verticalAlign: 'top'
@@ -130,7 +133,6 @@ export const MsgBlock = React.createClass({
       case 0:
         msgContents =
           <div>
-            <div>msgType:{this.props.msgType}</div>
             <p style={this.styles.text}>{this.props.contents}</p>
           </div>
         break;
@@ -139,7 +141,6 @@ export const MsgBlock = React.createClass({
       case 2:
         msgContents =
           <div>
-            <div>msgType:{this.props.msgType}</div>
             <img style={this.styles.image} src={JSON.parse(this.props.contents).thumb} onClick={this.showImage}/>
             <Modal show={this.state.showModal} onHide={this.onClose} bsSize="lg">
               <Modal.Header closeButton />
@@ -155,12 +156,11 @@ export const MsgBlock = React.createClass({
         const msg = JSON.parse(this.props.contents);
         msgContents =
           <div onClick={this.showCommodityInfo}>
-            <div>msgType:{this.props.msgType}</div>
             <img src={msg.image} alt="商品图片" style={this.styles.contents.image}/>
             <div style={this.styles.contents.textContents}>
               <h3 style={this.styles.singleLine}>商品｜{msg.title}</h3>
-              <p>¥ {msg.price} 起</p>
-              <p>商品编号: {msg.commodityId}</p>
+              <p style={this.styles.text}>售价: ¥ {msg.price} 起</p>
+              <p style={this.styles.text}>商品编号: {msg.commodityId}</p>
             </div>
           </div>
         break;
@@ -178,20 +178,26 @@ export const MsgBlock = React.createClass({
         break;
     }
 
-    const body = (this.props.senderId == 100068)
+    const body = (this.props.senderId == Meteor.userId())
       ? <div style={this.styles.leftContainer}>
           <img style={this.styles.avatar} src={this.props.avatar}/>
-          <div style={this.styles.bubble}>
-            <span style={_.extend({}, this.styles.triangle, this.styles.triangleAL)}>◆</span>
-            <span style={_.extend({}, this.styles.triangle, this.styles.triangleBL)}>◆</span>
-            {msgContents}
+          <div className="inline">
+            <TimeBlock timestamp={this.props.timestamp} align='left'/>
+            <div style={this.styles.bubble}>
+              <span style={_.extend({}, this.styles.triangle, this.styles.triangleAL)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle, this.styles.triangleBL)}>◆</span>
+              {msgContents}
+            </div>
           </div>
         </div>
       : <div style={this.styles.rightContainer}>
-          <div style={this.styles.bubble}>
-            <span style={_.extend({}, this.styles.triangle, this.styles.triangleAR)}>◆</span>
-            <span style={_.extend({}, this.styles.triangle, this.styles.triangleBR)}>◆</span>
-            {msgContents}
+          <div className="inline">
+            <TimeBlock timestamp={this.props.timestamp} align='right'/>
+            <div style={this.styles.bubble}>
+              <span style={_.extend({}, this.styles.triangle, this.styles.triangleAR)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle, this.styles.triangleBR)}>◆</span>
+              {msgContents}
+            </div>
           </div>
           <img style={this.styles.avatar} src={this.props.avatar}/>
         </div>;
