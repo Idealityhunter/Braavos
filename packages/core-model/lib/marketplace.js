@@ -63,8 +63,11 @@ Marketplace.Seller = new SimpleSchema({
     optional: true
   },
   // 服务标签
+  // 包括: 语言帮助/行程规划/当地咨询
   services: {
     type: [String],
+    allowedValues: ["language", "plan", "consult"],
+    maxCount: 3,
     optional: true
   },
   // 银行账户
@@ -115,7 +118,6 @@ Marketplace.Pricing = new SimpleSchema({
   // 价格
   price: {
     type: Number,
-    decimal: true,
     min: 0
   },
   // 价格在哪个时间区间内有效([start, end], 左开右闭区间)
@@ -181,14 +183,12 @@ Marketplace.CommodityPlan = new SimpleSchema({
   // 市场价格
   marketPrice: {
     type: Number,
-    decimal: true,
     optional: true,
     min: 0
   },
   // 商品售价
   price: {
     type: Number,
-    decimal: true,
     min: 0
   },
   // 库存信息
@@ -229,14 +229,12 @@ Marketplace.Commodity = new SimpleSchema({
   // 市场价格
   marketPrice: {
     type: Number,
-    decimal: true,
     optional: true,
     min: 0
   },
   // 商品售价
   price: {
     type: Number,
-    decimal: true,
     min: 0
   },
   // 套餐信息
@@ -327,6 +325,12 @@ Marketplace.Commodity = new SimpleSchema({
   updateTime: {
     type: Date,
     optional: true
+  },
+  // 商品的版本号
+  version: {
+    type: Number,
+    // 暂时先不做检测
+    optional: true
   }
 });
 
@@ -344,7 +348,6 @@ Marketplace.Prepay = new SimpleSchema({
   // 支付金额
   amount: {
     type: Number,
-    decimal: true,
     min: 0
   }
 });
@@ -355,14 +358,19 @@ Marketplace.OrderActivity = new SimpleSchema({
   timestamp: {
     type: Date
   },
-  // 分别对应于: 创建订单/取消订单/支付订单/商户发货/订单过期/订单完成/退款相关
+  // 操作前的状态
+  prevStatus: {
+    type: String,
+    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "refundApplied", "refunded"]
+  },
+  // 分别对应于: 创建订单/取消订单/支付订单/商户发货/订单过期/订单完成/申请退款/退款/拒绝退款
   action: {
     type: String,
-    allowedValues: ["create", "cancel", "pay", "commit", "expire", "finish", "refund"]
+    allowedValues: ["create", "cancel", "pay", "commit", "expire", "finish", 'refundApply', 'refundApprove', 'refundDeny']
   },
   // 附加数据
   data: {
-    type: Object, // allowedKeys: ['userId'|'memo'|'amount'|'type: ["accept","reject","apply"] '|'reason']
+    type: Object, // allowedKeys: ['userId'|'memo'|'amount'|'reason']
     blackbox: true,
     optional: true
   }
@@ -385,9 +393,16 @@ Marketplace.Order = new SimpleSchema({
     type: Marketplace.Commodity,
     blackbox: true
   },
-  // 选择的套餐
+  // 选择的套餐Id(暂时保留)
   planId: {
-    type: String
+    type: String,
+    optional: true
+  },
+  // 选择的套餐
+  plan: {
+    type: Marketplace.CommodityPlan,
+    optional: true,
+    blackbox: true
   },
   // 旅客信息
   travellers: {
@@ -397,6 +412,7 @@ Marketplace.Order = new SimpleSchema({
   // 订单联系人
   contact: {
     type: Misc.RealNameInfo,
+    // 应该是必须的
     optional: true
   },
   // 预约时间
@@ -411,13 +427,11 @@ Marketplace.Order = new SimpleSchema({
   // 订单总价
   totalPrice: {
     type: Number,
-    decimal: true,
     min: 0
   },
   // 订单折扣
   discount: {
     type: Number,
-    decimal: true,
     min: 0,
     optional: true
   },
@@ -432,10 +446,10 @@ Marketplace.Order = new SimpleSchema({
     optional: true
   },
   // 订单状态
-  // 分别为: 待付款, 已付款, 商户已确认, 订单完成, 已取消, 订单过期, 退款申请中, 退款完成
+  // 分别为: 待付款, 已付款, 商户已确认, 订单完成, 已取消, 退款申请中, 退款完成
   status: {
     type: String,
-    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "expired", "refundApplied", "refunded"]
+    allowedValues: ["pending", "paid", "committed", "finished", "canceled", "refundApplied", "refunded"]
   },
   // 订单的操作日志
   activities: {
