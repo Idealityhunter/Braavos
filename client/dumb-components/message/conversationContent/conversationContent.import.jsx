@@ -10,12 +10,26 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationContent = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
+    // 当前对话中的消息
     msgs: React.PropTypes.array,
+
+    // 修改当前会话的msg的数量限制的方法
     setMsgLimit: React.PropTypes.func,
+
+    //
     changeConversation: React.PropTypes.bool,
+
+    //
     changeCoversationState: React.PropTypes.func,
+
+    // 当前会话Id
     curConversation: React.PropTypes.string,
-    appendPendingMsg: React.PropTypes.func
+
+    // 添加pending消息的句柄(发消息时使用)
+    appendPendingMsg: React.PropTypes.func,
+
+    // 发送消息失败的处理
+    failInSendingMsg: React.PropTypes.func
   },
   styles: {
     noSelected: {
@@ -74,6 +88,7 @@ export const ConversationContent = React.createClass({
             <ConversationInput
               curConversation={this.props.curConversation}
               appendPendingMsg={this.props.appendPendingMsg}
+              failInSendingMsg={this.props.failInSendingMsg}
             />
           </div>
 

@@ -11,7 +11,10 @@ export const ConversationInput = React.createClass({
     curConversation: React.PropTypes.string,
 
     // 添加pending消息的句柄(发消息时使用)
-    appendPendingMsg: React.PropTypes.func
+    appendPendingMsg: React.PropTypes.func,
+
+    // 发送消息失败的处理
+    failInSendingMsg: React.PropTypes.func
   },
   styles: {
     container: {
@@ -66,26 +69,56 @@ export const ConversationInput = React.createClass({
     }
   },
 
+  // keydown的事件处理
+  _handleKeydown(e){
+    if (e.which == 13 || e.keyCode == 13) {
+      if (e.shiftKey) this._sendMsg();
+    };
+  },
+
   // 发送消息
-  _sendMsg(e){
+  _sendMsg(){
+    // 获取消息构成部分
     // TODO 获取 msgType
     const conversationId = this.props.curConversation;
     const contents = $('textarea').val();
     const sendType = 2;
+    const objectId = new Meteor.Collection.ObjectID();
+    $('textarea').val('');
 
-    // TODO 先添加fake消息
+    // TODO emoji处理
+    //var str1 = self._escapeRegExp('<img src="/images/emoji/ee_');
+    //var str2 = self._escapeRegExp('.png" alt="" class="emoji-container">');
+    //var regexp = new RegExp(str1+ '((\\d)*)' + str2, 'g');
+    //contents = contents.replace(regexp, function($1, $2, $3, $4, $5){
+    //  return emojiArray[$2 - 1].str;
+    //});
+
+    // 添加pending消息
     this.props.appendPendingMsg({
-      contents: contents,
+      status: 'pending',
       msgType: 0,
+      chatType: 'single',
+
+      contents: contents,
+      conversation: new Meteor.Collection.ObjectID(conversationId),
       timestamp: Date.now(),
-      senderId: 100012
+      senderId: parseInt(Meteor.userId()),
+      _id: objectId
     });
 
-    Meteor.call('talk.sendMsg', sendType, conversationId, contents, (err, res) => {
-      console.log(err);
-      console.log(res);
-      // TODO 假如发送失败,则显示发送失败,并且保留fake数据
-      // TODO 假如发送成功,则fake消息删除
+    // 调用后台发送消息
+    const self = this;
+    Meteor.call('talk.sendMsg', sendType, conversationId, contents, objectId._str, (err, res) => {
+      // 假如发送失败,则显示发送失败,并且保留pending数据
+      if (err || !res){
+        self.props.failInSendingMsg(objectId._str);
+        console.log(err);
+        console.log(res);
+        return false;
+      }
+
+      return true;
     });
   },
 
@@ -105,13 +138,13 @@ export const ConversationInput = React.createClass({
     // 发送框
     const textArea =
       <div>
-        <textarea style={this.styles.textArea} placeholder="请输入要发送的消息"></textarea>
+        <textarea style={this.styles.textArea} placeholder="请输入要发送的消息" onKeyDown={this._handleKeydown}/>
       </div>;
 
     // 包括发送按钮等
     const foot =
       <div style={this.styles.foot}>
-        <p className="inline" style={this.styles.comment}>按下Cmd+Enter发送</p>
+        <p className="inline" style={this.styles.comment}>按下Shift+Enter发送</p>
         <Button className="inline" bsStyle='info' onClick={this._sendMsg}>发送</Button>
       </div>;
 

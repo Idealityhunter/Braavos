@@ -13,7 +13,7 @@ Meteor.methods({
    * @param type {Object} key有 msgType(消息类型) 和 chatType(对话类型)
    * @returns {*}
    */
-  'talk.sendMsg': (sendType, receiver, contents, type = {msgType: 0, chatType: 'single'}) => {
+  'talk.sendMsg': (sendType, receiver, contents, objectId, type = {msgType: 0, chatType: 'single'}) => {
     // TODO 可以不需要chatType => 使用conversation的时候
 
     const userId = parseInt(Meteor.userId());
@@ -34,9 +34,11 @@ Meteor.methods({
           sender: userId,
           chatType: "single",
           msgType: type.msgType,
-          contents: contents
+          contents: contents,
+          id: objectId
         }
       };
+
       switch (sendType){
         case 0:
           options.data.receiver = receiver;
@@ -48,7 +50,7 @@ Meteor.methods({
           options.data.conversation = receiver;
           break;
         default:
-          console.log('错误调用!');
+          console.log('错误调用talk.sendMsg!');
           return false;
       };
 

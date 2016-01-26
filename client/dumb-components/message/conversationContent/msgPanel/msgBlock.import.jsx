@@ -41,32 +41,52 @@ export const MsgBlock = React.createClass({
       //marginTop: 15,
       maxWidth: 345,
       textAlign: 'left',
-      verticalAlign: 'top'
+      verticalAlign: 'top',
+      display: 'inline-block'
     },
-    triangle: {
-      position: 'absolute',
-      top: 0,
-      fontSize: 19
+    triangle:{
+      triangleBase: {
+        position: 'absolute',
+        top: 0,
+        fontSize: 19
+      },
+      triangleAL: {
+        zIndex: 1,
+        color: '#ccc',
+        left: -10
+      },
+      triangleBL: {
+        zIndex: 3,
+        color: '#fff',
+        left: -9
+      },
+      triangleAR: {
+        zIndex: 1,
+        color: '#ccc',
+        right: -10
+      },
+      triangleBR: {
+        zIndex: 3,
+        color: '#fff',
+        right: -9
+      }
     },
-    triangleAL: {
-      zIndex: 1,
-      color: '#ccc',
-      left: -10
-    },
-    triangleBL: {
-      zIndex: 3,
-      color: '#fff',
-      left: -9
-    },
-    triangleAR: {
-      zIndex: 1,
-      color: '#ccc',
-      right: -10
-    },
-    triangleBR: {
-      zIndex: 3,
-      color: '#fff',
-      right: -9
+    statusBoard: {
+      iconBase: {
+        width: 22,
+        height: 22,
+        margin: '3px 8px',
+        display: 'inline-block'
+      },
+      fail: {
+        background: 'url(wechat_sprite@2x28a2f7.png) 0 -1270px',
+        verticalAlign: 'middle',
+        backgroundSize: '150px 2489px'
+      },
+      loading: {
+        background: 'url(loading.gif) no-repeat',
+        backgroundSize: 'contain'
+      }
     },
     text: {
       margin: 0,
@@ -178,24 +198,44 @@ export const MsgBlock = React.createClass({
         break;
     }
 
-    const body = (this.props.senderId == Meteor.userId())
+    let statusBoard;
+    switch (this.props.status){
+      case 'pending':
+        statusBoard =
+          <div className="inline">
+            <i alt="" style={_.extend({}, this.styles.statusBoard.iconBase, this.styles.statusBoard.loading)}/>
+          </div>;
+        break;
+      case 'pending':
+        statusBoard =
+          <div className="inline">
+            <i alt="" style={_.extend({}, this.styles.statusBoard.iconBase, this.styles.statusBoard.fail)}/>
+          </div>;
+        break;
+      default:
+        statusBoard = <div/>;
+    };
+
+    const body = (this.props.senderId != Meteor.userId())
       ? <div style={this.styles.leftContainer}>
           <img style={this.styles.avatar} src={this.props.avatar}/>
           <div className="inline">
             <TimeBlock timestamp={this.props.timestamp} align='left'/>
             <div style={this.styles.bubble}>
-              <span style={_.extend({}, this.styles.triangle, this.styles.triangleAL)}>◆</span>
-              <span style={_.extend({}, this.styles.triangle, this.styles.triangleBL)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle.triangleBase, this.styles.triangle.triangleAL)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle.triangleBase, this.styles.triangle.triangleBL)}>◆</span>
               {msgContents}
             </div>
+            {statusBoard}
           </div>
         </div>
       : <div style={this.styles.rightContainer}>
           <div className="inline">
             <TimeBlock timestamp={this.props.timestamp} align='right'/>
+            {statusBoard}
             <div style={this.styles.bubble}>
-              <span style={_.extend({}, this.styles.triangle, this.styles.triangleAR)}>◆</span>
-              <span style={_.extend({}, this.styles.triangle, this.styles.triangleBR)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle.triangleBase, this.styles.triangle.triangleAR)}>◆</span>
+              <span style={_.extend({}, this.styles.triangle.triangleBase, this.styles.triangle.triangleBR)}>◆</span>
               {msgContents}
             </div>
           </div>

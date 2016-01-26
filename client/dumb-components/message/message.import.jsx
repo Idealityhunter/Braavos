@@ -22,8 +22,9 @@ const message = React.createClass({
       //curUser: undefined
       curConversation: '', // 当前的对话id
       msgSubOptions: {}, // 暂时只有limit
-      fakeMsgs: [],
-      //fakeMsgs: {
+
+      // 存储pending的消息(弃用)
+      //pendingMsgs: {
       //  [conversationName]: []
       //},
     }
@@ -55,7 +56,6 @@ const message = React.createClass({
       conversationView => _.extend(conversationView, {key: conversationView._id._str})
     ));
 
-
     // 订阅msg
     const msgSubOptions = this.state.msgSubOptions;
     for (let key in msgSubOptions){
@@ -80,33 +80,63 @@ const message = React.createClass({
       })
     ));
 
+    // 获取pendingMsgs
+    const allPendingMsgs = Session.get('pendingMsgs');
+    let pendingMsgs = allPendingMsgs[this.state.curConversation];
+    if (!pendingMsgs || !pendingMsgs.length) pendingMsgs = [];
+
+    // 遍历pendingMsgs,找出receivedMsg
+    let receivedMsgs = [];//记录已收到的pending消息
+    for (let i = 0;i < pendingMsgs.length;i++)
+      if (BraavosCore.Database.Hedy.Message.findOne({_id: pendingMsgs[i]._id}))
+        receivedMsgs.push(i);
+
+    // 清除receivedMsgs
+    for(let i = receivedMsgs.length - 1;i >= 0;i--)
+      pendingMsgs.splice(receivedMsgs[i], 1);
+
+    // 更新pendingMsgs
+    allPendingMsgs[this.state.curConversation] = pendingMsgs;
+    Session.set('pendingMsgs', allPendingMsgs);
+
+    // TODO (待测试)按timestamp插入
+    let i = 0, j = 0;
+    while (i < msgs.length && j < pendingMsgs.length){
+      if (msgs[i].timestamp > pendingMsgs[j].timestamp){
+        msgs.splice(i, 0, pendingMsgs[j]);
+        j += 1;
+      }else{
+        i += 1;
+      }
+    };
+
+    while (j < pendingMsgs.length){
+      msgs.splice(i++, 0, pendingMsgs[j]);
+      j += 1;
+    };
+
     return {
       selfInfo: selfInfo,//avatar, userId, nickName
       conversationViews: conversationViews,
       orderMsgs: orderMsgs,
-      msgs: msgs.concat(this.state.fakeMsgs)
-      //msgs: msgs.push({
-      //  "className" : "models.Message",
-      //  "msgId" : 1,
-      //  "senderId" : 201372,
-      //  "receiverId" : 210962,
-      //  "chatType" : "single",
-      //  "contents" : "{\n  \"title\" : \"巴厘岛婚纱摄影\",\n  \"commodityId\" : 100714,\n  \"price\" : 300,\n  \"image\" : \"http:\\/\\/7sbm17.com1.z0.glb.clouddn.com\\/commodity\\/images\\/79e2dc7a0c45f2ee063dfb8c7786fd4e\"\n}",
-      //  "msgType" : 19,
-      //  "timestamp" : 1453091845655,
-      //  "targets" : [
-      //    210962,
-      //    201372
-      //  ]
-      //}) && msgs
+      //msgs: msgs.concat(pendingMsgs)
+      msgs: msgs
     };
   },
 
   // 添加pending消息
   _appendPendingMsg(msg){
-    this.setState({
-      fakeMsgs: [].concat(this.state.fakeMsgs, msg)
-    });
+    const pendingMsgs = Session.get('pendingMsgs');
+    pendingMsgs[msg.conversation._str] = [].concat(pendingMsgs[msg.conversation._str], msg);
+    Session.set('pendingMsgs', pendingMsgs);
+  },
+
+  // 修改对应pendingMsg的状态为fail
+  _failPendingMsg(msg){
+    const pendingMsgs = Session.get('pendingMsgs');
+    const index = _.findIndex(pendingMsgs[msg.conversation._str], pendingMsg => pendingMsg._id == msg._id);
+    index && (pendingMsgs[msg.conversation._str][index].status = 'fail');
+    Session.set('pendingMsgs', pendingMsgs);
   },
 
   // 修改订阅msg的数量限制
@@ -140,7 +170,7 @@ const message = React.createClass({
     };
   },
 
-  // 已达底部,修改状态
+  // 滚动条已达底部,修改state状态
   _changeCoversationState(){
     this.setState({
       changeConversation: false
@@ -229,6 +259,7 @@ const message = React.createClass({
               changeCoversationState={this._changeCoversationState}
               curConversation={this.state.curConversation}
               appendPendingMsg={this._appendPendingMsg}
+              failInSendingMsg={this._failPendingMsg}
             />
           </div>
         </div>;
