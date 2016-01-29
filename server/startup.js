@@ -53,7 +53,13 @@ function initMongo() {
     }
     const optionsStr = Object.keys(options).map(key=>`${key}=${options[key]}`).join('&');
     const url = `mongodb://${user}:${password}@${servers}/${db}?${optionsStr}`;
-    const driver = new MongoInternals.RemoteCollectionDriver(url);
+
+    // 确定OPLOG_URL
+    var connectionOptions = {};
+    if (process.env.MONGO_OPLOG_URL) {
+      connectionOptions.oplogUrl = process.env.MONGO_OPLOG_URL;
+    }
+    const driver = new MongoInternals.RemoteCollectionDriver(url, connectionOptions);
 
     BraavosCore.Database[confKey] = {};
 
@@ -72,6 +78,7 @@ function initMongo() {
     {collName: 'Token', schema: Schema.Account.Token},
     {collName: "Seller", schema: Schema.Marketplace.Seller},
     {collName: "Commodity", schema: Schema.Marketplace.Commodity},
+    {collName: "Order", schema: Schema.Marketplace.Order},
     {collName: "CommoditySnapshot", schema: Schema.Marketplace.Commodity},
     {collName: "Country", schema: Schema.Marketplace.Country},
     {collName: "Locality", schema: Schema.Marketplace.Locality}
@@ -92,7 +99,7 @@ function initYunkaiService() {
   const Yunkai = module.Yunkai;
   const YunkaiTypes = module.YunkaiTypes;
 
-  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword'];
+  const apiSet = ['getUserById', 'login', 'createUserPoly', 'resetPassword', 'verifyCredential'];
   const client = ThriftHelper.createClient(Yunkai, host, port, apiSet, {name: 'yunkai', transport: 'framed'});
   BraavosCore.Thrift.Yunkai = {types: YunkaiTypes, client: client};
 }
@@ -150,10 +157,13 @@ function initKadira() {
 
 Meteor.startup(()=> {
   console.log('Server startup');
+
   // 获取etcd设置
   resolveEtcdData();
+
   // 数据库设置
   initMongo();
+
   // 初始化Yunkai
   initYunkaiService();
 

@@ -5,21 +5,21 @@
  */
 
 Meteor.methods({
-    /**
-     * 检查commodity是否为当前用户所有
-     * @param commodityId
-     */
-    'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
-      const userId = parseInt(Meteor.userId());
-      const options = {commodityId: parseInt(commodityId)};
-      if (!isAdmin) options['seller.sellerId'] = userId;
+  /**
+   * 检查commodity是否为当前用户所有
+   * @param commodityId
+   */
+  'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
+    const userId = parseInt(Meteor.userId());
+    const options = {commodityId: parseInt(commodityId)};
+    if (!isAdmin) options['seller.sellerId'] = userId;
 
-      const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
-      return {
-        valid: Boolean(ret),
-        commodityInfo: ret
-      };
-    },
+    const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
+    return {
+      valid: Boolean(ret),
+      commodityInfo: ret
+    };
+  },
 
   // 生成commodityId
   'commodity.insert.generateCommodityId': () => {
@@ -70,7 +70,13 @@ Meteor.methods({
       version: currentTime.getTime()
     });
 
-    return collCommoditySnapshot.insert(doc) && collCommodity.insert(doc);
+    //return collCommoditySnapshot.insert(doc) && collCommodity.insert(doc);
+    if (collCommoditySnapshot.insert(doc) && collCommodity.insert(doc)){
+      Meteor.call('viae.marketplace.onCreateCommodity', commodityId);
+      return true;
+    }else{
+      return false;
+    };
   },
 
   // 编辑商品
@@ -84,7 +90,14 @@ Meteor.methods({
       updateTime: currentTime,
       version: currentTime.getTime()
     });
-    return collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
+    //return collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
+
+    if (collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc})){
+      Meteor.call('viae.marketplace.onUpdateCommodity', resetDoc.commodityId);
+      return true;
+    }else{
+      return false;
+    };
 
     // 只能编辑自己的商品
     //const userId = parseInt(Meteor.userId());

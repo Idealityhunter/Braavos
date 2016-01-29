@@ -233,7 +233,7 @@ const commodityModifyBasic = React.createClass({
     return (
       <div className="commodity-basic-wrap">
         <label className="">
-          <FormattedMessage message={this.getIntlMessage(prefix + 'commodityImages')}/>
+          <FormattedMessage message={this.getIntlMessage(`${prefix}commodityImages`)}/>
           <span style={this.styles.asterisk}>*</span>
         </label>
         <CommodityGallery
@@ -244,18 +244,18 @@ const commodityModifyBasic = React.createClass({
           cover={this.props.cover}
         />
         <hr style={{border:'1px dashed #ddd'}}/>
-        <label className=""><FormattedMessage message={this.getIntlMessage(prefix + 'basicInfo')}/></label>
+        <label className=""><FormattedMessage message={this.getIntlMessage(`${prefix}basicInfo`)}/></label>
         <form className="form-horizontal commodity-basic-form-wrap">
           <div className="form-group title">
             <label className="label-text">
-              <FormattedMessage message={this.getIntlMessage(prefix + 'commodityName')}/>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}commodityName`)}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
             <input className="inline placeholder" type='text' placeholder="" defaultValue={this.props.title || ''} style={{padding: 6}} onChange={this._handleClearErrorClass}/>
           </div>
           <div className="form-group address">
             <label className="label-text">
-              <FormattedMessage message={this.getIntlMessage(prefix + 'addressInfo')}/>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}addressInfo`)}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
             {countrySelect}
@@ -264,7 +264,7 @@ const commodityModifyBasic = React.createClass({
           </div>
           <div className="form-group category">
             <label className="label-text">
-              <FormattedMessage message={this.getIntlMessage(prefix + 'commodityCategories')}/>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}commodityCategories`)}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
             <select name="" id="" className="form-control" defaultValue={selectCategoryIndex}>
@@ -296,15 +296,17 @@ const commodityModifyBasic = React.createClass({
           */}
           <div className="form-group cost-time">
             <label className="label-text">
-              <FormattedMessage message={this.getIntlMessage(prefix + 'timeCost')}/>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}timeCost`)}/>
               <span style={this.styles.asterisk}>*</span>
             </label>
             <NumberInput className="inline placeholder" style={{width:50, padding:6}}
                          value={this.props.timeCost || ''}
+                         numberType='float'
+                         decimalDigits={1}
                          placeholder=''
                          onChange={this._handleClearErrorClass.bind(null, this)}
             />
-            <FormattedMessage message={this.getIntlMessage(prefix + 'hour')}/>
+            <FormattedMessage message={this.getIntlMessage(`${prefix}hour`)}/>
           </div>
           {/*
            <div className="form-group">

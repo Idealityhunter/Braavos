@@ -100,18 +100,18 @@ Account.IdProof = new SimpleSchema({
   // 证件类型
   idType: {
     type: String,
-    // 分别表示: 护照/中国大陆身份证
-    allowedValues: ["passport", "cnid"]
+    // 分别表示: 护照/中国大陆身份证/入台证/港澳通行证
+    allowedValues: ["passport", "chineseID", "TWPermit", "HMPermit"]
   },
   // 国家代码
   nation: {
     type: String,
     regEx: /[A-Z]{2}/,
-    // 当idType为cnid时, 可以不提供nation信息
+    // 只有idType为passport时, 才需要nation信息
     optional: true
   },
   // 证件编号
-  code: {
+  number: {
     type: String,
     min: 8,
     max: 64

@@ -196,7 +196,7 @@ const commodityPlansModal = React.createClass({
     let i = 0;
     const pricingList = this.state.pricing && this.state.pricing.map(pricing =>
       <div className="pricing-wrap" data-id={i++} key={pricing.key}>
-        <NumberInput className="inline commodity-basic-price" placeholder="售价￥" value={pricing.price}/>
+        <NumberInput numberType='float' decimalDigits={2} className="inline commodity-basic-price" placeholder="售价￥" value={pricing.price}/>
         <div className="inline">
           <div className="form-group commodity-basic-datepicker inline" style={{width:350}}>
             <div className="input-daterange input-group">

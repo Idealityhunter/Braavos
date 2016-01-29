@@ -5,6 +5,7 @@ import {CommodityModifyBook} from '/client/dumb-components/commodity/commodityMo
 import {CommodityModifyTraffic} from '/client/dumb-components/commodity/commodityModifyTraffic';
 import {Steps} from "/client/components/steps/steps";
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
+import {PageLoading} from '/client/common/pageLoading';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -112,47 +113,6 @@ const commodityModify = React.createClass({
     });
   },
 
-  styles: {
-    shadowLayer: {
-      opacity: 1.04,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      position: 'fixed',
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      zIndex: 10000
-    },
-    loadingBoard: {
-      display: 'block',
-      backgroundColor: 'rgba(255,255,255,.7)',
-      width: 220,
-      marginTop: -57,
-      marginLeft: -130,
-      backgroundColor: 'white',
-      fontFamily: "'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-      padding: 20,
-      borderRadius: 5,
-      textAlign: 'center',
-      position: 'fixed',
-      left: '50%',
-      top: '50%',
-      overflow: 'hidden',
-      zIndex: 99999
-    },
-    loadingLabel: {
-      paddingBottom: 15
-    },
-    spinnerGroup: {
-      height: 60,
-      width: 70
-    },
-    spinnerItem: {
-      margin: '0 3px'
-    }
-  },
-
   // 判断index页面是否填写正确
   _validateCurrent(currentIndex) {
     // TODO 验证当前tab的必要信息是否填充完毕
@@ -239,7 +199,7 @@ const commodityModify = React.createClass({
       this.submitLock = true;
 
     // loading等待动画
-    $('.submit-waiting').show();
+    $('.page-loading-wrap').removeClass('hidden');
 
     // TODO error的样式应该加在error的tab上面
     let valid = true;
@@ -248,7 +208,7 @@ const commodityModify = React.createClass({
       if (!this._validateCurrent(i)){
         // 解锁
         this.submitLock = false;
-        $('.submit-waiting').hide();
+        $('.page-loading-wrap').addClass('hidden');
 
         if (current == i){
           return 'error';
@@ -413,7 +373,7 @@ const commodityModify = React.createClass({
       Meteor.call('commodity.update', modCommodityInfo, restCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
-        $('.submit-waiting').hide();
+        $('.page-loading-wrap').addClass('hidden');
 
         // TODO 回调结果反应
         if (err || res == 0) {
@@ -432,7 +392,7 @@ const commodityModify = React.createClass({
           });
 
           // 以免不点击swal导致不跳转
-          setTimeout(FlowRouter.go('commodities'), 500);
+          Meteor.setTimeout(() => FlowRouter.go('commodities'), 500);
 
           return true;
         }
@@ -442,7 +402,7 @@ const commodityModify = React.createClass({
       Meteor.call('commodity.insert', modCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
-        $('.submit-waiting').hide();
+        $('.page-loading-wrap').addClass('hidden');
 
         // TODO 回调结果反应
         if (err) {
@@ -461,7 +421,7 @@ const commodityModify = React.createClass({
           });
 
           // 以免不点击swal导致不跳转
-          setTimeout(FlowRouter.go('commodities'), 500);
+          Meteor.setTimeout(() => FlowRouter.go('commodities'), 500);
           return true;
         }
       });
@@ -512,33 +472,19 @@ const commodityModify = React.createClass({
         <CommodityModifyTraffic trafficInfo={this.props.commodityInfo && this.props.commodityInfo.trafficInfo || []}/>
       </div>;
 
-    const submitLoading =
-      <div className="submit-waiting" style={{display: 'none'}}>
-        <div className="shadow-layer" style={this.styles.shadowLayer}></div>
-        <div className="loading-board" style={this.styles.loadingBoard}>
-          <div className="loading-label" style={this.styles.loadingLabel}>正在提交中，请稍候...</div>
-          <div className="sk-spinner sk-spinner-wave" style={this.styles.spinnerGroup}>
-            <div className="sk-rect1" style={this.styles.spinnerItem}></div>
-            <div className="sk-rect2" style={this.styles.spinnerItem}></div>
-            <div className="sk-rect3" style={this.styles.spinnerItem}></div>
-            <div className="sk-rect4" style={this.styles.spinnerItem}></div>
-            <div className="sk-rect5" style={this.styles.spinnerItem}></div>
-          </div>
-        </div>
-      </div>;
     return (
       <div className="commodity-modify-wrap">
         <BraavosBreadcrumb />
         <br/>
         <Steps steps={[
-          {title: this.getIntlMessage(prefix + 'basic'), body: basicStep},
-          {title: this.getIntlMessage(prefix + 'introduction'), body: introductionStep},
-          {title: this.getIntlMessage(prefix + 'instruction'), body: instructionStep},
-          {title: this.getIntlMessage(prefix + 'book'), body: bookStep},
-          {title: this.getIntlMessage(prefix + 'traffic'), body: trafficStep}
+          {title: this.getIntlMessage(`${prefix}basic`), body: basicStep},
+          {title: this.getIntlMessage(`${prefix}introduction`), body: introductionStep},
+          {title: this.getIntlMessage(`${prefix}instruction`), body: instructionStep},
+          {title: this.getIntlMessage(`${prefix}book`), body: bookStep},
+          {title: this.getIntlMessage(`${prefix}traffic`), body: trafficStep}
           ]} willNextStep={this.willNextStep} willPreviousStep={this.willPreviousStep} willGoStep={this.willGoStep} willFinish={this.willFinish}/>
-        {submitLoading}
         <br/>
+        <PageLoading labelText='正在提交中，请稍候...' alpha={1}/>
       </div>
     );
   }

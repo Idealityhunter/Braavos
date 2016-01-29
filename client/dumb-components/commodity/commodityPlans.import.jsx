@@ -103,11 +103,11 @@ const commodityPlans = React.createClass({
     const addForm = $(e.target).parents('.commodity-add')[0];
     let addPlan = {
       title: $(addForm).children('.title').children('input').val(),
-      marketPrice: parseInt($(addForm).children('.market-price').children('input').val()),
-      price: parseInt($(addForm).children('.price').children('input').val()),
+      marketPrice: parseFloat($(addForm).children('.market-price').children('input').val()),
+      price: parseFloat($(addForm).children('.price').children('input').val()),
       modalPrice: $(addForm).children('.price').children('input').val(),
       pricing: this.state.addPlan.modalPricing.map(pricing => _.extend(pricing, {
-        price: parseInt(pricing.price),
+        price: parseFloat(pricing.price),
         timeRange: pricing.timeRange.map(date => (date != null) ? new Date(date) : null)
       })),
       modalPricing: this.state.addPlan.modalPricing,
@@ -115,9 +115,17 @@ const commodityPlans = React.createClass({
       planId: Meteor.uuid()
     };
 
-    if (Match.test(_.extend(_.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
+    // 新建一个用于检测plan的对象
+    const tempPlan = _.extend({timeRequired: true}, _.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'));
+    tempPlan['pricing'] = tempPlan['pricing'].map(pricing => _.extend({}, pricing, {
+      price: parseInt(pricing.price * 100)
+    }));
+    tempPlan['price'] = tempPlan['price'] && tempPlan['price'] * 100;
+    tempPlan['marketPrice'] = tempPlan['marketPrice'] && tempPlan['marketPrice'] * 100;
+
+    if (Match.test(tempPlan, BraavosCore.Schema.Marketplace.CommodityPlan)){
       addPlan.pricing = addPlan.pricing.map(pricing => _.extend(pricing, {
-        price: parseInt(pricing.price),
+        price: parseFloat(pricing.price),
         timeRange: pricing.timeRange.map(date => (date != null) ? moment(date).format('YYYY-MM-DD') : null)
       }));
       let copyPlan = this.state.plans.slice().concat(addPlan);
@@ -163,7 +171,7 @@ const commodityPlans = React.createClass({
       swal('请输入市场价!', '', 'error');
       return ;
     } else {
-      marketPrice = parseInt(marketPrice);
+      marketPrice = parseFloat(marketPrice);
     }
     if (copyPlan[arrayIndex].modalPricing.length == 0){
       swal('请添加套餐的售价信息!', '', 'error');
@@ -178,6 +186,8 @@ const commodityPlans = React.createClass({
       //stock: stock
       planId: copyPlan[arrayIndex].planId
     };
+
+    // TODO check商品的title长度
 
     _.extend(copyPlan[arrayIndex], editPlan);
     // 提交修改给父组件
@@ -308,7 +318,7 @@ const commodityPlans = React.createClass({
           <input className="inline" type='text' placeholder="套餐描述" defaultValue={plan.title} style={{padding: 6}}/>
         </div>
         <div className="market-price inline">
-          <NumberInput className="inline" placeholder="市场价￥" value={plan.marketPrice} style={{padding: 6}}/>
+          <NumberInput numberType='float' decimalDigits={2} className="inline" placeholder="市场价￥" value={plan.marketPrice} style={{padding: 6}}/>
         </div>
         <div className="price inline">
           {(this.state.dateRequired)
@@ -357,7 +367,7 @@ const commodityPlans = React.createClass({
           <input type='text' placeholder="套餐描述" value={this.state.addPlan.title} onChange={this._handleAddPlanTitleChange} style={{padding: 6}}/>
         </div>
         <div className="inline market-price">
-          <NumberInput placeholder="市场价￥" value={this.state.addPlan.marketPrice} style={{padding: 6}}/>
+          <NumberInput numberType='float' decimalDigits={2} placeholder="市场价￥" value={this.state.addPlan.marketPrice} style={{padding: 6}}/>
         </div>
         <div className="inline price">
           {(this.state.dateRequired)
