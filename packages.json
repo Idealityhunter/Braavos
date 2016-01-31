@@ -3,6 +3,7 @@
   "react-redux": "3.0.1",
   "externalify": "0.1.0",
   "react-bootstrap": "0.27.3",
+  "winston": "2.1.1",
   "qiniu": "6.1.8",
   "node-int64": "0.4.0"
 }
