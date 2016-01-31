@@ -43,7 +43,7 @@ zephyre:ueditor
 
 zimme:active-route
 aldeed:simple-schema
-underscore
+stevezhu:lodash
 react-meteor-data
 dburles:google-maps
 lvxingpai:meteor-jcrop
