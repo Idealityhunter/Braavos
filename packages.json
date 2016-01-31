@@ -1,9 +1,14 @@
 {
-  "redux": "3.0.2",
-  "react-redux": "3.0.1",
-  "externalify": "0.1.0",
-  "react-bootstrap": "0.27.3",
   "winston": "2.1.1",
   "qiniu": "6.1.8",
-  "node-int64": "0.4.0"
+  "node-int64": "0.4.0",
+  "react-mixin": "3.0.3",
+  "redux": "3.1.5",
+  "react-redux": "4.1.2",
+  "redux-thunk": "1.0.3",
+  "redux-logger": "2.4.0",
+  "react-bootstrap": "0.28.2",
+  "immutable": "3.7.6",
+  "redux-immutable": "3.0.3",
+  "externalify": "0.1.0"
 }
