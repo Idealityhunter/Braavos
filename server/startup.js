@@ -8,13 +8,12 @@
  * 获得etcd的数据
  */
 function resolveEtcdData() {
-  const logger = Meteor.npmRequire('winston');
+  const logger = BraavosCore.logger;
 
   // 获得etcd的地址. 优先查找Meteor.settings中的etcd.server. 如果没有找到, 则使用环境变量.
   // 如果二者都没有, 则使用localhost:2379
   let etcd_server;
-
-  logger.info(`Retrieving etcd server from Meteor.settings`);
+  logger.debug(`Retrieving etcd server from Meteor.settings`);
   // etcd.server的格式: {host: '192.168.1.1', port: 2379}
   if (Meteor.settings.etcd) {
     let {host, port} = Meteor.settings.etcd.server || {};
@@ -24,7 +23,7 @@ function resolveEtcdData() {
     }
   }
   if (!etcd_server) {
-    logger.info(`Retrieving etcd server from env`);
+    logger.debug(`Retrieving etcd server from env`);
     etcd_server = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
   }
   logger.info(`etcd server: ${etcd_server}`);
@@ -175,7 +174,15 @@ function initKadira() {
 }
 
 Meteor.startup(()=> {
-  console.log('Server startup');
+  // 设置winston
+  const winston = Meteor.npmRequire('winston');
+  // 默认日志级别: info
+  BraavosCore.logger = new winston.Logger({
+    level: (Meteor.settings.logging || {}).level || 'info',
+    transports: [
+      new (winston.transports.Console)()
+    ]
+  });
 
   // 获取etcd设置
   resolveEtcdData();
@@ -189,6 +196,7 @@ Meteor.startup(()=> {
   // 初始化IdGen
   initIdGenService();
 
+  // 初始化七牛SDK
   initQiniuSDK();
 
   // 初始化Kadira
