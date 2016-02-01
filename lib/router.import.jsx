@@ -2,7 +2,6 @@ import {MainLayout} from '/client/main-layout';
 import {Index} from '/client/dumb-components/index';
 import {Register} from '/client/dumb-components/common/register';
 import {RegistrationLayout} from "/client/common/registration"
-import {Login} from '/client/dumb-components/common/login';
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
@@ -17,6 +16,8 @@ import {Finance} from '/client/dumb-components/finance/finance';
 import {Page404} from '/client/dumb-components/page404';
 
 import {StepsDemo} from "/client/components/steps/steps"
+
+import { Login } from '/client/components/login/login'
 
 // 初始化Sub Manager
 BraavosCore.SubsManager = {
@@ -59,7 +60,7 @@ FlowRouter.route('/test', {
 FlowRouter.route('/login', {
   name: 'login',
   action() {
-    ReactLayout.render(Login, {...intlData});
+    ReactLayout.render(Login);
   }
 });
 
