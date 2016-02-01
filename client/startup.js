@@ -4,6 +4,15 @@
  * Created by zephyre on 10/23/15.
  */
 Meteor.startup(()=> {
+  // 初始化winston
+  {
+    const func = level => (message => console.log(`[${level}] ${message}`));
+    BraavosCore.logger = _.reduce(['debug', 'silly', 'verbose', 'info', 'warn', 'error'], (result, level) => {
+      result[level] = func(level);
+      return result;
+    }, {});
+  }
+
   // 定义客户端的schema
   const schema = BraavosCore.Schema;
   BraavosCore.Database.Braavos = {};
@@ -30,15 +39,15 @@ Meteor.startup(()=> {
   yunkai.UserInfo.attachSchema(schema.Account.UserInfo);
 });
 
-// 补全underscore的语法
-_.findIndex || ( _.findIndex = (arr, cal) => {
-  return _.reduce(arr, (memo, arri) => {
-    memo.index ++;
-    if (cal(arri)) memo.flag = memo.index;
-    return memo
-  }, {
-    index: -1,
-    flag: -1
-  }).flag;
-});
+//// 补全underscore的语法
+//_.findIndex || ( _.findIndex = (arr, cal) => {
+//  return _.reduce(arr, (memo, arri) => {
+//    memo.index ++;
+//    if (cal(arri)) memo.flag = memo.index;
+//    return memo
+//  }, {
+//    index: -1,
+//    flag: -1
+//  }).flag;
+//});
 
