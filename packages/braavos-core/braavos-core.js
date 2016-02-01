@@ -2,6 +2,9 @@
 
 BraavosCore = {};
 
+// 工具函数的集合
+BraavosCore.Utils = {};
+
 // 所有的Schema定义
 BraavosCore.Schema = CoreModel;
 

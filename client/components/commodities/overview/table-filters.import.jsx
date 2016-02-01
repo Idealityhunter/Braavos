@@ -3,8 +3,7 @@
  * Created by zephyre on 2/1/16.
  */
 
-import { Immutable } from '/lib/immutable'
-const { fromJS } = Immutable;
+import { fromJS } from '/lib/immutable'
 
 import { Input, ButtonToolbar, Button } from '/lib/react-bootstrap'
 import { DatePicker, moment } from '/lib/react-datepicker'

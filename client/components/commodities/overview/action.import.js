@@ -45,3 +45,13 @@ export const resetFilters = () => {
     type: 'RESET_FILTERS'
   };
 };
+
+/**
+ * 应用筛选条件(即点击"搜索"按钮)
+ * @returns {{type: string}}
+ */
+export const applyFilters = () => {
+  return {
+    type: 'APPLY_FILTERS'
+  };
+};

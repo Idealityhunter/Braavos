@@ -10,8 +10,7 @@
  * Created by zephyre on 2/1/16.
  */
 
-const { fromJS } = Immutable;
-import { Immutable } from '/lib/immutable'
+import { fromJS } from '/lib/immutable'
 
 /**
  * 和筛选控件相关的reducer
@@ -21,18 +20,21 @@ export const filterReducer = (state = fromJS({}), action) => {
   switch (action.type) {
     case 'SET_QUERY':
       // 更改了查找字符串
-      return state.merge(fromJS({query: action.query}));
+      return state.set('filters', oldFilters.set('query', action.query));
     case 'SET_FILTER':
       if (action.enabled) {
         // 应用filter
-        return state.merge(fromJS({}).set(action['filterKey'], action['filterValue']));
+        return state.set('filters', oldFilters.set(action['filterKey'], action['filterValue']));
       } else {
         // 清除filter
-        return state.delete(action['filterKey']);
+        return state.set('filters', oldFilters.delete(action['filterKey']));
       }
     case 'RESET_FILTERS':
       // 清除所有的filter
-      return fromJS({});
+      return state.set('filters', fromJS({})).set('appliedFilters', fromJS({}));
+    case 'APPLY_FILTERS':
+      // 应用filters: 其原理是将filter应用到appliedFilters上面
+      return state.set('appliedFilters', state.get('filters', fromJS({})));
     default:
       return state;
   }

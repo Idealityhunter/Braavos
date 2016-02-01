@@ -13,14 +13,14 @@ import { FixedDataTable } from '/lib/fixed-data-table'
 import { Input, Button, Alert } from '/lib/react-bootstrap'
 import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
 
-import { Immutable } from '/lib/immutable'
-const { fromJS } = Immutable;
+import { fromJS } from '/lib/immutable'
 
-import { setSortStyle, setQuery, setFilter, resetFilters } from './action'
+import { setSortStyle, setQuery, setFilter, resetFilters, applyFilters } from './action'
 import { filterReducer } from './reducers'
 import { TableFilters } from './table-filters'
+import { CommoditiesTable } from './commodities-table'
 
-const reducer = combineReducers({filters: filterReducer});
+const reducer = combineReducers({filter: filterReducer});
 const store = createStore(reducer, compose(
   applyMiddleware(thunkMiddleware),
   window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -34,29 +34,18 @@ const mapDispatchToProps = (dispatch) => {
     handlers: {
       // 和筛选控件相关的事件回调
       filters: {
-        onChangeQuery: (value) => {
-          dispatch(setQuery(value));
-        },
+        onChangeQuery: value => dispatch(setQuery(value)),
 
-        onChangeStatusFilter: (value) => {
-          dispatch(setFilter('commodityStatus', value));
-        },
+        onChangeStatusFilter: value => dispatch(setFilter('commodityStatus', value)),
 
-        onSelectDate: (dateType) => {
-          return (date) => {
-            dispatch(setFilter(`date.${dateType}`, date));
-          }
-        },
+        onSelectDate: dateType => (date => dispatch(setFilter(`date.${dateType}`, date))),
 
-        onResetFilters: () => {
-          dispatch(resetFilters());
-        },
+        onResetFilters: () => dispatch(resetFilters()),
 
-        onApplyFilters: (filters) => {
-          // 点击搜索按钮
-          Meteor.subscribe('marketplace.commodity', filters, true);
-        }
+        // 点击搜索按钮
+        onApplyFilters: () => dispatch(applyFilters())
       }
+      // 和表格相关的事件回调
     }
   }
 };
@@ -71,18 +60,24 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
       // 搜索关键词
       query: React.PropTypes.string,
       // 各种filter
-      filters: React.PropTypes.object
+      filters: React.PropTypes.object,
+      // 各种回调函数
+      handlers: React.PropTypes.object
     },
 
     render() {
-      const filters = this.props.filters || fromJS({});
-      const props = {filters: filters, ...this.props.handlers.filters};
+      const filters = this.props.filter.get('filters', fromJS({}));
+      // 为TableFilters准备的
+      const tableFiltersProps = {filters: filters, ...this.props.handlers.filters};
+      // 为CommoditiesTable准备的
+      const commodityTableProps = {filters: this.props.filter.get('appliedFilters', fromJS({}))}
 
       return (
         <div className="commodity-mngm-wrap">
           <BraavosBreadcrumb />
           <div className="wrapper wrapper-content animated fadeInRight">
-            <TableFilters {...props}/>
+            <TableFilters {...tableFiltersProps}/>
+            <CommoditiesTable {...commodityTableProps}/>
           </div>
         </div>
       );
