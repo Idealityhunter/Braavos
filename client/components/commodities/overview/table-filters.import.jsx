@@ -61,10 +61,10 @@ export const TableFilters = React.createClass({
   },
 
   render() {
-    const filters = (this.props.filters || fromJS({}));
-    let tmp = filters.get('date.start');
+    const filters = this.props.filters;
+    let tmp = filters['date.start'];
     const selectedDateStart = tmp ? moment(tmp) : null;
-    tmp = filters.get('date.end');
+    tmp = filters['date.end'];
     const selectedDateEnd = tmp ? moment(tmp) : null;
     return (
       <div className="ibox-content m-b-sm border-bottom">
@@ -80,13 +80,13 @@ export const TableFilters = React.createClass({
           <form>
             {/* 关键词搜索 */}
             <div className="col-sm-2">
-              <Input type="text" label="　" value={this.props.query} placeholder="搜索..."
+              <Input type="text" label="　" value={filters['query']} placeholder="搜索..."
                      onChange={this.handleChangeQuery}/>
             </div>
             {/* 商品状态 */}
             <div className="col-sm-2">
               <Input type="select" label="商品状态"
-                     value={(this.props.filters || fromJS({})).get('commodityStatus', 0)}
+                     value={filters['commodityStatus'] || 0}
                      onChange={this.handleChangeStatusFilter}>
                 <option value="0">全部</option>
                 <option value="1">已下架</option>

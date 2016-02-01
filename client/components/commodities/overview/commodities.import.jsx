@@ -18,25 +18,23 @@ import { Immutable } from '/lib/immutable'
 const { Map, fromJS } = Immutable;
 
 import { setSortStyle, setQuery, applyFilter, resetFilters } from './action'
-import { tableReducer } from './reducers'
+import { filterReducer } from './reducers'
 import { TableFilters } from './table-filters'
 
-const reducer = combineReducers({table: tableReducer});
+const reducer = combineReducers({filters: filterReducer});
 const store = createStore(reducer, compose(
   applyMiddleware(thunkMiddleware, createLogger()),
   window.devToolsExtension ? window.devToolsExtension() : f => f
   )
 );
 
-const mapStateToProps = (state) => {
-  console.log(state);
-  return state;
-};
+const mapStateToProps = (state) => state;
 
 const mapDispatchToProps = (dispatch) => {
   return {
     handlers: {
-      table: {
+      // 和筛选控件相关的事件回调
+      filters: {
         onChangeQuery: (value) => {
           dispatch(setQuery(value));
         },
@@ -53,7 +51,6 @@ const mapDispatchToProps = (dispatch) => {
 
         onResetFilters: () => {
           dispatch(resetFilters());
-          dispatch(setQuery(""))
         }
       }
     }
@@ -74,12 +71,14 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
     },
 
     render() {
+      const filters = this.props.filters || fromJS({});
+      const props = {filters: filters, ...this.props.handlers.filters};
 
       return (
         <div className="commodity-mngm-wrap">
           <BraavosBreadcrumb />
           <div className="wrapper wrapper-content animated fadeInRight">
-            <TableFilters {...{...(this.props.table.toObject()), ...this.props.handlers.table}}/>
+            <TableFilters {...props}/>
           </div>
         </div>
       );

@@ -10,30 +10,29 @@
  * Created by zephyre on 2/1/16.
  */
 
-const { Map, fromJS } = Immutable;
+const { fromJS } = Immutable;
 import { Immutable } from '/lib/immutable'
 
-export const tableReducer = (state=fromJS({}), action) => {
+/**
+ * 和筛选控件相关的reducer
+ */
+export const filterReducer = (state=fromJS({}), action) => {
+  const oldFilters = state.get('filters', fromJS({}));
   switch (action.type) {
-    case 'SET_SORT  _STYLE':
-      // 更改了排序方式(排序字段, 排序: asc/desc)
-      const sortStyle = _.pick(action, ['sortKey', 'sortOrder']);
-      return state.merge(fromJS(sortStyle));
     case 'SET_QUERY':
       // 更改了查找字符串
       return state.merge(fromJS({query: action.query}));
     case 'APPLY_FILTER':
-      const oldFilters = state.get('filters', fromJS({}));
       if (action.enabled) {
         // 应用filter
-        return state.set('filters', oldFilters.set(action['filterKey'], action['filterValue']));
+        return state.merge(fromJS({}).set(action['filterKey'], action['filterValue']));
       } else {
         // 清除filter
-        return state.set('filters', oldFilters.delete(action['filterKey']));
+        return state.delete(action['filterKey']);
       }
     case 'RESET_FILTERS':
       // 清除所有的filter
-      return state.set('filters', fromJS({}));
+      return fromJS({});
     default:
       return state;
   }
