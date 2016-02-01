@@ -15,10 +15,13 @@ export const CommoditiesTable = React.createClass({
   },
 
   getMeteorData() {
+    const userId = parseInt(Meteor.userId());
+    const isAdmin = BraavosCore.Utils.account.isAdmin(userId);
+
     const filters = this.props.filters.toObject();
     if (filters) {
-      Meteor.subscribe('marketplace.commodity', filters, true);
-      const query = BraavosCore.Utils.buildCommodityQuery(filters, true);
+      Meteor.subscribe('marketplace.commodity', filters, isAdmin);
+      const query = BraavosCore.Utils.marketplace.buildCommodityQuery(filters, isAdmin, userId);
       const fields = {commodityId: 1, seller: 1, title: 1, cover: 1, price: 1, createTime: 1, status: 1};
       // 默认排序: 按照时间倒序
       const sort = {createTime: -1};

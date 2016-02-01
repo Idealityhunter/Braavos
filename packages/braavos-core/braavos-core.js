@@ -3,7 +3,10 @@
 BraavosCore = {};
 
 // 工具函数的集合
-BraavosCore.Utils = {};
+BraavosCore.Utils = {
+  account: {},
+  marketplace: {}
+};
 
 // 所有的Schema定义
 BraavosCore.Schema = CoreModel;
