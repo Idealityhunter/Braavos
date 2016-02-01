@@ -16,13 +16,13 @@ import { Immutable } from '/lib/immutable'
 /**
  * 和筛选控件相关的reducer
  */
-export const filterReducer = (state=fromJS({}), action) => {
+export const filterReducer = (state = fromJS({}), action) => {
   const oldFilters = state.get('filters', fromJS({}));
   switch (action.type) {
     case 'SET_QUERY':
       // 更改了查找字符串
       return state.merge(fromJS({query: action.query}));
-    case 'APPLY_FILTER':
+    case 'SET_FILTER':
       if (action.enabled) {
         // 应用filter
         return state.merge(fromJS({}).set(action['filterKey'], action['filterValue']));

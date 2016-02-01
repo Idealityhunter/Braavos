@@ -35,7 +35,7 @@ export const TableFilters = React.createClass({
   // 改变商品状态筛选
   handleChangeStatusFilter(evt) {
     if (this.props.onChangeStatusFilter) {
-      this.props.onChangeStatusFilter(parseInt(evt.target.value));
+      this.props.onChangeStatusFilter(evt.target.value);
     }
   },
 
@@ -56,12 +56,14 @@ export const TableFilters = React.createClass({
   },
 
   // 开始搜索
-  handleSearch() {
-
+  applyFilters() {
+    if (this.props.onApplyFilters) {
+      this.props.onApplyFilters(this.props.filters.toObject());
+    }
   },
 
   render() {
-    const filters = this.props.filters;
+    const filters = this.props.filters.toObject();
     let tmp = filters['date.start'];
     const selectedDateStart = tmp ? moment(tmp) : null;
     tmp = filters['date.end'];
@@ -86,12 +88,12 @@ export const TableFilters = React.createClass({
             {/* 商品状态 */}
             <div className="col-sm-2">
               <Input type="select" label="商品状态"
-                     value={filters['commodityStatus'] || 0}
+                     value={filters['commodityStatus'] || 'all'}
                      onChange={this.handleChangeStatusFilter}>
-                <option value="0">全部</option>
-                <option value="1">已下架</option>
-                <option value="2">已发布</option>
-                <option value="3">审核中</option>
+                <option value="all">全部</option>
+                <option value="disabled">已下架</option>
+                <option value="pub">已发布</option>
+                <option value="review">审核中</option>
               </Input>
             </div>
             {/* 日期控件 */}
@@ -106,7 +108,7 @@ export const TableFilters = React.createClass({
             {/* 按钮 */}
             <div className="col-sm-3" style={{marginTop: 25}}>
               <ButtonToolbar>
-                <Button bsStyle="primary" bsSize="small" onClick={this.handleSearch} active>查询</Button>
+                <Button bsStyle="primary" bsSize="small" onClick={this.applyFilters} active>查询</Button>
                 <Button bsStyle="warning" bsSize="small" onClick={this.handleResetFilters} active>重置</Button>
               </ButtonToolbar>
             </div>

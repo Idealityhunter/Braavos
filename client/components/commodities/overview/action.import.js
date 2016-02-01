@@ -28,12 +28,12 @@ export const setQuery = (value) => {
 };
 
 /**
- * 添加一个筛选条件
+ * 设置一个筛选条件
  * @param filterKey 筛选条件的名称, 比如: commodityStatus, date.start, date.end等
  * @param filterValue 筛选值
  */
-export const applyFilter = (filterKey, filterValue) => {
-  return _.assign({filterKey, filterValue}, {type: 'APPLY_FILTER', enabled: true});
+export const setFilter = (filterKey, filterValue) => {
+  return _.assign({filterKey, filterValue}, {type: 'SET_FILTER', enabled: true});
 };
 
 /**

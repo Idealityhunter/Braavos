@@ -7,23 +7,22 @@
  */
 
 import {
-  createStore, combineReducers, compose, Provider, connect, applyMiddleware, thunkMiddleware, createLogger
+  createStore, combineReducers, compose, Provider, connect, applyMiddleware, thunkMiddleware
 } from '/lib/redux'
 import { FixedDataTable } from '/lib/fixed-data-table'
-const { Table, Column, Cell } = FixedDataTable;
 import { Input, Button, Alert } from '/lib/react-bootstrap'
 import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
 
 import { Immutable } from '/lib/immutable'
-const { Map, fromJS } = Immutable;
+const { fromJS } = Immutable;
 
-import { setSortStyle, setQuery, applyFilter, resetFilters } from './action'
+import { setSortStyle, setQuery, setFilter, resetFilters } from './action'
 import { filterReducer } from './reducers'
 import { TableFilters } from './table-filters'
 
 const reducer = combineReducers({filters: filterReducer});
 const store = createStore(reducer, compose(
-  applyMiddleware(thunkMiddleware, createLogger()),
+  applyMiddleware(thunkMiddleware),
   window.devToolsExtension ? window.devToolsExtension() : f => f
   )
 );
@@ -40,17 +39,22 @@ const mapDispatchToProps = (dispatch) => {
         },
 
         onChangeStatusFilter: (value) => {
-          dispatch(applyFilter('commodityStatus', value));
+          dispatch(setFilter('commodityStatus', value));
         },
 
         onSelectDate: (dateType) => {
           return (date) => {
-            dispatch(applyFilter(`date.${dateType}`, date));
+            dispatch(setFilter(`date.${dateType}`, date));
           }
         },
 
         onResetFilters: () => {
           dispatch(resetFilters());
+        },
+
+        onApplyFilters: (filters) => {
+          // 点击搜索按钮
+          Meteor.subscribe('marketplace.commodity', filters, true);
         }
       }
     }

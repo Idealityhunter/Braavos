@@ -8,6 +8,7 @@ export const CommoditiesTable = React.createClass({
   mixins: [ReactMeteorData],
 
   getMeteorData() {
+
   },
 
   render() {
