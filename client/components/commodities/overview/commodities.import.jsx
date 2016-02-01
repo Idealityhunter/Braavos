@@ -70,7 +70,7 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
       // 为TableFilters准备的
       const tableFiltersProps = {filters: filters, ...this.props.handlers.filters};
       // 为CommoditiesTable准备的
-      const commodityTableProps = {filters: this.props.filter.get('appliedFilters', fromJS({}))}
+      const commodityTableProps = {filters: this.props.filter.get('appliedFilters', fromJS({}))};
 
       return (
         <div className="commodity-mngm-wrap">
