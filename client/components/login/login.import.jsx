@@ -5,7 +5,7 @@
  */
 
 import {
-  createStore, combineReducers, Provider, connect, applyMiddleware, thunkMiddleware, createLogger
+  createStore, combineReducers, compose, Provider, connect, applyMiddleware, thunkMiddleware, createLogger
 } from '/lib/redux'
 import { Input, Button, Alert } from '/lib/react-bootstrap'
 
@@ -47,7 +47,11 @@ const miscReducer = (state = fromJS({}), action) => {
 };
 
 const reducer = combineReducers({fields: textFieldReducer, misc: miscReducer});
-const store = createStore(reducer, applyMiddleware(thunkMiddleware, createLogger()));
+const store = createStore(reducer, compose(
+  applyMiddleware(thunkMiddleware, createLogger()),
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
+);
 
 const mapStateToProps = (state) => state;
 
@@ -66,7 +70,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-Container = connect(mapStateToProps, mapDispatchToProps)(
+const Container = connect(mapStateToProps, mapDispatchToProps)(
   React.createClass({
     render() {
       // 是否显示登录失败的提示

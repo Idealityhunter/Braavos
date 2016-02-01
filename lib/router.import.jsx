@@ -4,6 +4,7 @@ import {Register} from '/client/dumb-components/common/register';
 import {RegistrationLayout} from "/client/common/registration"
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
+import {Commodities} from '/client/components/commodities/overview/commodities'
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
 import {OrderInfo} from '/client/dumb-components/order/orderInfo';
@@ -100,6 +101,17 @@ FlowRouter.route('/commodities', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Commodity {...intlData} />}, intlData, {documentTitle: "商品管理"}));
+  }
+});
+
+// 商品管理 - 列表
+FlowRouter.route('/commodities2', {
+  name: 'commodities2',
+  title: lsbMessages['commodities'],
+  parent: 'home',
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Commodities />}, intlData, {documentTitle: "商品管理"}));
   }
 });
 
