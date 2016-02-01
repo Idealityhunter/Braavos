@@ -6,11 +6,23 @@
 Meteor.startup(()=> {
   // 初始化winston
   {
-    const func = level => (message => console.log(`[${level}] ${message}`));
-    BraavosCore.logger = _.reduce(['debug', 'silly', 'verbose', 'info', 'warn', 'error'], (result, level) => {
-      result[level] = func(level);
-      return result;
-    }, {});
+    const levelList = ['silly', 'debug', 'verbose', 'info', 'warn', 'error'];
+    const func = (level, logger) => (message => {
+      const levelId = _.indexOf(levelList, level);
+      const minLevelId = _.indexOf(levelList, logger.level);
+      if (levelId != -1 && levelId >= minLevelId) {
+        console.log(`[${level}] ${message}`)
+      }
+    });
+    const logger = {
+      // 默认的level
+      level: (Meteor.settings.logging || {}).level || 'info'
+    };
+
+    BraavosCore.logger = _.reduce(levelList, (obj, level) => {
+      obj[level] = func(level, obj);
+      return obj;
+    }, logger);
   }
 
   // 定义客户端的schema
