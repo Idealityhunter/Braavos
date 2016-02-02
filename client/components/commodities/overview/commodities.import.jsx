@@ -15,12 +15,12 @@ import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
 
 import { fromJS } from '/lib/immutable'
 
-import { setSortStyle, setQuery, setFilter, resetFilters, applyFilters } from './action'
-import { filterReducer } from './reducers'
+import { setSorting, resetSorting, setQuery, setFilter, resetFilters, applyFilters } from './action'
+import { filterReducer, sortingReducer } from './reducers'
 import { TableFilters } from './table-filters'
 import { CommoditiesTable } from './commodities-table'
 
-const reducer = combineReducers({filter: filterReducer});
+const reducer = combineReducers({filter: filterReducer, sorting: sortingReducer});
 const store = createStore(reducer, compose(
   applyMiddleware(thunkMiddleware),
   window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -40,12 +40,18 @@ const mapDispatchToProps = (dispatch) => {
 
         onSelectDate: dateType => (date => dispatch(setFilter(`date.${dateType}`, date))),
 
-        onResetFilters: () => dispatch(resetFilters()),
+        onResetFilters: () => {
+          dispatch(resetFilters());
+          dispatch(resetSorting());
+        },
 
         // 点击搜索按钮
         onApplyFilters: () => dispatch(applyFilters())
-      }
+      },
       // 和表格相关的事件回调
+      table: {
+        onSortChange: (col, sortDir) => dispatch(setSorting(col, sortDir))
+      }
     }
   }
 };
@@ -70,7 +76,11 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
       // 为TableFilters准备的
       const tableFiltersProps = {filters: filters, ...this.props.handlers.filters};
       // 为CommoditiesTable准备的
-      const commodityTableProps = {filters: this.props.filter.get('appliedFilters', fromJS({}))};
+      const commodityTableProps = {
+        sorting: this.props.sorting,
+        filters: this.props.filter.get('appliedFilters', fromJS({})),
+        ...this.props.handlers.table
+      };
 
       return (
         <div className="commodity-mngm-wrap">

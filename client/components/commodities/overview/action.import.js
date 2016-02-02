@@ -9,12 +9,15 @@
  * @param key 排序字段
  * @param order 升序还是降序
  */
-export const setSortStyle = (key, order) => {
-  return {
-    type: 'SET_SORT_STYLE',
-    sortKey: key,
-    sortOrder: order
-  };
+export const setSorting = (key, order) => {
+  return _.extend({key, order}, {type: 'SET_SORTING'});
+};
+
+/**
+ * 清除排序
+ */
+export const resetSorting = () => {
+  return {type: 'RESET_SORTING'};
 };
 
 /**

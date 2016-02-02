@@ -45,10 +45,10 @@ Meteor.methods({
       }
     };
 
-    try{
+    try {
       const result = HTTP.post(url, options);
       return result;
-    }catch(e){
+    } catch (e) {
       console.log('退款失败! 错误信息: ');
       console.log(e);
     }

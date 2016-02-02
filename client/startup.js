@@ -16,7 +16,7 @@ Meteor.startup(()=> {
     });
     const logger = {
       // 默认的level
-      level: (Meteor.settings.logging || {}).level || 'info'
+      level: ((Meteor.settings.public || {}).logging || {}).level || 'info'
     };
 
     BraavosCore.logger = _.reduce(levelList, (obj, level) => {

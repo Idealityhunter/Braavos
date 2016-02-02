@@ -40,3 +40,18 @@ export const filterReducer = (state = fromJS({}), action) => {
   }
 };
 
+/**
+ * 和排序相关的reducer
+ */
+export const sortingReducer = (state = fromJS({createTime: 'desc'}), action) => {
+  switch (action.type) {
+    case 'SET_SORTING':
+      // 设置排序方式
+      return action.order ? fromJS({}).set(action.key, action.order) : fromJS({});
+    case 'RESET_SORTING':
+      return fromJS({});
+    default:
+      return state;
+  }
+};
+
