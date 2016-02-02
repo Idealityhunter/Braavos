@@ -96,6 +96,7 @@ export const TableFilters = React.createClass({
               </Input>
             </div>
             {/* 日期控件 */}
+            {/*
             <div className="col-sm-2">
               <label className="control-label" style={{marginBottom: 8}}>起始日期</label>
               <DatePicker selected={selectedDateStart} onChange={this.handleSelectDate('start')}/>
@@ -104,6 +105,7 @@ export const TableFilters = React.createClass({
               <label className="control-label" style={{marginBottom: 8}}>终止日期</label>
               <DatePicker selected={selectedDateEnd} onChange={this.handleSelectDate('end')}/>
             </div>
+            */}
             {/* 按钮 */}
             <div className="col-sm-3" style={{marginTop: 25}}>
               <ButtonToolbar>

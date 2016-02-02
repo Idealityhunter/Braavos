@@ -93,20 +93,20 @@ FlowRouter.route('/register', {
   }
 });
 
+//// 商品管理 - 列表
+//FlowRouter.route('/commodities', {
+//  name: 'commodities',
+//  title: lsbMessages['commodities'],
+//  parent: 'home',
+//  triggersEnter: [loginCheck],
+//  action() {
+//    ReactLayout.render(MainLayout, _.extend({content: <Commodity {...intlData} />}, intlData, {documentTitle: "商品管理"}));
+//  }
+//});
+
 // 商品管理 - 列表
 FlowRouter.route('/commodities', {
   name: 'commodities',
-  title: lsbMessages['commodities'],
-  parent: 'home',
-  triggersEnter: [loginCheck],
-  action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Commodity {...intlData} />}, intlData, {documentTitle: "商品管理"}));
-  }
-});
-
-// 商品管理 - 列表
-FlowRouter.route('/commodities2', {
-  name: 'commodities2',
   title: lsbMessages['commodities'],
   parent: 'home',
   triggersEnter: [loginCheck],
