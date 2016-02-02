@@ -33,7 +33,6 @@ twbs:bootstrap
 meteorhacks:npm
 universe:modules
 cosmos:browserify
-npm-container
 
 lxp:thrift-helper
 lxp:etcd
@@ -53,3 +52,6 @@ meteorhacks:kadira
 meteorhacks:subs-manager
 zephyre:flow-breadcrumb
 http
+
+
+npm-container
