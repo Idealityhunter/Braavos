@@ -26,18 +26,19 @@ Meteor.methods({
     const client = BraavosCore.Thrift.IdGen.client;
     try {
       const result = client.generate('commodity');
-      if (result.statusCode == 200 && result.data && result.data.id){
+      if (result.statusCode == 200 && result.data && result.data.id) {
         return result.data.id
-      }else{
+      } else {
         console.log(`Generate commodityId failed!`);
         console.log(result);
         return undefined;
       }
-    } catch(err) {
+    } catch (err) {
       console.log(`Generate commodityId failed!`);
       console.log(err);
       return undefined;
-    };
+    }
+    ;
   },
 
   // 添加商品
@@ -52,11 +53,12 @@ Meteor.methods({
 
     const commodityId = Meteor.call('commodity.insert.generateCommodityId');
     const userInfo = _.pick(collUserInfo.findOne({'userId': userId}), 'nickName', 'userId', 'avatar');
-    if (_.isString(userInfo.avatar)){
+    if (_.isString(userInfo.avatar)) {
       userInfo.avatar = {
         url: userInfo.avatar
       }
-    };
+    }
+    ;
 
     const currentTime = new Date();
     _.extend(doc, {
@@ -71,12 +73,13 @@ Meteor.methods({
     });
 
     //return collCommoditySnapshot.insert(doc) && collCommodity.insert(doc);
-    if (collCommoditySnapshot.insert(doc) && collCommodity.insert(doc)){
+    if (collCommoditySnapshot.insert(doc) && collCommodity.insert(doc)) {
       Meteor.call('viae.marketplace.onCreateCommodity', commodityId);
       return true;
-    }else{
+    } else {
       return false;
-    };
+    }
+    ;
   },
 
   // 编辑商品
@@ -92,12 +95,13 @@ Meteor.methods({
     });
     //return collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc});
 
-    if (collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc})){
+    if (collCommoditySnapshot.insert(_.omit(_.extend(resetDoc, modDoc), '_id')) && collCommodity.update({commodityId: resetDoc.commodityId}, {$set: modDoc})) {
       Meteor.call('viae.marketplace.onUpdateCommodity', resetDoc.commodityId);
       return true;
-    }else{
+    } else {
       return false;
-    };
+    }
+    ;
 
     // 只能编辑自己的商品
     //const userId = parseInt(Meteor.userId());

@@ -4,6 +4,27 @@
  * Created by zephyre on 10/23/15.
  */
 Meteor.startup(()=> {
+  // 初始化winston
+  {
+    const levelList = ['silly', 'debug', 'verbose', 'info', 'warn', 'error'];
+    const func = (level, logger) => (message => {
+      const levelId = _.indexOf(levelList, level);
+      const minLevelId = _.indexOf(levelList, logger.level);
+      if (levelId != -1 && levelId >= minLevelId) {
+        console.log(`[${level}] ${message}`)
+      }
+    });
+    const logger = {
+      // 默认的level
+      level: ((Meteor.settings.public || {}).logging || {}).level || 'info'
+    };
+
+    BraavosCore.logger = _.reduce(levelList, (obj, level) => {
+      obj[level] = func(level, obj);
+      return obj;
+    }, logger);
+  }
+
   // 定义客户端的schema
   const schema = BraavosCore.Schema;
   BraavosCore.Database.Braavos = {};
@@ -30,15 +51,15 @@ Meteor.startup(()=> {
   yunkai.UserInfo.attachSchema(schema.Account.UserInfo);
 });
 
-// 补全underscore的语法
-_.findIndex || ( _.findIndex = (arr, cal) => {
-  return _.reduce(arr, (memo, arri) => {
-    memo.index ++;
-    if (cal(arri)) memo.flag = memo.index;
-    return memo
-  }, {
-    index: -1,
-    flag: -1
-  }).flag;
-});
+//// 补全underscore的语法
+//_.findIndex || ( _.findIndex = (arr, cal) => {
+//  return _.reduce(arr, (memo, arri) => {
+//    memo.index ++;
+//    if (cal(arri)) memo.flag = memo.index;
+//    return memo
+//  }, {
+//    index: -1,
+//    flag: -1
+//  }).flag;
+//});
 

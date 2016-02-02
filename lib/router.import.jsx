@@ -4,6 +4,7 @@ import {Register} from '/client/dumb-components/common/register';
 import {RegistrationLayout} from "/client/common/registration"
 import {Account} from '/client/dumb-components/account/account';
 import {Commodity} from '/client/dumb-components/commodity/commodity';
+import {Commodities} from '/client/components/commodities/overview/commodities'
 import {CommodityModify} from '/client/dumb-components/commodity/commodityModify';
 import {Order} from '/client/dumb-components/order/order';
 import {OrderInfo} from '/client/dumb-components/order/orderInfo';
@@ -30,7 +31,7 @@ BraavosCore.SubsManager.geo.subscribe("countries");
 function loginCheck(context, redirect, stop) {
   if (!Meteor.userId()) {
     redirect('login');
-  };
+  }
   BraavosCore.SubsManager.account.subscribe("basicUserInfo");
   BraavosCore.SubsManager.account.subscribe("sellerInfo");
 }
@@ -103,6 +104,17 @@ FlowRouter.route('/commodities', {
   }
 });
 
+// 商品管理 - 列表
+FlowRouter.route('/commodities2', {
+  name: 'commodities2',
+  title: lsbMessages['commodities'],
+  parent: 'home',
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Commodities />}, intlData, {documentTitle: "商品管理"}));
+  }
+});
+
 // 商品管理 - 修改
 FlowRouter.route('/commodities/add', {
   name: 'commodityAdd',
@@ -143,7 +155,9 @@ FlowRouter.route('/commodities/editor/:commodityId', {
           }))
         });
 
-        ReactLayout.render(MainLayout, _.extend({content: <CommodityModify {...intlData} commodityInfo={ret.commodityInfo}/>}, intlData, {documentTitle: "商品修改"}));
+        ReactLayout.render(MainLayout, _.extend({
+          content: <CommodityModify {...intlData} commodityInfo={ret.commodityInfo}/>
+        }, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
       }
@@ -169,7 +183,9 @@ FlowRouter.route('/orders/:orderId', {
   parent: 'orders',
   triggersEnter: [loginCheck],
   action(param) {
-    ReactLayout.render(MainLayout, _.extend({content: <OrderInfo {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-订单详情"}));
+    ReactLayout.render(MainLayout, _.extend({
+      content: <OrderInfo {...intlData} orderId={param.orderId}/>
+    }, intlData, {documentTitle: "订单管理-订单详情"}));
   }
 });
 
@@ -181,15 +197,17 @@ FlowRouter.route('/orders/:orderId/deliver', {
   triggersEnter: [loginCheck],
   action(param) {
     // TODO 先loading,然后获取数据再进去!然后判断status状态是否是paid状态
-    ReactLayout.render(MainLayout, _.extend({content: <OrderDeliver {...intlData} orderId={param.orderId}/>}, intlData, {documentTitle: "订单管理-发货"}));
+    ReactLayout.render(MainLayout, _.extend({
+      content: <OrderDeliver {...intlData} orderId={param.orderId}/>
+    }, intlData, {documentTitle: "订单管理-发货"}));
   }
 });
 
 // 订单管理 -> 退款页面
 FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
   name: 'refund',
-  title:  param => {
-    switch (param.refundStatus){
+  title: param => {
+    switch (param.refundStatus) {
       case 'cancel':
         return '缺货退款'
       case 'paid':
@@ -198,7 +216,8 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
         return '退款处理'
       default:
         return '退款'
-    };
+    }
+    ;
   },
   parent: 'orders',
   triggersEnter: [loginCheck],
@@ -206,22 +225,29 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
     const orderId = param.orderId;
     // TODO 先loading,然后获取数据再进去!然后判断status状态是否是...状态
 
-    switch(param.refundStatus){
+    switch (param.refundStatus) {
       // 主动退款
       case 'cancel':
-        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCancel {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-缺货退款"}));
-        return ;
+        ReactLayout.render(MainLayout, _.extend({
+          content: <OrderRefundCancel {...intlData} orderId={orderId}/>
+        }, intlData, {documentTitle: "订单管理-缺货退款"}));
+        return;
       // 已支付状态下转入的申请退款状态
       case 'paid':
-        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundPaid {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款"}));
-        return ;
+        ReactLayout.render(MainLayout, _.extend({
+          content: <OrderRefundPaid {...intlData} orderId={orderId}/>
+        }, intlData, {documentTitle: "订单管理-退款"}));
+        return;
       // 已发货状态下转入的申请退款状态
       case 'committed':
-        ReactLayout.render(MainLayout, _.extend({content: <OrderRefundCommitted {...intlData} orderId={orderId}/>}, intlData, {documentTitle: "订单管理-退款处理"}));
+        ReactLayout.render(MainLayout, _.extend({
+          content: <OrderRefundCommitted {...intlData} orderId={orderId}/>
+        }, intlData, {documentTitle: "订单管理-退款处理"}));
       default:
         // TODO default处理? 何时做
-        return ;
-    };
+        return;
+    }
+    ;
   }
 });
 
@@ -248,10 +274,10 @@ FlowRouter.route('/account', {
 });
 
 FlowRouter.notFound = {
-  subscriptions: function() {
+  subscriptions: function () {
 
   },
-  action: function() {
+  action: function () {
     ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
   }
 };
