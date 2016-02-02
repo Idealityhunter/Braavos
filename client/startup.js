@@ -11,7 +11,11 @@ Meteor.startup(()=> {
       const levelId = _.indexOf(levelList, level);
       const minLevelId = _.indexOf(levelList, logger.level);
       if (levelId != -1 && levelId >= minLevelId) {
-        console.log(`[${level}] ${message}`)
+        // silly, debug和verbose这三种日志级别, 都是用console.debug来处理
+        if (level in ['silly', 'debug', 'verbose']) {
+          level = 'debug';
+        }
+        console[level](message);
       }
     });
     const logger = {
