@@ -107,14 +107,14 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*财务管理*/}
-            <li className={ActiveRoute.name('finance') ? "active" : ""}>
+            {/*<li className={ActiveRoute.name('finance') ? "active" : ""}>
               <a href={FlowRouter.path('finance')}>
                 <i className="fa fa-database"/>
                 <span className="nav-label">
                   <FormattedMessage message={this.getIntlMessage(`${prefix}finance`)}/>
                 </span>
               </a>
-            </li>
+            </li>*/}
 
             {/*账户信息*/}
             <li className={ActiveRoute.name('account') ? "active" : ""}>

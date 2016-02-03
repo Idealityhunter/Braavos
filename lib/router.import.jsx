@@ -217,7 +217,6 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
       default:
         return '退款'
     }
-    ;
   },
   parent: 'orders',
   triggersEnter: [loginCheck],
@@ -247,20 +246,19 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
         // TODO default处理? 何时做
         return;
     }
-    ;
   }
 });
 
-// 财务管理
-FlowRouter.route('/finance', {
-  name: 'finance',
-  title: lsbMessages['finance'],
-  parent: 'home',
-  triggersEnter: [loginCheck],
-  action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData, {documentTitle: "财务管理"}));
-  }
-});
+//// 财务管理
+//FlowRouter.route('/finance', {
+//  name: 'finance',
+//  title: lsbMessages['finance'],
+//  parent: 'home',
+//  triggersEnter: [loginCheck],
+//  action() {
+//    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData, {documentTitle: "财务管理"}));
+//  }
+//});
 
 // 账户信息
 FlowRouter.route('/account', {
