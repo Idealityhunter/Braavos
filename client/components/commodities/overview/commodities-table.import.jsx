@@ -4,24 +4,61 @@
  * Created by zephyre on 2/1/16.
  */
 
-import { fromJS } from '/lib/immutable'
+import { fromJS, Immutable } from '/lib/immutable'
+const { Map, is } = Immutable;
+
 import { Button, ButtonGroup } from '/lib/react-bootstrap'
 import { FixedDataTable} from '/lib/fixed-data-table'
 const { Table, Column, Cell } = FixedDataTable;
 
-const TextCell = ({rowIndex, data, col, transform}) => {
-  const getByPath = (obj, path) => {
-    const components = path.split('.');
-    const indexes = _.range(components.length);
-    return _.reduce(_.zip(indexes, components), (result, [i, key]) => {
-      return (i == components.length - 1) ? result[key] : (result[key] || {});
-    }, obj);
-  };
+const TextCell = React.createClass({
+  propTypes: {
+    // 第几行
+    rowIndex: React.PropTypes.number,
+    // table的数据
+    data: React.PropTypes.object,
+    // 列名称
+    col: React.PropTypes.string,
+    // 数据转换函数
+    transform: React.PropTypes.func
+  },
 
-  let contents = getByPath(data[rowIndex], col);
+  //shouldComponentUpdate(nextProps) {
+  //  // 这些key要求没有发生变化
+  //  const keys = ['col', 'columnKey', 'height', 'width', 'rowIndex'];
+  //  let changed = !!_.find(keys, key => this.props[key] != nextProps[key]);
+  //  if (changed) {
+  //    return true;
+  //  }
+  //  // 数据也不能发生变化
+  //  const v1 = this.props.data.getIn([this.props.rowIndex, ...this.props.col.split('.')]);
+  //  const v2 = nextProps.data.getIn([nextProps.rowIndex, ...nextProps.col.split('.')]);
+  //  return !is(v1, v2);
+  //},
+
+  render() {
+    const {rowIndex, data, col, transform} = this.props;
+
+    let contents = data.getIn([rowIndex, ...col.split('.')]);
+    if (transform && (typeof transform == 'function')) {
+      contents = transform(contents);
+    }
+
+    return (
+      <Cell>
+        {contents}
+      </Cell>
+    );
+  }
+});
+
+const TextCell2 = ({rowIndex, data, col, transform}) => {
+  let contents = data.getIn([rowIndex, ...col.split('.')]);
   if (transform && (typeof transform == 'function')) {
     contents = transform(contents);
   }
+
+  console.log(`Render: rowIndex=${rowIndex}, col=${col}`);
 
   return (
     <Cell>
@@ -32,7 +69,7 @@ const TextCell = ({rowIndex, data, col, transform}) => {
 
 // 操作
 const OperationCell = ({rowIndex, data}) => {
-  const commodity = data[rowIndex];
+  const commodity = data.get(rowIndex);
 
   const handleEdit = commodityId => (() => {
     const isAdmin = BraavosCore.Utils.account.isAdmin();
@@ -80,13 +117,17 @@ const OperationCell = ({rowIndex, data}) => {
     });
   });
 
-  const buttons = [<Button bsClass="btn btn-white" onClick={handleEdit(commodity.commodityId)}>编辑</Button>];
+  const commodityId = commodity.get('commodityId');
+  const buttons = [<Button key={`${commodityId}.edit`} bsClass="btn btn-white"
+                           onClick={handleEdit(commodityId)}>编辑</Button>];
 
-  const status = commodity.status;
+  const status = commodity.get('status');
   if (status == 'pub') {
-    buttons.push(<Button bsClass="btn btn-white" onClick={handleDropCommodity(commodity.commodityId)}>下架</Button>);
+    buttons.push(<Button key={`${commodityId}.disabled`} bsClass="btn btn-white"
+                         onClick={handleDropCommodity(commodity.get('commodityId'))}>下架</Button>);
   } else if (status == 'disabled') {
-    buttons.push(<Button bsClass="btn btn-white" onClick={handlePubCommodity(commodity.commodityId)}>上架</Button>);
+    buttons.push(<Button key={`${commodityId}.pub`} bsClass="btn btn-white"
+                         onClick={handlePubCommodity(commodity.get('commodityId'))}>上架</Button>);
   }
 
   return (
@@ -99,13 +140,13 @@ const OperationCell = ({rowIndex, data}) => {
 };
 
 const ImageCell = ({rowIndex, data, col}) => {
-  const getByPath = (obj, path) => _.reduce(path.split('.'), (result, key) => result[key] || {}, obj);
+  const contents = data.getIn([rowIndex, ...col.split('.'), 'url']);
   const dimension = 108;
 
   return (
     <Cell>
       <img width={dimension} height={dimension}
-           src={`${getByPath(data[rowIndex], col)['url']}?imageView2/1/w/${dimension}/h/${dimension}`}/>
+           src={`${contents}?imageView2/1/w/${dimension}/h/${dimension}`}/>
     </Cell>
   );
 };
@@ -240,7 +281,7 @@ export const CommoditiesTable = React.createClass({
         commodities = buildCommodities();
       }
     }
-    return {commodities};
+    return fromJS({commodities: commodities});
   },
 
   // 根据字段名称, 获得排序信息
@@ -265,9 +306,11 @@ export const CommoditiesTable = React.createClass({
   },
 
   render() {
+    const commodities = this.data.get('commodities');
+    const buildKey = (rowIndex, col) => `${commodities.getIn([rowIndex, 'commodityId'])}.${col}`;
     return (
       <Table
-        rowsCount={this.data.commodities.length}
+        rowsCount={this.data.get('commodities').count()}
         rowHeight={120}
         headerHeight={50}
         width={1200}
@@ -275,43 +318,44 @@ export const CommoditiesTable = React.createClass({
       >
         <Column
           header={this._buildHeader('seller.sellerId', '商户编号')}
-          cell={<TextCell data={this.data.commodities} col="seller.sellerId" />}
+          cell={<TextCell data={this.data.get('commodities')} col="seller.sellerId" />}
           fixed={true}
           width={80}
         />
         <Column
           header={this._buildHeader('seller.name', '商户名称')}
-          cell={<TextCell data={this.data.commodities} col="seller.name" />}
+          cell={<TextCell data={this.data.get('commodities')} col="seller.name" />}
           fixed={true}
           width={120}
         />
         <Column
           header={this._buildHeader('commodityId', '商品编号')}
-          cell={<TextCell data={this.data.commodities} col="commodityId" />}
+          cell={props => <TextCell key={buildKey(props.rowIndex, props.col)} data={commodities} col="commodityId"
+                                   {...props} />}
           fixed={true}
           width={80}
         />
         <Column
           header={this._buildHeader('title', '商品名称')}
-          cell={<TextCell data={this.data.commodities} col="title" />}
+          cell={<TextCell data={this.data.get('commodities')} col="title" />}
           fixed={true}
           width={160}
         />
         <Column
           header={<Cell>封面</Cell>}
-          cell={<ImageCell data={this.data.commodities} col="cover" />}
+          cell={<ImageCell data={this.data.get('commodities')} col="cover" />}
           fixed={true}
           width={140}
         />
         <Column
           header={this._buildHeader('price', '价格')}
-          cell={<TextCell data={this.data.commodities} col="price" transform={v => `￥${v / 100}`} />}
+          cell={<TextCell data={this.data.get('commodities')} col="price" transform={v => `￥${v / 100}`} />}
           fixed={true}
           width={80}
         />
         <Column
           header={<Cell>状态</Cell>}
-          cell={<TextCell data={this.data.commodities} col="status" transform={v => {
+          cell={<TextCell data={this.data.get('commodities')} col="status" transform={v => {
               const dict = {
                 pub: '已发布',
                 review: '审核中',
@@ -324,7 +368,7 @@ export const CommoditiesTable = React.createClass({
         />
         <Column
           header={this._buildHeader('createTime', '创建时间')}
-          cell={<TextCell data={this.data.commodities} col="createTime" transform={ v=> {
+          cell={<TextCell data={this.data.get('commodities')} col="createTime" transform={ v=> {
             if (v) {
               return moment(v).format('YYYY-MM-DD');
             } else {
@@ -336,7 +380,7 @@ export const CommoditiesTable = React.createClass({
         />
         <Column
           header={<Cell>操作</Cell>}
-          cell={<OperationCell data={this.data.commodities} />}
+          cell={<OperationCell data={this.data.get('commodities')} />}
           fixed={true}
           width={100}
         />
