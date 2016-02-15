@@ -13,27 +13,28 @@ function resolveEtcdData() {
   // 获得etcd的地址. 优先查找Meteor.settings中的etcd.server. 如果没有找到, 则使用环境变量.
   // 如果二者都没有, 则使用localhost:2379
   let etcd_server;
+  let etcd_auth = {};
   logger.debug(`Retrieving etcd server from Meteor.settings`);
   // etcd.server的格式: {host: '192.168.1.1', port: 2379}
   if (Meteor.settings.etcd) {
-    let {host, port} = Meteor.settings.etcd.server || {};
+    let {host, port, user, password} = Meteor.settings.etcd.server || {};
     port = port || 2379;
     if (host && port) {
       etcd_server = `${host}:${port}`;
     }
+    if (user && password) {
+      etcd_auth = {user, password};
+    }
   }
-  if (!etcd_server) {
-    logger.debug(`Retrieving etcd server from env`);
-    etcd_server = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
-  }
-  logger.info(`etcd server: ${etcd_server}`);
+
+  logger.info(`etcd server: ${etcd_server}, user: ${etcd_auth ? etcd_auth['user'] : 'guest'}`);
 
   // 获取相关服务
   const servicesBuilder = _.reduce(Meteor.settings.etcd.services, (memo, f) => {
     return (_.keys(f).length > 1)
       ? memo.addEntry(_.values(f))
       : memo.addEntry(_.values(f)[0]);
-  }, new EtcdHelper.EtcdServiceBuilder(etcd_server));
+  }, new EtcdHelper.EtcdServiceBuilder(etcd_server, etcd_auth));
   const services = servicesBuilder.build();
 
   // 获取其它配置
@@ -41,7 +42,7 @@ function resolveEtcdData() {
     return (_.keys(f).length > 1)
       ? memo.addEntry(_.values(f))
       : memo.addEntry(_.values(f)[0]);
-  }, new EtcdHelper.EtcdConfigBuilder(etcd_server));
+  }, new EtcdHelper.EtcdConfigBuilder(etcd_server, etcd_auth));
   const config = configBuilder.build();
 
   BraavosCore.RootConf = _.extend(services, config);
