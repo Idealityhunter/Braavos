@@ -7,11 +7,23 @@ const Future = Npm.require('fibers/future');
 
 EtcdHelper = (function () {
 
-  const EtcdBaseBuilder = function (server) {
+  const EtcdBaseBuilder = function (server, auth) {
     /**
      * etcd服务器地址
      */
     this.server = server;
+
+    /**
+     * etcd服务器的验证信息(basic认证: user:password)
+     */
+    this.auth = (() => {
+      const {user, password} = auth;
+      if (user) {
+        return `${user}:${password ? password : ''}`;
+      } else {
+        return undefined;
+      }
+    })();
 
     /**
      * 需要获取的key列表. 形式: [ ["key", "alias"] ]
@@ -100,10 +112,11 @@ EtcdHelper = (function () {
   /**
    * 从etcd服务器获得配置项目的类
    * @param server
+   * @param auth
    * @constructor
    */
-  const EtcdConfigBuilder = function (server) {
-    EtcdBaseBuilder.call(this, server);
+  const EtcdConfigBuilder = function (server, auth) {
+    EtcdBaseBuilder.call(this, server, auth);
   };
 
   EtcdConfigBuilder.prototype = Object.create(EtcdBaseBuilder.prototype, {
@@ -258,8 +271,12 @@ EtcdHelper = (function () {
         // 访问所有的key, 得到: [ {alias: yunkai, data: [Object]} ]形式的数据
         Promise.all(this.entries.map(entry=> {
           const [key, alias]=entry;
-          const url = `http://${this.server}/v2/keys/project-conf/${key}?recursive=true`;
-          return this.httpGet(url, {}, this.etcdValidator).then(ret=> {
+          const url = `http://${this.server}/v2/keys/project-conf/${key}/?recursive=true`;
+          const options = {};
+          if (this.auth) {
+            options['auth'] = this.auth;
+          }
+          return this.httpGet(url, options, this.etcdValidator).then(ret=> {
             return {key: alias, data: ret.data};
           });
         })).then(results=> results.reduce((memo, entry)=> {   // 将返回的数据汇总
@@ -269,10 +286,10 @@ EtcdHelper = (function () {
             return memo;
           }, {})
         ).then(data=> {
-            future.return(data)
-          }).catch(err=> {
-            future.throw(err);
-          });
+          future.return(data)
+        }).catch(err=> {
+          future.throw(err);
+        });
 
         future.wait();
         return future.get();
@@ -288,10 +305,11 @@ EtcdHelper = (function () {
   /**
    * 从etcd获得服务发现信息
    * @param server
+   * @param auth
    * @constructor
    */
-  const EtcdServiceBuilder = function (server) {
-    EtcdBaseBuilder.call(this, server);
+  const EtcdServiceBuilder = function (server, auth) {
+    EtcdBaseBuilder.call(this, server, auth);
   };
 
   EtcdServiceBuilder.prototype = Object.create(EtcdBaseBuilder.prototype, {
@@ -333,7 +351,11 @@ EtcdHelper = (function () {
         Promise.all(this.entries.map(entry=> {
           const [key, alias]=entry;
           const url = `http://${this.server}/v2/keys/backends/${key}?recursive=true`;
-          return this.httpGet(url, {}, this.etcdValidator).then(ret=> {
+          const options = {};
+          if (this.auth) {
+            options['auth'] = this.auth;
+          }
+          return this.httpGet(url, options, this.etcdValidator).then(ret=> {
             return {key: alias, data: ret.data};
           });
         })).then(results=> results.reduce((memo, entry)=> {   // 将返回的数据汇总
@@ -341,10 +363,10 @@ EtcdHelper = (function () {
             return memo;
           }, {})
         ).then(data=> {
-            future.return(data)
-          }).catch(err=> {
-            future.throw(err);
-          });
+          future.return(data)
+        }).catch(err=> {
+          future.throw(err);
+        });
 
         future.wait();
         return {backends: future.get()};
