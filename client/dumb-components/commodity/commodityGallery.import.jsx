@@ -5,45 +5,36 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
+
+  proptypes: {
+    addImage: React.PropTypes.func,
+    changeCover: React.PropTypes.func,
+    deleteImage: React.PropTypes.func,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array
+  },
+
   getInitialState() {
-    let coverCount = 0;// 假如有两张一样的图片,就需要coverCount来取其中前面一张
-    const images = (this.props.images.length > 0)
-      ? this.props.images.map(image => {
-        if (image.url == this.props.cover.url && !coverCount) {
-          coverCount = 1;
-          return {
-            src: image.url,
-            main: true
-          }
-        } else {
-          return {
-            src: image.url,
-            main: false
-          }
-        }
-      })
-      : [];
     return {
       // 是否显示上传图片的modal
       showUploadModal: false,
+
       // 上传头像的modal中, 需要显示的image
       uploadModalImageSrc: "",
 
       // 头像是否处于preloading状态
       imagePreloading: false,
 
-
       leftImages: 0,//左边不显示的图片的数量
-      //focusImage: images[0].src,
-      focusImageIndex: (images.length > 0) ? 0 : null,
-      images: images
+
+      focusImageIndex: (this.props.images.length > 0) ? 0 : -1
     }
   },
 
   // 控制滚动的点击事件
   handleScroll(e){
     const scrollLeft = (this.state.leftImages > 0);
-    const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
+    const scrollRight = (this.state.leftImages + 4 < this.props.images.length + 1);
 
     if ($(e.target).hasClass('left')) {
       if (!scrollLeft) return;
@@ -79,24 +70,15 @@ let commodityGallery = React.createClass({
       confirmButtonText: "删除",
       closeOnConfirm: false
     }, function () {
-      let copyImages = self.state.images.slice();
-      // 当为主图时的逻辑
-      if (copyImages[curIndex].main && copyImages.length > 1) {
-        if (curIndex != 0)
-          copyImages[0].main = true;
-        else
-          copyImages[1].main = true;
-      }
-
       // 当为focus图的逻辑时
       if (curIndex == self.state.focusImageIndex) {
-        if (copyImages.length > 1) {
+        if (self.props.images.length > 1) {
           self.setState({
             focusImageIndex: 0
           })
         } else {
           self.setState({
-            focusImageIndex: null
+            focusImageIndex: -1
           })
         }
       } else {
@@ -105,12 +87,9 @@ let commodityGallery = React.createClass({
             focusImageIndex: self.state.focusImageIndex - 1
           })
         }
-      }
+      };
 
-      copyImages.splice(curIndex, 1);
-      self.setState({
-        images: copyImages
-      })
+      self.props.deleteImage(curIndex);
       swal("成功删除该图片", "", "success");
     });
   },
@@ -123,18 +102,11 @@ let commodityGallery = React.createClass({
   },
 
   // 设置主图(作为商品的主图)
-  handleMain(e){
-    const imageUrl = $(e.target).siblings('img')[0].src.split('?')[0];
-    let copyImages = this.state.images.slice();
+  _handleChangeCover(e){
     this.setState({
-      images: _.map(copyImages, (image) => {
-        return {
-          src: image.src,
-          main: (image.src == imageUrl)
-        }
-      }),
       focusImageIndex: $(e.target).parent('.img-wrap').attr('data-id')
     });
+    this.props.changeCover($(e.target).parent('.img-wrap').attr('data-id'));
     swal("已将该图设为主图！", "", "success");
   },
 
@@ -150,7 +122,7 @@ let commodityGallery = React.createClass({
         });
 
         // 当plus按钮要被挤掉的时候
-        if (this.state.leftImages + 4 == this.state.images.length + 1){
+        if (this.state.leftImages + 4 == this.props.images.length + 1){
           // scroll left
           this.setState({
             leftImages: this.state.leftImages + 1
@@ -177,9 +149,12 @@ let commodityGallery = React.createClass({
       showUploadModal: false,
       imagePreloading: true
     });
-    const imageSrc = evt.croppedImage;
 
-    //deprecated 利用图像的内容, 做MD5, 得到key
+    // 获取原始宽高
+    const oSelection = evt.oSelection;
+
+
+    const imageSrc =  evt.oImage;
     const imageData = atob(imageSrc.replace(/^data:image\/[a-z]+;base64,/, ""));
     const key = `commodity/images/${CryptoJS.MD5(imageData).toString()}`;
     const bucketKey = "commodity";
@@ -208,28 +183,31 @@ let commodityGallery = React.createClass({
           processData: false,
           type: 'POST',
           success: function (data, textStatus, jqXHR) {
-            // TODO 修改成功的状态转换
-            let copyImages = self.state.images.slice();
-            copyImages.push({
-              main: (copyImages.length == 0),
-              src: ret.url
+            // 修改成功的状态转换
+            self.props.addImage({
+              url: ret.url,
+              cropHint: {
+                left: oSelection[0],
+                top: oSelection[1],
+                right: oSelection[0] + oSelection[2],
+                bottom: oSelection[1] + oSelection[3]
+              }
             });
             self.setState({
-              images: copyImages,
               imagePreloading: false,
               uploadModalImageSrc: '',
-              focusImageIndex: copyImages.length - 1
+              focusImageIndex: self.props.images.length - 1
             });
           },
           error(jqXHR, textStatus, errorThrown){
-            // TODO 修改失败的状态转换
+            // 修改失败的状态转换
             self.setState({
               imagePreloading: false
             });
           }
         });
       } else {
-        // TODO 修改失败的状态转换
+        // 修改失败的状态转换
         self.setState({
           imagePreloading: false
         });
@@ -272,27 +250,53 @@ let commodityGallery = React.createClass({
       </div>
     );
 
+    const focusImage = this.props.images[this.state.focusImageIndex];
+    const focusImageHtml =
+      <div className="img-view" style={{position:'relative'}}>
+        <img
+          src={focusImage
+            ? focusImage.cropHint
+              ? `${focusImage.url}?imageMogr2/crop/!${focusImage.cropHint.right - focusImage.cropHint.left}x${focusImage.cropHint.bottom - focusImage.cropHint.top}a${focusImage.cropHint.left}a${focusImage.cropHint.top}/thumbnail/500/500/`
+              : `${focusImage.url}?imageView2/2/w/500/h/500`
+            : ''
+          }
+          alt=""
+          style={this.styles.focusImg}
+        />
+      {preloader}
+    </div>;
+
     const uploadModal = this.state.showUploadModal ?
       <ImageCropper title={this.getIntlMessage(`${prefix}.cropUploadImage`)}
                     okTitle={this.getIntlMessage("dialog.ok")} cancelTitle={this.getIntlMessage("dialog.cancel")}
-                    imageSrc={this.state.uploadModalImageSrc} showModal={true} aspectRatio={1}
+                    imageSrc={this.state.uploadModalImageSrc}
+                    showModal={true} aspectRatio={2}
+                    changeAspectRatio={true}
                     imageMaxWidth={500}
                     onOk={this.handleModifyImage}
-                    onClose={this.handleCloseUploadModal}/>
+                    onClose={this.handleCloseUploadModal}
+                    onShadowClose={false}/>
       :
       <div />;
 
     const scrollLeft = (this.state.leftImages > 0);
-    const scrollRight = (this.state.leftImages + 4 < this.state.images.length + 1);
+    const scrollRight = (this.state.leftImages + 4 < this.props.images.length + 1);
 
     let i = 0;
-    const imgList = this.state.images.map((img) =>
-      <div className='inline img-wrap' key={Meteor.uuid()} data-id={i++}>
-        <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} src={`${img.src}?imageView2/2/w/128/h/128`}
-             alt="" onClick={this.handleFocus}/>
-        <i className='fa fa-trash-o' onClick={this.handleDelete}/>
-        <i className={img.main ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this.handleMain}/>
-      </div>
+    const imgList = this.props.images.map((img) => {
+      return (
+        <div className='inline img-wrap' key={Meteor.uuid()} data-id={i++}>
+          <img className={(i-1 == this.state.focusImageIndex) ? 'active' : ''} alt=""
+               src = { img.cropHint
+                ? `${img.url}?imageMogr2/crop/!${img.cropHint.right - img.cropHint.left}x${img.cropHint.bottom - img.cropHint.top}a${img.cropHint.left}a${img.cropHint.top}/thumbnail/150/150/`
+                : `${img.url}?imageView2/2/w/150/h/150`
+               }
+               onClick={this.handleFocus}
+          />
+          <i className='fa fa-trash-o' onClick={this.handleDelete}/>
+          <i className={_.isEqual(img, this.props.cover) ? 'fa fa-heart' : 'fa fa-heart-o'} onClick={this._handleChangeCover}/>
+        </div>
+      )}
     );
 
     return (
@@ -300,14 +304,7 @@ let commodityGallery = React.createClass({
         <div className="col-xs-6 col-sm-7 col-md-8">
           {uploadModal}
         </div>
-
-        <div className="img-view" style={{position:'relative'}}>
-          <img
-            src={(this.state.focusImageIndex !== null) ? `${this.state.images[this.state.focusImageIndex].src}?imageView2/2/w/250/h/250` : ''}
-            alt=""
-            style={this.styles.focusImg}/>
-          {preloader}
-        </div>
+        {focusImageHtml}
         <div className="scroll-view">
           <div className={scrollLeft ? "ctl-btn left " : "ctl-btn left frozen"} onClick={this.handleScroll}>{'<'}</div>
           <div className="middle-view inline">

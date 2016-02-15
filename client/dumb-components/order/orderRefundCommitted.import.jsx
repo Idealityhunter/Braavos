@@ -5,47 +5,31 @@ import {Modal, Button, Input} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
 import {NumberInput} from '/client/common/numberInput';
 import {PageLoading} from '/client/common/pageLoading';
+import {OrderMixin} from '/client/dumb-components/order/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 const orderRefundCommitted = React.createClass({
-  mixins: [IntlMixin, ReactMeteorData],
+  mixins: [IntlMixin, OrderMixin, ReactMeteorData],
 
   getInitialState(){
     return {
       submitting: false,
       showRefundModal: false,
       agreeRefund: true,
+
       // TODO 控制退款金额的变化,以便于modal中使用
       //refundMoney: ''
+
+      // 存储备注信息
+      agreeMemo: '',
+      rejectMemo: ''
     }
   },
 
-  // TODO 可复用
-  getMeteorData() {
-    const userId = parseInt(Meteor.userId());
-    let isAdmin = false;
-
-    // 获取用户权限
-    if (BraavosCore.SubsManager.account.ready()) {
-      const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
-      const adminRole = 10;
-      isAdmin = (_.indexOf(userInfo.roles, adminRole) != -1);
-    };
-
-    // 获取商品信息
-    const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo;
-    if (handleOrder.ready()) {
-      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo.totalPrice)
-        orderInfo.totalPrice = orderInfo.totalPrice / 100;
-    }
-
-    return {
-      orderInfo: orderInfo || {},
-    };
+  getMeteorData(){
+    return this.getOrderInfo();
   },
 
   // 取消操作
@@ -80,7 +64,8 @@ const orderRefundCommitted = React.createClass({
 
       // 密码正确, 进行退款
       const amount = $('.refund-amount').children('input').val();
-      Meteor.call('order.refunded', self.data.orderInfo.orderId, parseInt(amount * 100), (err, res) => {
+      const memo = $('textarea').val();
+      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount * 100), memo, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
@@ -109,31 +94,42 @@ const orderRefundCommitted = React.createClass({
   // 打开退款弹层
   _handleSubmitRefund(e){
     const amount = $('.refund-amount').children('input').val();
-    if (this._checkRefundAmount(amount)){
-      this.setState({
-        amount: amount,
-        showRefundModal: true
-      });
-    } else {
+    if (! this._checkRefundAmount(amount)){
       // 不能少于0,不能多于支付金额
       swal('请输入正确的退款金额','','warning');
-    }
+      return false;
+    };
+
+    if ($('textarea').val().trim() == '') {
+      swal('请填写退款备注', '', 'error');
+      return false;
+    };
+
+    this.setState({
+      amount: amount,
+      showRefundModal: true
+    });
   },
 
   // 拒绝退款
   _handleSubmitReject(e){
+    if ($('textarea').val().trim() == '') {
+      swal('请填写拒绝退款的原因', '', 'error');
+      return false;
+    };
+
     this.setState({
       submitting: true
     });
 
-    const reason = $('textarea').val();
-    Meteor.call('order.reject', this.data.orderInfo.orderId, reason, (err, res) => {
+    const memo = $('textarea').val();
+    Meteor.call('order.refundDeny', this.data.orderInfo.orderId, this.data.orderInfo.consumerId, this.data.orderInfo.commodity.title, memo, this.data.orderInfo, (err, res) => {
       if (err || !res) {
         swal('拒绝失败', '', 'error');
       } else{
         swal({
           title: "退款已拒绝",
-          text: `拒绝原因: ${reason}`,
+          text: `拒绝原因: ${memo}`,
           timer: 1500,
           showConfirmButton: false
         }, () => FlowRouter.go("orders"));
@@ -141,7 +137,11 @@ const orderRefundCommitted = React.createClass({
           swal.close();
           FlowRouter.go("orders");
         }, 2000);
-      }
+      };
+
+      this.setState({
+        submitting: false
+      });
     });
   },
 
@@ -209,64 +209,13 @@ const orderRefundCommitted = React.createClass({
     }
   },
 
-
-  // TODO 重复的函数
-  // 获取倒计时字段
-  _getCountDown(status){
-    const self = this;
-    if (!this.interval){
-      const startTime = this._getActivityTime(this.data.orderInfo.activities, status);
-      // TODO 应该是startTime + 2days, 暂时是10days
-      console.log(startTime);
-      this.remainingSeconds = (moment(startTime).add(10, 'd').valueOf() - Date.now()) / 1000;
-      this.interval = Meteor.setInterval(() => {
-        self.remainingSeconds = self.remainingSeconds - 1;
-        self.forceUpdate();
-      }, 1000);
+  // 选择同意还是拒绝
+  _changeRefundStatus(refundStatus){
+    if (refundStatus ^ this.state.agreeRefund){
+      this.setState({
+        agreeRefund: refundStatus
+      })
     };
-
-    const timeArray = this._getDividedTime(this.remainingSeconds);
-    return `${this._getSpecifiedLengthTime(timeArray[0])}天${this._getSpecifiedLengthTime(timeArray[1])}小时${this._getSpecifiedLengthTime(timeArray[2])}分${this._getSpecifiedLengthTime(timeArray[3])}秒`;
-  },
-
-  // 获取行为的时间戳
-  _getActivityTime(activities, status){
-    let activity;
-    switch (status) {
-      case 'refundApply':
-        // 多次申请,只展示最后一次!
-        const activityArray = _.filter(activities, activity => activity.action == 'refund' && activity.data.type == 'apply');
-        if (activityArray.length > 0)
-          activity = activityArray[activityArray.length - 1];
-
-        return activity
-          ? activity.timestamp
-          : 0;
-      case 'paid':
-        activity = _.find(activities, activity => activity.action == 'pay');
-
-        return activity
-          ? activity.timestamp
-          : 0;
-      default: return 0;
-    }
-  },
-
-  // 将时间按照时间单位分割
-  _getDividedTime(t) {
-    return _.reduce([86400, 3600, 60, 1], function({components, remainder}, divider) {
-      const newRemainder = remainder % divider;
-      return {components: Array.prototype.concat(components, [parseInt(remainder / divider)]), remainder: newRemainder};
-    }, {components: [], remainder: t}).components;
-  },
-
-  // 获取指定长度的时间数字
-  _getSpecifiedLengthTime(str, length = 2){
-    let tempStr = str + '';
-    while (tempStr.length < length){
-      tempStr = '0' + tempStr;
-    };
-    return tempStr;
   },
 
   render() {
@@ -274,12 +223,16 @@ const orderRefundCommitted = React.createClass({
       <PageLoading show={true} labelText='加载中...' showShadow={false} />;
 
     if (this.data.orderInfo.status) {
+      const activityArray = _.filter(this.data.orderInfo.activities, activity => activity.action == 'refundApply');
+      const orderRefundActivity = (activityArray.length > 0) ? activityArray[activityArray.length - 1] : {};
+      const orderRefundList = this._getActivityStatement(orderRefundActivity);
+
       content =
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="ibox-content" style={{padding: 30}}>
             <div>
               <h3 className="inline">请处理退款</h3>
-              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply')}</span>
+              <span style={this.styles.countDown}>倒计时: {this._getCountDown('refundApply', 72)}</span>
             </div>
 
             <ol style={this.styles.ol}>
@@ -292,8 +245,8 @@ const orderRefundCommitted = React.createClass({
             <hr style={this.styles.hr}/>
 
             <div>
-              <Button bsStyle={this.state.agreeRefund ? 'primary' : 'default'} onClick={() => this.setState({agreeRefund: true})} style={this.styles.submitBtn}>同意退款申请</Button>
-              <Button bsStyle={this.state.agreeRefund ? 'default' : 'primary'} onClick={() => this.setState({agreeRefund: false})}>拒绝退款申请</Button>
+              <Button bsStyle={this.state.agreeRefund ? 'primary' : 'default'} onClick={() => this._changeRefundStatus(true)} style={this.styles.submitBtn}>同意退款申请</Button>
+              <Button bsStyle={this.state.agreeRefund ? 'default' : 'primary'} onClick={() => this._changeRefundStatus(false)}>拒绝退款申请</Button>
             </div>
 
             <label style={this.styles.marginRight}>买家:</label>
@@ -311,19 +264,25 @@ const orderRefundCommitted = React.createClass({
             }
 
             <span style={this.styles.asterisk}>*</span>备注
-            <textarea style={this.styles.textarea}></textarea>
+
+            {(this.state.agreeRefund)
+              ? <textarea style={this.styles.textarea} value={this.state.agreeMemo} onChange={(e) => this.setState({agreeMemo: e.target.value})}></textarea>
+              : <textarea style={this.styles.textarea} value={this.state.rejectMemo} onChange={(e) => this.setState({rejectMemo: e.target.value})}></textarea>
+            }
+
+            {orderRefundList}
 
             <div style={this.styles.buttonGroup}>
               {(this.state.agreeRefund)
                 ? <Button bsStyle="primary" onClick={this._handleSubmitRefund}>退款</Button>
                 : [
-                <Button bsStyle="primary" onClick={this._handleSubmitReject} className={this.state.submitting ? 'hidden' : ''}>确定</Button>,
-                <div className={this.state.submitting ? 'la-ball-fall inline' : 'la-ball-fall hidden'} style={this.styles.submitLoading}>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
-              ]
+                  <Button bsStyle="primary" onClick={this._handleSubmitReject} className={this.state.submitting ? 'hidden' : ''}>确定</Button>,
+                  <div className={this.state.submitting ? 'la-ball-fall inline' : 'la-ball-fall hidden'} style={this.styles.submitLoading}>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                ]
               }
               <Button onClick={this._handleCancel} style={this.styles.cancelBtn}>取消</Button>
             </div>

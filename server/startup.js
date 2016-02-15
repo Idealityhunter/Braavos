@@ -3,19 +3,37 @@
  * Created by zephyre on 10/22/15.
  */
 
+
 /**
  * 获得etcd的数据
  */
 function resolveEtcdData() {
-  // 通过环境变量获得etcd地址, 默认为localhost:2379
-  const url = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
+  const logger = BraavosCore.logger;
+
+  // 获得etcd的地址. 优先查找Meteor.settings中的etcd.server. 如果没有找到, 则使用环境变量.
+  // 如果二者都没有, 则使用localhost:2379
+  let etcd_server;
+  logger.debug(`Retrieving etcd server from Meteor.settings`);
+  // etcd.server的格式: {host: '192.168.1.1', port: 2379}
+  if (Meteor.settings.etcd) {
+    let {host, port} = Meteor.settings.etcd.server || {};
+    port = port || 2379;
+    if (host && port) {
+      etcd_server = `${host}:${port}`;
+    }
+  }
+  if (!etcd_server) {
+    logger.debug(`Retrieving etcd server from env`);
+    etcd_server = `${process.env['ETCD_HOST'] || "localhost"}:${process.env['ETCD_PORT'] || 2379}`;
+  }
+  logger.info(`etcd server: ${etcd_server}`);
 
   // 获取相关服务
   const servicesBuilder = _.reduce(Meteor.settings.etcd.services, (memo, f) => {
     return (_.keys(f).length > 1)
       ? memo.addEntry(_.values(f))
       : memo.addEntry(_.values(f)[0]);
-  }, new EtcdHelper.EtcdServiceBuilder(url));
+  }, new EtcdHelper.EtcdServiceBuilder(etcd_server));
   const services = servicesBuilder.build();
 
   // 获取其它配置
@@ -23,7 +41,7 @@ function resolveEtcdData() {
     return (_.keys(f).length > 1)
       ? memo.addEntry(_.values(f))
       : memo.addEntry(_.values(f)[0]);
-  }, new EtcdHelper.EtcdConfigBuilder(url));
+  }, new EtcdHelper.EtcdConfigBuilder(etcd_server));
   const config = configBuilder.build();
 
   BraavosCore.RootConf = _.extend(services, config);
@@ -79,6 +97,7 @@ function initMongo() {
     {collName: "Seller", schema: Schema.Marketplace.Seller},
     {collName: "Commodity", schema: Schema.Marketplace.Commodity},
     {collName: "Order", schema: Schema.Marketplace.Order},
+    {collName: "CommoditySnapshot", schema: Schema.Marketplace.Commodity},
     {collName: "Country", schema: Schema.Marketplace.Country},
     {collName: "Locality", schema: Schema.Marketplace.Locality}
   ]);
@@ -130,7 +149,7 @@ function initIdGenService() {
 
   if (!Object.keys(services)) {
     throw('Cannot find Idgen services.');
-  };
+  }
   const {host, port} = services[Object.keys(services)[0]];
 
   //const apiSet = ['ping', 'generate', 'getCounter', 'resetCounter'];
@@ -159,25 +178,29 @@ function initKadira() {
 }
 
 Meteor.startup(()=> {
-  console.log('Server startup');
+  // 设置winston
+  const winston = Meteor.npmRequire('winston');
+  // 默认日志级别: info
+  BraavosCore.logger = new winston.Logger({
+    level: (Meteor.settings.logging || {}).level || 'info',
+    transports: [
+      new (winston.transports.Console)()
+    ]
+  });
+
   // 获取etcd设置
   resolveEtcdData();
 
-  BraavosCore.RootConf.braavos['mongo']['hedy'] = {
-    db: 'hedy',
-    user: 'hedy',
-    password: 'Im6weiV9eAf8',
-    replicaSet: 'foba'
-  };
-
   // 数据库设置
   initMongo();
+
   // 初始化Yunkai
   initYunkaiService();
 
   // 初始化IdGen
   initIdGenService();
 
+  // 初始化七牛SDK
   initQiniuSDK();
 
   // 初始化Kadira

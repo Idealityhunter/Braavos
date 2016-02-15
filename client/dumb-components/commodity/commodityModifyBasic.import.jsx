@@ -10,6 +10,24 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 const commodityModifyBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
+  proptypes: {
+    addImage: React.PropTypes.func,
+    changeCover: React.PropTypes.func,
+    deleteImage: React.PropTypes.func,
+    handleChildSubmitState: React.PropTypes.func,
+    title: React.PropTypes.String,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array,
+    category: React.PropTypes.Array,
+    country: React.PropTypes.Object,
+    locality: React.PropTypes.Object,
+    address: React.PropTypes.String,
+    timeCost: React.PropTypes.String,
+    plans: React.PropTypes.Array,
+    marketPrice: React.PropTypes.Number,
+    price: React.PropTypes.Number
+  },
+
   styles: {
     asterisk: {
       color: 'coral',
@@ -32,9 +50,9 @@ const commodityModifyBasic = React.createClass({
     subsManager.subscribe("countries");
     const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
 
-    // 对顺序作优先级处理
+    // 对国家展示顺序作优先级处理
     //const defaultCountriesName = ['菲律宾', '韩国', '日本', '台湾', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '中国'];
-    const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列'];
+    const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '尼泊尔', '马尔代夫'];
     const defaultCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) != -1);
     let tempCountries = [];
     if (defaultCountries.length > 0){
@@ -49,6 +67,19 @@ const commodityModifyBasic = React.createClass({
     subsManager.subscribe("localities", this.state.country);
     if (subsManager.ready()) {
       localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country}, {sort: {'enName': 1}}).fetch();
+
+      // 对城市展示顺序作优先级处理
+      const defaultLocalitiesName = ["清迈","曼谷","普吉岛","苏梅岛","芭堤雅","甲米","首尔","釜山","大阪","东京","京都","冲绳","巴厘岛","加德满都","博卡拉","奇特旺","槟城","沙巴","吉隆坡","新山","垦丁","台中","台北","高雄","花莲","马累","马尔代夫","长滩岛","薄荷岛","杜马盖地","海豚湾","暹粒","吴哥窟","新加坡","民丹岛","巴淡岛","圣淘沙","河内","芽庄"]
+      const defaultLocalities = _.filter(localities, locality => _.indexOf(defaultLocalitiesName, locality.zhName) != -1);
+      let tempLocalities = [];
+      if (defaultLocalities.length > 0){
+        for (let index in defaultLocalitiesName){
+          const tempLocality = _.find(defaultLocalities, defaultLocality => defaultLocality.zhName == defaultLocalitiesName[index]);
+          if (tempLocality) tempLocalities.push(tempLocality);
+        }
+      }
+      const restLocalities = _.filter(localities, locality => _.indexOf(defaultLocalitiesName, locality.zhName) == -1);
+      localities = Array.prototype.concat(tempLocalities, restLocalities)
     }
 
     return {
@@ -205,7 +236,13 @@ const commodityModifyBasic = React.createClass({
           <FormattedMessage message={this.getIntlMessage(`${prefix}commodityImages`)}/>
           <span style={this.styles.asterisk}>*</span>
         </label>
-        <CommodityGallery images={this.props.images} cover={this.props.cover}/>
+        <CommodityGallery
+          addImage={this.props.addImage}
+          changeCover={this.props.changeCover}
+          deleteImage={this.props.deleteImage}
+          images={this.props.images}
+          cover={this.props.cover}
+        />
         <hr style={{border:'1px dashed #ddd'}}/>
         <label className=""><FormattedMessage message={this.getIntlMessage(`${prefix}basicInfo`)}/></label>
         <form className="form-horizontal commodity-basic-form-wrap">

@@ -10,16 +10,27 @@ export const ImageCropper = React.createClass({
   propTypes: {
     // 对话框的标题
     title: React.PropTypes.string.isRequired,
+
     // 图像数据(可以以base64编码的形式提供)
     imageSrc: React.PropTypes.string.isRequired,
+
     // 确认按钮的文本
     okTitle: React.PropTypes.string,
+
     // 取消按钮的文本
     cancelTitle: React.PropTypes.string,
+
     // 是否显示modal dialog
     showModal: React.PropTypes.bool,
+
+    // 是否点击阴影层就关闭
+    onShadowClose: React.PropTypes.bool,
+
     // 选择框的比例
     aspectRatio: React.PropTypes.number,
+
+    // 是否提供修改aspectRatio的功能
+    changeAspectRatio: React.PropTypes.bool,
 
     imageMaxWidth: React.PropTypes.number,
     imageMaxHeight: React.PropTypes.number,
@@ -37,9 +48,13 @@ export const ImageCropper = React.createClass({
       imageMaxHeight: 480,
       aspectRatio: null,
       okTitle: "确认",
-      cancelTitle: "取消"
+      cancelTitle: "取消",
+      onShadowClose: true
     }
   },
+
+  // jcrop对象
+  jcropper: {},
 
   // 图像宽度
   imageWidth: 0,
@@ -60,7 +75,26 @@ export const ImageCropper = React.createClass({
     };
   },
 
-  onClose() {
+  styles:{
+    options: {
+      textAlign: 'left',
+      width: 400,
+      verticalAlign: 'middle'
+    },
+    label: {
+      margin: '5px 10px',
+      fontWeight: 'normal'
+    },
+    emphasize: {
+      fontSize: 13,
+      fontWeight: '800'
+    }
+  },
+
+  onClose(e) {
+    if (!e && !this.props.onShadowClose){
+      return ;
+    };
     if (this.props.onClose) {
       const oSelection = this._selConversion(this.state.selection);
       this.props.onClose({target: this, selection: this.state.selection, oSelection: oSelection});
@@ -92,6 +126,7 @@ export const ImageCropper = React.createClass({
 
   onOk() {
     if (this.props.onOk) {
+      // oSelection: original selection
       const oSelection = this._selConversion(this.state.selection);
       const imageNode = ReactDOM.findDOMNode(this.refs["image"]);
 
@@ -105,9 +140,11 @@ export const ImageCropper = React.createClass({
 
       this.props.onOk({
         target: this,
-        selection: this.state.selection, oSelection: oSelection,
+        selection: this.state.selection,
+        oSelection: oSelection,
         // crop后的数据
         croppedImage: canvas.toDataURL("image/png"),
+        oImage: this.props.imageSrc,
         imageNode: imageNode
       });
     }
@@ -156,6 +193,7 @@ export const ImageCropper = React.createClass({
 
   // 图像加载完成以后的回调函数
   onImageLoaded() {
+    const self = this;
     const imageNode = ReactDOM.findDOMNode(this.refs["image"]);
     this.imageWidth = $(imageNode).prop("width");
     this.imageHeight = $(imageNode).prop("height");
@@ -175,6 +213,9 @@ export const ImageCropper = React.createClass({
       onChange: this.onChange,
       aspectRatio: this.props.aspectRatio
     }, function () {
+      // 保存句柄
+      self.jcropper = this;
+
       // 设置margin
       $(imageNode).siblings(".jcrop-holder").css("margin", "10px auto");
     });
@@ -182,6 +223,34 @@ export const ImageCropper = React.createClass({
 
   render() {
     const btnStyle = {margin: "0 20px 0 0"};
+    const aspectRatioSection = this.props.changeAspectRatio ? [
+      <div className="inline">
+        <div>
+          <input type="radio" name="ratio" id="fixedRatio"
+                 defaultChecked={true}
+                 onChange={() => this.jcropper.setOptions({aspectRatio:2})}/>
+          <label htmlFor="fixedRatio" style={this.styles.label}>
+            固定比例2:1(<span style={{color:'red'}}>推荐</span>)
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="ratio" id="dynamicRatio"
+                 onChange={() => this.jcropper.setOptions({aspectRatio:null})}/>
+          <label htmlFor="dynamicRatio" style={this.styles.label}>不定比例</label>
+        </div>
+      </div>,
+      <div className="inline">
+        <div>
+          <label style={this.styles.label}>宽: </label>
+          <span style={this.styles.emphasize}>{this.state.selection[2]}</span>
+        </div>
+        <div>
+          <label style={this.styles.label}>高: </label>
+          <span style={this.styles.emphasize}>{this.state.selection[3]}</span>
+        </div>
+      </div>
+    ]: <div />;
+
     return (
       <Modal show={this.props.showModal} onHide={this.onClose} bsSize="medium">
         <Modal.Header closeButton>
@@ -192,8 +261,13 @@ export const ImageCropper = React.createClass({
              onLoad={this.onImageLoaded}
              style={{maxWidth:`${this.props.imageMaxWidth}px`, margin: "20px auto 20px"}}/>
         <Modal.Footer>
-          <Button onClick={this.onClose} style={btnStyle}>{this.props.cancelTitle}</Button>
-          <Button bsStyle="primary" onClick={this.onOk} style={btnStyle}>{this.props.okTitle}</Button>
+          <form className="form-horizontal">
+            <div className="inline" style={this.styles.options}>
+              {aspectRatioSection}
+            </div>
+            <Button onClick={this.onClose} style={btnStyle}>{this.props.cancelTitle}</Button>
+            <Button bsStyle="primary" onClick={this.onOk} style={btnStyle}>{this.props.okTitle}</Button>
+          </form>
         </Modal.Footer>
       </Modal>
     );

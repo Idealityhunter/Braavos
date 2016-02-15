@@ -12,10 +12,32 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
+  proptypes: {
+    title: React.PropTypes.String,
+    cover: React.PropTypes.Object,
+    images: React.PropTypes.Array,
+    category: React.PropTypes.Array,
+    country: React.PropTypes.Object,
+    locality: React.PropTypes.Object,
+    address: React.PropTypes.String,
+    timeCost: React.PropTypes.String,
+    plans: React.PropTypes.Array,
+    marketPrice: React.PropTypes.Number,
+    price: React.PropTypes.Number,
+    desc: React.PropTypes.Object,
+    notice: React.PropTypes.Array,
+    refundPolicy: React.PropTypes.Array,
+    trafficInfo: React.PropTypes.Array
+  },
+
+  // 控制'完成'动作
   submitLock: false,
+
   getInitialState(){
     return {
-      plans: this.props.plans || []
+      plans: this.props.commodityInfo && this.props.commodityInfo.plans || [],
+      images: this.props.commodityInfo && this.props.commodityInfo.images || [],
+      cover: this.props.commodityInfo && this.props.commodityInfo.cover || ''
     }
   },
 
@@ -31,6 +53,60 @@ const commodityModify = React.createClass({
     };
   },
 
+  // 添加图片
+  _handleAddImage(image){
+    let copyImages = this.state.images.slice();
+    if (copyImages.length == 0){
+      this.setState({
+        cover: image
+      });
+    };
+
+    copyImages.push(image);
+    this.setState({
+      images: copyImages
+    });
+  },
+
+  // 修改主图
+  _handleChangeCover(imageIndex){
+    // TODO 假如有两张一模一样的image在images,然后后一张被选为主图,则会出错
+    this.setState({
+      cover: this.state.images[imageIndex]
+    })
+  },
+
+  // 删除图片
+  _handleDeleteImage(imageIndex){
+    let copyImages = this.state.images.slice();
+
+    // 当为主图时的逻辑
+    if (_.isEqual(copyImages[imageIndex], this.state.cover)) {
+      if (copyImages.length > 1){
+        if (imageIndex != 0){
+          this.setState({
+            cover: copyImages[0]
+          });
+        } else{
+          this.setState({
+            cover: copyImages[1]
+          });
+        }
+      }else{
+        // 只有一张图时,cover也置空
+        this.setState({
+          cover: {}
+        })
+      }
+    }
+
+    copyImages.splice(imageIndex, 1);
+    this.setState({
+      images: copyImages
+    })
+  },
+
+  // 提交套餐信息的修改
   handleChildSubmitState(plans){
     this.setState({
       plans: plans
@@ -158,21 +234,6 @@ const commodityModify = React.createClass({
       marketPrice: Number.MAX_VALUE
     });
 
-    // 获取上传图片
-    const imageList = $('.gallery-wrap').find('.img-wrap').children('img');
-    let images = [];
-    let cover = {};
-    for (i = 0; i < imageList.length; i++) {
-      if ($(imageList[i]).siblings('.fa-heart').length > 0)
-        cover = {
-          url: imageList[i].src.split('?')[0]//截取掉imageView等参数
-        }
-      images[i] = {
-        url: imageList[i].src.split('?')[0]
-      };
-    }
-    ;
-
     // 获取country选中的option对应的值
     const countryIndex = $('.form-group.address>select.country-select').val();
     const countryZh = $($('.form-group.address>select.country-select>option')[parseInt(countryIndex)]).text();
@@ -213,11 +274,18 @@ const commodityModify = React.createClass({
     tmp.innerHTML = desc.body;
     desc.summary = (tmp.textContent || tmp.innerText || "").substring(0, 100);
 
+
+    // 调整images的顺序 => 将cover抽离出来,放在第一张
+    const copyImages = this.state.images.slice();
+    const coverIndex = _.findIndex(copyImages, image => _.isEqual(image, this.state.cover));
+    copyImages.splice(coverIndex, 1);
+    const images = [this.state.cover].concat(copyImages);
+
     // tips: 现在timeRequired默认为true且不可修改
     //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
     const timeRequired = true;
 
-    const commodityInfo = {
+    const modCommodityInfo = {
       title: $('.form-group.title>input').val(),
       country: country,
       address: $('.form-group.address>input').val(),
@@ -289,17 +357,20 @@ const commodityModify = React.createClass({
           timeRequired: timeRequired//暂时全部一样
         }
       }),
-      cover: cover,
+      cover: this.state.cover,
       images: images
     };
 
     // locality不为空时才添加
-    !!locality.zhName && (commodityInfo['locality'] = locality);
+    !!locality.zhName && (modCommodityInfo['locality'] = locality);
+
+    // 获取未被修改的数据
+    const restCommodityInfo = this.props.commodityInfo && _.omit(this.props.commodityInfo, Object.keys(modCommodityInfo)) || {};
 
     // 编辑和添加的不同
-    if (this.props.commodityId) {
+    if (this.props.commodityInfo) {
       const self = this;
-      Meteor.call('commodity.update', commodityInfo, this.props.commodityId, function (err, res) {
+      Meteor.call('commodity.update', modCommodityInfo, restCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.page-loading-wrap').addClass('hidden');
@@ -328,7 +399,7 @@ const commodityModify = React.createClass({
       });
     } else {
       const self = this;
-      Meteor.call('commodity.insert', commodityInfo, function (err, res) {
+      Meteor.call('commodity.insert', modCommodityInfo, function (err, res) {
         // 解锁
         self.submitLock = false;
         $('.page-loading-wrap').addClass('hidden');
@@ -363,39 +434,42 @@ const commodityModify = React.createClass({
     const basicStep =
       <div className="basic">
         <CommodityModifyBasic
+          addImage={this._handleAddImage}
+          changeCover={this._handleChangeCover}
+          deleteImage={this._handleDeleteImage}
           handleChildSubmitState={this.handleChildSubmitState}
-          title={this.props.title || []}
-          cover={this.props.cover || ''}
-          images={this.props.images || []}
-          category={this.props.category || []}
-          country={this.props.country || {}}
-          locality={this.props.locality || {}}
-          address={this.props.address || ''}
-          timeCost={this.props.timeCost || ''}
-          plans={this.props.plans || []}
-          price={this.props.price || ''}
-          marketPrice={this.props.marketPrice || ''}
+          cover={this.state.cover || ''}
+          images={this.state.images || []}
+          title={this.props.commodityInfo && this.props.commodityInfo.title || []}
+          category={this.props.commodityInfo && this.props.commodityInfo.category || []}
+          country={this.props.commodityInfo && this.props.commodityInfo.country || {}}
+          locality={this.props.commodityInfo && this.props.commodityInfo.locality || {}}
+          address={this.props.commodityInfo && this.props.commodityInfo.address || ''}
+          timeCost={this.props.commodityInfo && this.props.commodityInfo.timeCost || ''}
+          plans={this.props.commodityInfo && this.props.commodityInfo.plans || []}
+          price={this.props.commodityInfo && this.props.commodityInfo.price || ''}
+          marketPrice={this.props.commodityInfo && this.props.commodityInfo.marketPrice || ''}
         />
       </div>;
 
     const introductionStep =
       <div className="introduction">
-        <CommodityModifyIntroduction desc={this.props.desc || {}}/>
+        <CommodityModifyIntroduction desc={this.props.commodityInfo && this.props.commodityInfo.desc || {}}/>
       </div>;
 
     const instructionStep =
       <div className="instruction">
-        <CommodityModifyInstruction notice={this.props.notice || []}/>
+        <CommodityModifyInstruction notice={this.props.commodityInfo && this.props.commodityInfo.notice || []}/>
       </div>;
 
     const bookStep =
       <div className="book">
-        <CommodityModifyBook refundPolicy={this.props.refundPolicy || []}/>
+        <CommodityModifyBook refundPolicy={this.props.commodityInfo && this.props.commodityInfo.refundPolicy || []}/>
       </div>;
 
     const trafficStep =
       <div className="traffic">
-        <CommodityModifyTraffic trafficInfo={this.props.trafficInfo || []}/>
+        <CommodityModifyTraffic trafficInfo={this.props.commodityInfo && this.props.commodityInfo.trafficInfo || []}/>
       </div>;
 
     return (

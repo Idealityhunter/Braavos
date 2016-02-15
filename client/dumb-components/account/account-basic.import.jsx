@@ -4,6 +4,7 @@ import {Avatar} from "/client/common/avatar";
 import {ImageCropper} from "/client/common/image-cropper"
 import {Chosen} from "/client/common/chosen";
 import {Label, Input, Overlay, Tooltip} from "/lib/react-bootstrap"
+import {CommentText} from '/client/dumb-components/common/comment-text';
 
 var IntlMixin = ReactIntl.IntlMixin;
 var FormattedMessage = ReactIntl.FormattedMessage;
@@ -127,10 +128,13 @@ export const AccountBasic = React.createClass({
 
     let um = null;
     if (!umeditorFlags.init) {
+      // what does this mean?
       $("div.tab-content").focus();
+
       // 初始化desc页面的um插件
       UM.delEditor('ueContainer');
       um = UM.getEditor('ueContainer');
+
       $("#ueContainer").blur(() => {
         if (this.data.subsReady) {
           const desc = um.getContent();
@@ -226,10 +230,23 @@ export const AccountBasic = React.createClass({
     const deselected = event.deselected;
 
     if (selected) {
-      Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "add", selected);
+      Meteor.call("marketplace.seller.updateArray", Meteor.userId(), "add", "lang", selected);
     }
     if (deselected) {
-      Meteor.call("marketplace.seller.updateLang", Meteor.userId(), "remove", deselected);
+      Meteor.call("marketplace.seller.updateArray", Meteor.userId(), "remove", "lang", deselected);
+    }
+  },
+
+  // 更新商户的附加服务
+  handleUpdateServices(event) {
+    const selected = event.selected;
+    const deselected = event.deselected;
+
+    if (selected) {
+      Meteor.call("marketplace.seller.updateArray", Meteor.userId(), "add", "services", selected);
+    }
+    if (deselected) {
+      Meteor.call("marketplace.seller.updateArray", Meteor.userId(), "remove", "services", deselected);
     }
   },
 
@@ -427,6 +444,18 @@ export const AccountBasic = React.createClass({
               <Chosen multiSelect={true} style={{width: 240}} selected={this.data.sellerInfo.lang}
                       onChange={this.handleUpdateLang} placeholder={"请选择服务语言"}
                       options={[{value: "zh", text: "中文"}, {value: "en", text: "英文"}, {value: "local", text: "当地语言"}]}/>
+            </div>
+          </div>
+          <hr />
+          <div className="form-group">
+            <label className="col-xs-4 col-sm-3 col-md-2 control-label">
+              附加服务
+            </label>
+            <div className="col-xs-6 col-sm-7 col-md-8">
+              <Chosen multiSelect={true} style={{width: 240}} selected={this.data.sellerInfo.services}
+                      onChange={this.handleUpdateServices} placeholder={"添加附加服务"}
+                      options={[{value: "language", text: "语言帮助"}, {value: "plan", text: "行程规划"}, {value: "consult", text: "当地咨询"}]}/>
+              <CommentText text='附加服务为您愿意为游客免费提供的一些旅行帮助, 非必填' inline={true} style={{marginLeft: 30}}/>
             </div>
           </div>
           <hr />

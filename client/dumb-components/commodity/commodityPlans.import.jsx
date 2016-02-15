@@ -7,6 +7,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityPlans = React.createClass({
   mixins: [IntlMixin],
+
+  proptypes: {
+    plans: React.PropTypes.Array,
+    handleSubmitState: React.PropTypes.func
+  },
+
   getInitialState(){
     return {
       // 会影响: 修改状态下的条款以及增加的项目(的calendar是否展示)
@@ -109,7 +115,15 @@ const commodityPlans = React.createClass({
       planId: Meteor.uuid()
     };
 
-    if (Match.test(_.extend(_.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'), {timeRequired: true}), BraavosCore.Schema.Marketplace.CommodityPlan)){
+    // 新建一个用于检测plan的对象
+    const tempPlan = _.extend({timeRequired: true}, _.pick(addPlan, 'planId', 'title', 'marketPrice', 'price', 'pricing'));
+    tempPlan['pricing'] = tempPlan['pricing'].map(pricing => _.extend({}, pricing, {
+      price: parseInt(pricing.price * 100)
+    }));
+    tempPlan['price'] = tempPlan['price'] && tempPlan['price'] * 100;
+    tempPlan['marketPrice'] = tempPlan['marketPrice'] && tempPlan['marketPrice'] * 100;
+
+    if (Match.test(tempPlan, BraavosCore.Schema.Marketplace.CommodityPlan)){
       addPlan.pricing = addPlan.pricing.map(pricing => _.extend(pricing, {
         price: parseFloat(pricing.price),
         timeRange: pricing.timeRange.map(date => (date != null) ? moment(date).format('YYYY-MM-DD') : null)

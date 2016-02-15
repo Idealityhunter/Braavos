@@ -33,7 +33,6 @@ twbs:bootstrap
 meteorhacks:npm
 universe:modules
 cosmos:browserify
-npm-container
 
 lxp:thrift-helper
 lxp:etcd
@@ -43,7 +42,6 @@ zephyre:ueditor
 
 zimme:active-route
 aldeed:simple-schema
-underscore
 react-meteor-data
 dburles:google-maps
 lvxingpai:meteor-jcrop
@@ -54,3 +52,6 @@ meteorhacks:kadira
 meteorhacks:subs-manager
 zephyre:flow-breadcrumb
 http
+
+
+npm-container

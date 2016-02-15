@@ -113,10 +113,10 @@ BraavosCore.IntlData.zh = {
         orderId: '订单号',
         commodity: '商品',
         purchaseQuantity: '购买数量',
-        totalAdvancePayment: '支付总价',
+        orderTotalPrice: '订单总价',
         tradeStatus: '交易状态',
         //purchaser: '买家',
-        contact: '联系人',
+        contact: '联系人信息',
         action: '操作'
       },
       btn:{
