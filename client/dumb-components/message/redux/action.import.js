@@ -39,16 +39,6 @@ export const setConversationLimit = (limit) => {
 };
 
 /**
- * 重置会话列表的数目限制
- * @returns {{type: string}}
- */
-export const resetConversationLimit = () => {
-  return {
-    type: 'RESET_CONVERSATION_LIMIT'
-  }
-};
-
-/**
  * 设置当前会话
  * @param conversationId
  * @returns {{type: string, conversationId: *}}
@@ -57,16 +47,6 @@ export const setActiveConversation = (conversationId) => {
   return {
     type: 'SET_ACTIVE_CONVERSATION',
     conversationId: conversationId
-  }
-};
-
-/**
- * 重置当前会话
- * @returns {{type: string}}
- */
-export const resetActiveConversation = () => {
-  return {
-    type: 'RESET_ACTIVE_CONVERSATION'
   }
 };
 
@@ -84,29 +64,17 @@ export const setMessageLimit = (conversationId, limit) => {
   }
 };
 
-/**
- * 重置会话的消息的数目限制
- * @param conversationId
- * @returns {{type: string, conversationId: *}}
- */
-export const resetMessageLimit = (conversationId) => {
-  return {
-    type: 'RESET_MESSAGE_LIMIT',
-    conversationId: conversationId
-  }
-};
 
 /**
  * 添加pendingMessage
- * @param conversationId
  * @param msg
- * @returns {{type: string, conversationId: *, msg: *}}
+ * @returns {{type: string, msg: *, conversationId: *}}
  */
-export const postMessage = (conversationId, msg) => {
+export const postMessage = (msg, conversationId) => {
   return {
     type: 'POST_MESSAGE',
-    conversationId: conversationId,
-    msg: msg
+    msg: msg,
+    conversationId: conversationId
   }
 };
 
@@ -114,16 +82,15 @@ export const postMessage = (conversationId, msg) => {
  * 修改pendingMessage的状态 :
  *    success => 从队列中删除
  *    fail => 移到failMessage队列
- * @param conversationId
  * @param msg
  * @param status
  * @returns {{type: string, conversationId: *, msg: *, status: *}}
  */
-export const setMessageStatus = (conversationId, msg, status) => {
+export const setMessageStatus = (msgId, conversationId, status) => {
   return {
     type: 'SET_MESSAGE_STATUS',
+    msgId: msgId,
     conversationId: conversationId,
-    msg: msg,
     status: status
   }
 };
