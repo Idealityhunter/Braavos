@@ -212,7 +212,7 @@ export const AccountBasic = React.createClass({
       userInfo.avatar.url && (userInfo.avatar = userInfo.avatar.url);
       userInfo.avatar = userInfo.avatar.indexOf("qiniudn") ? `${userInfo.avatar}?imageView2/2/w/128/h/128` : userInfo.avatar;
     } else {
-      userInfo.avatar = "http://www.lvxingpai.com/app/download/images/appdownload/logo.png"
+      userInfo.avatar = "images/logo.png"
     }
 
     const sellerInfo = BraavosCore.Database.Braavos.Seller.findOne({sellerId: userId}) || {};
