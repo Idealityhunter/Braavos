@@ -7,14 +7,23 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationInput = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
-    // 当前所在conversation的conversationId
-    curConversation: React.PropTypes.string,
+    // 会话Id
+    conversationId: React.PropTypes.string,
 
     // 添加pending消息的句柄(发消息时使用)
     appendPendingMsg: React.PropTypes.func,
 
     // 发送消息失败的处理
-    failInSendingMsg: React.PropTypes.func
+    failInSendingMsg: React.PropTypes.func,
+
+    // 修改输入框的消息内容
+    onChangeInputValue: React.PropTypes.func,
+
+    // 清除输入框的消息内容
+    onClearInputValue: React.PropTypes.func,
+
+    // 输入框中的消息内容
+    inputValue: React.PropTypes.string
   },
   styles: {
     container: {
@@ -69,6 +78,7 @@ export const ConversationInput = React.createClass({
     }
   },
 
+  // TODO 暂时会有bug,用shift+enter发送会多一个回车符
   // keydown的事件处理
   _handleKeydown(e){
     if (e.which == 13 || e.keyCode == 13) {
@@ -76,15 +86,22 @@ export const ConversationInput = React.createClass({
     };
   },
 
+  // 文本内容改变时
+  _handleChange(e){
+    this.props.onChangeInputValue(e.target.value);
+  },
+
   // 发送消息
   _sendMsg(){
     // 获取消息构成部分
     // TODO 获取 msgType
-    const conversationId = this.props.curConversation;
-    const contents = $('textarea').val();
+    const conversationId = this.props.conversationId;
+    const contents = this.props.inputValue;
     const sendType = 2;
     const objectId = new Meteor.Collection.ObjectID();
-    $('textarea').val('');
+
+    // 清空输入框
+    this.props.onClearInputValue();
 
     // TODO emoji处理
     //var str1 = self._escapeRegExp('<img src="/images/emoji/ee_');
@@ -96,10 +113,8 @@ export const ConversationInput = React.createClass({
 
     // 添加pending消息
     this.props.appendPendingMsg({
-      status: 'pending',
       msgType: 0,
       chatType: 'single',
-
       contents: contents,
       conversation: new Meteor.Collection.ObjectID(conversationId),
       timestamp: Date.now(),
@@ -132,13 +147,16 @@ export const ConversationInput = React.createClass({
         <a href="javascript:;" style={_.extend({},this.styles.toolImage, this.styles.search)} title="搜索" />
       </div>;
 
-    //<textarea style={this.styles.textArea} placeholder="请输入要发送的消息"></textarea>
-    //<Input style={this.styles.textArea} type="textarea" placeholder="textarea" />
-
     // 发送框
     const textArea =
       <div>
-        <textarea style={this.styles.textArea} placeholder="请输入要发送的消息" onKeyDown={this._handleKeydown}/>
+        <textarea
+          style={this.styles.textArea}
+          placeholder="请输入要发送的消息"
+          value={this.props.inputValue}
+          onKeyDown={this._handleKeydown}
+          onChange={this._handleChange}
+        />
       </div>;
 
     // 包括发送按钮等

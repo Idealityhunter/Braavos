@@ -8,6 +8,25 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const MsgBlock = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    // 消息的发送状态(pending/failed/空)
+    status: React.PropTypes.string,
+
+    // 消息类型
+    msgType: React.PropTypes.number,
+
+    // 消息内容
+    contents: React.PropTypes.string,
+
+    // 发送者Id
+    senderId: React.PropTypes.number,
+
+    // 发送者头像的url
+    avatar: React.PropTypes.string,
+
+    // 消息的发送时间
+    timestamp: React.PropTypes.number
+  },
   getInitialState(){
     return {
       showModal: false,
@@ -206,7 +225,7 @@ export const MsgBlock = React.createClass({
             <i alt="" style={_.extend({}, this.styles.statusBoard.iconBase, this.styles.statusBoard.loading)}/>
           </div>;
         break;
-      case 'pending':
+      case 'failed':
         statusBoard =
           <div className="inline">
             <i alt="" style={_.extend({}, this.styles.statusBoard.iconBase, this.styles.statusBoard.fail)}/>

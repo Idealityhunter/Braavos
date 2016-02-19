@@ -8,10 +8,26 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const MsgPanel = React.createClass({
   mixins: [IntlMixin],
 
+  // 存储当前DOM的总高度(包括由于滚动原因未展示部分)
+  curScrollHeight: null,
+
   propTypes: {
+    // 消息列表
     msgs: React.PropTypes.array,
-    setMsgLimit: React.PropTypes.func,
+
+    // 订阅消息的总数
+    messageLimit: React.PropTypes.number,
+
+    // 会话Id
+    conversationId: React.PropTypes.string,
+
+    // 修改MessageLimit的方法
+    onChangeMessageLimit: React.PropTypes.func,
+
+    // TODO: 优化
     changeConversation: React.PropTypes.bool,
+
+    // TODO: 优化
     changeCoversationState: React.PropTypes.func
   },
 
@@ -26,7 +42,7 @@ export const MsgPanel = React.createClass({
   // 滚轮的监测事件
   _handleScroll(e){
     if (e.target.scrollTop < 50){
-      this.props.setMsgLimit(this.props.limit + 10);
+      this.props.onChangeMessageLimit(this.props.conversationId, this.props.limit + 10);
     }
   },
 
@@ -35,7 +51,7 @@ export const MsgPanel = React.createClass({
     const scrollEle = $(node).children();
 
     // 存储当前总高度
-    this.preScrollHeight = scrollEle[0].scrollHeight;
+    this.curScrollHeight = scrollEle[0].scrollHeight;
   },
 
   componentDidUpdate() {
@@ -43,7 +59,7 @@ export const MsgPanel = React.createClass({
     const scrollEle = $(node).children();
 
     // 当前高度控制
-    scrollEle[0].scrollTop += (scrollEle[0].scrollHeight - this.preScrollHeight);
+    scrollEle[0].scrollTop += (scrollEle[0].scrollHeight - this.curScrollHeight);
 
     if (this.props.changeConversation){
       scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;

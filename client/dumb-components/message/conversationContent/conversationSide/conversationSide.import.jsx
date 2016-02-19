@@ -5,6 +5,9 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationSide = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    // TODO: 补全
+  },
   getInitialState(){
     return {
       activeTab: 0,
@@ -133,6 +136,9 @@ export const ConversationSide = React.createClass({
 // 订单卡片
 const OrderCard = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    // TODO: 补全
+  },
   styles: {
     container: {
       display: 'inline-block',
@@ -218,6 +224,9 @@ const OrderCard = React.createClass({
 // 商品卡片
 const CommodityCard = React.createClass({
   mixins: [IntlMixin],
+  propTypes: {
+    // TODO: 补全
+  },
   styles: {
     container: {
       display: 'inline-block',

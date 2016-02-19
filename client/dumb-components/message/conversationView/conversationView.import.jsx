@@ -7,8 +7,24 @@ export const ConversationView = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
     // todo conversation的其它属性
-    changeConversation: React.PropTypes.func,
 
+    // 会话Id
+    conversationId: React.PropTypes.object,
+
+    // TODO 会话对象的头像(个人则为个人头像,群组则为默认头像或者固定头像)
+    avatar: React.PropTypes.string,
+
+    // TODO 会话对象的昵称(个人默认为用户名,群组默认为群组号)
+    nickName: React.PropTypes.string,
+
+    // 会话的最近消息的发送时间
+    updateTime: React.PropTypes.string,
+
+    // 会话的最近消息的摘要
+    lastMessage: React.PropTypes.string,
+
+    // TODO: 优化 =>  滚动条已达底部,修改state状态
+    changeConversation: React.PropTypes.func,
   },
   styles: {
     container:{

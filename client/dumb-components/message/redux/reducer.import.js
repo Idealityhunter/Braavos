@@ -17,9 +17,13 @@
  * Created by lyn on 2/15/16.
  */
 
-import { fromJS, Map, List, Set } from '/lib/immutable'
+import { fromJS, Immutable } from '/lib/immutable'
 
 export const messageReducer = (state = fromJS({
+    inputValue: null,
+    conversationLimit: null,
+    activeConversation: null,
+
     messageLimits:{},
     postedMessages: {},
     pendingMessages: {},
@@ -29,8 +33,6 @@ export const messageReducer = (state = fromJS({
       // 输入框内容改动
       case 'SET_INPUT_VALUE':
         return state.set('inputValue', action.content || '');
-      case 'RESET_INPUT_VALUE':
-        return state.set('inputValue', '');
 
       // 设置会话的数目限制
       case 'SET_CONVERSATION_LIMIT':
@@ -38,7 +40,7 @@ export const messageReducer = (state = fromJS({
 
       // 设置当前回话
       case 'SET_ACTIVE_CONVERSATION':
-        return state.set('activeConversationId', action.conversationId);
+        return state.set('activeConversation', action.conversationId);
 
       // 设置会话的消息的数目限制
       case 'SET_MESSAGE_LIMIT':
@@ -52,7 +54,7 @@ export const messageReducer = (state = fromJS({
         const tempState = state.set('postedMessages', state.get('postedMessages').set(msgId, fromJS(action.msg)));
 
         // 插入 pendingMessage
-        const pendingMessages = tempState.getIn(['pendingMessages', action.conversationId], Set);
+        const pendingMessages = tempState.getIn(['pendingMessages', action.conversationId], Immutable.Set());
         return tempState.setIn(['pendingMessages', action.conversationId], pendingMessages.add(msgId));
 
       // 改变发送消息的状态
@@ -67,9 +69,9 @@ export const messageReducer = (state = fromJS({
         }
 
         // 发送消息失败
-        if (action.status == 'fail') {
+        if (action.status == 'failed') {
           // 插入 failedMessage
-          const failedMessages = state.getIn(['failedMessages', action.conversationId], Set);
+          const failedMessages = state.getIn(['failedMessages', action.conversationId], Immutable.Set());
           const tempState = state.setIn(['failedMessages', action.conversationId], failedMessages.add(action.msgId));
 
           // 删除 pendingMessage

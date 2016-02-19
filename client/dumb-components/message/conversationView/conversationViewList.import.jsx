@@ -9,18 +9,26 @@ export const ConversationViewList = React.createClass({
   mixins: [IntlMixin],
 
   propTypes: {
+    // 会话列表
     conversations: React.PropTypes.array,
-    setConversationLimit: React.PropTypes.func,
-    changeConversation: React.PropTypes.func,
-    limit: React.PropTypes.number
+
+    // 修改会话订阅数目的方法
+    onChangeConversationLimit: React.PropTypes.func,
+
+    // 订阅会话的数目
+    conversationLimit: React.PropTypes.number,
+
+    // TODO: 优化 =>  滚动条已达底部,修改state状态
+    changeConversation: React.PropTypes.func
+
   },
 
   // 滚轮的监测事件
   _handleScroll(e){
     const $scrollEle = $(e.target);
     const $conversationViewEle = $(e.target).children();
-    if ( $scrollEle.scrollTop() + $scrollEle.height() > $($conversationViewEle[0]).height() * (this.props.limit - 1) ) {
-      this.props.setConversationLimit(this.props.limit + 10);
+    if ( $scrollEle.scrollTop() + $scrollEle.height() > $($conversationViewEle[0]).height() * (this.props.conversationLimit - 1) ) {
+      this.props.onChangeConversationLimit(this.props.conversationLimit + 10);
     }
   },
 

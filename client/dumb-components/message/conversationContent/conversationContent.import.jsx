@@ -10,26 +10,38 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationContent = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
-    // 当前对话中的消息
+    // 消息列表
     msgs: React.PropTypes.array,
 
     // 修改当前会话的msg的数量限制的方法
-    setMsgLimit: React.PropTypes.func,
+    onChangeMessageLimit: React.PropTypes.func,
 
-    //
+    // TODO 优化
     changeConversation: React.PropTypes.bool,
 
-    //
+    // TODO 优化
     changeCoversationState: React.PropTypes.func,
 
-    // 当前会话Id
-    curConversation: React.PropTypes.string,
+    // 订阅的消息总数
+    messageLimit: React.PropTypes.number,
+
+    // 会话Id
+    conversationId: React.PropTypes.string,
 
     // 添加pending消息的句柄(发消息时使用)
     appendPendingMsg: React.PropTypes.func,
 
     // 发送消息失败的处理
-    failInSendingMsg: React.PropTypes.func
+    failInSendingMsg: React.PropTypes.func,
+
+    // 修改输入框的消息内容的回调
+    onChangeInputValue: React.PropTypes.func,
+
+    // 清除输入框的消息内容的回调
+    onClearInputValue: React.PropTypes.func,
+
+    // 输入框中的消息内容
+    inputValue: React.PropTypes.string
   },
   styles: {
     noSelected: {
@@ -59,7 +71,7 @@ export const ConversationContent = React.createClass({
     }
   },
   render(){
-    if (! this.props.user) {
+    if (! this.props.conversationId) {
       return(
         <div style={_.extend({}, this.styles.noSelected, this.styles.container)}>
           未选择聊天
@@ -72,7 +84,7 @@ export const ConversationContent = React.createClass({
 
         {/* head */}
         <div style={this.styles.head}>
-          {this.props.user}
+          {this.props.conversationId}
         </div>
 
         {/* body */}
@@ -81,14 +93,20 @@ export const ConversationContent = React.createClass({
           <div style={this.styles.center}>
             <MsgPanel
               msgs={this.props.msgs}
-              setMsgLimit={this.props.setMsgLimit}
+              messageLimit={this.props.messageLimit}
+              conversationId={this.props.conversationId}
+              onChangeMessageLimit={this.props.onChangeMessageLimit}
               changeConversation={this.props.changeConversation}
               changeCoversationState={this.props.changeCoversationState}
             />
             <ConversationInput
-              curConversation={this.props.curConversation}
+              conversationId={this.props.conversationId}
               appendPendingMsg={this.props.appendPendingMsg}
               failInSendingMsg={this.props.failInSendingMsg}
+
+              onChangeInputValue={this.props.onChangeInputValue}
+              onClearInputValue={this.props.onClearInputValue}
+              inputValue={this.props.inputValue}
             />
           </div>
 

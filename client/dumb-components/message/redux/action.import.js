@@ -5,7 +5,7 @@
  */
 
 /**
- * 输入发送框内容
+ * 设置发送框内容
  * @param content
  * @returns {{type: string, content: *}}
  */
@@ -13,16 +13,6 @@ export const setInputValue = (content) => {
   return {
     type: 'SET_INPUT_VALUE',
     content: content
-  }
-};
-
-/**
- * 清除发送框内容
- * @returns {{type: string}}
- */
-export const resetInputValue = () => {
-  return {
-    type: 'RESET_INPUT_VALUE'
   }
 };
 
