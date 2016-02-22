@@ -10,11 +10,11 @@ export const ConversationInput = React.createClass({
     // 会话Id
     conversationId: React.PropTypes.string,
 
-    // 添加pending消息的句柄(发消息时使用)
-    appendPendingMsg: React.PropTypes.func,
+    // 发送消息的句柄
+    onPostMessage: React.PropTypes.func,
 
     // 发送消息失败的处理
-    failInSendingMsg: React.PropTypes.func,
+    onFailedMessage: React.PropTypes.func,
 
     // 修改输入框的消息内容
     onChangeInputValue: React.PropTypes.func,
@@ -112,7 +112,7 @@ export const ConversationInput = React.createClass({
     //});
 
     // 添加pending消息
-    this.props.appendPendingMsg({
+    this.props.onPostMessage({
       msgType: 0,
       chatType: 'single',
       contents: contents,
@@ -120,14 +120,14 @@ export const ConversationInput = React.createClass({
       timestamp: Date.now(),
       senderId: parseInt(Meteor.userId()),
       _id: objectId
-    });
+    }, conversationId);
 
     // 调用后台发送消息
     const self = this;
     Meteor.call('talk.sendMsg', sendType, conversationId, contents, objectId._str, (err, res) => {
-      // 假如发送失败,则显示发送失败,并且保留pending数据
+      // 假如发送失败,则显示发送失败,并将pending消息变成failed消息
       if (err || !res){
-        self.props.failInSendingMsg(objectId._str);
+        self.props.onFailedMessage(objectId._str, conversationId);
         console.log(err);
         console.log(res);
         return false;

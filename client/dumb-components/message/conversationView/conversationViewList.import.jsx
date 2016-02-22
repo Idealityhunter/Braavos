@@ -19,7 +19,7 @@ export const ConversationViewList = React.createClass({
     conversationLimit: React.PropTypes.number,
 
     // TODO: 优化 =>  滚动条已达底部,修改state状态
-    changeConversation: React.PropTypes.func
+    onChangeConversation: React.PropTypes.func
 
   },
 
@@ -55,11 +55,14 @@ export const ConversationViewList = React.createClass({
     //}
   },
   render(){
+    // (废弃,增大defaultLimit即可)由于部分对话不展示,导致会话数量不够滚动
+    //if (this.props.conversations.length < 9 && this.props.conversationLimit < 29) this.props.onChangeConversationLimit(this.props.conversationLimit + 10);
+
     return (
       <div style={this.styles.container}>
         <div style={this.styles.listWrap} onScroll={this._handleScroll}>
           {this.props.conversations.map(conversation =>
-            <ConversationView {... conversation} changeConversation={this.props.changeConversation}/>
+            <ConversationView {... conversation} onChangeConversation={this.props.onChangeConversation}/>
           )}
         </div>
       </div>

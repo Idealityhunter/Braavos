@@ -84,3 +84,10 @@ export const setMessageStatus = (msgId, conversationId, status) => {
     status: status
   }
 };
+
+
+export const addConversationList = () => {
+  return {
+    type: ''
+  }
+}

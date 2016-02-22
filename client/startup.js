@@ -60,10 +60,7 @@ Meteor.startup(()=> {
   hedy.ConversationView.attachSchema(schema.Talk.ConversationView);
   hedy.Message = new Mongo.Collection("Message");
   hedy.Message.attachSchema(schema.Talk.Message);
-
-
-  // 初始化Session
-  Session.set('pendingMsgs', {});
+  hedy.Conversation = new Mongo.Collection("Conversation");
 });
 
 //// 补全underscore的语法

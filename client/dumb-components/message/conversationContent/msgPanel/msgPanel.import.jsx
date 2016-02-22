@@ -28,7 +28,7 @@ export const MsgPanel = React.createClass({
     changeConversation: React.PropTypes.bool,
 
     // TODO: 优化
-    changeCoversationState: React.PropTypes.func
+    changeConversationState: React.PropTypes.func
   },
 
   componentDidMount(){
@@ -61,9 +61,10 @@ export const MsgPanel = React.createClass({
     // 当前高度控制
     scrollEle[0].scrollTop += (scrollEle[0].scrollHeight - this.curScrollHeight);
 
+    // 假如是切换了conversation引发的更新,那么scrollEle[0]要改变
     if (this.props.changeConversation){
       scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
-      this.props.changeCoversationState();
+      this.props.changeConversationState();
     };
   },
 

@@ -20,19 +20,20 @@ export const ConversationContent = React.createClass({
     changeConversation: React.PropTypes.bool,
 
     // TODO 优化
-    changeCoversationState: React.PropTypes.func,
+    changeConversationState: React.PropTypes.func,
 
     // 订阅的消息总数
     messageLimit: React.PropTypes.number,
 
-    // 会话Id
+    // 会话Id和名称
     conversationId: React.PropTypes.string,
+    conversationName: React.PropTypes.string,
 
-    // 添加pending消息的句柄(发消息时使用)
-    appendPendingMsg: React.PropTypes.func,
+    // 发送消息的句柄(发消息时使用)
+    onPostMessage: React.PropTypes.func,
 
     // 发送消息失败的处理
-    failInSendingMsg: React.PropTypes.func,
+    onFailedMessage: React.PropTypes.func,
 
     // 修改输入框的消息内容的回调
     onChangeInputValue: React.PropTypes.func,
@@ -84,7 +85,7 @@ export const ConversationContent = React.createClass({
 
         {/* head */}
         <div style={this.styles.head}>
-          {this.props.conversationId}
+          {this.props.conversationName}
         </div>
 
         {/* body */}
@@ -97,12 +98,12 @@ export const ConversationContent = React.createClass({
               conversationId={this.props.conversationId}
               onChangeMessageLimit={this.props.onChangeMessageLimit}
               changeConversation={this.props.changeConversation}
-              changeCoversationState={this.props.changeCoversationState}
+              changeConversationState={this.props.changeConversationState}
             />
             <ConversationInput
               conversationId={this.props.conversationId}
-              appendPendingMsg={this.props.appendPendingMsg}
-              failInSendingMsg={this.props.failInSendingMsg}
+              onPostMessage={this.props.onPostMessage}
+              onFailedMessage={this.props.onFailedMessage}
 
               onChangeInputValue={this.props.onChangeInputValue}
               onClearInputValue={this.props.onClearInputValue}

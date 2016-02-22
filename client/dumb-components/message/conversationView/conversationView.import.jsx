@@ -6,15 +6,13 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const ConversationView = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
-    // todo conversation的其它属性
-
     // 会话Id
     conversationId: React.PropTypes.object,
 
-    // TODO 会话对象的头像(个人则为个人头像,群组则为默认头像或者固定头像)
+    // 会话对象的头像(个人则为个人头像,群组则为默认头像或者固定头像)
     avatar: React.PropTypes.string,
 
-    // TODO 会话对象的昵称(个人默认为用户名,群组默认为群组号)
+    // 会话对象的昵称(个人默认为用户名,群组默认为群组号)
     nickName: React.PropTypes.string,
 
     // 会话的最近消息的发送时间
@@ -24,7 +22,7 @@ export const ConversationView = React.createClass({
     lastMessage: React.PropTypes.string,
 
     // TODO: 优化 =>  滚动条已达底部,修改state状态
-    changeConversation: React.PropTypes.func,
+    onChangeConversation: React.PropTypes.func,
   },
   styles: {
     container:{
@@ -65,22 +63,20 @@ export const ConversationView = React.createClass({
     }
   },
 
+  // 点击组件的触发函数
   _handleClickContainer(e){
-    //TODO nickename
-    //this.props.changeConversation(this.props.conversationId._str, this.props.nickName);
-    this.props.changeConversation(this.props.conversationId._str, this.props.conversationId._str);
+    this.props.onChangeConversation(this.props.conversationId._str, this.props.conversationId._str);
   },
 
   render(){
     return(
       <div style={this.styles.container} onClick={this._handleClickContainer}>
-        <img src={this.props.avatar || 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2467440505,410519858&fm=80'} style={this.styles.avatar}/>
+        <img src={this.props.avatar} style={this.styles.avatar}/>
         <div style={this.styles.summary}>
           <div>
-            <div style={this.styles.name} title={this.props.conversationId._str}>
+            <div style={this.styles.name} title={this.props.nickName}>
               {/*长度未限制,因此可能会有bug*/
-                //this.props.nickName
-                this.props.conversationId._str
+                this.props.nickName
               }
             </div>
             <span style={this.styles.time}>
