@@ -23,6 +23,7 @@ export const messageReducer = (state = fromJS({
     inputValue: null,
     conversationLimit: null,
     activeConversation: null,
+    activeTab: 'message',//'message' or 'conversation'
 
     messageLimits:{},
     postedMessages: {},
@@ -30,6 +31,10 @@ export const messageReducer = (state = fromJS({
     failedMessages: {}
   }), action) => {
     switch (action.type) {
+      // 设置当前tab展示项
+      case 'SET_ACTIVE_TAB':
+        return state.set('activeTab', action.tabItem);
+
       // 输入框内容改动
       case 'SET_INPUT_VALUE':
         return state.set('inputValue', action.content || '');

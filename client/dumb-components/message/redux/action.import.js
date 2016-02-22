@@ -4,6 +4,19 @@
  * Created by lyn on 2/15/16.
  */
 
+
+/**
+ * 设置当前tab展示项
+ * @param tabItem
+ * @returns {{type: string, tabItem: *}}
+ */
+export const setActiveTab = (tabItem) => {
+  return {
+    type: 'SET_ACTIVE_TAB',
+    tabItem: tabItem
+  }
+};
+
 /**
  * 设置发送框内容
  * @param content

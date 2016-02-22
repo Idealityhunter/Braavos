@@ -13,7 +13,7 @@ import {ButtonToolbar, Button, Tabs, Tab, Input} from "/lib/react-bootstrap";
 
 // redux相关组件引用
 import { messageReducer } from '/client/dumb-components/message/redux/reducer'
-import { setInputValue, resetInputValue, setConversationLimit, setActiveConversation, setMessageLimit, postMessage, setMessageStatus } from '/client/dumb-components/message/redux/action'
+import { setInputValue, resetInputValue, setConversationLimit, setActiveTab, setActiveConversation, setMessageLimit, postMessage, setMessageStatus } from '/client/dumb-components/message/redux/action'
 
 // 普通组件引用
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
@@ -49,8 +49,11 @@ const mapDispatchToProps = (dispatch) => {
         // 修改订阅的conversationView的limit限制
         onChangeConversationLimit: limit => dispatch(setConversationLimit(limit)),
 
+        // 切换tab
+        onChangeActiveTab: tabItem => dispatch(setActiveTab(tabItem)),
+
         // 切换激活的会话
-        onChangeActiveConversation: conversationId =>  dispatch(setActiveConversation(conversationId)),
+        onChangeActiveConversation: conversationId => dispatch(setActiveConversation(conversationId)),
 
         // 修改会话订阅的消息的数目上限
         onChangeMessageLimit: (conversationId, limit) => dispatch(setMessageLimit(conversationId, limit)),
@@ -83,6 +86,7 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
         <div className="message-mngm-wrap">
           <BraavosBreadcrumb />
           <MessageContent
+            activeTab = {this.props.messageReducer.get('activeTab')}
             inputValue = {this.props.messageReducer.get('inputValue')}
             conversationLimit = {this.props.messageReducer.get('conversationLimit')}
             activeConversation = {this.props.messageReducer.get('activeConversation')}
@@ -91,7 +95,7 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
             pendingMessages = {this.props.messageReducer.get('pendingMessages')}
             failedMessages = {this.props.messageReducer.get('failedMessages')}
 
-            handlers={this.props.handlers}/>
+            handlers = {this.props.handlers}/>
         </div>
       );
     }
@@ -119,6 +123,9 @@ const MessageContent = React.createClass({
     }
   },
   propTypes: {
+    // 展示的tab项
+    activeTab: React.PropTypes.string,
+
     // 是否可以添加conversationLimit
     changeConversation: React.PropTypes.bool,
 
@@ -346,13 +353,6 @@ const MessageContent = React.createClass({
     });
   },
 
-  // 响应statusTab的点击事件
-  _handleTabChange(status){
-    this.setState({
-      activeStatus: status
-    })
-  },
-
   // 路由跳转前的动作
   componentWillUnmount(){
     // 替换回router中的订阅
@@ -395,18 +395,18 @@ const MessageContent = React.createClass({
     // tab首部
     const tabHeadList =
       <ul style={this.styles.tabHeadList}>
-        <li onClick={this._handleTabChange.bind(this, 'message')}
-            style={(this.state.activeStatus == 'message') ? _.extend({}, this.styles.tabHeadListItem, this.styles.tabHeadListItemActive) : this.styles.tabHeadListItem}>
+        <li onClick={() => this.props.handlers.chatMessages.onChangeActiveTab('message')}
+            style={(this.props.activeTab == 'message') ? _.extend({}, this.styles.tabHeadListItem, this.styles.tabHeadListItemActive) : this.styles.tabHeadListItem}>
           消息中心
         </li>
-        <li onClick={this._handleTabChange.bind(this, 'conversation')}
-            style={(this.state.activeStatus == 'conversation') ? _.extend({}, this.styles.tabHeadListItem, this.styles.tabHeadListItemActive) : this.styles.tabHeadListItem}>
+        <li onClick={() => this.props.handlers.chatMessages.onChangeActiveTab('conversation')}
+            style={(this.props.activeTab == 'conversation') ? _.extend({}, this.styles.tabHeadListItem, this.styles.tabHeadListItemActive) : this.styles.tabHeadListItem}>
           聊天中心
         </li>
       </ul>;
 
     // tab主体
-    const tabBody = (this.state.activeStatus == 'message')
+    const tabBody = (this.props.activeTab == 'message')
       ? <div className="col-lg-12 fadeIn">
           <div className="ibox" style={_.extend({}, this.styles.ibox, {width: 600})}>
             <SystemMessagesList msgs={this.data.orderMsgs}/>
