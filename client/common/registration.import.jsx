@@ -204,7 +204,7 @@ const SignupWoLxp = React.createClass({
 
   onInputPassword(source, evt) {
     // 只处理密码
-    if (!_.contains(["password1", "password2"], source)) {
+    if (!_.includes(["password1", "password2"], source)) {
       return;
     }
     const state = this._checkPassword(source, evt.target.value).state;
@@ -214,7 +214,7 @@ const SignupWoLxp = React.createClass({
 
   onInputChange(source, evt) {
     const sourceList = ["name", "nickname"];
-    if (!_.contains(sourceList, source)) {
+    if (!_.includes(sourceList, source)) {
       return;
     }
 
