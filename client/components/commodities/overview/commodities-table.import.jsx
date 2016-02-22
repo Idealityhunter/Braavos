@@ -125,7 +125,7 @@ const OperationCell = ({rowIndex, data}) => {
   if (status == 'pub') {
     buttons.push(<Button key={`${commodityId}.disabled`} bsClass="btn btn-white"
                          onClick={handleDropCommodity(commodity.get('commodityId'))}>下架</Button>);
-  } else if (status == 'disabled') {
+  } else if (status == 'disabled' || status == 'review' && BraavosCore.Utils.account.isAdmin()) {
     buttons.push(<Button key={`${commodityId}.pub`} bsClass="btn btn-white"
                          onClick={handlePubCommodity(commodity.get('commodityId'))}>上架</Button>);
   }
