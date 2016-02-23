@@ -8,6 +8,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const MsgBlock = React.createClass({
   mixins: [IntlMixin],
+  getDefaultProps: () => {
+    return {
+      // loading图片
+      loadingImage: '/images/spinner.gif'
+    }
+  },
   propTypes: {
     // 消息的发送状态(pending/failed/空)
     status: React.PropTypes.string,
@@ -30,7 +36,10 @@ export const MsgBlock = React.createClass({
   getInitialState(){
     return {
       showModal: false,
-      imageSrc: ''
+      imageSrc: '',
+
+      // 图片消息中的图片是否加载完成
+      imageLoaded: false
     }
   },
   styles: {
@@ -139,13 +148,16 @@ export const MsgBlock = React.createClass({
       image: {
         maxWidth: '100%',
         height: 'auto',
-        margin: '0 auto',
-        display: 'block'
+        margin: '0 auto'
+      },
+      loadingImage: {
+        margin: '20px 400px',
+        width: 50
       }
     }
   },
 
-  // 全屏展示图片
+  // 图片消息大图展示的控制
   showImage(){
     const self = this;
     this.setState({
@@ -155,6 +167,7 @@ export const MsgBlock = React.createClass({
     return ;
   },
 
+  // 图片消息大图展示的modal关闭回调函数
   onClose(){
     this.setState({
       showModal: false
@@ -163,6 +176,13 @@ export const MsgBlock = React.createClass({
 
   showCommodityInfo(){
     //TODO 跳转到商品详情页面
+  },
+
+  // 图片加载完成的回调
+  _handlerOnload(){
+    this.setState({
+      imageLoaded: true
+    })
   },
 
   render(){
@@ -180,11 +200,21 @@ export const MsgBlock = React.createClass({
       case 2:
         msgContents =
           <div>
-            <img style={this.styles.image} src={JSON.parse(this.props.contents).thumb} onClick={this.showImage}/>
+            <img style={this.styles.image}
+                 src={JSON.parse(this.props.contents).thumb}
+                 onClick={this.showImage}/>
+
             <Modal show={this.state.showModal} onHide={this.onClose} bsSize="lg">
               <Modal.Header closeButton />
               <div style={this.styles.modal.wrap}>
-                <img ref="image" src={this.state.imageSrc} style={this.styles.modal.image}/>
+                <img ref="image" src={this.state.imageSrc}
+                     style={this.styles.modal.image}
+                     onLoad={this._handlerOnload}
+                     className={this.state.imageLoaded ? '' : 'hidden'}/>
+
+                <img style={this.styles.modal.loadingImage}
+                     src={this.props.loadingImage}
+                     className={this.state.imageLoaded ? 'hidden' : ''}/>
               </div>
             </Modal>
           </div>

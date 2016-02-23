@@ -35,7 +35,9 @@ const mapDispatchToProps = (dispatch) => {
     handlers: {
       // 系统通知部分相关的事件回调
       systemMessages: {
-
+        // TODO 瀑布流展示
+        // TODO 已读/未读展示
+        // TODO 新消息提示
       },
 
       // 聊天部分相关的事件回调
@@ -126,9 +128,6 @@ const MessageContent = React.createClass({
     // 展示的tab项
     activeTab: React.PropTypes.string,
 
-    // 是否可以添加conversationLimit
-    changeConversation: React.PropTypes.bool,
-
     // 输入框中的消息内容
     inputValue: React.PropTypes.string,
 
@@ -157,8 +156,8 @@ const MessageContent = React.createClass({
 
   getInitialState(){
     return {
-      activeStatus: 'message',
-      //activeStatus: 'conversation', // 当前展示的是系统消息(message)还是对话(conversation)
+      // 是否可以添加conversationLimit
+      changeConversation: false
     }
   },
 
@@ -190,29 +189,24 @@ const MessageContent = React.createClass({
     // 添加key
     conversationViews.map(conversationView => _.extend(conversationView, {key: conversationView._id._str}));
 
-    // 获取会话的头像 conversationView(conversationId) => conversation(userId) => userInfo(avatar)
-    //const conversationViewAvatars = conversationViews.map((conversationView) => {
-    //
-    //})
-
     // 查找conversationView对应的conversation
     const conversationIds = conversationViews.map(conversationView => conversationView.conversationId);
 
     // 订阅conversationView对应的conversation
     Meteor.subscribe('conversations', conversationIds);
 
-    // 查找conversation对应的userId
+    // 查找conversation对应的userId(TODO: 目前只考虑单聊的情况)
     const conversations = BraavosCore.Database.Hedy.Conversation.find({'_id': {$in: conversationIds}}).fetch();
     const conversationUsers = conversations.map(conversation => parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], selfInfo.userId.toString())[0]));
 
-    // 订阅conversationView对应的userInfo信息(TODO: 目前只考虑单聊的情况)
+    // 订阅conversationView对应的userInfo信息
     Meteor.subscribe('userInfos', conversationUsers);
 
     // 记录activeConversation的nickName
     let activeConversationName = this.props.activeConversation;
     const self = this;
 
-    // 目前只考虑单聊的情况
+    // 添加头像/昵称(目前只考虑单聊的情况)
     conversationViews.map(conversationView => {
       // 获取会话相关用户
       const conversation = BraavosCore.Database.Hedy.Conversation.findOne({'_id': conversationView.conversationId}) || {};
@@ -329,7 +323,7 @@ const MessageContent = React.createClass({
       // 聊天消息(聊天中心使用)
       msgs: msgs,
 
-      // activeConversation的nickName
+      // activeConversation的名称
       activeConversationName: activeConversationName
     };
   },

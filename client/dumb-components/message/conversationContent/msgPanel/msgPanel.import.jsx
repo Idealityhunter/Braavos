@@ -25,6 +25,7 @@ export const MsgPanel = React.createClass({
     onChangeMessageLimit: React.PropTypes.func,
 
     // TODO: 优化
+    // 是否可以添加conversationLimit
     changeConversation: React.PropTypes.bool,
 
     // TODO: 优化
@@ -39,13 +40,6 @@ export const MsgPanel = React.createClass({
     scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
   },
 
-  // 滚轮的监测事件
-  _handleScroll(e){
-    if (e.target.scrollTop < 50){
-      this.props.onChangeMessageLimit(this.props.conversationId, this.props.limit + 10);
-    }
-  },
-
   componentWillUpdate() {
     const node = this.getDOMNode();
     const scrollEle = $(node).children();
@@ -55,7 +49,10 @@ export const MsgPanel = React.createClass({
   },
 
   componentDidUpdate() {
+    // container元素
     const node = this.getDOMNode();
+
+    // 滚动条所在的元素
     const scrollEle = $(node).children();
 
     // 当前高度控制
@@ -66,6 +63,13 @@ export const MsgPanel = React.createClass({
       scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
       this.props.changeConversationState();
     };
+  },
+
+  // 滚轮的监测事件
+  _handleScroll(e){
+    if (e.target.scrollTop < 50){
+      this.props.onChangeMessageLimit(this.props.conversationId, this.props.limit + 10);
+    }
   },
 
   styles: {

@@ -17,6 +17,7 @@ export const ConversationContent = React.createClass({
     onChangeMessageLimit: React.PropTypes.func,
 
     // TODO 优化
+    // 是否可以添加conversationLimit
     changeConversation: React.PropTypes.bool,
 
     // TODO 优化
