@@ -38,10 +38,7 @@ const finance = React.createClass({
     if (handleOrder.ready()) {
       //最好是按照更新时间来排序吧
       orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
-      orders = orders.map(order => _.extend(order, {
-        key: Meteor.uuid(),
-        totalPrice: order.totalPrice / 100
-      }));
+      orders = orders.map(order => _.extend(order, {key: Meteor.uuid()}));
     }
 
     return {
@@ -160,8 +157,8 @@ const finance = React.createClass({
 
   _getIncome(order){
     const income = (order.status == 'finished')
-      ? order.totalPrice
-      : order.totalPrice - this._getRefundAmount(order);
+      ? order.totalPrice / 100
+      : order.totalPrice / 100 - this._getRefundAmount(order);
 
     return(
       <td data-value={income} style={{textAlign:'center'}}>

@@ -19,6 +19,7 @@ const orderRefundPaid = React.createClass({
     }
   },
 
+  // 通过mixin的公有函数获取数据
   getMeteorData(){
     return this.getOrderInfo();
   },
@@ -54,10 +55,10 @@ const orderRefundPaid = React.createClass({
       }
 
       // 密码正确, 进行退款
-      //const amount = $('.refund-amount').children('input').val();
-      const amount = self.data.orderInfo.totalPrice;
-      const memo = $('textarea').val();
-      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount * 100), memo, (err, res) => {
+      const amount = self.data.orderInfo.totalPrice - (self.data.orderInfo.discount || 0);// 获取实付金额
+      const memo = $('textarea').val();// 获取退款备注
+
+      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount), memo, (err, res) => {
         if (err || !res) {
           // 退款失败处理
           swal('退款失败', '', 'error');
@@ -65,7 +66,7 @@ const orderRefundPaid = React.createClass({
           // 取消订单成功
           swal({
             title: "退款成功!",
-            text: `退款金额${amount}元`,
+            text: `退款金额${amount / 100}元`,// 钱款单位转换(分 => 元)
             timer: 1500
           }, () => FlowRouter.go("orders"));
           Meteor.setTimeout(() => {
@@ -77,7 +78,7 @@ const orderRefundPaid = React.createClass({
     })
   },
 
-  // 检查退款金额
+  // (不需要)检查退款金额
   //_checkRefundAmount(amount){
   //  return amount > 0 && amount <= this.data.orderInfo.totalPrice;
   //},
@@ -175,11 +176,11 @@ const orderRefundPaid = React.createClass({
             <label style={this.styles.marginRight}>买家:</label>
             <span style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
             <label style={this.styles.marginRight}>实付金额:</label>
-            <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
+            <span>¥ {(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100 || '-'}</span>
 
             <div className='refund-amount'>
               <label style={this.styles.label}>退款金额</label>
-              <span>{this.data.orderInfo.totalPrice || '-'} 元</span>
+              <span>{(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100 || '-'} 元</span>
             </div>
 
             <span>备注</span>
@@ -204,8 +205,8 @@ const orderRefundPaid = React.createClass({
           handleClose={this._handleRefundModalClose}
           handleSubmit={this._handleRefundModalSubmit}
           amount={
-            //this.state.amount
-            this.data.orderInfo.totalPrice
+            // 除去以及钱款单位转换(分 => 元)
+            (this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100
           }
           />
           : <div />

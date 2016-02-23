@@ -239,7 +239,7 @@ const orderInfo = React.createClass({
               </td>
               <td style={this.styles.td}>{orderPlanTitle}</td>
               <td style={this.styles.td}>{orderInfo.quantity}</td>
-              <td style={this.styles.td}>{orderInfo.totalPrice}</td>
+              <td style={this.styles.td}>{orderInfo.totalPrice / 100}</td>
               <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD')}</td>
               <td style={this.styles.td}>
                 <p>{`${orderInfo.contact.surname}${orderInfo.contact.givenName}`}</p>
