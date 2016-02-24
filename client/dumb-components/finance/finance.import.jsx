@@ -1,7 +1,7 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap";
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;

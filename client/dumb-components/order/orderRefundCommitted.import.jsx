@@ -5,7 +5,8 @@ import {Modal, Button, Input} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
 import {NumberInput} from '/client/common/numberInput';
 import {PageLoading} from '/client/common/pageLoading';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';
+import {TotalPrice} from '/client/dumb-components/order/common/totalPrice';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -28,6 +29,7 @@ const orderRefundCommitted = React.createClass({
     }
   },
 
+  // 通过mixin的公有函数获取数据
   getMeteorData(){
     return this.getOrderInfo();
   },
@@ -254,13 +256,13 @@ const orderRefundCommitted = React.createClass({
             <label style={this.styles.marginRight}>买家:</label>
             <span style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
             <label style={this.styles.marginRight}>实付金额:</label>
-
-            <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
+            <span>¥ {(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100}</span>
+            <TotalPrice discount={this.data.orderInfo.discount || 0} totalPrice={this.data.orderInfo.totalPrice}/>
 
             {(this.state.agreeRefund)
               ? <div className='refund-amount'>
                   <label style={this.styles.label}>退款金额</label>
-                  <NumberInput numberType='float' decimalDigits={2} value={this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)} style={this.styles.totalPrice} autoComplete="off"/> 元
+                  <NumberInput numberType='float' decimalDigits={2} value={(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100} style={this.styles.totalPrice} autoComplete="off"/> 元
                 </div>
               : <div><br/></div>//留一行空白
             }
