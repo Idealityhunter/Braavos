@@ -1,7 +1,7 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Button} from "/lib/react-bootstrap";
 import {PageLoading} from '/client/common/pageLoading';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';// 包括getMeteorData
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';// 包括getMeteorData
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;

@@ -18,8 +18,15 @@ export const OrderMixin = {
     let orderInfo;
     if (handleOrder.ready()) {
       orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
-      if (orderInfo && orderInfo.totalPrice)
-        orderInfo.totalPrice = orderInfo.totalPrice / 100;
+
+      // 钱款单位转换(分 => 元)
+      //if (orderInfo){
+      //  if (orderInfo.totalPrice)
+      //    orderInfo.totalPrice = orderInfo.totalPrice / 100;
+      //  if (orderInfo.discount){
+      //    orderInfo.paidAmount = (orderInfo.totalPrice * 100 - orderInfo.discount) / 100;
+      //  }
+      //}
     }
 
     return {
@@ -30,7 +37,7 @@ export const OrderMixin = {
   // 获取退款数额
   _getRefundAmount(order){
     const activity = _.find(order.activities, activity => activity.action == 'refundApprove');
-    return activity && activity.data && activity.data.amount / 100 || order.totalPrice;
+    return activity && activity.data && activity.data.amount / 100 || (order.totalPrice || (order.discount || 0))/ 100;
   },
 
   // 获取activity的操作者

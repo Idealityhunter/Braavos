@@ -2,7 +2,8 @@ import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Button, Table} from "/lib/react-bootstrap";
 import {PageLoading} from '/client/common/pageLoading';
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';
+import {TotalPrice} from '/client/dumb-components/order/common/totalPrice';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -12,15 +13,17 @@ const orderInfo = React.createClass({
 
   getInitialState(){
     return {
-      submitting: false,
+      // 控制关闭交易的modal的展示
       showCloseModal: false
     }
   },
 
+  // 通过mixin的公有函数获取数据
   getMeteorData(){
     return this.getOrderInfo();
   },
 
+  // 清除定时器
   componentWillUnmount: function() {
     Meteor.clearInterval(this.interval);
   },
@@ -163,6 +166,9 @@ const orderInfo = React.createClass({
     table: {
       marginTop: 30
     },
+    th: {
+      textAlign: 'center'
+    },
     td: {
       textAlign: 'center'
     },
@@ -217,17 +223,19 @@ const orderInfo = React.createClass({
         </div>;
 
       const orderTable =
-        <Table bordered condensed responsive style={this.styles.table}>
+        <Table bordered condensed style={this.styles.table}>
           <thead>
             <tr>
-              <th>订单号</th>
-              <th>商品</th>
-              <th>套餐</th>
-              <th>购买数量</th>
-              <th>订单总价</th>
-              <th>使用时间</th>
-              <th>联系人信息</th>
-              <th>留言</th>
+              <th style={this.styles.th}>订单号</th>
+              <th style={this.styles.th}>商品</th>
+              <th style={this.styles.th}>套餐</th>
+              <th style={this.styles.th}>购买数量</th>
+              <th style={this.styles.th}>订单总价
+                <TotalPrice discount={orderInfo.discount || 0} totalPrice={orderInfo.totalPrice}/>
+              </th>
+              <th style={this.styles.th}>使用时间</th>
+              <th style={this.styles.th}>联系人信息</th>
+              <th style={this.styles.th}>留言</th>
             </tr>
           </thead>
           <tbody>
@@ -239,7 +247,7 @@ const orderInfo = React.createClass({
               </td>
               <td style={this.styles.td}>{orderPlanTitle}</td>
               <td style={this.styles.td}>{orderInfo.quantity}</td>
-              <td style={this.styles.td}>{orderInfo.totalPrice}</td>
+              <td style={this.styles.td}>{orderInfo.totalPrice / 100}</td>
               <td style={this.styles.td}>{moment(orderInfo.rendezvousTime).format('YYYY-MM-DD')}</td>
               <td style={this.styles.td}>
                 <p>{`${orderInfo.contact.surname}${orderInfo.contact.givenName}`}</p>

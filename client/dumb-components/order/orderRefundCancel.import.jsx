@@ -4,7 +4,8 @@ import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {Modal, Button} from "/lib/react-bootstrap";
 import {OrderRefundModal} from '/client/dumb-components/order/orderRefundModal';
 import {PageLoading} from '/client/common/pageLoading';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';
+import {TotalPrice} from '/client/dumb-components/order/common/totalPrice';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -53,8 +54,9 @@ const orderRefundCancel = React.createClass({
       }
 
       // 密码正确, 取消订单
+      const amount = self.data.orderInfo.totalPrice - (self.data.orderInfo.discount || 0);
       const memo = $('textarea').val();
-      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(self.data.orderInfo.totalPrice * 100), memo, (err, res) => {
+      Meteor.call('marketplace.order.refundApi', self.data.orderInfo.orderId, self.data.orderInfo.commodity.seller.sellerId, parseInt(amount), memo, (err, res) => {
         if (err || !res) {
           // 密码验证失败处理
           swal('退款失败', '', 'error');
@@ -62,7 +64,7 @@ const orderRefundCancel = React.createClass({
           // 取消订单成功
           swal({
             title: "退款成功!",
-            text: `退款金额${self.data.orderInfo.totalPrice}元`,
+            text: `退款金额${amount / 100}元`,
             timer: 1000
           }, () =>
             FlowRouter.go("orders")
@@ -151,11 +153,12 @@ const orderRefundCancel = React.createClass({
             <span
               style={this.styles.marginRight}>{this.data.orderInfo.contact && (`${this.data.orderInfo.contact.surname} ${this.data.orderInfo.contact.givenName}`) || '-'}</span>
             <label style={this.styles.marginRight}>实付金额:</label>
-            <span>¥ {this.data.orderInfo.totalPrice || '-'}</span>
+            <span>¥ {(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100 || '-'}</span>
+            <TotalPrice discount={this.data.orderInfo.discount || 0} totalPrice={this.data.orderInfo.totalPrice}/>
 
             <div>
               <label style={this.styles.label}>退款金额</label>
-              <span>{this.data.orderInfo.totalPrice || '-'} 元</span>
+              <span>{(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100 || '-'} 元</span>
             </div>
 
             <span style={this.styles.asterisk}>*</span>备注
@@ -179,7 +182,7 @@ const orderRefundCancel = React.createClass({
               showModal={this.state.showRefundModal}
               handleClose={this._handleRefundModalClose}
               handleSubmit={this._handleRefundModalSubmit}
-              amount={this.data.orderInfo.totalPrice}
+              amount={(this.data.orderInfo.totalPrice - (this.data.orderInfo.discount || 0)) / 100}
             />
           : <div />
         }
