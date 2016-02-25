@@ -1,7 +1,7 @@
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {ButtonToolbar, Button} from "/lib/react-bootstrap";
 import {OrderCloseModal} from '/client/dumb-components/order/orderCloseModal';
-import {OrderMixin} from '/client/dumb-components/order/orderMixins';
+import {OrderMixin} from '/client/dumb-components/order/common/orderMixins';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -37,10 +37,7 @@ const order = React.createClass({
     if (handleOrder.ready()) {
       //最好是按照更新时间来排序吧
       orders = BraavosCore.Database.Braavos.Order.find({}, {sort: {updateTime: -1}}).fetch();
-      orders = orders.map(order => _.extend(order, {
-        key: Meteor.uuid(),
-        totalPrice: order.totalPrice / 100
-      }));
+      orders = orders.map(order => _.extend(order, {key: Meteor.uuid()}));
       ordersReady = true;
     }
 
@@ -396,7 +393,7 @@ const order = React.createClass({
             <p>商品编号: {order.commodity && order.commodity.commodityId}</p>
           </td>
           <td data-value={order.quantity} style={{textAlign:'center'}}>{order.quantity}</td>
-          <td data-value={order.totalPrice} style={{textAlign:'center'}}>{order.totalPrice}</td>
+          <td data-value={order.totalPrice / 100} style={{textAlign:'center'}}>{order.totalPrice / 100}</td>
           <td style={{textAlign:'center'}}>{moment(order.createTime).format('YYYY-MM-DD HH:mm')}</td>
           <td style={{color: '#333', textAlign: 'center'}}>
             {this._getTradeStatusHtml(order)}
