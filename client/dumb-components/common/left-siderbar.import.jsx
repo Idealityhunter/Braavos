@@ -23,7 +23,7 @@ let leftSiderBar = React.createClass({
       userInfo.avatar.url && (userInfo.avatar = userInfo.avatar.url);
       userInfo.avatar += '?imageView2/2/w/48/h/48';
     } else {
-      userInfo.avatar = "images/logo.png"
+      userInfo.avatar = "/images/logo.png"
     }
     return {
       userInfo: userInfo
