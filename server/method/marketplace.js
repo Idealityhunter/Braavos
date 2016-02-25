@@ -30,14 +30,23 @@ Meteor.methods({
   },
 
   // 调用退款API
-  "marketplace.order.refundApi": (orderId, userId, amount, memo) => {
-    // TODO 检测是否为本人(管理员也不能帮助退款!!!)
+  "marketplace.order.refundApi": (orderId, sellerId, amount, memo) => {
+    // 检测是否为本人(管理员也不能帮助退款)
+    if (Meteor.userId() != sellerId) {
+      BraavosCore.logger.error(`Error in 'marketplace.order.refundApi': The user ${Meteor.userId()} is not the order ${orderId}'s seller(${sellerId})`);
+      return false
+    };
 
-    const apiHost = Meteor.settings.hanse;
-    const url = `${apiHost}app/marketplace/orders/${orderId}/refund`;
+    // 获取hanse服务
+    const services = Object.keys(BraavosCore.RootConf.backends['hanse']).map(key => {
+      const {host, port} = BraavosCore.RootConf.backends['hanse'][key];
+      return `${host}:${port}`;
+    });
+    const url = `http://${services[0]}/marketplace/orders/${orderId}/refund`;
+
     const options = {
       headers: {
-        'X-Lvxingpai-Id': userId,
+        'X-Lvxingpai-Id': sellerId,
         'Token': Meteor.settings.token
       },
       data: {
