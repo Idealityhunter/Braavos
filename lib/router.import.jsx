@@ -13,6 +13,7 @@ import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel
 import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
+import {Message} from '/client/dumb-components/message/message';
 
 import {Page404} from '/client/dumb-components/page404';
 
@@ -23,9 +24,17 @@ import { Login } from '/client/components/login/login'
 // 初始化Sub Manager
 BraavosCore.SubsManager = {
   geo: new SubsManager(),
-  account: new SubsManager()
+  account: new SubsManager(),
+  conversation: new SubsManager(),
+  orderMsg: new SubsManager()
 };
+
+BraavosCore.SubsManagerStubs = {};
+BraavosCore.SubsManagerStubs.conversation = [];
+BraavosCore.SubsManagerStubs.orderMsg = [];
+
 BraavosCore.SubsManager.geo.subscribe("countries");
+
 
 // 检查是否登录
 function loginCheck(context, redirect, stop) {
@@ -34,6 +43,10 @@ function loginCheck(context, redirect, stop) {
   }
   BraavosCore.SubsManager.account.subscribe("basicUserInfo");
   BraavosCore.SubsManager.account.subscribe("sellerInfo");
+
+  // 存储conversationView的subscribe记录
+  BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
+  BraavosCore.SubsManagerStubs.orderMsg.push(BraavosCore.SubsManager.orderMsg.subscribe("orderMsgs"));
 }
 
 const intlData = BraavosCore.IntlData.zh;
@@ -268,6 +281,17 @@ FlowRouter.route('/account', {
   triggersEnter: [loginCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Account {...intlData} />}, intlData, {documentTitle: "账户信息"}));
+  }
+});
+
+// 账户信息
+FlowRouter.route('/message', {
+  name: 'message',
+  title: lsbMessages['message'],
+  parent: 'home',
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "消息"}));
   }
 });
 

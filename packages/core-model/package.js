@@ -17,7 +17,7 @@ Package.onUse(function (api) {
   api.imply("aldeed:simple-schema");
 
   api.addFiles(["core-model.js", "lib/misc.js", "lib/geo.js", "lib/finance.js", "lib/account.js",
-    "lib/marketplace.js"], ["client", "server"]);
+    "lib/marketplace.js", "lib/talk.js"], ["client", "server"]);
 
   api.export("CoreModel", ["client", "server"])
 });

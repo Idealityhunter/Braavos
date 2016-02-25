@@ -1,0 +1,71 @@
+// 左侧的 Conversation View 列表
+
+import {ConversationView} from '/client/dumb-components/message/conversationView/conversationView';
+
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
+
+export const ConversationViewList = React.createClass({
+  mixins: [IntlMixin],
+
+  propTypes: {
+    // 会话列表
+    conversations: React.PropTypes.array,
+
+    // 修改会话订阅数目的方法
+    onChangeConversationLimit: React.PropTypes.func,
+
+    // 订阅会话的数目
+    conversationLimit: React.PropTypes.number,
+
+    // TODO: 优化 =>  滚动条已达底部,修改state状态
+    onChangeConversation: React.PropTypes.func
+
+  },
+
+  // 滚轮的监测事件
+  _handleScroll(e){
+    const $scrollEle = $(e.target);
+    const $conversationViewEle = $(e.target).children();
+    if ( $scrollEle.scrollTop() + $scrollEle.height() > $($conversationViewEle[0]).height() * (this.props.conversationLimit - 1) ) {
+      this.props.onChangeConversationLimit(this.props.conversationLimit + 10);
+    }
+  },
+
+  styles:{
+    container: {
+      borderRight: '1px solid #ccc',
+      display: 'inline-block',
+      width: 250,
+      height: 598,
+      boxSizing: 'border-box'
+    },
+    listWrap: {
+      width: 249,
+      height: 594,
+      marginTop: 2,
+      overflow: 'auto',
+      boxSizing: 'border-box'
+    },
+    //暂时废弃,loading逻辑不容易实现
+    //spinner:{
+    //  margin: '15px auto',
+    //  width: 25,
+    //  height: 25
+    //}
+  },
+  render(){
+    // (废弃,增大defaultLimit即可)由于部分对话不展示,导致会话数量不够滚动
+    //if (this.props.conversations.length < 9 && this.props.conversationLimit < 29) this.props.onChangeConversationLimit(this.props.conversationLimit + 10);
+
+    return (
+      <div style={this.styles.container}>
+        <div style={this.styles.listWrap} onScroll={this._handleScroll}>
+          {this.props.conversations.map(conversation =>
+            <ConversationView {... conversation} onChangeConversation={this.props.onChangeConversation}/>
+          )}
+        </div>
+      </div>
+    );
+  }
+});
