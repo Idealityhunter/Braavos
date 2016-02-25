@@ -204,3 +204,19 @@ Meteor.publish("orderInfo", function (orderId, isAdmin=false) {
   // 只发布自己的订单
   return coll.find({orderId: parseInt(orderId), 'commodity.seller.sellerId': userId}, {fields: fields});
 });
+
+/**
+ * 发布指定的用户信息
+ * userIds: [userId]
+ */
+Meteor.publish("userInfos", function (userIds) {
+  const coll = BraavosCore.Database.Yunkai.UserInfo;
+  const allowedFields = ['nickName', 'gender', 'alias', 'userId', 'avatar'];
+  const fields = _.reduce(allowedFields, (memo, f) => {
+    memo[f] = 1;
+    return memo;
+  }, {});
+
+  return coll.find({userId: {$in: userIds}}, {fields: fields});
+});
+
