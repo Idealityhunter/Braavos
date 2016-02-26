@@ -147,14 +147,14 @@ export const OrderMixin = {
       case 'finish':
         return <p>订单完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>;
       case 'expire':
-        return (activity.prevState == 'paid' || activity.prevState == 'refundApplied')
+        return (activity.prevStatus == 'paid' || activity.prevStatus == 'refundApplied')
           ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
           ? [
           <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>,
           <p>卖家退款说明: {activity.data.memo}</p>
         ]
           : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>
-          : (activity.prevState == 'pending')
+          : (activity.prevStatus == 'pending')
           // 买家支付超时
           ? [/**/]
           : [];
