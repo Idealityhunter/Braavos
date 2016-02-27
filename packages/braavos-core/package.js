@@ -14,10 +14,13 @@ Package.onUse(function (api) {
   api.versionsFrom('1.2.0.2');
   api.use('ecmascript');
   api.use('aldeed:simple-schema');
-  api.use("lvxingpai:core-model");
+  api.use('lvxingpai:core-model');
+  api.use('meteorhacks:subs-manager', 'client');
 
   // Init
   api.addFiles('braavos-core.js');
+  api.addFiles('braavos-core-server.js', 'server');
+  api.addFiles('braavos-core-client.js', 'client');
 
   api.export('BraavosCore');
 });

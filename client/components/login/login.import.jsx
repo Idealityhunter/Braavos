@@ -15,10 +15,11 @@ import {store} from '/client/redux/store'
 import {Provider} from '/lib/redux'
 
 import {setUserNameInput, setPasswordInput, setLoginFailedAlert} from '/client/redux/components/login/action'
+import {setCurrentUserId} from '/client/redux/core/user/action'
 
 const mapStateToProps = (state) => {
   return {
-    redux: state.getIn(['components', 'login'], Immutable.fromJS({}))
+    value: state.getIn(['components', 'login'], Immutable.fromJS({}))
   };
 };
 
@@ -49,6 +50,9 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(setLoginFailedAlert(true));
           } else {
             // 登录成功
+            dispatch(setCurrentUserId(parseInt(Meteor.userId())));
+            dispatch(setUserNameInput(''));
+            dispatch(setPasswordInput(''));
             FlowRouter.go('home')
           }
         }
@@ -60,11 +64,11 @@ const mapDispatchToProps = (dispatch) => {
 const Container = connect(mapStateToProps, mapDispatchToProps)(
   (props) => {
     // 是否显示登录失败的提示
-    const alertStatus = props.redux.get('loginFailed', false);
+    const alertStatus = props.value.get('loginFailed', false);
     const alertMessage = alertStatus ? <Alert bsStyle="danger" style={{padding: "8px"}}>登录失败 ;-(</Alert> :
       <div></div>;
-    const name = props.redux.get('userName', '');
-    const password = props.redux.get('password', '');
+    const name = props.value.get('userName', '');
+    const password = props.value.get('password', '');
 
     return (
       <div className="gray-bg">
@@ -80,9 +84,7 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
                        handleChange={props.handlePasswordChange}
                        placeholder="密码"/>
             <Button bsStyle="primary" block onClick={() => {
-              const user = props.redux.get('userName', '');
-              const password = props.redux.get('password', '');
-              props.handleLogin(user, password);
+              props.handleLogin(name, password);
             }}>登录</Button>
           </form>
         </div>

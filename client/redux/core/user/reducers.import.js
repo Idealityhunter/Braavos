@@ -24,11 +24,19 @@ const setCurrentUserId = (state, userId) => state.set('currentUserId', userId);
 const updateSubscribedUsers = (state, type, users) => {
   const subscribed = state.get('subscribedUserIds', Set());
 
-  let userIdList = [];
-  if (_.isNumber(users)) {
-    userIdList = [users];
-  } else if (_.isArray(users)) {
-    userIdList = users;
+  // 获得userId列表
+  const userIdList = [];
+  const pushId = (value) => {
+    if (_.isNumber(value) && !_.isNaN(value)) {
+      userIdList.push(value);
+    }
+  };
+  if (_.isArray(users)) {
+    for (let v of users) {
+      pushId(v);
+    }
+  } else {
+    pushId(users);
   }
 
   if (!_.isEmpty(userIdList)) {
