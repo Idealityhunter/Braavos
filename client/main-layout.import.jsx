@@ -1,8 +1,9 @@
 import {LeftSiderBar} from '/client/dumb-components/common/left-siderbar';
 import {TopBar} from '/client/dumb-components/common/topbar';
+import {store} from '/client/redux/store'
+import {Provider} from '/lib/redux'
 
-
-let mainLayout = React.createClass({
+let App = React.createClass({
   componentDidMount() {
     // Initialize i-check plugin
     $('.i-checks').iCheck({
@@ -29,4 +30,4 @@ let mainLayout = React.createClass({
   }
 });
 
-export const MainLayout = mainLayout;
+export const MainLayout = App;//() => <Provider store={store}><App /></Provider>;

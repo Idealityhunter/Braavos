@@ -5,6 +5,42 @@
  */
 
 /**
+ * 设置用户名输入框
+ * @param value
+ * @returns {{type: string, value: *}}
+ */
+export const setUserNameInput = (value) => {
+  return {
+    type: 'SET_USER_NAME_INPUT',
+    value: value
+  };
+};
+
+/**
+ * 设置密码输入框
+ * @param value
+ * @returns {{type: string, value: *}}
+ */
+export const setPasswordInput = (value) => {
+  return {
+    type: 'SET_PASSWORD_INPUT',
+    value: value
+  }
+};
+
+/**
+ * 是否显示登录失败的提示
+ * @param value true / false
+ * @returns {{type: string, value: *}}
+ */
+export const setLoginFailedAlert = (value) => {
+  return {
+    type: 'SET_LOGIN_FAILED_ALERT',
+    value: value
+  }
+};
+
+/**
  * 更改一个TextField的值. 通常发生在用户输入的时候.
  *
  * @param fieldRef 内容发生变化的text field的ref

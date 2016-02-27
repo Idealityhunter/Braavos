@@ -5,101 +5,90 @@
  */
 
 import {
-  createStore, combineReducers, compose, Provider, connect, applyMiddleware, thunkMiddleware, createLogger
+  connect, applyMiddleware, thunkMiddleware, createLogger
 } from '/lib/redux'
 import { Input, Button, Alert } from '/lib/react-bootstrap'
 
-const { Map, fromJS } = Immutable;
-import { Immutable } from '/lib/immutable'
-import { TextField } from './login-field'
+import {Immutable} from '/lib/immutable'
+import {TextField} from './login-field'
+import {store} from '/client/redux/store'
+import {Provider} from '/lib/redux'
 
-import { changeTextField, toggleAlert, login } from './action'
+import {setUserNameInput, setPasswordInput, setLoginFailedAlert} from '/client/redux/components/login/action'
 
-// 输入框的状态. 举例:
-// { fieldName: { value: "this is the value" }}
-const textFieldReducer = (state = fromJS({}), action) => {
-  switch (action.type) {
-    case 'CHANGE_TEXT_FIELD':
-      // text field的内容发生了变化
-      const {fieldRef, newValue} = action;
-      return state.merge((new Map()).set(fieldRef, fromJS({value: newValue})));
-    default:
-      return state;
-  }
+const mapStateToProps = (state) => {
+  return {
+    redux: state.getIn(['components', 'login'], Immutable.fromJS({}))
+  };
 };
-
-// 其它状态
-const miscReducer = (state = fromJS({}), action) => {
-  switch (action.type) {
-    case 'REQUEST_LOGIN':
-      // 准备登录
-      return state;
-    case 'FINISH_LOGIN':
-      // 登录成功
-      FlowRouter.go('home');
-      return state;
-    case 'LOGIN_FAILED':
-      // 登录失败
-      return state.merge(fromJS({alert: true}));
-    default:
-      return state;
-  }
-};
-
-const reducer = combineReducers({fields: textFieldReducer, misc: miscReducer});
-const store = createStore(reducer, compose(
-  applyMiddleware(thunkMiddleware, createLogger()),
-  window.devToolsExtension ? window.devToolsExtension() : f => f
-  )
-);
-
-const mapStateToProps = (state) => state;
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // text field中内容发生变化
-    handleChange: (fieldRef, evt) => {
-      const action = changeTextField(fieldRef, evt.target.value);
-      dispatch(action);
+    // 输入用户名
+    handleUseNameChange: (value) => dispatch(setUserNameInput(value)),
+    // 输入密码
+    handlePasswordChange: (value) => {
+      dispatch(setPasswordInput(value));
+      // 清除登录失败的提示
+      dispatch(setLoginFailedAlert(false));
     },
     // 用户点击了"登录"按钮
     handleLogin: (user, password) => {
-      const action = login(user, password);
-      dispatch(action);
+      BraavosCore.logger.debug(`Trying to login with user: ${user}, password: ${password}`);
+
+      // 尝试登录
+      //create a login request with admin: true, so our loginHandler can handle this request
+      const loginRequest = {user, password};
+
+      //send the login request
+      Accounts.callLoginMethod({
+        methodArguments: [loginRequest],
+        userCallback: (ret) => {
+          if (ret && ret.error) {
+            // 登录失败
+            dispatch(setLoginFailedAlert(true));
+          } else {
+            // 登录成功
+            FlowRouter.go('home')
+          }
+        }
+      });
     }
   };
 };
 
 const Container = connect(mapStateToProps, mapDispatchToProps)(
-  React.createClass({
-    render() {
-      // 是否显示登录失败的提示
-      const alertStatus = this.props.misc.get('alert', false);
-      const alertMessage = alertStatus ? <Alert bsStyle="danger" style={{padding: "8px"}}>登录失败 ;-(</Alert> :
-        <div></div>;
-      const name = this.props.fields.getIn(['name', 'value']);
-      const password = this.props.fields.getIn(['password', 'value']);
+  (props) => {
+    // 是否显示登录失败的提示
+    const alertStatus = props.redux.get('loginFailed', false);
+    const alertMessage = alertStatus ? <Alert bsStyle="danger" style={{padding: "8px"}}>登录失败 ;-(</Alert> :
+      <div></div>;
+    const name = props.redux.get('userName', '');
+    const password = props.redux.get('password', '');
 
-      return (
-        <div className="gray-bg">
-          <div className="middle-box text-center loginscreen animated fadeInDown">
-            <h2>欢迎来到商家管理系统</h2>
-            <p><br /></p>
-            {alertMessage}
-            <form className="m-t" role="form">
-              <TextField value={name}
-                         handleChange={this.props.handleChange.bind(this, 'name')}
-                         placeholder="Email/手机号码"/>
-              <TextField value={password} inputType="password"
-                         handleChange={this.props.handleChange.bind(this, 'password')}
-                         placeholder="密码"/>
-              <Button bsStyle="primary" block onClick={this.props.handleLogin.bind(this, name, password)}>
-                登录</Button>
-            </form>
-          </div>
+    return (
+      <div className="gray-bg">
+        <div className="middle-box text-center loginscreen animated fadeInDown">
+          <h2>欢迎来到商家管理系统</h2>
+          <p><br /></p>
+          {alertMessage}
+          <form className="m-t" role="form">
+            <TextField value={name}
+                       handleChange={props.handleUseNameChange}
+                       placeholder="Email/手机号码"/>
+            <TextField value={password} inputType="password"
+                       handleChange={props.handlePasswordChange}
+                       placeholder="密码"/>
+            <Button bsStyle="primary" block onClick={() => {
+              const user = props.redux.get('userName', '');
+              const password = props.redux.get('password', '');
+              props.handleLogin(user, password);
+            }}>登录</Button>
+          </form>
         </div>
-      )
-    }
-  }));
+      </div>
+    );
+    //}
+  });
 
 export const Login = () => <Provider store={store}><Container /></Provider>;
