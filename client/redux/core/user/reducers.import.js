@@ -20,9 +20,10 @@ const setCurrentUserId = (state, userId) => state.set('currentUserId', userId);
  * @param state
  * @param type 是订阅(sub), 还是取消订阅(unsub)?
  * @param users 用户的ID. 可以是数组, 也可以是数字
+ * @param keyName subscribedUserIds / subscribedSellerIds 该函数可以复用: 更新用户订阅, 以及更新商家订阅
  */
-const updateSubscribedUsers = (state, type, users) => {
-  const subscribed = state.get('subscribedUserIds', Set());
+const updateSubscribedUsers = (state, type, users, keyName) => {
+  const subscribed = state.get(keyName, Set());
 
   // 获得userId列表
   const userIdList = [];
@@ -41,9 +42,9 @@ const updateSubscribedUsers = (state, type, users) => {
 
   if (!_.isEmpty(userIdList)) {
     if (type === 'sub') {
-      return state.set('subscribedUserIds', subscribed.union(userIdList));
+      return state.set(keyName, subscribed.union(userIdList));
     } else if (type === 'unsub') {
-      return state.set('subscribedUserIds', subscribed.substract(userIdList));
+      return state.set(keyName, subscribed.substract(userIdList));
     }
   }
 
@@ -55,9 +56,13 @@ export const userReducer = (state = fromJS({}), action) => {
     case 'SET_CURRENT_USER_ID':
       return setCurrentUserId(state, action.userId);
     case 'SUBSCRIBE_USERS':
-      return updateSubscribedUsers(state, 'sub', action.userIds);
+      return updateSubscribedUsers(state, 'sub', action.userIds, 'subscribedUserIds');
     case 'UNSUBSCRIBE_USERS':
-      return updateSubscribedUsers(state, 'unsub', action.userIds);
+      return updateSubscribedUsers(state, 'unsub', action.userIds, 'subscribedUserIds');
+    case 'SUBSCRIBE_SELLERS':
+      return updateSubscribedUsers(state, 'sub', action.userIds, 'subscribedSellerIds');
+    case 'UNSUBSCRIBE_SELLERS':
+      return updateSubscribedUsers(state, 'unsub', action.userIds, 'subscribedSellerIds');
     default:
       return state;
   }

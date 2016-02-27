@@ -12,7 +12,7 @@ import {OrderDeliver} from '/client/dumb-components/order/orderDeliver';
 import {OrderRefundCancel} from '/client/dumb-components/order/orderRefundCancel';
 import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
-import {Finance} from '/client/dumb-components/finance/finance';
+import {Finance} from '/client/components/finance/finance';
 import {Message} from '/client/dumb-components/message/message';
 
 import {Page404} from '/client/dumb-components/page404';
@@ -41,8 +41,8 @@ function loginCheck(context, redirect, stop) {
   if (!Meteor.userId()) {
     redirect('login');
   }
-  BraavosCore.SubsManager.account.subscribe("basicUserInfo");
-  BraavosCore.SubsManager.account.subscribe("sellerInfo");
+  BraavosCore.SubsManager.account.subscribe('basicUserInfo');
+  BraavosCore.SubsManager.account.subscribe('sellerInfo');
 
   // 存储conversationView的subscribe记录
   BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
@@ -272,6 +272,17 @@ FlowRouter.route('/orders/:orderId/refund/:refundStatus', {
 //    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData, {documentTitle: "财务管理"}));
 //  }
 //});
+
+// 财务管理
+FlowRouter.route('/finance', {
+  name: 'finance',
+  title: lsbMessages['finance'],
+  parent: 'home',
+  triggersEnter: [loginCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Finance {...intlData} />}, intlData, {documentTitle: "财务管理"}));
+  }
+});
 
 // 账户信息
 FlowRouter.route('/account', {

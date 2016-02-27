@@ -61,14 +61,20 @@ s.subscribe(() => {
   if (previousUsers != currentUsers) {
     // 需要重新订阅
     const userSubsManager = BraavosCore.SubsManager.users;
+    const sellerSubsManager = BraavosCore.SubsManager.sellers;
 
     // 当前用户
     const currentUserId = currentUsers.get('currentUserId');
     // 其它用户
     const subscribedUsers = currentUsers.get('subscribedUserIds', Immutable.Set());
+    // 订阅的商家
+    const subscribedSellers = currentUsers.get('subscribedSellerIds', Immutable.Set());
 
     const userIdList = subscribedUsers.add(currentUserId).filter(v => _.isNumber(v) && !_.isNaN(v)).sort().toJS();
     userSubsManager.subscribe('userInfo', userIdList);
+
+    const sellerIdList = subscribedSellers.add(currentUserId).filter(v => _.isNumber(v) && !_.isNaN(v)).sort().toJS();
+    sellerSubsManager.subscribe('sellerInfo', sellerIdList);
   }
 });
 

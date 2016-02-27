@@ -43,3 +43,29 @@ export const unsubscribeUserIds = (userIds) => {
     userIds: userIds
   };
 };
+
+/**
+ * 订阅商家
+ *
+ * @returns {{type: string, value: *}}
+ * @param userIds
+ */
+export const subscribeSellerIds = (userIds) => {
+  return {
+    type: 'SUBSCRIBE_SELLERS',
+    userIds: userIds
+  };
+};
+
+/**
+ * 取消订阅商家
+ *
+ * @returns {{type: string, value: *}}
+ * @param userIds
+ */
+export const unsubscribeSellerIds = (userIds) => {
+  return {
+    type: 'UNSUBSCRIBE_SELLERS',
+    userIds: userIds
+  };
+};

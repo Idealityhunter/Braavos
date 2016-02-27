@@ -38,6 +38,8 @@ Meteor.startup(()=> {
   db.Token.attachSchema(schema.Account.Token);
   db.Seller = new Mongo.Collection("Seller");
   db.Seller.attachSchema(schema.Marketplace.Seller);
+  db.TransactionLog = new Mongo.Collection('TransactionLog');
+  db.TransactionLog.attachSchema(schema.Finance.TransactionLog);
   db.Commodity = new Mongo.Collection("Commodity");
   db.Commodity.attachSchema(schema.Marketplace.Commodity);
   db.Order = new Mongo.Collection("Order");
