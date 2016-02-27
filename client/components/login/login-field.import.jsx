@@ -4,7 +4,7 @@
  * Created by zephyre on 1/31/16.
  */
 
-import { Input } from '/lib/react-bootstrap'
+import {Input} from '/lib/react-bootstrap'
 
 export const TextField = React.createClass({
   propTypes: {
@@ -22,7 +22,7 @@ export const TextField = React.createClass({
 
   handleChange(evt) {
     if (this.props.handleChange) {
-      this.props.handleChange(evt);
+      this.props.handleChange(evt.target.value);
     }
   },
 
