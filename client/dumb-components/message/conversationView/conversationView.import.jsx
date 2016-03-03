@@ -21,11 +21,18 @@ export const ConversationView = React.createClass({
     // 会话的最近消息的摘要
     lastMessage: React.PropTypes.string,
 
-    // TODO: 优化 =>  滚动条已达底部,修改state状态
+    // 修改当前会话
     onChangeConversation: React.PropTypes.func,
+
+    // 当前激活会话的Id
+    activeConversation: React.PropTypes.string
   },
   styles: {
-    container:{
+    container: {
+      borderBottom: '1px solid #ccc'
+    },
+    activeContainer: {
+      backgroundColor: 'honeydew',
       borderBottom: '1px solid #ccc'
     },
     avatar: {
@@ -63,14 +70,14 @@ export const ConversationView = React.createClass({
     }
   },
 
-  // 点击组件的触发函数
+  // 点击组件的触发函数,将当前会话改为本组件对应的会话
   _handleClickContainer(e){
-    this.props.onChangeConversation(this.props.conversationId._str, this.props.conversationId._str);
+    this.props.onChangeConversation(this.props.conversationId._str);
   },
 
   render(){
     return(
-      <div style={this.styles.container} onClick={this._handleClickContainer}>
+      <div style={(this.props.activeConversation == this.props.conversationId._str) ? this.styles.activeContainer : this.styles.container} onClick={this._handleClickContainer}>
         <img src={this.props.avatar} style={this.styles.avatar}/>
         <div style={this.styles.summary}>
           <div>
