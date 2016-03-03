@@ -18,9 +18,11 @@ export const ConversationViewList = React.createClass({
     // 订阅会话的数目
     conversationLimit: React.PropTypes.number,
 
-    // TODO: 优化 =>  滚动条已达底部,修改state状态
-    onChangeConversation: React.PropTypes.func
+    // 修改当前会话
+    onChangeConversation: React.PropTypes.func,
 
+    // 当前激活会话的Id
+    activeConversation: React.PropTypes.string,
   },
 
   // 滚轮的监测事件
@@ -62,7 +64,10 @@ export const ConversationViewList = React.createClass({
       <div style={this.styles.container}>
         <div style={this.styles.listWrap} onScroll={this._handleScroll}>
           {this.props.conversations.map(conversation =>
-            <ConversationView {... conversation} onChangeConversation={this.props.onChangeConversation}/>
+            <ConversationView {... conversation}
+              onChangeConversation={this.props.onChangeConversation}
+              activeConversation={this.props.activeConversation}
+            />
           )}
         </div>
       </div>
