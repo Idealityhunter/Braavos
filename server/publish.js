@@ -140,6 +140,7 @@ Meteor.publish("localities", function (country) {
 Meteor.publish("orders", function (options, isAdmin=false) {
   const userId = parseInt(this.userId);
   const orderColl = BraavosCore.Database.Braavos.Order;
+  let notAdmin = true; // 记录检测结果
 
   // fields获取
   const allowedFields = ["orderId", "commodity", "consumerId", "quantity", "paymentInfo", "createTime", "updateTime", "expireDate", "status", "contact", "activities", "discount", "totalPrice"];
@@ -159,24 +160,27 @@ Meteor.publish("orders", function (options, isAdmin=false) {
     options.updateTime['$gte'] && (options.updateTime['$gte'] = new Date(options.updateTime['$gte']));
   };
 
-  // 手机号或者订单号的条件判断
-  if (options.searchId) {
-    const searchId = options.searchId;
-    options = _.omit(options, 'searchId');
-    return orderColl.find({$or: [_.extend({orderId: parseInt(searchId)}, options), _.extend({'contact.tel.number': parseInt(searchId)}, options), _.extend({'commodity.commodityId': parseInt(searchId)}, options)]}, {fields: fields});
-  };
-
   // 假如带有admin标志
   if (isAdmin) {
     const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId});
     if (userInfo.roles && _.indexOf(userInfo.roles, 10) !== -1){
-      return orderColl.find(options, {fields: fields});
+      notAdmin = false;
     };
   };
 
-  // TODO 只发布自己的订单
-  return orderColl.find(_.extend({'commodity.seller.sellerId': userId}, options), {fields: fields});
-  //return orderColl.find(_.extend({}, options), {fields: fields});
+  // 假如不是管理员,则只发布自己的订单
+  if (notAdmin) _.extend(options, {'commodity.seller.sellerId': userId});
+
+  // 手机号或者订单号的条件判断
+  if (options.searchId) {
+    const searchId = options.searchId;
+    options = _.omit(options, 'searchId');
+    return orderColl.find({
+      $or: [_.extend({orderId: parseInt(searchId)}, options), _.extend({'contact.tel.number': parseInt(searchId)}, options), _.extend({'commodity.commodityId': parseInt(searchId)}, options)]
+    }, {fields: fields});
+  };
+
+  return orderColl.find(options, {fields: fields});
 });
 
 /**

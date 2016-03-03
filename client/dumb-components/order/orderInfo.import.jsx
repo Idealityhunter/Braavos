@@ -140,6 +140,16 @@ const orderInfo = React.createClass({
           statusLabel: '已成功的订单',
           dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
+      case 'reviewed':
+        return {
+          statusLabel: '已成功的订单',
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
+        }
+      case 'toReview':
+        return {
+          statusLabel: '已成功的订单',
+          dateList: order.activities.map(activity => self._getActivityStatement(activity))
+        }
       case 'canceled':
         return (_.findIndex(order.activities, (activity) => activity.action == 'cancel') != -1)
           // 区分 超时自动取消 or 商家/买家主动取消

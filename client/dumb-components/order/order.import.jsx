@@ -203,6 +203,10 @@ const order = React.createClass({
           <p>(已退款{this._getRefundAmount(order)}元)</p>
         ]
       case 'finished':
+        return '已成功的订单';
+      case 'reviewed':
+        return '已成功的订单'
+      case 'toReview':
         return '已成功的订单'
       case 'canceled':
         return (_.findIndex(order.activities, (activity) => activity.action == 'cancel') != -1)
@@ -227,7 +231,7 @@ const order = React.createClass({
     }
   },
 
-  // 响应statusTab的点击事件
+  // 响应statusTab的点击事件,修改订阅订单的筛选条件options
   _handleStatusFilter(status){
     switch (status){
       case 'all':
@@ -240,6 +244,16 @@ const order = React.createClass({
             status: {
               // 关闭是取消,退款完成的合并状态
               $in: ['canceled', 'refunded']
+            }
+          }
+        });
+        break;
+      case 'finished':
+        this.setState({
+          options: {
+            status: {
+              // 完成是待评价,已评价的合并状态
+              $in: ['finished', 'reviewed', 'toReview']
             }
           }
         });
