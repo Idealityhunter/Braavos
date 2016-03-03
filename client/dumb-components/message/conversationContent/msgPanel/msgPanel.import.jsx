@@ -9,7 +9,7 @@ export const MsgPanel = React.createClass({
   mixins: [IntlMixin],
 
   // 存储当前DOM的总高度(包括由于滚动原因未展示部分)
-  curScrollHeight: null,
+  tempScrollHeight: null || 0,
 
   propTypes: {
     // 消息列表
@@ -22,53 +22,49 @@ export const MsgPanel = React.createClass({
     conversationId: React.PropTypes.string,
 
     // 修改MessageLimit的方法
-    onChangeMessageLimit: React.PropTypes.func,
-
-    // TODO: 优化
-    // 是否可以添加conversationLimit
-    changeConversation: React.PropTypes.bool,
-
-    // TODO: 优化
-    changeConversationState: React.PropTypes.func
+    onChangeMessageLimit: React.PropTypes.func
   },
 
-  componentDidMount(){
-    const node = this.getDOMNode();
-    const scrollEle = $(node).children();
-
-    // 进入页面时滚动条在底部
-    scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
-  },
+  // 暂时弃用, 因为不需要, 当第一次加载时, 是activeConversation第一次确定时, 此时msg还没有准备好
+  //componentDidMount(){
+  //  // 获取滚动列表元素
+  //  const scrollEle = ReactDOM.findDOMNode(this).childNodes[0];
+  //  // 初始化时,将滚动条移到底部
+  //  scrollEle.scrollTop = scrollEle.scrollHeight - scrollEle.offsetHeight;
+  //},
 
   componentWillUpdate() {
-    const node = this.getDOMNode();
-    const scrollEle = $(node).children();
+    // 获取滚动列表元素
+    const scrollEle = ReactDOM.findDOMNode(this).childNodes[0];
 
-    // 存储当前总高度
-    this.curScrollHeight = scrollEle[0].scrollHeight;
+    // 存储当前滚动列表的总高度
+    this.tempScrollHeight = scrollEle.scrollHeight;
   },
 
-  componentDidUpdate() {
-    // container元素
-    const node = this.getDOMNode();
+  componentDidUpdate(prevProps, prevState) {
+    // 获取滚动列表元素
+    const scrollEle = ReactDOM.findDOMNode(this).childNodes[0];
 
-    // 滚动条所在的元素
-    const scrollEle = $(node).children();
+    // 获取当前滚动列表的总高度
+    const curScrollHeight = scrollEle.scrollHeight;
 
-    // 当前高度控制
-    scrollEle[0].scrollTop += (scrollEle[0].scrollHeight - this.curScrollHeight);
+    // 这里希望用prevProps和this.props的conversationId比较来判断是否changeConversation,可是第一次加载的时候因为这个
+    //if (this.props.changeConversation){
 
-    // 假如是切换了conversation引发的更新,那么scrollEle[0]要改变
-    if (this.props.changeConversation){
-      scrollEle[0].scrollTop = scrollEle[0].scrollHeight - scrollEle[0].offsetHeight;
-      this.props.changeConversationState();
-    };
+    if (this.props.conversationId != prevProps.conversationId){
+      // 假如是切换了conversation引发的更新,那么将滚动条移到底部
+      // TODO Bug: 有图片时, 因为图片加载前高度为40px, 加载后为484px...
+      scrollEle.scrollTop = curScrollHeight - scrollEle.offsetHeight;
+    }else{
+      // 将当前滚动条高度滚至新消息加载前看到的消息节点
+      scrollEle.scrollTop += (curScrollHeight - this.tempScrollHeight);
+    }
   },
 
-  // 滚轮的监测事件
+  // 滚轮的监测事件 => throttle控制触发
   _handleScroll(e){
     if (e.target.scrollTop < 50){
-      this.props.onChangeMessageLimit(this.props.conversationId, this.props.limit + 10);
+      this.props.onChangeMessageLimit(this.props.conversationId, this.props.messageLimit + 10);
     }
   },
 
@@ -91,10 +87,10 @@ export const MsgPanel = React.createClass({
   },
   render(){
     return (
-      <div style={this.styles.container}>
-        <div style={this.styles.wrap} onScroll={this._handleScroll}>
+      <div className="messages-container" style={this.styles.container}>
+        <div className="scroll-wrap" style={this.styles.wrap} onScroll={_.throttle(this._handleScroll, 1000)}>
           {/*为了获取消息占的总高度*/}
-          <div>
+          <div className="scroll-bar">
             {/**<TimeBlock timestamp={1437106632058} />**/}
             {this.props.msgs.map(msg => <MsgBlock {...msg}/>)}
           </div>

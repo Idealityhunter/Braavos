@@ -8,12 +8,14 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const MsgBlock = React.createClass({
   mixins: [IntlMixin],
+
   getDefaultProps: () => {
     return {
       // loading图片
       loadingImage: '/images/spinner.gif'
     }
   },
+
   propTypes: {
     // 消息的发送状态(pending/failed/空)
     status: React.PropTypes.string,
@@ -33,6 +35,7 @@ export const MsgBlock = React.createClass({
     // 消息的发送时间
     timestamp: React.PropTypes.number
   },
+
   getInitialState(){
     return {
       showModal: false,
@@ -42,6 +45,12 @@ export const MsgBlock = React.createClass({
       imageLoaded: false
     }
   },
+
+  // 消息体不需要重新渲染
+  shouldComponentUpdate(nextProps, nextState){
+    return false;
+  },
+
   styles: {
     leftContainer: {
       textAlign: 'left',
@@ -234,16 +243,16 @@ export const MsgBlock = React.createClass({
           </div>
         break;
       default:
+        msgContents =
+          <div>
+            <p style={this.styles.text}>暂不支持该类格式的消息!</p>
+          </div>
+        // 开发用代码: 查看message结构
         //msgContents =
         //  <div>
         //    <div>msgType:{this.props.msgType}</div>
-        //    <p style={this.styles.text}>暂不支持该类格式的消息!</p>
+        //    <p style={this.styles.text}>{this.props.contents}</p>
         //  </div>
-        msgContents =
-          <div>
-            <div>msgType:{this.props.msgType}</div>
-            <p style={this.styles.text}>{this.props.contents}</p>
-          </div>
         break;
     }
 

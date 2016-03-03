@@ -154,13 +154,6 @@ const MessageContent = React.createClass({
 
   },
 
-  getInitialState(){
-    return {
-      // 是否可以添加conversationLimit
-      changeConversation: false
-    }
-  },
-
   // 清除其它的订阅(每次只保留一条sub)
   _clearPreviousSub(){
     if (BraavosCore.SubsManager.conversation._cacheList.length > 1){
@@ -171,12 +164,13 @@ const MessageContent = React.createClass({
   },
 
   getMeteorData() {
-    console.log(this.props);
-
     const userId = parseInt(Meteor.userId());
 
     // 获取自己的信息
     const selfInfo = BraavosCore.SubsManager.account.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId}) : {};
+
+    // 预处理
+    selfInfo.avatar = selfInfo.avatar ? selfInfo.avatar.url : selfInfo.avatar;
 
     // 订阅conversationView
     BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews", this.props.conversationLimit || this.props.defaultConversationLimit));
@@ -197,7 +191,7 @@ const MessageContent = React.createClass({
 
     // 查找conversation对应的userId(TODO: 目前只考虑单聊的情况)
     const conversations = BraavosCore.Database.Hedy.Conversation.find({'_id': {$in: conversationIds}}).fetch();
-    const conversationUsers = conversations.map(conversation => parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], selfInfo.userId.toString())[0]));
+    const conversationUsers = conversations.map(conversation => parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], userId.toString())[0]));
 
     // 订阅conversationView对应的userInfo信息
     Meteor.subscribe('userInfos', conversationUsers);
@@ -210,7 +204,7 @@ const MessageContent = React.createClass({
     conversationViews.map(conversationView => {
       // 获取会话相关用户
       const conversation = BraavosCore.Database.Hedy.Conversation.findOne({'_id': conversationView.conversationId}) || {};
-      const conversationUserId = parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], selfInfo.userId.toString())[0]);
+      const conversationUserId = parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], userId.toString())[0]);
 
       // 筛选部分对话(订单消息 / 好友通知)
       if (_.includes([0, 10002], conversationUserId)) return _.extend(conversationView, {disabled: true});
@@ -276,46 +270,47 @@ const MessageContent = React.createClass({
       pendingMsgs.splice(receivedMsgs[i], 1);
     };
 
-    // TODO: 待测试 (按timestamp插入pending消息) => 优化
+    // TODO: 优化
+    // 按timestamp插入pending消息
     let i = 0, j = 0;
     const postedMessages = this.props.postedMessages.toJS();
     while (i < msgs.length && j < pendingMsgs.length){
       if (msgs[i].timestamp > postedMessages[pendingMsgs[j]].timestamp){
-        msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar && selfInfo.avatar.url || selfInfo.avatar}));
+        msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar}));
         j += 1;
       }else{
         i += 1;
       }
     };
     while (j < pendingMsgs.length){
-      msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar && selfInfo.avatar.url || selfInfo.avatar}));
+      msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar}));
       j += 1;
     };
 
-    // TODO: 待测试 (按timestamp插入failed消息)
+    // 按timestamp插入failed消息
     i = 0;j = 0;
     const failedMsgs = this.props.failedMessages.toJS()[this.props.activeConversation] || [];
     while (i < msgs.length && j < failedMsgs.length){
       if (msgs[i].timestamp > postedMessages[failedMsgs[j]].timestamp){
-        msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar && selfInfo.avatar.url || selfInfo.avatar}));
+        msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar}));
         j += 1;
       }else{
         i += 1;
       }
     };
     while (j < failedMsgs.length){
-      msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar && selfInfo.avatar.url || selfInfo.avatar}));
+      msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar}));
       j += 1;
     };
 
     return {
-      // 用户信息
-      selfInfo: selfInfo,//avatar, userId, nickName
+      // 用户信息 => 合并到userInfo中吧
+      //selfInfo: selfInfo,//avatar, userId, nickName
+
+      // TODO: userInfo: userAvatar&userId&avatar 群组聊天中用到
 
       // 会话列表
       conversationViews: conversationViews,//包括avatar
-
-      // TODO: userInfo: userAvatar&userId&avatar 群组聊天中用到
 
       // 订单消息(消息中心使用)
       orderMsgs: orderMsgs,
@@ -332,19 +327,7 @@ const MessageContent = React.createClass({
   _handleSetActiveConversation(conversationId){
     if (this.props.activeConversation != conversationId){
       this.props.handlers.chatMessages.onChangeActiveConversation(conversationId);
-
-      // TODO to store => 优化
-      this.setState({
-        changeConversation: true
-      });
     };
-  },
-
-  // 滚动条已达底部,修改state状态
-  _changeConversationState(){
-    this.setState({
-      changeConversation: false
-    });
   },
 
   // 路由跳转前的动作
@@ -420,8 +403,6 @@ const MessageContent = React.createClass({
               conversationName={this.data.activeConversationName}
               messageLimit={this.props.messageLimits.get(this.props.activeConversation, this.props.defaultMessageLimit)}
               onChangeMessageLimit={this.props.handlers.chatMessages.onChangeMessageLimit}
-              changeConversation={this.state.changeConversation}
-              changeConversationState={this._changeConversationState}
               onPostMessage={this.props.handlers.chatMessages.onPostMessage}
               onFailedMessage={this.props.handlers.chatMessages.onFailedMessage}
 
