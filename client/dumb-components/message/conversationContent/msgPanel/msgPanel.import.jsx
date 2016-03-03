@@ -56,6 +56,7 @@ export const MsgPanel = React.createClass({
       // TODO Bug: 有图片时, 因为图片加载前高度为40px, 加载后为484px...
       scrollEle.scrollTop = curScrollHeight - scrollEle.offsetHeight;
     }else{
+      // TODO 当来的消息是新消息,从下面增加时
       // 将当前滚动条高度滚至新消息加载前看到的消息节点
       scrollEle.scrollTop += (curScrollHeight - this.tempScrollHeight);
     }

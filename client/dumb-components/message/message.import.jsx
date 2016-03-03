@@ -396,6 +396,7 @@ const MessageContent = React.createClass({
               onChangeConversationLimit={this.props.handlers.chatMessages.onChangeConversationLimit}
               onChangeConversation={this._handleSetActiveConversation}
               conversationLimit={this.props.conversationLimit || this.props.defaultConversationLimit}
+              activeConversation={this.props.activeConversation}
             />
             <ConversationContent
               msgs={this.data.msgs}
