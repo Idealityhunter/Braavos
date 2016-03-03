@@ -16,13 +16,6 @@ export const ConversationContent = React.createClass({
     // 修改当前会话的msg的数量限制的方法
     onChangeMessageLimit: React.PropTypes.func,
 
-    // TODO 优化
-    // 是否可以添加conversationLimit
-    changeConversation: React.PropTypes.bool,
-
-    // TODO 优化
-    changeConversationState: React.PropTypes.func,
-
     // 订阅的消息总数
     messageLimit: React.PropTypes.number,
 
@@ -98,8 +91,6 @@ export const ConversationContent = React.createClass({
               messageLimit={this.props.messageLimit}
               conversationId={this.props.conversationId}
               onChangeMessageLimit={this.props.onChangeMessageLimit}
-              changeConversation={this.props.changeConversation}
-              changeConversationState={this.props.changeConversationState}
             />
             <ConversationInput
               conversationId={this.props.conversationId}
