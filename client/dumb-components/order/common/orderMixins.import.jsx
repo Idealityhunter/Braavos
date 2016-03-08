@@ -68,7 +68,7 @@ export const OrderMixin = {
   _getActivityTime(activities, status){
     let activity;
     switch (status) {
-      case 'refundApply':
+      case 'refundAppied':
         // 多次申请,只获取最后一次!
         const activityArray = _.filter(activities, activity => activity.action == 'refundApply');
         if (activityArray.length > 0)
@@ -149,15 +149,15 @@ export const OrderMixin = {
       case 'expire':
         return (activity.prevStatus == 'paid' || activity.prevStatus == 'refundApplied')
           ? (activity.data && activity.data.memo && activity.data.memo.length > 0)
-          ? [
-          <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>,
-          <p>卖家退款说明: {activity.data.memo}</p>
-        ]
-          : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>
+            ? [
+              <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>,
+              <p>卖家退款说明: {activity.data.memo}</p>
+            ]
+            : <p>退款完成时间: {moment(activity.timestamp).format('YYYY-MM-DD HH:mm')}</p>
           : (activity.prevStatus == 'pending')
-          // 买家支付超时
-          ? [/**/]
-          : [];
+            // 买家支付超时
+            ? [/**/]
+            : [];
       case 'refundApply':
         return (activity.data && activity.data.reason && activity.data.reason.length > 0)
           ? (activity.data.memo && activity.data.memo.length > 0)

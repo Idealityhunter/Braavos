@@ -14,7 +14,7 @@ const finance = React.createClass({
       // 展示已完成/退款成功的订单
       options: {
         status: {
-          $in: ['finished', 'refunded']
+          $in: ['finished', 'refunded', 'reviewed', 'toReview']
         }
       }
     }
@@ -105,6 +105,10 @@ const finance = React.createClass({
     switch (order.status){
       case 'finished':
         return '已成功的订单'
+      case 'reviewed':
+        return '已成功的订单'
+      case 'toReview':
+        return '已成功的订单'
       case 'refunded':
         return [
           <p>已关闭</p>,
@@ -156,7 +160,7 @@ const finance = React.createClass({
   },
 
   _getIncome(order){
-    const income = (order.status == 'finished')
+    const income = (_.indexOf(order.status, ['finished', 'reviewed', 'toReview']) == 0)
       ? order.totalPrice / 100
       : order.totalPrice / 100 - this._getRefundAmount(order);
 
