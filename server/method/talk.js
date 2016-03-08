@@ -6,7 +6,7 @@
 
 Meteor.methods({
   /**
-   *
+   * 发送消息
    * @param sendType {Number} 0/1/2分别代表发送给receiver/Group/Conversation
    * @param receiver {String} 接收者Id/接收GroupId/接收的conversation
    * @param contents {Object} 消息内容
