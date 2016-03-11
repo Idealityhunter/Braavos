@@ -99,6 +99,7 @@ BraavosCore.IntlData.zh = {
           addressInfo: '目的地',
           commodityCategories: '商品分类',
           timeCost: '游玩时长',
+          weightBoost: '商品权重',
           hour: '小时',
           gallery: {
             cropUploadImage: '裁剪上传图片'

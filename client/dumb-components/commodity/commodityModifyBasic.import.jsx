@@ -10,22 +10,57 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 const commodityModifyBasic = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
-  proptypes: {
+  propTypes: {
+    // 用户是否为管理员
+    isAdmin: React.PropTypes.bool,
+
+    // 从图片列表中添加图片的回调
     addImage: React.PropTypes.func,
+
+    // 修改主图的回调
     changeCover: React.PropTypes.func,
+
+    // 从图片列表中删除图片的回调
     deleteImage: React.PropTypes.func,
+
+    // 控制提交 plan 状态的回调
     handleChildSubmitState: React.PropTypes.func,
-    title: React.PropTypes.String,
-    cover: React.PropTypes.Object,
-    images: React.PropTypes.Array,
-    category: React.PropTypes.Array,
-    country: React.PropTypes.Object,
-    locality: React.PropTypes.Object,
-    address: React.PropTypes.String,
-    timeCost: React.PropTypes.String,
-    plans: React.PropTypes.Array,
-    marketPrice: React.PropTypes.Number,
-    price: React.PropTypes.Number
+
+    // 商品的 title
+    title: React.PropTypes.string,
+
+    // 商品的 cover 图
+    cover: React.PropTypes.object,
+
+    // 商品的图集
+    images: React.PropTypes.array,
+
+    // 商品的种类
+    category: React.PropTypes.array,
+
+    // 商品所在国家
+    country: React.PropTypes.object,
+
+    // 商品所在地区
+    locality: React.PropTypes.object,
+
+    // 商品所在地的自定义地址
+    address: React.PropTypes.string,
+
+    // 商品所用时长
+    timeCost: React.PropTypes.string,
+
+    // 商品的套餐列表
+    plans: React.PropTypes.array,
+
+    // 商品的市场价(由 plans 的 marketPrice 得到)
+    marketPrice: React.PropTypes.number,
+
+    // 商品的价格(由 plans 的 price 得到)
+    price: React.PropTypes.number,
+
+    // 商品的权重
+    weightBoost: React.PropTypes.number
   },
 
   styles: {
@@ -204,7 +239,7 @@ const commodityModifyBasic = React.createClass({
 
     // 根据data生成country的select组件
     i = 0;
-    const countryOptionList = this.data.countries.map(country => <option value={i++} data-id={country._id._str} data-en={country.enName}>{country.zhName}</option>);
+    const countryOptionList = this.data.countries.map(country => <option value={i++} data-id={country._id._str} data-en={country.enName} key={country._id._str}>{country.zhName}</option>);
     const countrySelect = (
       <select name="" id=""
               className="country-select form-control"
@@ -218,7 +253,7 @@ const commodityModifyBasic = React.createClass({
 
     // 根据data生成locality的select组件
     let j = 0;
-    const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-id={locality._id._str} data-en={locality.enName}>{locality.zhName}</option>));
+    const localityOptionList = this.data.localities.map(locality => (<option value={j++} data-id={locality._id._str} data-en={locality.enName} key={locality._id._str}>{locality.zhName}</option>));
     const localitySelect = (
       <select name="" id=""
               className="locality-select form-control"
@@ -268,15 +303,15 @@ const commodityModifyBasic = React.createClass({
               <span style={this.styles.asterisk}>*</span>
             </label>
             <select name="" id="" className="form-control" defaultValue={selectCategoryIndex}>
-              <option value="0">特色活动</option>
-              <option value="1">文化体验</option>
-              <option value="2">美食住宿</option>
-              <option value="3">城市游览</option>
-              <option value="4">门票预订</option>
-              <option value="5">演出</option>
-              <option value="6">SPA</option>
-              <option value="7">游船</option>
-              <option value="8">其它</option>
+              <option value="0" key='category00'>特色活动</option>
+              <option value="1" key='category01'>文化体验</option>
+              <option value="2" key='category02'>美食住宿</option>
+              <option value="3" key='category03'>城市游览</option>
+              <option value="4" key='category04'>门票预订</option>
+              <option value="5" key='category05'>演出</option>
+              <option value="6" key='category06'>SPA</option>
+              <option value="7" key='category07'>游船</option>
+              <option value="8" key='category08'>其它</option>
             </select>
           </div>
           {/*
@@ -308,6 +343,19 @@ const commodityModifyBasic = React.createClass({
             />
             <FormattedMessage message={this.getIntlMessage(`${prefix}hour`)}/>
           </div>
+          {this.props.isAdmin
+            ? <div className="form-group weight-boost">
+                <label className="label-text">
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}weightBoost`)}/>
+                </label>
+                <NumberInput className="inline placeholder" style={{width:50, padding:6}}
+                             value={_.isNil(this.props.weightBoost) ? '' : this.props.weightBoost}
+                             numberType='integer'
+                />
+              </div>
+            : ''
+          }
+
           {/*
            <div className="form-group">
            <label className="label-text">旅行服务</label>

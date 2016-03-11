@@ -7,12 +7,13 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 const commodityPlansModal = React.createClass({
   mixins: [IntlMixin],
 
-  proptypes: {
-    index: React.PropTypes.Number,
-    plan: React.PropTypes.Object,
+  propTypes: {
+    index: React.PropTypes.number,
+    plan: React.PropTypes.object,
     onClose: React.PropTypes.func,
     onSubmit: React.PropTypes.func
   },
+
   getInitialState() {
     let transferredPricing = [];
     let i = 0;

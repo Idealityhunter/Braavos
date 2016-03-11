@@ -12,22 +12,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 const commodityModify = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
-  proptypes: {
-    title: React.PropTypes.String,
-    cover: React.PropTypes.Object,
-    images: React.PropTypes.Array,
-    category: React.PropTypes.Array,
-    country: React.PropTypes.Object,
-    locality: React.PropTypes.Object,
-    address: React.PropTypes.String,
-    timeCost: React.PropTypes.String,
-    plans: React.PropTypes.Array,
-    marketPrice: React.PropTypes.Number,
-    price: React.PropTypes.Number,
-    desc: React.PropTypes.Object,
-    notice: React.PropTypes.Array,
-    refundPolicy: React.PropTypes.Array,
-    trafficInfo: React.PropTypes.Array
+  propTypes: {
+    // 用户是否为管理员
+    isAdmin: React.PropTypes.bool,
+
+    // 商品的所有属性
+    commodityInfo: React.PropTypes.object
   },
 
   // 控制'完成'动作
@@ -364,6 +354,13 @@ const commodityModify = React.createClass({
     // locality不为空时才添加
     !!locality.zhName && (modCommodityInfo['locality'] = locality);
 
+    // 获取 weightBoost (商品权重),当 weightBoost 为空时则取消该属性
+    if (this.props.isAdmin){
+      const weightBoost = $('.form-group.weight-boost>input').val();
+      // 假如输入的 weightBoost 为空则置为 1
+      modCommodityInfo['weightBoost'] = weightBoost ? weightBoost : 1;
+    };
+
     // 获取未被修改的数据
     const restCommodityInfo = this.props.commodityInfo && _.omit(this.props.commodityInfo, Object.keys(modCommodityInfo)) || {};
 
@@ -449,6 +446,8 @@ const commodityModify = React.createClass({
           plans={this.props.commodityInfo && this.props.commodityInfo.plans || []}
           price={this.props.commodityInfo && this.props.commodityInfo.price || ''}
           marketPrice={this.props.commodityInfo && this.props.commodityInfo.marketPrice || ''}
+          weightBoost={(this.props.commodityInfo && !_.isNil(this.props.commodityInfo.weightBoost)) ? this.props.commodityInfo.weightBoost : ''}
+          isAdmin={this.props.isAdmin}
         />
       </div>;
 
