@@ -1,11 +1,11 @@
 // 消息展板
-import {TimeBlock} from '/client/dumb-components/message/conversationContent/msgPanel/timeBlock';
-import {MsgBlock} from '/client/dumb-components/message/conversationContent/msgPanel/msgBlock';
+import {TimeBlock} from '/client/dumb-components/message/conversationContent/messagePanel/timeBlock';
+import {MessageBlock} from '/client/dumb-components/message/conversationContent/messagePanel/messageBlock';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
-export const MsgPanel = React.createClass({
+export const MessagePanel = React.createClass({
   mixins: [IntlMixin],
 
   // 存储当前DOM的总高度(包括由于滚动原因未展示部分)
@@ -13,7 +13,7 @@ export const MsgPanel = React.createClass({
 
   propTypes: {
     // 消息列表
-    msgs: React.PropTypes.array,
+    //messages: React.PropTypes.array,
 
     // 订阅消息的总数
     messageLimit: React.PropTypes.number,
@@ -86,6 +86,7 @@ export const MsgPanel = React.createClass({
       overflow: 'auto'
     }
   },
+
   render(){
     return (
       <div className="messages-container" style={this.styles.container}>
@@ -93,7 +94,7 @@ export const MsgPanel = React.createClass({
           {/*为了获取消息占的总高度*/}
           <div className="scroll-bar">
             {/**<TimeBlock timestamp={1437106632058} />**/}
-            {this.props.msgs.map(msg => <MsgBlock {...msg}/>)}
+            {this.props.messages.map(message => <MessageBlock {...message}/>)}
           </div>
         </div>
       </div>

@@ -6,6 +6,11 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 export const SystemMessage = React.createClass({
   mixins: [IntlMixin],
 
+  propTypes:{
+    // 消息内容
+    message: React.PropTypes.object
+  },
+
   showOrderInfo(){
     // TODO 交易消息置为已读
     FlowRouter.go(`/orders/${JSON.parse(this.props.msg.contents).orderId}`);
@@ -30,15 +35,19 @@ export const SystemMessage = React.createClass({
       margin: '5px 0'
     }
   },
+
+  // 获取 message 的 contents
+  getMessageContents(message){
+    try {
+      return JSON.parse(message.contents);
+    } catch (err) {
+      BraavosCore.logger.debug(`Unable to parse the message body: ${this.props.msg.contents}`);
+      return undefined;
+    }
+  },
+
   render(){
-    const contents = (() => {
-      try {
-        return JSON.parse(this.props.msg.contents);
-      } catch (err) {
-        BraavosCore.logger.debug(`Unable to parse the message body: ${this.props.msg.contents}`);
-        return undefined;
-      }
-    })();
+    const contents = this.getMessageContents(this.props.message);
 
     if (contents) {
       return (

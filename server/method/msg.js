@@ -6,7 +6,8 @@
 
 Meteor.methods({
   /**
-   * Deprecated: 发送交易消息
+   * ------- Deprecated: 发送交易消息 ---------
+   *
    * @param consumerId {String} 买家Id
    * @param orderId {String} 订单Id
    * @param commodityName {String} 商品名称

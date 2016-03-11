@@ -6,6 +6,7 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationInput = React.createClass({
   mixins: [IntlMixin],
+
   propTypes: {
     // 会话Id
     conversationId: React.PropTypes.string,
@@ -25,6 +26,7 @@ export const ConversationInput = React.createClass({
     // 输入框中的消息内容
     inputValue: React.PropTypes.string
   },
+
   styles: {
     container: {
       width: 498,

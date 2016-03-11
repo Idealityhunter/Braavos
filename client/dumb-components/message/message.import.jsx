@@ -13,13 +13,14 @@ import {ButtonToolbar, Button, Tabs, Tab, Input} from "/lib/react-bootstrap";
 
 // redux相关组件引用
 import { messageReducer } from '/client/dumb-components/message/redux/reducer'
-import { setInputValue, resetInputValue, setConversationLimit, setActiveTab, setActiveConversation, setMessageLimit, postMessage, setMessageStatus } from '/client/dumb-components/message/redux/action'
+import { setInputValue, resetInputValue, setConversationLimit, setActiveTab, setActiveConversation, setMessageLimit, postMessage, setMessageStatus, setSearchWord, setSearchResult} from '/client/dumb-components/message/redux/action'
 
 // 普通组件引用
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
 import {SystemMessagesList} from '/client/dumb-components/message/systemMessage/systemMessagesList';
 import {ConversationViewList} from '/client/dumb-components/message/conversationView/conversationViewList';
 import {ConversationContent} from '/client/dumb-components/message/conversationContent/conversationContent';
+import {SearchBox} from '/client/dumb-components/message/search/search';
 
 const reducer = combineReducers({messageReducer: messageReducer});
 const store = createStore(reducer, compose(
@@ -67,7 +68,13 @@ const mapDispatchToProps = (dispatch) => {
         onSuccessMessage: (msgId, conversationId) => dispatch(setMessageStatus(msgId, conversationId, 'success')),
 
         // 消息发送失败的回调函数
-        onFailedMessage: (msgId, conversationId) => dispatch(setMessageStatus(msgId, conversationId, 'failed'))
+        onFailedMessage: (msgId, conversationId) => dispatch(setMessageStatus(msgId, conversationId, 'failed')),
+
+        // 修改搜索框的搜索词
+        onChangeSearchWord: value => dispatch(setSearchWord(value)),
+
+        // 修改搜索结果
+        onChangeSearchResult: msgs => dispatch(setSearchResult(msgs))
       }
     }
   }
@@ -96,6 +103,8 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
             postedMessages = {this.props.messageReducer.get('postedMessages')}
             pendingMessages = {this.props.messageReducer.get('pendingMessages')}
             failedMessages = {this.props.messageReducer.get('failedMessages')}
+            searchWord = {this.props.messageReducer.get('searchWord')}
+            matchedMessages = {this.props.messageReducer.get('matchedMessages')}
 
             handlers = {this.props.handlers}/>
         </div>
@@ -124,6 +133,7 @@ const MessageContent = React.createClass({
       defaultAvatar: 'http://taozi-uploads.qiniudn.com/avt_10000_1438680785981.jpg'
     }
   },
+
   propTypes: {
     // 展示的tab项
     activeTab: React.PropTypes.string,
@@ -149,9 +159,14 @@ const MessageContent = React.createClass({
     // 发送已失败消息的缓存
     failedMessages: React.PropTypes.object,
 
+    // 搜索框的搜索词
+    searchWord: React.PropTypes.string,
+
+    // 根据搜索词匹配的消息
+    matchedMessages: React.PropTypes.object,
+
     // 各种回调函数
     handlers: React.PropTypes.object
-
   },
 
   // 清除其它的订阅(每次只保留一条sub)
@@ -163,145 +178,259 @@ const MessageContent = React.createClass({
     BraavosCore.SubsManagerStubs.conversation = [BraavosCore.SubsManagerStubs.conversation[1]];
   },
 
-  getMeteorData() {
-    const userId = parseInt(Meteor.userId());
+  // 获取个人信息
+  getUserInfo(userId){
+    const userInfo = BraavosCore.SubsManager.account.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId}) : {};
 
-    // 获取自己的信息
-    const selfInfo = BraavosCore.SubsManager.account.ready() ? BraavosCore.Database.Yunkai.UserInfo.findOne({'userId': userId}) : {};
+    // 头像预处理
+    userInfo.avatar = userInfo.avatar && userInfo.avatar.url || userInfo.avatar || this.props.defaultAvatar;
 
-    // 预处理
-    selfInfo.avatar = selfInfo.avatar ? selfInfo.avatar.url : selfInfo.avatar;
+    return userInfo;
+  },
 
-    // 订阅conversationView
-    BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews", this.props.conversationLimit || this.props.defaultConversationLimit));
-    this._clearPreviousSub();
+  // 过滤非聊天对话
+  filterConversation(conversationViews){
+    // 删除指定对话(订单消息 / 好友通知)
+    return _.remove(conversationViews, conversationView => conversationView.disabled);
+  },
 
-    // 获取会话信息
-    //const conversationViews = BraavosCore.SubsManager.conversation.ready() ? BraavosCore.Database.Hedy.ConversationView.find({'userId': userId}).fetch() : [];
+  // 根据用户 userId 获取会话列表(包括avatar,nickName)
+  getConversationViews(userId){
     const conversationViews = BraavosCore.Database.Hedy.ConversationView.find({'userId': userId}, {sort: {updateTime: -1}}).fetch() || [];
 
     // 添加key
     conversationViews.map(conversationView => _.extend(conversationView, {key: conversationView._id._str}));
 
+    return conversationViews;
+  },
+
+  // 订阅conversationView
+  subConversationViews(){
+    // 订阅conversationView,并清除上一条订阅
+    BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews", this.props.conversationLimit || this.props.defaultConversationLimit));
+    this._clearPreviousSub();
+  },
+
+  // 订阅conversation
+  subConversations(conversationViews){
     // 查找conversationView对应的conversation
     const conversationIds = conversationViews.map(conversationView => conversationView.conversationId);
 
     // 订阅conversationView对应的conversation
     Meteor.subscribe('conversations', conversationIds);
+  },
 
-    // 查找conversation对应的userId(TODO: 目前只考虑单聊的情况)
+  // 获取 conversationViews 对应的 conversations
+  getConversations(conversationViews){
+    const conversationIds = conversationViews.map(conversationView => conversationView.conversationId);
     const conversations = BraavosCore.Database.Hedy.Conversation.find({'_id': {$in: conversationIds}}).fetch();
-    const conversationUsers = conversations.map(conversation => parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], userId.toString())[0]));
 
-    // 订阅conversationView对应的userInfo信息
-    Meteor.subscribe('userInfos', conversationUsers);
+    return conversations;
+  },
 
-    // 记录activeConversation的nickName
-    let activeConversationName = this.props.activeConversation;
-    const self = this;
+  // 订阅conversation 对应的 users
+  subConversationUserInfo(conversations){
+    const conversationUsers = _.reduce(conversations, (tempConversations, conversation) => {
+      // 仅考虑单聊的情况下
+      const users = conversation.fingerprint && conversation.fingerprint.split('.') || [];
 
-    // 添加头像/昵称(目前只考虑单聊的情况)
-    conversationViews.map(conversationView => {
-      // 获取会话相关用户
-      const conversation = BraavosCore.Database.Hedy.Conversation.findOne({'_id': conversationView.conversationId}) || {};
-      const conversationUserId = parseInt(_.without(conversation.fingerprint && conversation.fingerprint.split('.') || [], userId.toString())[0]);
+      // 群聊的情况下
+      //const users = conversation.fingerprint.participants || [];
 
-      // 筛选部分对话(订单消息 / 好友通知)
-      if (_.includes([0, 10002], conversationUserId)) return _.extend(conversationView, {disabled: true});
+      users.map(user => tempConversations.add(parseInt(user)));
+      return tempConversations;
+    }, new Set());
 
-      // 获取头像
-      const conversationUser = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: conversationUserId}) || {};
-      const conversationAvatar = conversationUser.avatar && conversationUser.avatar.url || conversationUser.avatar || this.props.defaultAvatar;
+    Meteor.subscribe('userInfos', Array.from(conversationUsers));
+  },
 
-      // 个人的昵称/群组的群号
-      const conversationName = conversationUser.nickName || `${conversation.fingerprint}群`;
+  // 根据 conversationId 获取 nickName 和 avatar
+  getConversationMiscInfo(conversationId){
+    const conversation = BraavosCore.Database.Hedy.Conversation.findOne({'_id': new Meteor.Collection.ObjectID(conversationId)}) || {};
+    const fingerprintUsers = conversation.fingerprint && conversation.fingerprint.split('.') || [];
 
-      _.extend(conversationView, {avatar: conversationAvatar, nickName: conversationName});
+    // 获取会话相关用户(只获取第一个, 作为会话的 avatar 以及 nickName 来源)
+    const conversationUserId = parseInt(_.without(fingerprintUsers, Meteor.userId())[0]);
 
-      if (conversationView.conversationId._str == self.props.activeConversation)
-        activeConversationName = conversationName;
-    });
+    // fingerprintUsers为1时, 只代表群组号
+    const conversationUser = (fingerprintUsers.length > 1) && BraavosCore.Database.Yunkai.UserInfo.findOne({userId: conversationUserId}) || {};
 
-    // 删除指定对话(订单消息 / 好友通知)
-    _.remove(conversationViews, conversationView => conversationView.disabled);
+    // 获取 avatar (个人头像/默认头像)
+    const conversationAvatar = conversationUser.avatar && conversationUser.avatar.url || conversationUser.avatar || this.props.defaultAvatar;
 
-    // 订阅msg
-    const activeConversation = this.props.activeConversation;
-    Meteor.subscribe('messages', activeConversation, this.props.messageLimits.get(activeConversation, this.props.defaultMessageLimit));
+    // 获取 nickName (个人的昵称/群组的群号)
+    const conversationName = conversationUser.nickName || `${conversation.fingerprint}群`;
 
-    // 获取消息
-    const msgs = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(this.props.activeConversation)}, {sort: {timestamp: 1}}).fetch() || [];
-    msgs.map((
-      msg => {
-        const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: msg.senderId}) || {};
+    return {
+      conversationUserId: conversationUserId,
+      conversationAvatar: conversationAvatar,
+      conversationName: conversationName
+    }
+  },
 
-        // 个人: 获取用户信息! / 群组: 使用默认图片(logo)
-        const avatar = userInfo.avatar && userInfo.avatar.url || userInfo.avatar ||this.props.defaultAvatar;
+  // 向 conversationView 中添加 avatar,nickName 等 misc 信息
+  addMiscInfo(conversationView){
+    const miscInfo = this.getConversationMiscInfo(conversationView.conversationId._str);
 
-        return _.extend(msg, {
-          key: msg._id._str,
-          avatar:  avatar
+    // 筛选部分对话(订单消息 / 好友通知)
+    if (_.includes([0, 10002], miscInfo.conversationUserId)) return _.extend(conversationView, {disabled: true});
+
+    return _.extend(conversationView, {avatar: miscInfo.conversationAvatar, nickName: miscInfo.conversationName});
+  },
+
+  // 获取 conversation 信息
+  getConversationInfo(conversationViews, conversationId){
+    return _.find(conversationViews, conversationView => conversationView.conversationId._str == conversationId) || {}
+  },
+
+  // 根据 conversationId 订阅消息
+  subMessages(conversationId){
+    Meteor.subscribe('messages', conversationId, this.props.messageLimits.get(conversationId, this.props.defaultMessageLimit));
+  },
+
+  // 获取订单相关的消息
+  getOrderMessages(){
+    const orderMessages = BraavosCore.Database.Hedy.Message.find({msgType: 20}, {sort: {timestamp: -1}}).fetch() || [];
+    orderMessages.map((
+      msg => _.extend(msg, {
+        key: msg._id._str
+      })
+    ));
+
+    return orderMessages;
+  },
+
+  // 根据 conversationId 获取 messages
+  getConversationMessages(conversationId, selfInfo, conversationInfo){
+    const messages = BraavosCore.Database.Hedy.Message.find({conversation: new Meteor.Collection.ObjectID(conversationId)}, {sort: {timestamp: 1}}).fetch() || [];
+    messages.map((
+      message => {
+        // TODO 适配群聊
+        // const userInfo = BraavosCore.Database.Yunkai.UserInfo.findOne({userId: message.senderId}) || {};
+
+        // 当前只考虑单聊情况,其它人全部使用默认头像
+        const userInfo = (message.senderId == selfInfo.userId) ? selfInfo : _.extend({nickName: message.senderId}, conversationInfo);
+
+        return _.extend(message, {
+          key: message._id._str,
+          // 个人: 获取用户信息! / 群组: 使用默认图片(logo)
+          avatar: userInfo.avatar && userInfo.avatar.url || userInfo.avatar || this.props.defaultAvatar,
+          nickName: userInfo.nickName
         })
       }
     ));
 
-    // 筛选出订单消息
-    const orderMsgs = BraavosCore.Database.Hedy.Message.find({msgType: 20}, {sort: {timestamp: -1}}).fetch() || [];
-    orderMsgs.map((
-      msg => _.extend(msg, {
-        key: msg._id._str,
-      })
-    ));
+    return messages;
+  },
 
-    // 获取当前会话对应的pendingMsgs
-    const allPendingMsgs = this.props.pendingMessages.toJS();
-    let pendingMsgs = allPendingMsgs[this.props.activeConversation] || [];
+  // 过滤 curPendingMessages 中已经发送成功( Mongo 中有)的 successMessages
+  // 备注: 这里的 curPendingMessages 和 successMessages 都只是 ObjectID(字符串形式) 的集合
+  filterSuccessMessages(curPendingMessages){
+    // 遍历 curPendingMessages 找出 successMessages 的下标
+    const successMessages = _.reduce(curPendingMessages, (memo, message) => {
+      return (BraavosCore.Database.Hedy.Message.findOne({_id: new Meteor.Collection.ObjectID(message)}))
+        ? _.extend(memo, {
+            index: memo.index + 1,
+            successMessages: _.concat(memo.successMessages, {
+              index: memo.index,
+              messageId: message
+            })
+          })
+        : _.extend(memo, {index: memo.index + 1});
+    }, {index: 0, successMessages: []}).successMessages;
 
-    // 遍历pendingMsgs,找出已收到的msg
-    let receivedMsgs = [];//记录已收到的pending消息
-    for (let i = 0;i < pendingMsgs.length;i++)
-      if (BraavosCore.Database.Hedy.Message.findOne({_id: new Meteor.Collection.ObjectID(pendingMsgs[i])}))
-        receivedMsgs.push(i);
+    // 从 curPendingMessages 中过滤掉 successMessages,并修改 store 相应的 postedMessage 的状态
+    const filteredPendingMessages = _.reduce(successMessages, (curPendingMessages, successMessage) => {
+      this.props.handlers.chatMessages.onSuccessMessage(successMessage.messageId, this.props.activeConversation);
+      return curPendingMessages.splice(successMessage.index, 1);
+    }, curPendingMessages);
 
-    // 从pendingMsgs中过滤掉已收到的msg
-    for(let i = receivedMsgs.length - 1;i >= 0;i--){
-      // 更新已收到的msg的状态
-      this.props.handlers.chatMessages.onSuccessMessage(receivedMsgs[i], this.props.activeConversation);
-      pendingMsgs.splice(receivedMsgs[i], 1);
-    };
+    return filteredPendingMessages;
+  },
 
-    // TODO: 优化
-    // 按timestamp插入pending消息
-    let i = 0, j = 0;
+  // 将 messageIndexes 中的 messages 按照时间顺序依次插入 messages 中, 并插入 status(failed / pending) 作为标识
+  mergeIntoMessages(messages, messageIndexes, status, selfInfo){
     const postedMessages = this.props.postedMessages.toJS();
-    while (i < msgs.length && j < pendingMsgs.length){
-      if (msgs[i].timestamp > postedMessages[pendingMsgs[j]].timestamp){
-        msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar}));
+
+    let i = 0, j = 0;
+    while (i < messages.length && j < messageIndexes.length){
+      if (messages[i].timestamp > postedMessages[messageIndexes[j]].timestamp){
+        messages.splice(i, 0, _.extend(postedMessages[messageIndexes[j]], {status: status, avatar: selfInfo.avatar}));
         j += 1;
       }else{
         i += 1;
       }
     };
-    while (j < pendingMsgs.length){
-      msgs.splice(i, 0, _.extend(postedMessages[pendingMsgs[j]], {status: 'pending', avatar: selfInfo.avatar}));
+    while (j < messageIndexes.length){
+      messages.splice(i, 0, _.extend(postedMessages[messageIndexes[j]], {status: status, avatar: selfInfo.avatar}));
       j += 1;
     };
 
-    // 按timestamp插入failed消息
-    i = 0;j = 0;
-    const failedMsgs = this.props.failedMessages.toJS()[this.props.activeConversation] || [];
-    while (i < msgs.length && j < failedMsgs.length){
-      if (msgs[i].timestamp > postedMessages[failedMsgs[j]].timestamp){
-        msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar}));
-        j += 1;
-      }else{
-        i += 1;
-      }
-    };
-    while (j < failedMsgs.length){
-      msgs.splice(i, 0, _.extend(postedMessages[failedMsgs[j]], {status: 'failed', avatar: selfInfo.avatar}));
-      j += 1;
-    };
+    return messages;
+  },
+
+  getMeteorData() {
+    const userId = parseInt(Meteor.userId());
+
+    // 获取 selfInfo => TODO: It could be merged in userInfo list
+    const selfInfo = this.getUserInfo(userId);
+
+    // 订阅 conversationView
+    this.subConversationViews();
+
+    // 获取 conversationViews
+    const conversationViews = this.getConversationViews(userId);
+
+    // 订阅 conversationViews 对应的 conversations
+    this.subConversations(conversationViews);
+
+    // 获取 conversationViews 对应的 conversations
+    const conversations = this.getConversations(conversationViews);
+
+    // 订阅 conversationView 对应的 userInfo 信息
+    this.subConversationUserInfo(conversations);
+
+    // 获取 conversation 的头像/昵称
+    conversationViews.map(conversationView => this.addMiscInfo(conversationView));
+
+    // 根据 disabled 字段过滤部分 conversation
+    this.filterConversation(conversationViews);
+
+    // 根据 activeConversation 订阅聊天相关的 message
+    this.subMessages(this.props.activeConversation);
+
+    // TODO(add): 修改订单消息的订阅
+
+    // 获取 activeConversation 对应的 info
+    const activeConversationInfo = this.getConversationInfo(conversationViews, this.props.activeConversation);
+    const activeConversationName = activeConversationInfo.nickName || this.props.activeConversation;
+
+    // 获取 activeConversation 对应的 messages
+    const messages = this.getConversationMessages(this.props.activeConversation, selfInfo, activeConversationInfo);
+
+    // 筛选出订单消息
+    const orderMessages = this.getOrderMessages();
+
+    // TODO: 将pendingMessages和failedMessages加入到messages中
+    // TODO: pendingMessages过滤;
+
+    // 过滤 this.props.pendingMessages 中的 successMessages
+    const pendingMessages = this.filterSuccessMessages(this.props.pendingMessages.toJS()[this.props.activeConversation] || []);
+
+    // 获取 failedMessages
+    const failedMessages = this.props.failedMessages.toJS()[this.props.activeConversation] || [];
+
+    // merge pendingMessages & failedMessages into messages
+    const mergedMessages = _.reduce([{
+      messages: pendingMessages,
+      status: 'pending'
+    }, {
+      messages: failedMessages,
+      status: 'failed'
+    }], (messages, messageIndexes) => this.mergeIntoMessages(messages, messageIndexes.messages, messageIndexes.status, selfInfo), messages);
+
+    // TODO 获取activeConversation对应的userInfo
+    //const activeUserInfo =
 
     return {
       // 用户信息 => 合并到userInfo中吧
@@ -313,10 +442,10 @@ const MessageContent = React.createClass({
       conversationViews: conversationViews,//包括avatar
 
       // 订单消息(消息中心使用)
-      orderMsgs: orderMsgs,
+      orderMessages: orderMessages,
 
       // 聊天消息(聊天中心使用)
-      msgs: msgs,
+      messages: mergedMessages,
 
       // activeConversation的名称
       activeConversationName: activeConversationName
@@ -363,6 +492,12 @@ const MessageContent = React.createClass({
       backgroundColor: '#ffffff',
       width: 1000,
       height: 600
+    },
+    leftBar: {
+      display: 'inline-block',
+      borderRight: '1px solid #ccc',
+      height: 598,
+      width: 250
     }
   },
 
@@ -386,20 +521,28 @@ const MessageContent = React.createClass({
     const tabBody = (this.props.activeTab == 'message')
       ? <div className="col-lg-12 fadeIn">
           <div className="ibox" style={_.extend({}, this.styles.ibox, {width: 600})}>
-            <SystemMessagesList msgs={this.data.orderMsgs}/>
+            <SystemMessagesList messages={this.data.orderMessages}/>
           </div>
         </div>
       : <div className="col-lg-12 fadeIn">
           <div className="ibox" style={this.styles.ibox}>
-            <ConversationViewList
-              conversations={this.data.conversationViews}
-              onChangeConversationLimit={this.props.handlers.chatMessages.onChangeConversationLimit}
-              onChangeConversation={this._handleSetActiveConversation}
-              conversationLimit={this.props.conversationLimit || this.props.defaultConversationLimit}
-              activeConversation={this.props.activeConversation}
-            />
+            <div className="left-bar" style={this.styles.leftBar}>
+              <SearchBox
+                onChangeSearchWord={this.props.handlers.chatMessages.onChangeSearchWord}
+                onChangeSearchResult={this.props.handlers.chatMessages.onChangeSearchResult}
+                matchedMessages={this.props.matchedMessages}
+                searchWord={this.props.searchWord}
+              />
+              <ConversationViewList
+                conversations={this.data.conversationViews}
+                onChangeConversationLimit={this.props.handlers.chatMessages.onChangeConversationLimit}
+                onChangeConversation={this._handleSetActiveConversation}
+                conversationLimit={this.props.conversationLimit || this.props.defaultConversationLimit}
+                activeConversation={this.props.activeConversation}
+              />
+            </div>
             <ConversationContent
-              msgs={this.data.msgs}
+              messages={this.data.messages}
               conversationId={this.props.activeConversation}
               conversationName={this.data.activeConversationName}
               messageLimit={this.props.messageLimits.get(this.props.activeConversation, this.props.defaultMessageLimit)}
@@ -424,4 +567,3 @@ const MessageContent = React.createClass({
     );
   }
 });
-

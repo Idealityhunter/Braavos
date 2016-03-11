@@ -7,3 +7,7 @@
     left: -9999px;
     opacity: 0;
 }
+
+.hover-gainsboro:hover{
+    background: gainsboro;
+}

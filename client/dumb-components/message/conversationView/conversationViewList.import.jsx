@@ -36,15 +36,14 @@ export const ConversationViewList = React.createClass({
 
   styles:{
     container: {
-      borderRight: '1px solid #ccc',
       display: 'inline-block',
-      width: 250,
-      height: 598,
+      width: 249,
+      height: 563,
       boxSizing: 'border-box'
     },
     listWrap: {
       width: 249,
-      height: 594,
+      height: 559,
       marginTop: 2,
       overflow: 'auto',
       boxSizing: 'border-box'
