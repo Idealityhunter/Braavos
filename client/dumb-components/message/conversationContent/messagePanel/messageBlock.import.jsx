@@ -1,12 +1,12 @@
 // '消息展板'中的 单个消息内容块
 import {Modal} from "/lib/react-bootstrap"
-import {TimeBlock} from '/client/dumb-components/message/conversationContent/msgPanel/timeBlock';
+import {TimeBlock} from '/client/dumb-components/message/conversationContent/messagePanel/timeBlock';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
 
 
-export const MsgBlock = React.createClass({
+export const MessageBlock = React.createClass({
   mixins: [IntlMixin],
 
   getDefaultProps: () => {
@@ -46,9 +46,9 @@ export const MsgBlock = React.createClass({
     }
   },
 
-  // 消息体不需要重新渲染
+  // 消息体不需要重新渲染(当有 pending 或 failed 状态时会可能渲染)
   shouldComponentUpdate(nextProps, nextState){
-    return false;
+    return nextProps.status;
   },
 
   styles: {

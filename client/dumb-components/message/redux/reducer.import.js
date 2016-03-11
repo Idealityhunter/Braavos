@@ -91,23 +91,22 @@ export const messageReducer = (state = fromJS({
       case 'SET_MESSAGE_STATUS':
         // 发送消息成功
         if (action.status == 'success') {
-          // 删除 pendingMessage
+          // 从 pendingMessages 中删除相应的 message
           const tempState = state.setIn(['pendingMessages', action.conversationId], state.getIn(['pendingMessages', action.conversationId]).delete(action.msgId));
 
-          // 删除 postedMessage
+          // 从 postedMessage 中删除相应的 message
           return tempState.set('postedMessages', tempState.get('postedMessages').delete(action.msgId));
         }
 
         // 发送消息失败
         if (action.status == 'failed') {
-          // 插入 failedMessage
+          // 将 message 插入到 failedMessages 中
           const failedMessages = state.getIn(['failedMessages', action.conversationId], Immutable.Set());
           const tempState = state.setIn(['failedMessages', action.conversationId], failedMessages.add(action.msgId));
 
-          // 删除 pendingMessage
+          // 从 pendingMessages 中删除相应的 message
           return tempState.setIn(['pendingMessages', action.conversationId], tempState.getIn(['pendingMessages', action.conversationId]).delete(action.msgId));
         }
-
         return state;
 
       default:

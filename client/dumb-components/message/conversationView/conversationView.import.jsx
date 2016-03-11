@@ -5,6 +5,7 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const ConversationView = React.createClass({
   mixins: [IntlMixin],
+
   propTypes: {
     // 会话Id
     conversationId: React.PropTypes.object,
@@ -16,7 +17,7 @@ export const ConversationView = React.createClass({
     nickName: React.PropTypes.string,
 
     // 会话的最近消息的发送时间
-    updateTime: React.PropTypes.string,
+    updateTime: React.PropTypes.object,
 
     // 会话的最近消息的摘要
     lastMessage: React.PropTypes.string,
@@ -27,6 +28,7 @@ export const ConversationView = React.createClass({
     // 当前激活会话的Id
     activeConversation: React.PropTypes.string
   },
+
   styles: {
     container: {
       borderBottom: '1px solid #ccc'
