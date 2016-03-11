@@ -8,8 +8,8 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 const commodityPlans = React.createClass({
   mixins: [IntlMixin],
 
-  proptypes: {
-    plans: React.PropTypes.Array,
+  propTypes: {
+    plans: React.PropTypes.array,
     handleSubmitState: React.PropTypes.func
   },
 

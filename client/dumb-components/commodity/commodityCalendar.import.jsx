@@ -1,4 +1,6 @@
-let commodityCalendar = React.createClass({
+// 商品编辑页的日历组件
+
+export const CommodityCalendar = React.createClass({
   componentDidMount() {
     //以下内容需要放在steps之后做
     var date = new Date();
@@ -105,5 +107,3 @@ let commodityCalendar = React.createClass({
     )
   }
 });
-
-export const CommodityCalendar = commodityCalendar;

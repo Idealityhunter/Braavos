@@ -1,3 +1,5 @@
+// 商品编辑页面的图片管理组件
+
 import {ImageCropper} from "/client/common/image-cropper"
 
 var IntlMixin = ReactIntl.IntlMixin;
@@ -6,12 +8,12 @@ var FormattedMessage = ReactIntl.FormattedMessage;
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
 
-  proptypes: {
+  propTypes: {
     addImage: React.PropTypes.func,
     changeCover: React.PropTypes.func,
     deleteImage: React.PropTypes.func,
-    cover: React.PropTypes.Object,
-    images: React.PropTypes.Array
+    cover: React.PropTypes.object,
+    images: React.PropTypes.array
   },
 
   getInitialState() {
@@ -94,7 +96,7 @@ let commodityGallery = React.createClass({
     });
   },
 
-  //  选择图片展示
+  // 选择图片展示
   handleFocus(e){
     this.setState({
       focusImageIndex: $(e.target).parent('.img-wrap').attr('data-id')

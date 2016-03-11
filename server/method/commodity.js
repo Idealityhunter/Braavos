@@ -12,7 +12,9 @@ Meteor.methods({
   'commodity.editor.checkCommodityId': ({commodityId, isAdmin}) => {
     const userId = parseInt(Meteor.userId());
     const options = {commodityId: parseInt(commodityId)};
-    if (!isAdmin) options['seller.sellerId'] = userId;
+
+    if (isAdmin != 'true' || !BraavosCore.Utils.account.isAdmin())
+      options['seller.sellerId'] = userId;
 
     const ret = BraavosCore.Database.Braavos.Commodity.findOne(options);
     return {
