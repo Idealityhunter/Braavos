@@ -98,9 +98,26 @@ export const setMessageStatus = (msgId, conversationId, status) => {
   }
 };
 
-
-export const addConversationList = () => {
+/**
+ * 设置搜索框内容
+ * @param content
+ * @returns {{type: string, content: *}}
+ */
+export const setSearchWord = (content) => {
   return {
-    type: ''
+    type: 'SET_SEARCH_WORD',
+    content: content
   }
-}
+};
+
+/**
+ * 设置搜索结果
+ * @param msgs
+ * @returns {{type: string, msgs: *}}
+ */
+export const setSearchResult = (msgs) => {
+  return {
+    type: 'SET_SEARCH_RESULT',
+    msgs: msgs
+  }
+};

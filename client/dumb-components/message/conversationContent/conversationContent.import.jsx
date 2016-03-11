@@ -1,6 +1,6 @@
 // 右侧的 Conversation 内容
 
-import {MsgPanel} from '/client/dumb-components/message/conversationContent/msgPanel/msgPanel';
+import {MessagePanel} from '/client/dumb-components/message/conversationContent/messagePanel/messagePanel';
 import {ConversationInput} from '/client/dumb-components/message/conversationContent/conversationInput';
 import {ConversationSide} from '/client/dumb-components/message/conversationContent/conversationSide/conversationSide';
 
@@ -11,7 +11,7 @@ export const ConversationContent = React.createClass({
   mixins: [IntlMixin],
   propTypes: {
     // 消息列表
-    msgs: React.PropTypes.array,
+    messages: React.PropTypes.array,
 
     // 修改当前会话的msg的数量限制的方法
     onChangeMessageLimit: React.PropTypes.func,
@@ -38,6 +38,7 @@ export const ConversationContent = React.createClass({
     // 输入框中的消息内容
     inputValue: React.PropTypes.string
   },
+
   styles: {
     noSelected: {
       // 额外的样式
@@ -86,8 +87,8 @@ export const ConversationContent = React.createClass({
         <div>
           {/* center */}
           <div style={this.styles.center}>
-            <MsgPanel
-              msgs={this.props.msgs}
+            <MessagePanel
+              messages={this.props.messages}
               messageLimit={this.props.messageLimit}
               conversationId={this.props.conversationId}
               onChangeMessageLimit={this.props.onChangeMessageLimit}

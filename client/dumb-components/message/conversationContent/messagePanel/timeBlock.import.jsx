@@ -5,10 +5,10 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 
 export const TimeBlock = React.createClass({
   mixins: [IntlMixin],
-  propTypes: {
-    align: React.PropTypes.string,
-    timestamp: React.PropTypes.number//可以为其它格式的时间(对象/字符串)
-  },
+  //propTypes: {
+  //  align: React.PropTypes.string,
+  //  timestamp: React.PropTypes.number//可以为其它格式的时间(对象/字符串)
+  //},
   getDefaultProps() {
     return {
       align: 'center'

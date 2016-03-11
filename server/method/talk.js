@@ -6,7 +6,7 @@
 
 Meteor.methods({
   /**
-   *
+   * 发送消息
    * @param sendType {Number} 0/1/2分别代表发送给receiver/Group/Conversation
    * @param receiver {String} 接收者Id/接收GroupId/接收的conversation
    * @param contents {Object} 消息内容
@@ -50,18 +50,17 @@ Meteor.methods({
           options.data.conversation = receiver;
           break;
         default:
-          console.log('错误调用talk.sendMsg!');
+          BraavosCore.logger(`错误调用 "talk.sendMsg" method: sendType 为 ${sendType}`);
           return false;
       };
 
       // 发送请求
       try {
         const result = HTTP.post(url, options);
-        console.log(result);
         return result;
       }catch(e){
-        console.log('发送消息失败! 错误为: ');
-        console.log(e);
+        BraavosCore.logger('发送消息失败! 错误为: ');
+        BraavosCore.logger(e);
       }
     }
   }
