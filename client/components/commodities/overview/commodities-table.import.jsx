@@ -186,7 +186,10 @@ export const CommoditiesTable = React.createClass({
 
   getDefaultProps() {
     return {
-      maxCommodityCount: 200
+      maxCommodityCount: 200,
+
+      // TODO (疑问): 为什么在这里初始化会出错(UserInfo not defined?)
+      //isAdmin: BraavosCore.Utils.account.isAdmin()
     };
   },
 
@@ -236,6 +239,10 @@ export const CommoditiesTable = React.createClass({
     const buildCommodities = () => {
       const query = BraavosCore.Utils.marketplace.buildCommodityQuery(filters, isAdmin, userId);
       const fields = {commodityId: 1, seller: 1, title: 1, cover: 1, price: 1, createTime: 1, status: 1};
+
+      // 管理员还需要展示 weightBoost
+      if (isAdmin) _.extend(fields, {weightBoost: 1});
+
       // 默认排序: 按照时间倒序
       const sort = BraavosCore.Utils.marketplace.buildCommoditySort(sorting);
       return BraavosCore.Database.Braavos.Commodity.find(query, {fields: fields, sort: sort, limit: limit}).fetch();
@@ -281,7 +288,7 @@ export const CommoditiesTable = React.createClass({
         commodities = buildCommodities();
       }
     }
-    return fromJS({commodities: commodities});
+    return fromJS({commodities: commodities, isAdmin: isAdmin});
   },
 
   // 根据字段名称, 获得排序信息
@@ -384,6 +391,14 @@ export const CommoditiesTable = React.createClass({
           fixed={true}
           width={100}
         />
+        {this.data.get('isAdmin') ?
+          <Column
+            header={this._buildHeader('weightBoost', '权重')}
+            cell={<TextCell data={this.data.get('commodities')} col="weightBoost" />}
+            fixed={true}
+            width={60}
+          /> : ''
+        }
       </Table>
     );
   }
