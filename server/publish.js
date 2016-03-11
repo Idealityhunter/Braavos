@@ -73,7 +73,7 @@ Meteor.publish("commodities", function (options) {
 Meteor.publish("commodityInfo", function (commodityId) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Braavos.Commodity;
-  const allowedFields = ["commodityId", "title", "seller", "country", "address", "category", "price", "marketPrice", "plans", "cover", "images", "notice", "refundPolicy", "trafficInfo", "desc"];
+  const allowedFields = ["commodityId", "title", "seller", "country", "address", "category", "price", "marketPrice", "plans", "cover", "images", "notice", "refundPolicy", "trafficInfo", "desc", "weightBoost"];
   const fields = _.reduce(allowedFields, (memo, f) => {
       memo[f] = 1;
   return memo;

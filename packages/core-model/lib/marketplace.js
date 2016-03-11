@@ -331,6 +331,11 @@ Marketplace.Commodity = new SimpleSchema({
     type: Number,
     // 暂时先不做检测
     optional: true
+  },
+  // 商品权重
+  weightBoost: {
+    type: Number,
+    optional: true
   }
 });
 

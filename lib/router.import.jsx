@@ -149,6 +149,7 @@ FlowRouter.route('/commodities/editor/:commodityId', {
   action(param, queryParam) {
     const commodityId = param.commodityId;
     const isAdmin = queryParam.isAdmin;
+
     // 检查token是否是当前用户的商品
     Meteor.call('commodity.editor.checkCommodityId', {commodityId: commodityId, isAdmin: isAdmin}, (err, ret) => {
       const isValid = (!err && ret.valid);
@@ -169,7 +170,7 @@ FlowRouter.route('/commodities/editor/:commodityId', {
         });
 
         ReactLayout.render(MainLayout, _.extend({
-          content: <CommodityModify {...intlData} commodityInfo={ret.commodityInfo}/>
+          content: <CommodityModify {...intlData} commodityInfo={ret.commodityInfo} isAdmin={isAdmin == 'true'}/>
         }, intlData, {documentTitle: "商品修改"}));
       } else {
         FlowRouter.go('home');
