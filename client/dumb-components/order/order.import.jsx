@@ -203,9 +203,7 @@ const order = React.createClass({
           <p>(已退款{this._getRefundAmount(order)}元)</p>
         ]
       case 'finished':
-        return '已成功的订单';
       case 'reviewed':
-        return '已成功的订单'
       case 'toReview':
         return '已成功的订单'
       case 'canceled':
