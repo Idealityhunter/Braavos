@@ -104,9 +104,7 @@ const finance = React.createClass({
   _getTradeStatusHtml(order) {
     switch (order.status){
       case 'finished':
-        return '已成功的订单'
       case 'reviewed':
-        return '已成功的订单'
       case 'toReview':
         return '已成功的订单'
       case 'refunded':

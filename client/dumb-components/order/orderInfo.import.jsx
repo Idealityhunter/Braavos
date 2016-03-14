@@ -136,15 +136,7 @@ const orderInfo = React.createClass({
           dateList: order.activities.map(activity => self._getActivityStatement(activity))
         }
       case 'finished':
-        return {
-          statusLabel: '已成功的订单',
-          dateList: order.activities.map(activity => self._getActivityStatement(activity))
-        }
       case 'reviewed':
-        return {
-          statusLabel: '已成功的订单',
-          dateList: order.activities.map(activity => self._getActivityStatement(activity))
-        }
       case 'toReview':
         return {
           statusLabel: '已成功的订单',
