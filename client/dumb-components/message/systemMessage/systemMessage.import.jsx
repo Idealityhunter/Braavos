@@ -36,6 +36,11 @@ export const SystemMessage = React.createClass({
     }
   },
 
+  // 不需要重新渲染
+  shouldComponentUpdate(nextProps, nextState){
+    return false;
+  },
+
   // 获取 message 的 contents
   getMessageContents(message){
     try {

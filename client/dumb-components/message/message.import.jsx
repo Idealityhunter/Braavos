@@ -13,7 +13,7 @@ import {ButtonToolbar, Button, Tabs, Tab, Input} from "/lib/react-bootstrap";
 
 // redux相关组件引用
 import { messageReducer } from '/client/dumb-components/message/redux/reducer'
-import { setInputValue, resetInputValue, setConversationLimit, setActiveTab, setActiveConversation, setMessageLimit, postMessage, setMessageStatus, setSearchWord, setSearchResult} from '/client/dumb-components/message/redux/action'
+import { setSystemMessageLimit, setInputValue, resetInputValue, setConversationLimit, setActiveTab, setActiveConversation, setMessageLimit, postMessage, setMessageStatus, setSearchWord, setSearchResult} from '/client/dumb-components/message/redux/action'
 
 // 普通组件引用
 import {BraavosBreadcrumb} from '/client/components/breadcrumb/breadcrumb';
@@ -37,6 +37,9 @@ const mapDispatchToProps = (dispatch) => {
       // 系统通知部分相关的事件回调
       systemMessages: {
         // TODO 瀑布流展示
+        // 修改订阅的 systemMessage 的limit限制
+        onChangeSystemMessageLimit: limit => dispatch(setSystemMessageLimit(limit)),
+
         // TODO 已读/未读展示
         // TODO 新消息提示
       },
@@ -95,6 +98,7 @@ const Container = connect(mapStateToProps, mapDispatchToProps)(
         <div className="message-mngm-wrap">
           <BraavosBreadcrumb />
           <MessageContent
+            systemMessageLimit = {this.props.messageReducer.get('systemMessageLimit')}
             activeTab = {this.props.messageReducer.get('activeTab')}
             inputValue = {this.props.messageReducer.get('inputValue')}
             conversationLimit = {this.props.messageReducer.get('conversationLimit')}
@@ -120,8 +124,11 @@ const MessageContent = React.createClass({
 
   getDefaultProps: () => {
     return {
+      // 默认系统消息的会话数
+      defaultSystemMessageLimit: 6,
+
       // 默认订阅的会话数
-      defaultConversationLimit: 10 + 2,//后者为disbledUser的长度
+      defaultConversationLimit: 9 + 2,//后者为disbledUser的长度
 
       // 默认不展示在聊天中的会话
       disabledUser: [0, 10004],
@@ -137,6 +144,9 @@ const MessageContent = React.createClass({
   propTypes: {
     // 展示的tab项
     activeTab: React.PropTypes.string,
+
+    // 订阅系统消息的数目上限
+    systemMessageLimit: React.PropTypes.object,
 
     // 输入框中的消息内容
     inputValue: React.PropTypes.string,
@@ -165,17 +175,16 @@ const MessageContent = React.createClass({
     // 根据搜索词匹配的消息
     matchedMessages: React.PropTypes.object,
 
-    // 各种回调函数
+    // 各种回调函数: 分为 systemMessages 和 chatMessages 两种
     handlers: React.PropTypes.object
   },
 
   // 清除其它的订阅(每次只保留一条sub)
-  _clearPreviousSub(){
-    if (BraavosCore.SubsManager.conversation._cacheList.length > 1){
-      console.log(BraavosCore.SubsManager.conversation._cacheList.length);
-      BraavosCore.SubsManager.conversation.unsubscribe(BraavosCore.SubsManagerStubs.conversation[0].key);
+  _clearPreviousSub(subscribeName){
+    if (BraavosCore.SubsManager[subscribeName]._cacheList.length > 1){
+      BraavosCore.SubsManager[subscribeName].unsubscribe(BraavosCore.SubsManagerStubs[subscribeName][0].key);
     };
-    BraavosCore.SubsManagerStubs.conversation = [BraavosCore.SubsManagerStubs.conversation[1]];
+    BraavosCore.SubsManagerStubs[subscribeName] = [BraavosCore.SubsManagerStubs[subscribeName][1]];
   },
 
   // 获取个人信息
@@ -204,19 +213,28 @@ const MessageContent = React.createClass({
     return conversationViews;
   },
 
-  // 订阅conversationView
-  subConversationViews(){
-    // 订阅conversationView,并清除上一条订阅
-    BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews", this.props.conversationLimit || this.props.defaultConversationLimit));
-    this._clearPreviousSub();
+  // 订阅 systemMessage
+  subSystemMessages(){
+    // 订阅 systemMessage,并清除上一条订阅
+    BraavosCore.SubsManagerStubs.systemMessage.push(BraavosCore.SubsManager.systemMessage.subscribe("systemMessages", this.props.systemMessageLimit || this.props.defaultSystemMessageLimit));
+
+    // TODO: 这里需要清除上一次的 systemMessage 的订阅, 然而这里加上就会有加载的问题
+    this._clearPreviousSub('systemMessage');
   },
 
-  // 订阅conversation
+  // 订阅 conversationView
+  subConversationViews(){
+    // 订阅 conversationView ,并清除上一条订阅
+    BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews", this.props.conversationLimit || this.props.defaultConversationLimit));
+    this._clearPreviousSub('conversation');
+  },
+
+  // 订阅 conversation
   subConversations(conversationViews){
-    // 查找conversationView对应的conversation
+    // 查找 conversationView 对应的 conversation
     const conversationIds = conversationViews.map(conversationView => conversationView.conversationId);
 
-    // 订阅conversationView对应的conversation
+    // 订阅 conversationView 对应的 conversation
     Meteor.subscribe('conversations', conversationIds);
   },
 
@@ -375,6 +393,9 @@ const MessageContent = React.createClass({
     // 获取 selfInfo => TODO: It could be merged in userInfo list
     const selfInfo = this.getUserInfo(userId);
 
+    // 订阅 systemMessages
+    this.subSystemMessages();
+
     // 订阅 conversationView
     this.subConversationViews();
 
@@ -462,7 +483,8 @@ const MessageContent = React.createClass({
   // 路由跳转前的动作
   componentWillUnmount(){
     // 替换回router中的订阅
-    this._clearPreviousSub()
+    this._clearPreviousSub('conversation');
+    this._clearPreviousSub('systemMessage')
   },
 
   styles: {
@@ -521,7 +543,11 @@ const MessageContent = React.createClass({
     const tabBody = (this.props.activeTab == 'message')
       ? <div className="col-lg-12 fadeIn">
           <div className="ibox" style={_.extend({}, this.styles.ibox, {width: 600})}>
-            <SystemMessagesList messages={this.data.orderMessages}/>
+            <SystemMessagesList
+              messages={this.data.orderMessages}
+              systemMessageLimit={this.props.systemMessageLimit || this.props.defaultSystemMessageLimit}
+              onChangeSystemMessageLimit={this.props.handlers.systemMessages.onChangeSystemMessageLimit}
+            />
           </div>
         </div>
       : <div className="col-lg-12 fadeIn">
