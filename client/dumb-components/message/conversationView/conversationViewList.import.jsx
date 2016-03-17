@@ -27,8 +27,11 @@ export const ConversationViewList = React.createClass({
 
   // 滚轮的监测事件
   _handleScroll(e){
+    // 获取滚动列表元素和列表中的所有子元素
     const $scrollEle = $(e.target);
     const $conversationViewEle = $(e.target).children();
+
+    // 当滚到倒数第二条时,添加订阅量 => 判断条件为: 滚动列表元素的总高度 > 单个子元素高度 * (订阅数量 - 1)
     if ( $scrollEle.scrollTop() + $scrollEle.height() > $($conversationViewEle[0]).height() * (this.props.conversationLimit - 1) ) {
       this.props.onChangeConversationLimit(this.props.conversationLimit + 10);
     }

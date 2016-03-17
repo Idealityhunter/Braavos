@@ -20,6 +20,9 @@
 import { fromJS, Immutable } from '/lib/immutable'
 
 export const messageReducer = (state = fromJS({
+    // 系统消息的订阅数
+    systemMessageLimit: null,
+
     // 搜索词
     searchWord: null,
 
@@ -48,6 +51,10 @@ export const messageReducer = (state = fromJS({
     failedMessages: {}
   }), action) => {
     switch (action.type) {
+      // 设置系统消息的数目限制
+      case 'SET_SYSTEM_MESSAGE_LIMIT':
+        return state.set('systemMessageLimit', action.limit || null);
+
       // 设置搜索结果
       case 'SET_SEARCH_RESULT':
         return state.set('matchedMessages', fromJS(action.msgs));
