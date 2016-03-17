@@ -26,12 +26,12 @@ BraavosCore.SubsManager = {
   geo: new SubsManager(),
   account: new SubsManager(),
   conversation: new SubsManager(),
-  orderMsg: new SubsManager()
+  systemMessage: new SubsManager()
 };
 
 BraavosCore.SubsManagerStubs = {};
 BraavosCore.SubsManagerStubs.conversation = [];
-BraavosCore.SubsManagerStubs.orderMsg = [];
+BraavosCore.SubsManagerStubs.systemMessage = [];
 
 BraavosCore.SubsManager.geo.subscribe("countries");
 
@@ -46,7 +46,7 @@ function loginCheck(context, redirect, stop) {
 
   // 存储conversationView的subscribe记录
   BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
-  BraavosCore.SubsManagerStubs.orderMsg.push(BraavosCore.SubsManager.orderMsg.subscribe("orderMsgs"));
+  BraavosCore.SubsManagerStubs.systemMessage.push(BraavosCore.SubsManager.systemMessage.subscribe("systemMessages"));
 }
 
 const intlData = BraavosCore.IntlData.zh;

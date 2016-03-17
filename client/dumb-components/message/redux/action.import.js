@@ -121,3 +121,17 @@ export const setSearchResult = (msgs) => {
     msgs: msgs
   }
 };
+
+
+
+/**
+ * 设置系统消息列表的数目限制
+ * @param limit
+ * @returns {{type: string, limit: *}}
+ */
+export const setSystemMessageLimit = (limit) => {
+  return {
+    type: 'SET_SYSTEM_MESSAGE_LIMIT',
+    limit: limit
+  }
+};

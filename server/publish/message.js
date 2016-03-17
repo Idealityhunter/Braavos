@@ -65,7 +65,7 @@ Meteor.publish("messages", function (conversationId, limit = 10) {
  * conversationId: ObjectId(...)
  * sort: 默认为发送时间的逆序
  */
-Meteor.publish("orderMsgs", function (limit = 10) {
+Meteor.publish("systemMessages", function (limit = 10) {
   const userId = parseInt(this.userId);
   const coll = BraavosCore.Database.Hedy.Message;
   const allowedFields = ['msgId', 'conversation', 'senderId', 'receiverId', 'targets', 'msgType', 'contents', 'timestamp', 'read'];
