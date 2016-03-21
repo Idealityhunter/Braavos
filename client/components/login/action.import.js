@@ -67,8 +67,11 @@ export const loginFailed = (user, password) => {
  * @param password 密码
  * @returns {Function}
  */
-export const login = (user, password) => {
+export const login = (inputUser, password) => {
   return dispatch => {
+    // 清除输入的 user 中的空白符
+    const user = _.trim(inputUser);
+
     dispatch(requestLogin(user, password));
 
     // 尝试登录
