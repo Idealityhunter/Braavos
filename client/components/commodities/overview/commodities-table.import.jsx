@@ -105,15 +105,32 @@ const OperationCell = ({rowIndex, data}) => {
   // 上架商品
   const handlePubCommodity = commodityId => (e => {
     e.preventDefault();
-    Meteor.call('commodity.status.update', commodityId, 'pub', function (err, res) {
-      if (err) {
-        // 上架失败
+
+    // 检查是否满足上架条件
+    Meteor.call('commodity.check.publish', commodityId, function(err, res){
+      if (err){
         swal("上架失败!", "", "error");
-      }
+        return ;
+      };
+
+      // 未满足条件,则展示 method 传来的错误
+      if (!res.status) {
+        swal("上架失败!", (res.errorCode == 'Invalid Date') ? '您的商品套餐时间已过期，请重新选择.' : '', "error");
+        return ;
+      };
+
       if (res) {
-        // 上架成功
-        swal("上架成功!", "", "success");
-      }
+        Meteor.call('commodity.status.update', commodityId, 'pub', function (err, res) {
+          if (err) {
+            // 上架失败
+            swal("上架失败!", "", "error");
+          }
+          if (res) {
+            // 上架成功
+            swal("上架成功!", "", "success");
+          }
+        });
+      };
     });
   });
 
@@ -356,7 +373,7 @@ export const CommoditiesTable = React.createClass({
         />
         <Column
           header={this._buildHeader('price', '价格')}
-          cell={<TextCell data={this.data.get('commodities')} col="price" transform={v => `￥${v / 100}`} />}
+          cell={<TextCell data={this.data.get('commodities')} col="price" transform={v => `￥${v / 100}起`} />}
           fixed={true}
           width={80}
         />
