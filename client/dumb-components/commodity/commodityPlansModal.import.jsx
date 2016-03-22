@@ -227,7 +227,7 @@ const commodityPlansModal = React.createClass({
         id={"calendar-modal-" + this.props.index}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title">{this.props.plan.title} 设置价格</Modal.Title>
+          <Modal.Title id="contained-modal-title">套餐 "{this.props.plan.title}" 设置价格</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="commodity-basic-price-list">

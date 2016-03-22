@@ -120,8 +120,8 @@ const commodityPlans = React.createClass({
     tempPlan['pricing'] = tempPlan['pricing'].map(pricing => _.extend({}, pricing, {
       price: parseInt(pricing.price * 100)
     }));
-    tempPlan['price'] = tempPlan['price'] && tempPlan['price'] * 100;
-    tempPlan['marketPrice'] = tempPlan['marketPrice'] && tempPlan['marketPrice'] * 100;
+    tempPlan['price'] = tempPlan['price'] && parseInt(tempPlan['price'] * 100);//此处若是没有 parseInt 的话会有可能出现 20.01 * 100 得到一个小数的情况
+    tempPlan['marketPrice'] = tempPlan['marketPrice'] && parseInt(tempPlan['marketPrice'] * 100);
 
     if (Match.test(tempPlan, BraavosCore.Schema.Marketplace.CommodityPlan)){
       addPlan.pricing = addPlan.pricing.map(pricing => _.extend(pricing, {
