@@ -30,7 +30,7 @@ const commodityPlansModal = React.createClass({
       transferredPricing = [{
         'price': '',
         'key': Meteor.uuid(),
-        'timeRange': [moment().format('YYYY-MM-DD'), moment(new Date().valueOf() + 1000 * 60 * 60 * 24 * 90).format('YYYY-MM-DD')]
+        'timeRange': [moment().format('YYYY-MM-DD'), moment(new Date().valueOf() + 1000 * 60 * 60 * 24 * 180).format('YYYY-MM-DD')]
       }]
     }
 
