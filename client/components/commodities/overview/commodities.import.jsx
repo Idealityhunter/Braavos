@@ -9,8 +9,6 @@
 import {
   createStore, combineReducers, compose, Provider, connect, applyMiddleware, thunkMiddleware
 } from '/lib/redux'
-import { FixedDataTable } from '/lib/fixed-data-table'
-import { Input, Button, Alert } from '/lib/react-bootstrap'
 import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
 
 import { fromJS } from '/lib/immutable'

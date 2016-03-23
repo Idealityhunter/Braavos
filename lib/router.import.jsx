@@ -14,6 +14,7 @@ import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/dumb-components/finance/finance';
 import {Message} from '/client/dumb-components/message/message';
+import {Columns} from '/client/components/activities/column/column';
 
 import {Page404} from '/client/dumb-components/page404';
 
@@ -47,6 +48,17 @@ function loginCheck(context, redirect, stop) {
   // 存储conversationView的subscribe记录
   BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
   BraavosCore.SubsManagerStubs.systemMessage.push(BraavosCore.SubsManager.systemMessage.subscribe("systemMessages"));
+}
+
+// 检查是否为管理员
+function adminCheck(context, redirect, stop) {
+  // TODO 此处可能会有错, 因为在 startup.js 未加载时, User 表还没有定义, 因此在使用 BraavosCore.Utils.account.isAdmin 时会报错
+  if (! BraavosCore.Utils.account.isAdmin()){
+     ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
+     stop();
+  }
+
+  return true;
 }
 
 const intlData = BraavosCore.IntlData.zh;
@@ -285,7 +297,7 @@ FlowRouter.route('/account', {
   }
 });
 
-// 账户信息
+// 消息页面
 FlowRouter.route('/message', {
   name: 'message',
   title: lsbMessages['message'],
@@ -296,6 +308,7 @@ FlowRouter.route('/message', {
   }
 });
 
+// 404页面
 FlowRouter.notFound = {
   subscriptions: function () {
 
@@ -304,3 +317,25 @@ FlowRouter.notFound = {
     ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
   }
 };
+
+// 专区活动页面
+FlowRouter.route('/activities/column', {
+  name: 'activities-column',
+  title: lsbMessages['activities-column'],
+  parent: 'home',
+  triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "商品专区管理"}));
+  }
+});
+
+// Banner活动页面
+FlowRouter.route('/activities/banner', {
+  name: 'activities-banner',
+  title: lsbMessages['activities-banner'],
+  parent: 'home',
+  triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
+  }
+});

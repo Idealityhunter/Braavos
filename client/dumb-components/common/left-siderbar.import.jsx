@@ -26,7 +26,8 @@ let leftSiderBar = React.createClass({
       userInfo.avatar = "/images/logo.png"
     }
     return {
-      userInfo: userInfo
+      userInfo: userInfo,
+      isAdmin: BraavosCore.Utils.account.isAdmin()
     };
   },
 
@@ -135,6 +136,31 @@ let leftSiderBar = React.createClass({
                 </span>
               </a>
             </li>
+
+            {
+              this.data.isAdmin ?
+                <li className={ActiveRoute.name(/^activities/) ? "active" : ""}>
+                  <a href="#">
+                    <i className="fa fa-th-large"></i>
+                <span className="nav-label">
+                  <FormattedMessage message={this.getIntlMessage(`${prefix}platformActivities`)}/>
+                </span>
+                    <span className="fa arrow"></span>
+                  </a>
+                  <ul className={ActiveRoute.name(/^activities/) ? "nav nav-second-level in" : "nav nav-second-level"}>
+                    <li className={ActiveRoute.name('activities-column') ? "active" : ""}>
+                      <a href={FlowRouter.path('activities-column')}>
+                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
+                      </a>
+                    </li>
+                    <li className={ActiveRoute.name('activities-banner') ? "active" : ""}>
+                      <a href={FlowRouter.path('activities-banner')}>
+                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
+                      </a>
+                    </li>
+                  </ul>
+                </li> : <div/>
+            }
 
             {/*Dashboards*/}
             {/*
