@@ -34,7 +34,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setLoginFailedAlert(false));
     },
     // 用户点击了"登录"按钮
-    handleLogin: (user, password) => {
+    handleLogin: (inputUser, password) => {
+      // 清除输入的 user 中的空白符
+      const user = _.trim(inputUser);
+
       BraavosCore.logger.debug(`Trying to login with user: ${user}, password: ${password}`);
 
       // 尝试登录
