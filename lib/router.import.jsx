@@ -14,6 +14,8 @@ import {OrderRefundPaid} from '/client/dumb-components/order/orderRefundPaid';
 import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCommitted';
 import {Finance} from '/client/components/finance/finance';
 import {Message} from '/client/dumb-components/message/message';
+import {Columns} from '/client/components/activities/column/column';
+import {ColumnEdit} from '/client/components/activities/column/column-edit';
 
 import {Page404} from '/client/dumb-components/page404';
 
@@ -47,6 +49,17 @@ function loginCheck(context, redirect, stop) {
   // 存储conversationView的subscribe记录
   BraavosCore.SubsManagerStubs.conversation.push(BraavosCore.SubsManager.conversation.subscribe("conversationViews"));
   BraavosCore.SubsManagerStubs.systemMessage.push(BraavosCore.SubsManager.systemMessage.subscribe("systemMessages"));
+}
+
+// 检查是否为管理员
+function adminCheck(context, redirect, stop) {
+  // TODO 此处可能会有错, 因为在 startup.js 未加载时, User 表还没有定义, 因此在使用 BraavosCore.Utils.account.isAdmin 时会报错
+  if (! BraavosCore.Utils.account.isAdmin()){
+     ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
+     stop();
+  }
+
+  return true;
 }
 
 const intlData = BraavosCore.IntlData.zh;
@@ -296,7 +309,7 @@ FlowRouter.route('/account', {
   }
 });
 
-// 账户信息
+// 消息页面
 FlowRouter.route('/message', {
   name: 'message',
   title: lsbMessages['message'],
@@ -307,6 +320,7 @@ FlowRouter.route('/message', {
   }
 });
 
+// 404页面
 FlowRouter.notFound = {
   subscriptions: function () {
 
@@ -315,3 +329,63 @@ FlowRouter.notFound = {
     ReactLayout.render(MainLayout, _.extend({content: <Page404 {...intlData} />}, intlData, {documentTitle: "404页面"}));
   }
 };
+
+// 专区活动列表页面
+FlowRouter.route('/activities/columns', {
+  name: 'activities-column',
+  title: lsbMessages['activities-column'],
+  parent: 'home',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "商品专区管理"}));
+  }
+});
+
+// 专区活动添加页面
+FlowRouter.route('/activities/columns/add', {
+  name: 'activities-column-add',
+  title: lsbMessages['activities-column-add'],
+  parent: 'activities-column',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <ColumnEdit {...intlData} />}, intlData, {documentTitle: "专区添加"}));
+  }
+});
+
+// 专区活动编辑页面
+FlowRouter.route('/activities/columns/edit/:columnId', {
+  name: 'activities-column-edit',
+  title: lsbMessages['activities-column-edit'],
+  parent: 'activities-column',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action(param, queryParam) {
+    const columnId = param.columnId;
+
+    // 检查token是否是当前用户的商品
+    Meteor.call('activity.column.getColumnInfo', columnId, (err, ret) => {
+      const isValid = (!err && ret.valid);
+      if (isValid) {
+        ReactLayout.render(MainLayout, _.extend({
+          content: <ColumnEdit {...intlData} {...ret.columnInfo}/>
+        }, intlData, {documentTitle: "专区编辑"}));
+      } else {
+        FlowRouter.go('home');
+      }
+    });
+  }
+});
+
+// Banner活动页面
+FlowRouter.route('/activities/banners', {
+  name: 'activities-banner',
+  title: lsbMessages['activities-banner'],
+  parent: 'home',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
+  }
+});

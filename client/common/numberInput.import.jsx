@@ -1,6 +1,6 @@
 // 数字输入框: 禁止用户输入非数字的行为(暂时支持整数和小数)
 
-const numberInput = React.createClass({
+export const NumberInput = React.createClass({
   propTypes:{
     // 输入框的自定义样式
     style: React.PropTypes.object,
@@ -14,7 +14,7 @@ const numberInput = React.createClass({
     // number 的小数点位数限制(当 numberType 为 'float' 的时候才起作用)
     decimalDigits: React.PropTypes.number,
 
-    // TODO: 待定
+    // 修改 state 的函数
     onChange: React.PropTypes.func,
 
     // 输入框的 placeholder
@@ -50,6 +50,7 @@ const numberInput = React.createClass({
         } else {
           $(e.target).val(this.originValue);
         };
+        break;
       default :
         break;
     };
@@ -94,5 +95,3 @@ const numberInput = React.createClass({
     )
   }
 });
-
-export const NumberInput = numberInput;

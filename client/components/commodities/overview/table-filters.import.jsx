@@ -14,8 +14,10 @@ export const TableFilters = React.createClass({
     query: React.PropTypes.string,
     // 商品状态
     statusFilter: React.PropTypes.number,
-    // 添加商品
+
+    // 添加商品 => 暂时没有传入
     onAddCommodity: React.PropTypes.func,
+
     // 修改查询关键词
     onChangeQuery: React.PropTypes.func,
     // 修改商品状态
@@ -70,12 +72,7 @@ export const TableFilters = React.createClass({
     return (
       <div className="ibox-content m-b-sm border-bottom">
         <div className="row">
-          <a href="/commodities/add" style={{
-          marginTop: 25,
-          float: 'left',
-          marginLeft: 20,
-          marginRight: 0
-          }}>
+          <a href="/commodities/add" style={{marginTop: 25, float: 'left', marginLeft: 20, marginRight: 0}}>
             <Button bsStyle="info" bsSize="small" onClick={this.props.onAddCommodity}>添加商品</Button>
           </a>
           <form>

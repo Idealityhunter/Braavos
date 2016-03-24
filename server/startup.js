@@ -101,7 +101,8 @@ function initMongo() {
     {collName: "Order", schema: Schema.Marketplace.Order},
     {collName: "CommoditySnapshot", schema: Schema.Marketplace.Commodity},
     {collName: "Country", schema: Schema.Marketplace.Country},
-    {collName: "Locality", schema: Schema.Marketplace.Locality}
+    {collName: "Locality", schema: Schema.Marketplace.Locality},
+    {collName: "Column", Schema: Schema.Activity.Column}
   ]);
   helper('yunkai', 'Yunkai', [{collName: 'UserInfo', schema: Schema.Account.UserInfo}]);
   helper('hedy', 'Hedy', [

@@ -18,7 +18,12 @@ BraavosCore.IntlData.zh = {
         orders: '订单管理',
         finance: '财务管理',
         accountInfo: '账户信息',
-        message: '消息'
+        message: '消息',
+        platformActivities: '平台活动',
+        'activities-column': '专区管理',
+        'activities-column-add': '专区添加',
+        'activities-column-edit': '专区编辑',
+        'activities-banner': 'Banner区管理'
       }
     },
     login: {
