@@ -6,8 +6,8 @@ import {Chosen} from "/client/common/chosen";
 import {Label, Input, Overlay, Tooltip} from "/lib/react-bootstrap"
 import {CommentText} from '/client/dumb-components/common/comment-text';
 
-var IntlMixin = ReactIntl.IntlMixin;
-var FormattedMessage = ReactIntl.FormattedMessage;
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
 
 const PhoneEditor = React.createClass({
   propTypes: {

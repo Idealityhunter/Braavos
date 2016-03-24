@@ -2,8 +2,8 @@
 
 import {ImageCropper} from "/client/common/image-cropper"
 
-var IntlMixin = ReactIntl.IntlMixin;
-var FormattedMessage = ReactIntl.FormattedMessage;
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
 
 let commodityGallery = React.createClass({
   mixins: [IntlMixin],
@@ -154,7 +154,6 @@ let commodityGallery = React.createClass({
 
     // 获取原始宽高
     const oSelection = evt.oSelection;
-
 
     const imageSrc =  evt.oImage;
     const imageData = atob(imageSrc.replace(/^data:image\/[a-z]+;base64,/, ""));

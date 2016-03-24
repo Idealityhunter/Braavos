@@ -15,6 +15,7 @@ import {OrderRefundCommitted} from '/client/dumb-components/order/orderRefundCom
 import {Finance} from '/client/dumb-components/finance/finance';
 import {Message} from '/client/dumb-components/message/message';
 import {Columns} from '/client/components/activities/column/column';
+import {ColumnEdit} from '/client/components/activities/column/column-edit';
 
 import {Page404} from '/client/dumb-components/page404';
 
@@ -318,23 +319,61 @@ FlowRouter.notFound = {
   }
 };
 
-// 专区活动页面
-FlowRouter.route('/activities/column', {
+// 专区活动列表页面
+FlowRouter.route('/activities/columns', {
   name: 'activities-column',
   title: lsbMessages['activities-column'],
   parent: 'home',
-  triggersEnter: [loginCheck, adminCheck],
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "商品专区管理"}));
   }
 });
 
+// 专区活动添加页面
+FlowRouter.route('/activities/columns/add', {
+  name: 'activities-column-add',
+  title: lsbMessages['activities-column-add'],
+  parent: 'activities-column',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <ColumnEdit {...intlData} />}, intlData, {documentTitle: "专区添加"}));
+  }
+});
+
+// 专区活动编辑页面
+FlowRouter.route('/activities/columns/edit/:columnId', {
+  name: 'activities-column-edit',
+  title: lsbMessages['activities-column-edit'],
+  parent: 'activities-column',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action(param, queryParam) {
+    const columnId = param.columnId;
+
+    // 检查token是否是当前用户的商品
+    Meteor.call('activity.column.getColumnInfo', columnId, (err, ret) => {
+      const isValid = (!err && ret.valid);
+      if (isValid) {
+        ReactLayout.render(MainLayout, _.extend({
+          content: <ColumnEdit {...intlData} {...ret.columnInfo}/>
+        }, intlData, {documentTitle: "专区编辑"}));
+      } else {
+        FlowRouter.go('home');
+      }
+    });
+  }
+});
+
 // Banner活动页面
-FlowRouter.route('/activities/banner', {
+FlowRouter.route('/activities/banners', {
   name: 'activities-banner',
   title: lsbMessages['activities-banner'],
   parent: 'home',
-  triggersEnter: [loginCheck, adminCheck],
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
   }

@@ -5,7 +5,6 @@
  */
 
 import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
-//import { Input, Button, Alert } from '/lib/react-bootstrap'
 import { Button, ButtonGroup } from '/lib/react-bootstrap'
 import { FixedDataTable} from '/lib/fixed-data-table'
 const { Table, Column, Cell } = FixedDataTable;
@@ -14,10 +13,13 @@ const TextCell = React.createClass({
   propTypes: {
     // 第几行
     rowIndex: React.PropTypes.number,
+
     // table的数据
     data: React.PropTypes.object,
+
     // 列名称
     col: React.PropTypes.string,
+
     // 数据转换函数
     transform: React.PropTypes.func
   },
@@ -31,8 +33,9 @@ const TextCell = React.createClass({
       contents = transform(contents);
     };
 
+    const disabled = data[rowIndex]['status'] == 'disabled';
     return (
-      <Cell>
+      <Cell style={disabled ? {color: '#ccc'} : {}}>
         {contents}
       </Cell>
     );
@@ -55,10 +58,6 @@ const ImageCell = ({rowIndex, data, col}) => {
 
 // 操作
 const OperationCell = ({rowIndex, data}) => {
-  const handleEdit = commodityId => (() => {
-    const isAdmin = BraavosCore.Utils.account.isAdmin();
-    FlowRouter.go(`/commodities/editor/${commodityId}?isAdmin=${isAdmin}`);
-  });
 
   // 下架商品
   const handleDropCommodity = commodityId => (e => {
@@ -118,28 +117,60 @@ const OperationCell = ({rowIndex, data}) => {
     });
   });
 
-  //const commodityId = commodity.get('commodityId');
-  //const buttons = [<Button key={`${commodityId}.edit`} bsClass="btn btn-white"
-  //                         onClick={handleEdit(commodityId)}>编辑</Button>];
+  const columnId = data[rowIndex].columnId;
 
-  //const status = commodity.get('status');
-  //if (status == 'pub') {
-  //  buttons.push(<Button key={`${commodityId}.disabled`} bsClass="btn btn-white"
-  //                       onClick={handleDropCommodity(commodity.get('commodityId'))}>下架</Button>);
-  //} else if (status == 'disabled' || status == 'review' && BraavosCore.Utils.account.isAdmin()) {
-  //  buttons.push(<Button key={`${commodityId}.pub`} bsClass="btn btn-white"
-  //                       onClick={handlePubCommodity(commodity.get('commodityId'))}>上架</Button>);
-  //}
+  // 控制进入专区编辑页面的函数
+  const handleEdit = columnId => (e => {
+    e.preventDefault();
+    FlowRouter.go(`/activities/columns/edit/${columnId}`);
+  });
 
-  const columnId = data[rowIndex].id;
+  // 控制专区上线的函数
+  const handleColumnPub = columnId => ((e) => {
+    e.preventDefault();
+
+    Meteor.call('activity.column.update.status', columnId, 'pub', function (err, res) {
+      if (err) {
+        swal("上线失败!", "", "error");
+      }
+      if (res) {
+        swal("上线成功", "", "success");
+      }
+    });
+  });
+
+  // 控制专区下线的函数
+  const handleColumnDisable = columnId => ((e) => {
+    e.preventDefault();
+
+    Meteor.call('activity.column.update.status', columnId, 'disabled', function (err, res) {
+      if (err) {
+        swal("下线失败!", "", "error");
+      }
+      if (res) {
+        swal("下线成功", "", "success");
+      }
+    });
+  });
+
+  const status = data[rowIndex].status;
   const buttons = [
-    <Button key={`${columnId}.edit`} bsClass="btn btn-white" onClick={handleEdit()}>编辑</Button>,
-    <Button key={`${columnId}.view`} bsClass="btn btn-white" onClick={handleEdit()}>查看</Button>,
-    <Button key={`${columnId}.online`} bsClass="btn btn-white" onClick={handleEdit()}>上线</Button>,
-    <Button key={`${columnId}.disable`} bsClass="btn btn-white" onClick={handleEdit()}>下线</Button>
+    <Button key={`${columnId}.edit`} bsClass="btn btn-white" onClick={handleEdit(columnId)}>编辑</Button>,
+
+    // TODO 暂时先不做查看页面
+    //<Button key={`${columnId}.view`} bsClass="btn btn-white" onClick={handleEdit()}>查看</Button>,
+
     // TODO 暂时不需要删除, 以免造成无法恢复的后果
     //,<Button key={`${columnId}.delete`} bsClass="btn btn-white" onClick={handleEdit()}>删除</Button>
   ];
+
+  if (status == 'disabled'){
+    buttons.push(<Button key={`${columnId}.pub`} bsClass="btn btn-white" onClick={handleColumnPub(columnId)}>上线</Button>);
+  }
+
+  if (status == 'pub'){
+    buttons.push(<Button key={`${columnId}.disable`} bsClass="btn btn-white" onClick={handleColumnDisable(columnId)}>下线</Button>);
+  }
 
   return (
     <Cell>
@@ -151,60 +182,44 @@ const OperationCell = ({rowIndex, data}) => {
 };
 
 export const Columns = React.createClass({
-  fakeData: [{
-    id: 111212,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 9,
-    rank: 1
-  }, {
-    id: 111211232,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 91,
-    rank: 2
-  }, {
-    id: 111212123123,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 20,
-    rank: 3
-  }, {
-    id: 111212213123,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 19,
-    rank: 4
-  }, {
-    id: 111212123213123,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 29,
-    rank: 5
-  }, {
-    id: 111212123213213,
-    title: '海岛专区',
-    cover: 'http://images.taozilvxing.com/columnc1_beach.jpg',
-    commodities: [1,2,3,4,5,6,7,7,8,9,9],
-    count: 39,
-    rank: 6
-  }],
+  mixins: [ReactMeteorData],
+  propTypes: {
+  },
 
   getMeteorData(){
+    const columnsSub = Meteor.subscribe('activity.column.bulk', {columnType: 'special'});
 
+    let columns = [];
+    if (columnsSub.ready()){
+      columns = BraavosCore.Database.Braavos.Column.find({columnType: 'special'},{sort: {rank: 1}}).fetch();
+    }
+
+    return {
+      columns: columns
+    }
+  },
+
+  // 数据预处理 => cover 的提取和 count 的计算
+  processData(columns){
+    let i = 0;
+    return columns.map(column => _.extend(column, {
+      cover: column.images[0].key && `http://images.taozilvxing.com/${column.images[0].key}` || column.images[0].url || '',
+      count: column.commodities && column.commodities.length || 0
+    }))
   },
 
   render (){
-    const columns = this.fakeData;
+    //const columns = this.fakeData;
+    const columns = this.processData(this.data.columns);
+
     return (
-      <div className="commodity-mngm-wrap">
+      <div className="column-mngm-wrap">
         <BraavosBreadcrumb />
         <div className="wrapper wrapper-content animated fadeInRight">
+          <a href="/activities/columns/add" style={{marginBottom: 20, display: 'block'}}>
+            <Button bsStyle="info" bsSize="small"> + 添加专区</Button>
+          </a>
+
           <Table
             rowsCount={columns.length}
             rowHeight={120}
@@ -212,6 +227,12 @@ export const Columns = React.createClass({
             width={800}
             height={650}
           >
+            <Column
+              header={<Cell>专区编号</Cell>}
+              cell={<TextCell data={columns} col="columnId"/>}
+              fixed={true}
+              width={80}
+            />
             <Column
               header={<Cell>活动名称</Cell>}
               cell={<TextCell data={columns} col="title"/>}
@@ -228,13 +249,13 @@ export const Columns = React.createClass({
               header={<Cell>专区商品数量</Cell>}
               cell={<TextCell data={columns} col="count"/>}
               fixed={true}
-              width={100}
+              width={80}
             />
             <Column
               header={<Cell>排名</Cell>}
               cell={<TextCell data={columns} col="rank"/>}
               fixed={true}
-              width={100}
+              width={80}
             />
             <Column
               header={<Cell>操作</Cell>}

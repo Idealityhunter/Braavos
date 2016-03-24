@@ -1,5 +1,5 @@
-var IntlMixin = ReactIntl.IntlMixin;
-var FormattedMessage = ReactIntl.FormattedMessage;
+const IntlMixin = ReactIntl.IntlMixin;
+const FormattedMessage = ReactIntl.FormattedMessage;
 
 let leftSiderBar = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
@@ -148,12 +148,12 @@ let leftSiderBar = React.createClass({
                     <span className="fa arrow"></span>
                   </a>
                   <ul className={ActiveRoute.name(/^activities/) ? "nav nav-second-level in" : "nav nav-second-level"}>
-                    <li className={ActiveRoute.name('activities-column') ? "active" : ""}>
+                    <li className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
                       <a href={FlowRouter.path('activities-column')}>
                         <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
                       </a>
                     </li>
-                    <li className={ActiveRoute.name('activities-banner') ? "active" : ""}>
+                    <li className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>
                       <a href={FlowRouter.path('activities-banner')}>
                         <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
                       </a>
