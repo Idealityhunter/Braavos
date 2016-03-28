@@ -4,6 +4,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 let leftSiderBar = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
+  getInitialState(){
+    return {
+      showActivity: undefined,
+    }
+  },
+
   getMeteorData() {
     const handle = Meteor.subscribe('basicUserInfo');
 
@@ -35,8 +41,40 @@ let leftSiderBar = React.createClass({
     $('#side-menu').metisMenu();
   },
 
+  // 控制 activity 二级菜单的展示
+  handleShowActivity(e){
+    this.setState({
+      showActivity: this.state.showActivity
+    })
+  },
+
   render() {
     const prefix = 'mainLayout.leftSideBar.';
+
+    // activity 的二级菜单
+    const activitiesNav = this.data.isAdmin ?
+      <li className={ this.state.showActivity != undefined && this.state.showActivity || ActiveRoute.name(/^activities/) ? "active" : ""} onClick={this.handleShowActivity}>
+        <a href="#">
+          <i className="fa fa-th-large"></i>
+          <span className="nav-label">
+            <FormattedMessage message={this.getIntlMessage(`${prefix}platformActivities`)}/>
+          </span>
+          <span className="fa arrow"></span>
+        </a>
+        <ul className={`nav nav-second-level ${this.state.showActivity != undefined && this.state.showActivity || ActiveRoute.name(/^activities/) ? "in" : "collapse"}`}>
+          <li key="activities-column" className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-column')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
+            </a>
+          </li>
+          <li key="activities-banner" className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-banner')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
+            </a>
+          </li>
+        </ul>
+      </li> : <div/>;
+
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -137,30 +175,7 @@ let leftSiderBar = React.createClass({
               </a>
             </li>
 
-            {
-              this.data.isAdmin ?
-                <li className={ActiveRoute.name(/^activities/) ? "active" : ""}>
-                  <a href="#">
-                    <i className="fa fa-th-large"></i>
-                <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(`${prefix}platformActivities`)}/>
-                </span>
-                    <span className="fa arrow"></span>
-                  </a>
-                  <ul className={ActiveRoute.name(/^activities/) ? "nav nav-second-level in" : "nav nav-second-level"}>
-                    <li className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
-                      <a href={FlowRouter.path('activities-column')}>
-                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
-                      </a>
-                    </li>
-                    <li className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>
-                      <a href={FlowRouter.path('activities-banner')}>
-                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
-                      </a>
-                    </li>
-                  </ul>
-                </li> : <div/>
-            }
+            {activitiesNav}
 
             {/*Dashboards*/}
             {/*
