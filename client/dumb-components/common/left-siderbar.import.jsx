@@ -42,10 +42,18 @@ let leftSiderBar = React.createClass({
     $('#side-menu').metisMenu();
   },
 
-  // 控制 activity 二级菜单的展示
+  // 点击 activity 时, 控制 activity 二级菜单的展示和消失
   handleShowActivity(e){
     this.setState({
-      showActivity: this.state.showActivity
+      showActivity: ! this.state.showActivity
+    })
+  },
+
+  // 点击其它子菜单的时候, 控制 activity 菜单的隐藏
+  // TODO 添加新一个二级菜单时可将此改为 handleHideOthers(e)
+  handleHideActivity(e){
+    this.setState({
+      showActivity: false
     })
   },
 
@@ -122,7 +130,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*首页*/}
-            <li className={ActiveRoute.name('home') ? "active" : ""}>
+            <li className={ActiveRoute.name('home') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('home')}>
                 <i className="fa fa-diamond"/>
                 <span className="nav-label">
@@ -132,7 +140,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*商品管理*/}
-            <li className={ActiveRoute.name('commodities') ? "active" : ""}>
+            <li className={ActiveRoute.name('commodities') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('commodities')}>
                 <i className="fa fa-shopping-cart"/>
                 <span className="nav-label">
@@ -142,7 +150,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*订单管理*/}
-            <li className={ActiveRoute.name('orders') ? "active" : ""}>
+            <li className={ActiveRoute.name('orders') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('orders')}>
                 <i className="fa fa-tags"/>
                 <span className="nav-label">
@@ -162,7 +170,7 @@ let leftSiderBar = React.createClass({
             </li>*/}
 
             {/*账户信息*/}
-            <li className={ActiveRoute.name('account') ? "active" : ""}>
+            <li className={ActiveRoute.name('account') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('account')}>
                 <i className="fa fa-user"/>
                 <span className="nav-label">
@@ -172,7 +180,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*消息*/}
-            <li className={ActiveRoute.name('message') ? "active" : ""}>
+            <li className={ActiveRoute.name('message') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('message')}>
                 <i className="fa fa-comments"/>
                 <span className="nav-label">
