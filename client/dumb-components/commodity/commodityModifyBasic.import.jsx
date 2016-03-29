@@ -118,8 +118,8 @@ const commodityModifyBasic = React.createClass({
     }
 
     return {
-      countries: Array.prototype.concat(tempCountries, restCountries),
-      localities: localities
+      localities,
+      countries: Array.prototype.concat(tempCountries, restCountries)
     }
   },
 
@@ -179,7 +179,7 @@ const commodityModifyBasic = React.createClass({
   _handleCountryChange(e){
     const country = $(e.target).children(`option:eq(${e.target.value})`).text();
     this.setState({
-      country: country
+      country
     })
   },
 
@@ -187,7 +187,7 @@ const commodityModifyBasic = React.createClass({
   _handleLocalityChange(e){
     const locality = $(e.target).children(`option:eq(${e.target.value})`).text();
     this.setState({
-      locality: locality
+      locality
     })
   },
 

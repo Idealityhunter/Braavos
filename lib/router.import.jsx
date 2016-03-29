@@ -367,6 +367,56 @@ FlowRouter.route('/activities/columns/edit/:columnId', {
   }
 });
 
+
+
+// 专区活动列表页面
+FlowRouter.route('/activities/articles', {
+  name: 'activities-article',
+  title: lsbMessages['activities-article'],
+  parent: 'home',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "城市文章管理"}));
+  }
+});
+
+// 专区活动添加页面
+FlowRouter.route('/activities/articles/add', {
+  name: 'activities-article-add',
+  title: lsbMessages['activities-article-add'],
+  parent: 'activities-article',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action() {
+    ReactLayout.render(MainLayout, _.extend({content: <ColumnEdit {...intlData} />}, intlData, {documentTitle: "城市文章添加"}));
+  }
+});
+
+//// 专区活动编辑页面
+//FlowRouter.route('/activities/columns/edit/:columnId', {
+//  name: 'activities-column-edit',
+//  title: lsbMessages['activities-column-edit'],
+//  parent: 'activities-column',
+//  // 方便调试
+//  //triggersEnter: [loginCheck, adminCheck],
+//  action(param, queryParam) {
+//    const columnId = param.columnId;
+//
+//    // 检查token是否是当前用户的商品
+//    Meteor.call('activity.column.getColumnInfo', columnId, (err, ret) => {
+//      const isValid = (!err && ret.valid);
+//      if (isValid) {
+//        ReactLayout.render(MainLayout, _.extend({
+//          content: <ColumnEdit {...intlData} {...ret.columnInfo}/>
+//        }, intlData, {documentTitle: "专区编辑"}));
+//      } else {
+//        FlowRouter.go('home');
+//      }
+//    });
+//  }
+//});
+
 // Banner活动页面
 FlowRouter.route('/activities/banners', {
   name: 'activities-banner',

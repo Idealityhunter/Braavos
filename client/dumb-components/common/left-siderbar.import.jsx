@@ -31,8 +31,9 @@ let leftSiderBar = React.createClass({
     } else {
       userInfo.avatar = "/images/logo.png"
     }
+
     return {
-      userInfo: userInfo,
+      userInfo,
       isAdmin: BraavosCore.Utils.account.isAdmin()
     };
   },
@@ -65,6 +66,11 @@ let leftSiderBar = React.createClass({
           <li key="activities-column" className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
             <a href={FlowRouter.path('activities-column')}>
               <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
+            </a>
+          </li>
+          <li key="activities-article" className={ActiveRoute.name(/^activities-article/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-article')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-article`)}/>
             </a>
           </li>
           <li key="activities-banner" className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>

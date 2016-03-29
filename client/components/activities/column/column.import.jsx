@@ -194,9 +194,7 @@ export const Columns = React.createClass({
       columns = BraavosCore.Database.Braavos.Column.find({columnType: 'special'},{sort: {rank: 1}}).fetch();
     }
 
-    return {
-      columns: columns
-    }
+    return {columns}
   },
 
   // 数据预处理 => cover 的提取和 count 的计算

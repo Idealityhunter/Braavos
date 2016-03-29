@@ -460,16 +460,16 @@ const MessageContent = React.createClass({
       // TODO: userInfo: userAvatar&userId&avatar 群组聊天中用到
 
       // 会话列表
-      conversationViews: conversationViews,//包括avatar
+      conversationViews,//包括avatar
 
       // 订单消息(消息中心使用)
-      orderMessages: orderMessages,
-
-      // 聊天消息(聊天中心使用)
-      messages: mergedMessages,
+      orderMessages,
 
       // activeConversation的名称
-      activeConversationName: activeConversationName
+      activeConversationName,
+
+      // 聊天消息(聊天中心使用)
+      messages: mergedMessages
     };
   },
 
