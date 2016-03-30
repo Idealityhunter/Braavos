@@ -47,7 +47,7 @@ const commodity = React.createClass({
       }));
     }
     return {
-      commodities: commodities,
+      commodities,
       isAdmin: options.isAdmin
     };
   },

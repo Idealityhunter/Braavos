@@ -4,6 +4,12 @@ const FormattedMessage = ReactIntl.FormattedMessage;
 let leftSiderBar = React.createClass({
   mixins: [IntlMixin, ReactMeteorData],
 
+  getInitialState(){
+    return {
+      showActivity: undefined,
+    }
+  },
+
   getMeteorData() {
     const handle = Meteor.subscribe('basicUserInfo');
 
@@ -25,8 +31,9 @@ let leftSiderBar = React.createClass({
     } else {
       userInfo.avatar = "/images/logo.png"
     }
+
     return {
-      userInfo: userInfo,
+      userInfo,
       isAdmin: BraavosCore.Utils.account.isAdmin()
     };
   },
@@ -35,8 +42,53 @@ let leftSiderBar = React.createClass({
     $('#side-menu').metisMenu();
   },
 
+  // 点击 activity 时, 控制 activity 二级菜单的展示和消失
+  handleShowActivity(e){
+    this.setState({
+      showActivity: ! this.state.showActivity
+    })
+  },
+
+  // 点击其它子菜单的时候, 控制 activity 菜单的隐藏
+  // TODO 添加新一个二级菜单时可将此改为 handleHideOthers(e)
+  handleHideActivity(e){
+    this.setState({
+      showActivity: false
+    })
+  },
+
   render() {
     const prefix = 'mainLayout.leftSideBar.';
+
+    // activity 的二级菜单
+    const activitiesNav = this.data.isAdmin ?
+      <li className={ this.state.showActivity != undefined && this.state.showActivity || ActiveRoute.name(/^activities/) ? "active" : ""} onClick={this.handleShowActivity}>
+        <a href="#">
+          <i className="fa fa-th-large"></i>
+          <span className="nav-label">
+            <FormattedMessage message={this.getIntlMessage(`${prefix}platformActivities`)}/>
+          </span>
+          <span className="fa arrow"></span>
+        </a>
+        <ul className={`nav nav-second-level ${this.state.showActivity != undefined && this.state.showActivity || ActiveRoute.name(/^activities/) ? "in" : "collapse"}`}>
+          <li key="activities-column" className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-column')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
+            </a>
+          </li>
+          <li key="activities-article" className={ActiveRoute.name(/^activities-article/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-article')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-article`)}/>
+            </a>
+          </li>
+          <li key="activities-banner" className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>
+            <a href={FlowRouter.path('activities-banner')}>
+              <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
+            </a>
+          </li>
+        </ul>
+      </li> : <div/>;
+
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -78,7 +130,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*首页*/}
-            <li className={ActiveRoute.name('home') ? "active" : ""}>
+            <li className={ActiveRoute.name('home') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('home')}>
                 <i className="fa fa-diamond"/>
                 <span className="nav-label">
@@ -88,7 +140,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*商品管理*/}
-            <li className={ActiveRoute.name('commodities') ? "active" : ""}>
+            <li className={ActiveRoute.name('commodities') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('commodities')}>
                 <i className="fa fa-shopping-cart"/>
                 <span className="nav-label">
@@ -98,7 +150,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*订单管理*/}
-            <li className={ActiveRoute.name('orders') ? "active" : ""}>
+            <li className={ActiveRoute.name('orders') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('orders')}>
                 <i className="fa fa-tags"/>
                 <span className="nav-label">
@@ -118,7 +170,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*账户信息*/}
-            <li className={ActiveRoute.name('account') ? "active" : ""}>
+            <li className={ActiveRoute.name('account') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('account')}>
                 <i className="fa fa-user"/>
                 <span className="nav-label">
@@ -128,7 +180,7 @@ let leftSiderBar = React.createClass({
             </li>
 
             {/*消息*/}
-            <li className={ActiveRoute.name('message') ? "active" : ""}>
+            <li className={ActiveRoute.name('message') ? "active" : ""} onClick={this.handleHideActivity}>
               <a href={FlowRouter.path('message')}>
                 <i className="fa fa-comments"/>
                 <span className="nav-label">
@@ -137,30 +189,7 @@ let leftSiderBar = React.createClass({
               </a>
             </li>
 
-            {
-              this.data.isAdmin ?
-                <li className={ActiveRoute.name(/^activities/) ? "active" : ""}>
-                  <a href="#">
-                    <i className="fa fa-th-large"></i>
-                <span className="nav-label">
-                  <FormattedMessage message={this.getIntlMessage(`${prefix}platformActivities`)}/>
-                </span>
-                    <span className="fa arrow"></span>
-                  </a>
-                  <ul className={ActiveRoute.name(/^activities/) ? "nav nav-second-level in" : "nav nav-second-level"}>
-                    <li className={ActiveRoute.name(/^activities-column/) ? "active" : ""}>
-                      <a href={FlowRouter.path('activities-column')}>
-                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-column`)}/>
-                      </a>
-                    </li>
-                    <li className={ActiveRoute.name(/^activities-banner/) ? "active" : ""}>
-                      <a href={FlowRouter.path('activities-banner')}>
-                        <FormattedMessage message={this.getIntlMessage(`${prefix}activities-banner`)}/>
-                      </a>
-                    </li>
-                  </ul>
-                </li> : <div/>
-            }
+            {activitiesNav}
 
             {/*Dashboards*/}
             {/*

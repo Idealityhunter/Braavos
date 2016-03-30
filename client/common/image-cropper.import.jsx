@@ -139,13 +139,14 @@ export const ImageCropper = React.createClass({
       ctx.drawImage(imageNode, l, t, w, h, 0, 0, canvasSize, canvasSize);
 
       this.props.onOk({
+        oSelection,
+        imageNode,
         target: this,
         selection: this.state.selection,
-        oSelection: oSelection,
+
         // crop后的数据
         croppedImage: canvas.toDataURL("image/png"),
         oImage: this.props.imageSrc,
-        imageNode: imageNode
       });
     }
   },
