@@ -58,65 +58,6 @@ const ImageCell = ({rowIndex, data, col}) => {
 
 // 操作
 const OperationCell = ({rowIndex, data}) => {
-
-  // 下架商品
-  const handleDropCommodity = commodityId => (e => {
-    e.preventDefault();
-    swal({
-      title: "确认下架?",
-      text: "",
-      type: "warning",
-      showCancelButton: true,
-      cancelButtonText: "取消",
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "下架",
-      closeOnConfirm: false
-    }, function () {
-      Meteor.call('commodity.status.update', commodityId, 'disabled', function (err, res) {
-        if (err) {
-          // 下架失敗
-          swal("下架失败!", "", "error");
-        }
-        if (res) {
-          // 下架成功
-          swal("下架成功", "", "success");
-        }
-      });
-    });
-  });
-
-  // 上架商品
-  const handlePubCommodity = commodityId => (e => {
-    e.preventDefault();
-
-    // 检查是否满足上架条件
-    Meteor.call('commodity.check.publish', commodityId, function(err, res){
-      if (err){
-        swal("上架失败!", "", "error");
-        return ;
-      };
-
-      // 未满足条件,则展示 method 传来的错误
-      if (!res.status) {
-        swal("上架失败!", (res.errorCode == 'Invalid Date') ? '您的商品套餐时间已过期，请重新选择.' : '', "error");
-        return ;
-      };
-
-      if (res) {
-        Meteor.call('commodity.status.update', commodityId, 'pub', function (err, res) {
-          if (err) {
-            // 上架失败
-            swal("上架失败!", "", "error");
-          }
-          if (res) {
-            // 上架成功
-            swal("上架成功!", "", "success");
-          }
-        });
-      };
-    });
-  });
-
   const columnId = data[rowIndex].columnId;
 
   // 控制进入专区编辑页面的函数
@@ -153,6 +94,20 @@ const OperationCell = ({rowIndex, data}) => {
     });
   });
 
+  // 控制专区数据的删除(暂时不展示该功能)
+  const handleColumnDelete = columnId => ((e) => {
+    e.preventDefault();
+
+    Meteor.call('activity.column.delete', columnId, function (err, res) {
+      if (err) {
+        swal("删除失败!", "", "error");
+      }
+      if (res) {
+        swal("删除成功", "", "success");
+      }
+    });
+  });
+
   const status = data[rowIndex].status;
   const buttons = [
     <Button key={`${columnId}.edit`} bsClass="btn btn-white" onClick={handleEdit(columnId)}>编辑</Button>,
@@ -161,7 +116,7 @@ const OperationCell = ({rowIndex, data}) => {
     //<Button key={`${columnId}.view`} bsClass="btn btn-white" onClick={handleEdit()}>查看</Button>,
 
     // TODO 暂时不需要删除, 以免造成无法恢复的后果
-    //,<Button key={`${columnId}.delete`} bsClass="btn btn-white" onClick={handleEdit()}>删除</Button>
+    //,<Button key={`${columnId}.delete`} bsClass="btn btn-white" onClick={handleColumnDelete()}>删除</Button>
   ];
 
   if (status == 'disabled'){
@@ -187,10 +142,10 @@ export const Columns = React.createClass({
   },
 
   getMeteorData(){
-    const columnsSub = Meteor.subscribe('activity.column.bulk', {columnType: 'special'});
+    const columnSub = Meteor.subscribe('activity.column.bulk', {columnType: 'special'});
 
     let columns = [];
-    if (columnsSub.ready()){
+    if (columnSub.ready()){
       columns = BraavosCore.Database.Braavos.Column.find({columnType: 'special'},{sort: {rank: 1}}).fetch();
     }
 
@@ -207,7 +162,6 @@ export const Columns = React.createClass({
   },
 
   render (){
-    //const columns = this.fakeData;
     const columns = this.processData(this.data.columns);
 
     return (

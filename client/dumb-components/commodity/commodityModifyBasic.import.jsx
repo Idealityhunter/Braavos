@@ -170,7 +170,7 @@ const commodityModifyBasic = React.createClass({
     this._handleChosenUpdate();
   },
 
-  // 每次数据更新, 应该重新绑定一下scountry-elect
+  // 每次数据更新, 应该重新绑定一下country-elect
   componentDidUpdate(){
     this._handleChosenUpdate();
   },

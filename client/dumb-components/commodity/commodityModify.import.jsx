@@ -264,7 +264,6 @@ const commodityModify = React.createClass({
     tmp.innerHTML = desc.body;
     desc.summary = (tmp.textContent || tmp.innerText || "").substring(0, 100);
 
-
     // 调整images的顺序 => 将cover抽离出来,放在第一张
     const copyImages = this.state.images.slice();
     const coverIndex = _.findIndex(copyImages, image => _.isEqual(image, this.state.cover));

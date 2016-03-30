@@ -3,10 +3,9 @@
  *
  * Created by lyn on 3/23/16.
  */
-import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
+import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb'
 import { Button, ButtonGroup } from '/lib/react-bootstrap'
 import { ImageCropper } from "/client/common/image-cropper"
-import { NumberInput } from '/client/common/numberInput';
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;

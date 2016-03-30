@@ -16,6 +16,9 @@ import {Finance} from '/client/dumb-components/finance/finance';
 import {Message} from '/client/dumb-components/message/message';
 import {Columns} from '/client/components/activities/column/column';
 import {ColumnEdit} from '/client/components/activities/column/column-edit';
+import {Articles} from '/client/components/activities/article/article';
+import {ArticleEdit} from '/client/components/activities/article/article-edit';
+
 
 import {Page404} from '/client/dumb-components/page404';
 
@@ -368,8 +371,7 @@ FlowRouter.route('/activities/columns/edit/:columnId', {
 });
 
 
-
-// 专区活动列表页面
+// 城市文章列表页面
 FlowRouter.route('/activities/articles', {
   name: 'activities-article',
   title: lsbMessages['activities-article'],
@@ -377,47 +379,47 @@ FlowRouter.route('/activities/articles', {
   // 方便调试
   //triggersEnter: [loginCheck, adminCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "城市文章管理"}));
+    ReactLayout.render(MainLayout, _.extend({content: <Articles {...intlData} />}, intlData, {documentTitle: "城市文章管理"}));
   }
 });
 
-// 专区活动添加页面
+// 城市文章添加页面
 FlowRouter.route('/activities/articles/add', {
   name: 'activities-article-add',
   title: lsbMessages['activities-article-add'],
   parent: 'activities-article',
   // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  //triggersEnter: [loginCheck, adminCheck],ArticleEdit
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <ColumnEdit {...intlData} />}, intlData, {documentTitle: "城市文章添加"}));
+    ReactLayout.render(MainLayout, _.extend({content: <ArticleEdit {...intlData} />}, intlData, {documentTitle: "城市文章添加"}));
   }
 });
 
-//// 专区活动编辑页面
-//FlowRouter.route('/activities/columns/edit/:columnId', {
-//  name: 'activities-column-edit',
-//  title: lsbMessages['activities-column-edit'],
-//  parent: 'activities-column',
-//  // 方便调试
-//  //triggersEnter: [loginCheck, adminCheck],
-//  action(param, queryParam) {
-//    const columnId = param.columnId;
-//
-//    // 检查token是否是当前用户的商品
-//    Meteor.call('activity.column.getColumnInfo', columnId, (err, ret) => {
-//      const isValid = (!err && ret.valid);
-//      if (isValid) {
-//        ReactLayout.render(MainLayout, _.extend({
-//          content: <ColumnEdit {...intlData} {...ret.columnInfo}/>
-//        }, intlData, {documentTitle: "专区编辑"}));
-//      } else {
-//        FlowRouter.go('home');
-//      }
-//    });
-//  }
-//});
+// 城市文章编辑页面
+FlowRouter.route('/activities/articles/edit/:articleId', {
+  name: 'activities-article-edit',
+  title: lsbMessages['activities-article-edit'],
+  parent: 'activities-article',
+  // 方便调试
+  //triggersEnter: [loginCheck, adminCheck],
+  action(param, queryParam) {
+    const articleId = param.articleId;
 
-// Banner活动页面
+    // 检查token是否是当前用户的商品
+    Meteor.call('activity.article.getArticleInfo', articleId, (err, ret) => {
+      const isValid = (!err && ret.valid);
+      if (isValid) {
+        ReactLayout.render(MainLayout, _.extend({
+          content: <ArticleEdit {...intlData} {...ret.articleInfo}/>
+        }, intlData, {documentTitle: "城市文章编辑"}));
+      } else {
+        FlowRouter.go('home');
+      }
+    });
+  }
+});
+
+// TODO Banner活动页面
 FlowRouter.route('/activities/banners', {
   name: 'activities-banner',
   title: lsbMessages['activities-banner'],
