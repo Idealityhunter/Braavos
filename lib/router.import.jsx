@@ -427,6 +427,7 @@ FlowRouter.route('/activities/banners', {
   // 方便调试
   //triggersEnter: [loginCheck, adminCheck],
   action() {
-    ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
+    //ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
+    FlowRouter.go('home');
   }
 });

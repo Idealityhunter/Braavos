@@ -46,7 +46,6 @@ Meteor.methods({
     return collColumn.insert({
       ...columnInfo,
       columnId: columnId,
-      columnType: 'special',
       createTime: new Date(),
       status: 'pub'
     });
