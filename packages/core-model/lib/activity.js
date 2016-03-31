@@ -22,7 +22,7 @@ Activity.Column = new SimpleSchema({
 
   // 专区名称
   title: {
-    type: Number
+    type: String
   },
 
   // 专区的封面图
