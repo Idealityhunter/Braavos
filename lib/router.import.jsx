@@ -327,8 +327,7 @@ FlowRouter.route('/activities/columns', {
   name: 'activities-column',
   title: lsbMessages['activities-column'],
   parent: 'home',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Columns {...intlData} />}, intlData, {documentTitle: "商品专区管理"}));
   }
@@ -339,8 +338,7 @@ FlowRouter.route('/activities/columns/add', {
   name: 'activities-column-add',
   title: lsbMessages['activities-column-add'],
   parent: 'activities-column',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <ColumnEdit {...intlData} />}, intlData, {documentTitle: "专区添加"}));
   }
@@ -351,8 +349,7 @@ FlowRouter.route('/activities/columns/edit/:columnId', {
   name: 'activities-column-edit',
   title: lsbMessages['activities-column-edit'],
   parent: 'activities-column',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  triggersEnter: [loginCheck, adminCheck],
   action(param, queryParam) {
     const columnId = param.columnId;
 
@@ -376,8 +373,7 @@ FlowRouter.route('/activities/articles', {
   name: 'activities-article',
   title: lsbMessages['activities-article'],
   parent: 'home',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <Articles {...intlData} />}, intlData, {documentTitle: "城市文章管理"}));
   }
@@ -388,8 +384,7 @@ FlowRouter.route('/activities/articles/add', {
   name: 'activities-article-add',
   title: lsbMessages['activities-article-add'],
   parent: 'activities-article',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],ArticleEdit
+  triggersEnter: [loginCheck, adminCheck],
   action() {
     ReactLayout.render(MainLayout, _.extend({content: <ArticleEdit {...intlData} />}, intlData, {documentTitle: "城市文章添加"}));
   }
@@ -400,8 +395,7 @@ FlowRouter.route('/activities/articles/edit/:articleId', {
   name: 'activities-article-edit',
   title: lsbMessages['activities-article-edit'],
   parent: 'activities-article',
-  // 方便调试
-  //triggersEnter: [loginCheck, adminCheck],
+  triggersEnter: [loginCheck, adminCheck],
   action(param, queryParam) {
     const articleId = param.articleId;
 
@@ -424,7 +418,6 @@ FlowRouter.route('/activities/banners', {
   name: 'activities-banner',
   title: lsbMessages['activities-banner'],
   parent: 'home',
-  // 方便调试
   //triggersEnter: [loginCheck, adminCheck],
   action() {
     //ReactLayout.render(MainLayout, _.extend({content: <Message {...intlData} />}, intlData, {documentTitle: "banner区管理"}));
