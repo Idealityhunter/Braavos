@@ -270,7 +270,7 @@ const commodityModify = React.createClass({
     copyImages.splice(coverIndex, 1);
     const images = [this.state.cover].concat(copyImages);
 
-    // tips: 现在timeRequired默认为true且不可修改
+    // 注意: 现在timeRequired默认为true且不可修改
     //const timeRequired = $('.form-group.time-required').find('input').prop('checked');
     const timeRequired = true;
 
