@@ -110,6 +110,16 @@ Marketplace.Seller = new SimpleSchema({
   // 开店时间
   createTime: {
     type: Date
+  },
+  // 商户的账户余额
+  balance: {
+    type: Number,
+    optional: true
+  },
+  // 销售额
+  sales: {
+    type: Number,
+    optional: true
   }
 });
 

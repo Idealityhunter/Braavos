@@ -18,7 +18,6 @@ Package.onUse(function (api) {
 
   api.addFiles(["core-model.js", "lib/misc.js", "lib/geo.js", "lib/finance.js", "lib/account.js",
     "lib/marketplace.js", "lib/talk.js", "lib/activity.js"], ["client", "server"]);
-
   api.export("CoreModel", ["client", "server"])
 });
 
