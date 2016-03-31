@@ -12,8 +12,8 @@ const index = React.createClass({
     const lat = -37.8136;
     const lng = 144.9631;
     return {
-      lat: lat,
-      lng: lng,
+      lat,
+      lng,
       location: [lat, lng]
     }
   },

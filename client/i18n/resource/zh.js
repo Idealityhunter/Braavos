@@ -23,6 +23,7 @@ BraavosCore.IntlData.zh = {
         'activities-column': '专区管理',
         'activities-column-add': '专区添加',
         'activities-column-edit': '专区编辑',
+        'activities-article': '文章管理',
         'activities-banner': 'Banner区管理'
       }
     },

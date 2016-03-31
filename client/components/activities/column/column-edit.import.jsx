@@ -3,10 +3,10 @@
  *
  * Created by lyn on 3/23/16.
  */
-import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb';
+import { BraavosBreadcrumb } from '/client/components/breadcrumb/breadcrumb'
 import { Button, ButtonGroup } from '/lib/react-bootstrap'
 import { ImageCropper } from "/client/common/image-cropper"
-import { NumberInput } from '/client/common/numberInput';
+import { GeoSelect } from "/client/components/activities/article/article-edit"
 
 const IntlMixin = ReactIntl.IntlMixin;
 const FormattedMessage = ReactIntl.FormattedMessage;
@@ -202,6 +202,8 @@ export const UploadImage = React.createClass({
 })
 
 export const ColumnEdit = React.createClass({
+  mixins: [IntlMixin, ReactMeteorData],
+
   propTypes: {
     // 专区详情
     title: React.PropTypes.string,
@@ -211,12 +213,72 @@ export const ColumnEdit = React.createClass({
     commodities: React.PropTypes.array,
     rank: React.PropTypes.number,
     columnId: React.PropTypes.number,
+    columnType: React.PropTypes.string,
+    country: React.PropTypes.object,
+    locality: React.PropTypes.object
   },
 
   getInitialState(){
     return {
       // 输入商品编号框的 value
-      commodityId: null
+      commodityId: null,
+
+      // 是否为城市专区
+      isLocalitySpecial: null,
+
+      // 记录 country 和 locality 的选择
+      country: this.props.country && this.props.country.zhName || '中国',
+      locality: this.props.locality && this.props.locality.zhName || '台北'
+    }
+  },
+
+  // 获取 country 和 locality 列表的数据
+  getMeteorData() {
+    // 订阅 country 数据
+    const subsManager = BraavosCore.SubsManager.geo;
+    subsManager.subscribe("countries");
+
+    // 获取 country 数据
+    const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+
+    // 对国家展示顺序作优先级处理
+    //const defaultCountriesName = ['菲律宾', '韩国', '日本', '台湾', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '中国'];
+    const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '尼泊尔', '马尔代夫'];
+    const defaultCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) != -1);
+    let tempCountries = [];
+    if (defaultCountries.length > 0){
+      for (let index in defaultCountriesName){
+        const tempCountry = _.find(defaultCountries, defaultCountry => defaultCountry.zhName == defaultCountriesName[index]);
+        if (tempCountry) tempCountries.push(tempCountry);
+      }
+    }
+    const restCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) == -1);
+
+    // 订阅 locality 数据
+    let localities = [];
+    subsManager.subscribe("localities", this.state.country);
+
+    // 获取 locality 数据
+    if (subsManager.ready()) {
+      localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country}, {sort: {'enName': 1}}).fetch();
+
+      // 对城市展示顺序作优先级处理
+      const defaultLocalitiesName = ["清迈","曼谷","普吉岛","苏梅岛","芭堤雅","甲米","首尔","釜山","大阪","东京","京都","冲绳","巴厘岛","加德满都","博卡拉","奇特旺","槟城","沙巴","吉隆坡","新山","垦丁","台中","台北","高雄","花莲","马累","马尔代夫","长滩岛","薄荷岛","杜马盖地","海豚湾","暹粒","吴哥窟","新加坡","民丹岛","巴淡岛","圣淘沙","河内","芽庄"]
+      const defaultLocalities = _.filter(localities, locality => _.indexOf(defaultLocalitiesName, locality.zhName) != -1);
+      let tempLocalities = [];
+      if (defaultLocalities.length > 0){
+        for (let index in defaultLocalitiesName){
+          const tempLocality = _.find(defaultLocalities, defaultLocality => defaultLocality.zhName == defaultLocalitiesName[index]);
+          if (tempLocality) tempLocalities.push(tempLocality);
+        }
+      }
+      const restLocalities = _.filter(localities, locality => _.indexOf(defaultLocalitiesName, locality.zhName) == -1);
+      localities = Array.prototype.concat(tempLocalities, restLocalities)
+    }
+
+    return {
+      localities,
+      countries: Array.prototype.concat(tempCountries, restCountries)
     }
   },
 
@@ -246,8 +308,32 @@ export const ColumnEdit = React.createClass({
     swal('添加失败!', '请输入正确的商品编号', 'error')
   },
 
+  // 获取 geo 信息
+  getGeoInfo(zhName, geoType){
+    const geoItem = BraavosCore.Database.Braavos[geoType].findOne({zhName});
+    const geoInfo = {
+      zhName,
+      _id: geoItem._id,
+      className: `com.lvxingpai.model.geo.${geoType}`
+    };
+    geoItem && geoItem.enName && _.extend(geoInfo, {enName: geoItem.enName});
+
+    return geoInfo;
+  },
+
+  // 从 DOM 中获取 locality 的值
+  getLocalityFromSelect(){
+    const localityIndex = $('select.locality-select').val();
+    const localityZh = $($('select.locality-select>option')[parseInt(localityIndex)]).text();
+    return localityZh;
+  },
+
   // 保存专区内容
   saveColumnInfo(){
+    // 判断是否为 城市专区
+    const isLocalitySpecial = this.state.isLocalitySpecial !== null && this.state.isLocalitySpecial
+        || this.state.isLocalitySpecial == null && this.props.columnType == 'locality';
+
     // 获取编辑的信息
     const columnInfo = {
       title: this.state.title || this.props.title || '',
@@ -255,11 +341,22 @@ export const ColumnEdit = React.createClass({
       banner: this.state.banner && {key: this.state.banner} || this.props.banner || {key: ''},
       desc: this.state.desc || this.props.desc || '',
       commodities: this.state.commodities || this.props.commodities || [],
-      rank: this.state.rank || this.props.rank || 1
+      rank: this.state.rank || this.props.rank || 1,
+      columnType: isLocalitySpecial ? 'locality' : 'special'
     };
 
     // TODO 验证编辑的数据
     //this.validateColumnInfo();
+
+    // 城市专区获取 country 和 locality 数据
+    if (isLocalitySpecial){
+      _.extend(columnInfo, {
+        country: this.getGeoInfo(this.state.country, 'Country'),
+
+        // 注意: 此处不能只从 state 获取 locality 数据;因为切换国家的时候, locality 也会切换,然而 state 中的 locality 并没有改变,其实相当于"状态和表现分离"了
+        locality: this.getGeoInfo((this.state.locality !== '') ? this.state.locality : this.getLocalityFromSelect(), 'Locality')
+      })
+    }
 
     // 假如存在 columnId 说明是编辑页面,不存在则为添加页面
     if (this.props.columnId){
@@ -337,6 +434,31 @@ export const ColumnEdit = React.createClass({
     }
   },
 
+  // 修改专区类型(是否为"城市专区")
+  _handleTypeChange(e) {
+    this.setState({
+      isLocalitySpecial: e.target.checked
+    });
+  },
+
+  // 修改国家的 state
+  _handleCountryChange(country){
+    this.setState({
+      country,
+      locality: ''
+    })
+  },
+
+  // 修改城市的 state
+  _handleLocalityChange(locality){
+    this.setState({locality})
+  },
+
+  // 判断当前选择是否为城市专区
+  _isLocalitySpecial(){
+    return (this.state.isLocalitySpecial || this.state.isLocalitySpecial == null && this.props.columnType == 'locality')
+  },
+
   render (){
     const commodities = this.state.commodities || this.props.commodities || [];
     const commoditiesWrap = (commodities.length > 0)
@@ -344,6 +466,23 @@ export const ColumnEdit = React.createClass({
           {commodities.map(commodity => <p>{commodity}</p>)}
         </div>
       : <div />;
+
+    const geoContents = this._isLocalitySpecial() ?
+      <div style={this.styles.inputWrap}>
+        <div style={{marginRight: 20, display: 'inline-block'}}>
+          <GeoSelect data = {this.data.countries}
+                     zhName = {this.state.country}
+                     geoType="country"
+                     geoTypeName="国家"
+                     onOptionChange = {this._handleCountryChange}/>
+        </div>
+
+        <GeoSelect data = {this.data.localities}
+                   zhName = {this.state.locality}
+                   geoType="locality"
+                   geoTypeName="城市"
+                   onOptionChange = {this._handleLocalityChange}/>
+      </div> : null;// 注意: 此处使用null, 是因为没有内容的 div 会导致有一个 chosen 生成的 DOM 不会被清除! 比如: <div/> 或者 <div><div/>
 
     return (
       <div className="column-edit-wrap">
@@ -376,22 +515,19 @@ export const ColumnEdit = React.createClass({
 
           <div className="form-group">
             <label className="label-text">
-              banner图-专区页(参数规格: 900*600)
+              选择专区位置
             </label>
-            <div style={this.styles.inputWrap}>
-              <UploadImage width={300} height={200}
-                           inputId="columnBanner"
-                           onSuccessUpload={key => this.setState({banner: key})}
-                           imageUrl={this.state.banner && `http://images.taozilvxing.com/${this.state.banner}` || this.props.banner && `http://images.taozilvxing.com/${this.props.banner.key}` || ''}
-              />
-            </div>
+            <label className="">
+              <input type="checkbox" defaultChecked={this._isLocalitySpecial() ? "checked" : ""} onChange={this._handleTypeChange}/> 在"城市专区"
+            </label>
+            {geoContents}
           </div>
 
           <hr style={this.styles.hr}/>
 
           <div className="form-group">
             <label className="label-text">
-              封面图-首页(参数规格: 400*400)
+              封面图-首页/城市页(参数规格: 400*400)
             </label>
             <div style={this.styles.inputWrap}>
               <UploadImage width={150} height={150}
@@ -403,6 +539,19 @@ export const ColumnEdit = React.createClass({
           </div>
 
           <hr style={this.styles.hr}/>
+
+          <div className="form-group">
+            <label className="label-text">
+              banner图-专区页(参数规格: 900*600)
+            </label>
+            <div style={this.styles.inputWrap}>
+              <UploadImage width={300} height={200}
+                           inputId="columnBanner"
+                           onSuccessUpload={key => this.setState({banner: key})}
+                           imageUrl={this.state.banner && `http://images.taozilvxing.com/${this.state.banner}` || this.props.banner && `http://images.taozilvxing.com/${this.props.banner.key}` || ''}
+              />
+            </div>
+          </div>
 
           <div className="form-group">
             <label className="">

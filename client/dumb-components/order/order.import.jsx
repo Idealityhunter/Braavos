@@ -32,7 +32,7 @@ const order = React.createClass({
 
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orders', options, isAdmin);
-    let orders;
+    let orders = [];
     let ordersReady = false;
     if (handleOrder.ready()) {
       //最好是按照更新时间来排序吧
@@ -42,8 +42,8 @@ const order = React.createClass({
     }
 
     return {
-      orders: orders || [],
-      ordersReady: ordersReady
+      ordersReady,
+      orders
     };
   },
 
@@ -233,34 +233,36 @@ const order = React.createClass({
   _handleStatusFilter(status){
     switch (status){
       case 'all':
-        // 全部就置空
-        this.setState({options: {}});
+        // all 就置 status 条件为空
+        this.setState({
+          options: _.omit(this.state.options, 'status')
+        });
         break;
       case 'closed':
         this.setState({
-          options: {
+          options: _.extend(this.state.options, {
             status: {
               // 关闭是取消,退款完成的合并状态
               $in: ['canceled', 'refunded']
             }
-          }
+          })
         });
         break;
       case 'finished':
         this.setState({
-          options: {
+          options: _.extend(this.state.options, {
             status: {
               // 完成是待评价,已评价的合并状态
               $in: ['finished', 'reviewed', 'toReview']
             }
-          }
+          })
         });
         break;
       default:
         this.setState({
-          options: {
+          options: _.extend(this.state.options, {
             status: status
-          }
+          })
         });
         break;
     };

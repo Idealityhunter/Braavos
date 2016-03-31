@@ -178,9 +178,9 @@ const commodityPlans = React.createClass({
       return ;
     }
     const editPlan = {
+      title,
+      marketPrice,
       status: 'view',
-      title: title,
-      marketPrice: marketPrice,
       price: copyPlan[arrayIndex].modalPrice,
       pricing: copyPlan[arrayIndex].modalPricing,
       //stock: stock

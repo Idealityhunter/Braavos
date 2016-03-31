@@ -50,6 +50,8 @@ Meteor.startup(()=> {
   db.Locality.attachSchema(schema.Geo.Locality);
   db.Column = new Mongo.Collection("Column");
   db.Column.attachSchema(schema.Activity.Column);
+  db.LocalityArticle = new Mongo.Collection("LocalityArticle");
+  db.LocalityArticle.attachSchema(schema.Activity.Article);
 
   BraavosCore.Database.Yunkai = {};
   const yunkai = BraavosCore.Database.Yunkai;

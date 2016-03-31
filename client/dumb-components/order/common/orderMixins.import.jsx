@@ -15,9 +15,9 @@ export const OrderMixin = {
 
     // 获取商品信息
     const handleOrder = Meteor.subscribe('orderInfo', this.props.orderId, isAdmin);
-    let orderInfo;
+    let orderInfo = {};
     if (handleOrder.ready()) {
-      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)});
+      orderInfo = BraavosCore.Database.Braavos.Order.findOne({orderId: parseInt(this.props.orderId)}) || {};
 
       // 钱款单位转换(分 => 元)
       //if (orderInfo){
@@ -30,7 +30,7 @@ export const OrderMixin = {
     }
 
     return {
-      orderInfo: orderInfo || {},
+      orderInfo
     };
   },
 
