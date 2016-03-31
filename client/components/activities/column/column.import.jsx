@@ -150,12 +150,18 @@ export const Columns = React.createClass({
     return {columns}
   },
 
+  isLocalitySpecial(column){
+    return column.columnType == 'locality'
+  },
+
   // 数据预处理 => cover 的提取和 count 的计算
   processData(columns){
     return columns.map(column => _.extend(column, {
       cover: column.images[0].key && `http://images.taozilvxing.com/${column.images[0].key}` || column.images[0].url || '',
       count: column.commodities && column.commodities.length || 0,
-      position: (column.columnType == 'special') ? '首页专区' : '城市专区'
+      position: this.isLocalitySpecial(column) ? '城市专区' : '首页专区',
+      country: this.isLocalitySpecial(column) ? column.country.zhName : '-',
+      locality: this.isLocalitySpecial(column) ? column.locality.zhName : '-'
     }))
   },
 
@@ -174,7 +180,7 @@ export const Columns = React.createClass({
             rowsCount={columns.length}
             rowHeight={120}
             headerHeight={50}
-            width={850}
+            width={1050}
             height={650}
           >
             <Column
@@ -200,6 +206,18 @@ export const Columns = React.createClass({
               cell={<ImageCell data={columns} col="cover"/>}
               fixed={true}
               width={150}
+            />
+            <Column
+              header={<Cell>国家</Cell>}
+              cell={<TextCell data={columns} col="country"/>}
+              fixed={true}
+              width={100}
+            />
+            <Column
+              header={<Cell>城市</Cell>}
+              cell={<TextCell data={columns} col="locality"/>}
+              fixed={true}
+              width={100}
             />
             <Column
               header={<Cell>专区商品数量</Cell>}

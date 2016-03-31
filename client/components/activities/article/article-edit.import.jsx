@@ -89,6 +89,7 @@ export const GeoSelect = React.createClass({
     // 根据 data 生成 select 组件
     let i = 0;
     const optionList = this.props.data.map(item => (<option value={i++} key={item._id._str}>{item.zhName}</option>));
+
     return (
       <select name="" id=""
               className={`${this.props.geoType}-select form-control`}
@@ -122,6 +123,19 @@ export const ArticleEdit = React.createClass({
     }
   },
 
+  // 暂存上一次的结果
+  temp: {
+    country: '',
+    countries: [],
+    localities: [],
+    countryIsReady: false // 记录 countries 数据是否订阅完全
+  },
+
+  // 判断选择的 country 是否改变
+  countryIsChange(){
+    return this.state.country != this.temp.country;
+  },
+
   // 获取country和locality列表的数据
   getMeteorData() {
     // 订阅 country 数据
@@ -129,27 +143,37 @@ export const ArticleEdit = React.createClass({
     subsManager.subscribe("countries");
 
     // 获取 country 数据
-    const countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
+    let countries = [];
+    if (subsManager.ready() && ! this.temp.countryIsReady){
+      countries = BraavosCore.Database.Braavos.Country.find({}, {sort: {'pinyin': 1}}).fetch();
 
-    // 对国家展示顺序作优先级处理
-    //const defaultCountriesName = ['菲律宾', '韩国', '日本', '台湾', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '中国'];
-    const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '尼泊尔', '马尔代夫'];
-    const defaultCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) != -1);
-    let tempCountries = [];
-    if (defaultCountries.length > 0){
-      for (let index in defaultCountriesName){
-        const tempCountry = _.find(defaultCountries, defaultCountry => defaultCountry.zhName == defaultCountriesName[index]);
-        if (tempCountry) tempCountries.push(tempCountry);
+      // 对国家展示顺序作优先级处理
+      //const defaultCountriesName = ['菲律宾', '韩国', '日本', '台湾', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '中国'];
+      const defaultCountriesName = ['菲律宾', '韩国', '日本', '中国', '泰国', '越南', '马来西亚', '印度尼西亚', '斯里兰卡', '柬埔寨', '新加坡', '印度', '阿联酋', '肯尼亚', '以色列', '尼泊尔', '马尔代夫'];
+      const defaultCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) != -1);
+      let tempCountries = [];
+      if (defaultCountries.length > 0){
+        for (let index in defaultCountriesName){
+          const tempCountry = _.find(defaultCountries, defaultCountry => defaultCountry.zhName == defaultCountriesName[index]);
+          if (tempCountry) tempCountries.push(tempCountry);
+        }
       }
+      const restCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) == -1);
+      countries = Array.prototype.concat(tempCountries, restCountries);
+
+      // 缓存当前状态
+      this.temp.countries = countries;
+      this.temp.countryIsReady = true;
+    }else{
+      countries = this.temp.countries;
     }
-    const restCountries = _.filter(countries, country => _.indexOf(defaultCountriesName, country.zhName) == -1);
 
     // 订阅 locality 数据
     let localities = [];
     subsManager.subscribe("localities", this.state.country);
 
     // 获取 locality 数据
-    if (subsManager.ready()) {
+    if (subsManager.ready() && this.countryIsChange()) {
       localities = BraavosCore.Database.Braavos.Locality.find({"country.zhName": this.state.country}, {sort: {'enName': 1}}).fetch();
 
       // 对城市展示顺序作优先级处理
@@ -163,12 +187,18 @@ export const ArticleEdit = React.createClass({
         }
       }
       const restLocalities = _.filter(localities, locality => _.indexOf(defaultLocalitiesName, locality.zhName) == -1);
-      localities = Array.prototype.concat(tempLocalities, restLocalities)
+      localities = Array.prototype.concat(tempLocalities, restLocalities);
+
+      // 缓存当前状态
+      this.temp.localities = localities;
+      this.temp.country = this.state.country;
+    }else{
+      localities = this.temp.localities;
     }
 
     return {
       localities,
-      countries: Array.prototype.concat(tempCountries, restCountries)
+      countries
     }
   },
 
@@ -195,13 +225,21 @@ export const ArticleEdit = React.createClass({
     return geoInfo;
   },
 
+  // 从 DOM 中获取 locality 的值
+  getLocalityFromSelect(){
+    const localityIndex = $('select.locality-select').val();
+    const localityZh = $($('select.locality-select>option')[parseInt(localityIndex)]).text();
+    return localityZh;
+  },
+
   // 保存文章内容
   saveArticleInfo(){
     // 获取 country 数据
     const country = this.getGeoInfo(this.state.country, 'Country');
 
     // 获取 locality 数据
-    const locality = this.getGeoInfo(this.state.locality, 'Locality');
+    // 注意: 此处不能只从 state 获取 locality 数据;因为切换国家的时候, locality 也会切换,然而 state 中的 locality 并没有改变,其实相当于"状态和表现分离"了
+    const locality = this.getGeoInfo((this.state.locality !== '') ? this.state.locality : this.getLocalityFromSelect(), 'Locality');
 
     // 获取RichText
     const um = UM.getEditor('ueContainer');
@@ -289,7 +327,10 @@ export const ArticleEdit = React.createClass({
 
   // 修改国家的 state
   _handleCountryChange(country){
-    this.setState({country})
+    this.setState({
+      country,
+      locality: ''
+    })
   },
 
   // 修改城市的 state

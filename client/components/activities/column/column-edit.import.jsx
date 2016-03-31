@@ -223,11 +223,16 @@ export const ColumnEdit = React.createClass({
       // 输入商品编号框的 value
       commodityId: null,
 
-      isLocalitySpecial: null
+      // 是否为城市专区
+      isLocalitySpecial: null,
+
+      // 记录 country 和 locality 的选择
+      country: this.props.country && this.props.country.zhName || '中国',
+      locality: this.props.locality && this.props.locality.zhName || '台北'
     }
   },
 
-  // 获取country和locality列表的数据
+  // 获取 country 和 locality 列表的数据
   getMeteorData() {
     // 订阅 country 数据
     const subsManager = BraavosCore.SubsManager.geo;
@@ -277,19 +282,6 @@ export const ColumnEdit = React.createClass({
     }
   },
 
-  // 获取 geo 信息
-  getGeoInfo(zhName, geoType){
-    const geoItem = BraavosCore.Database.Braavos[geoType].findOne({zhName});
-    const geoInfo = {
-      zhName,
-      _id: geoItem._id,
-      className: `com.lvxingpai.model.geo.${geoType}`
-    };
-    geoItem && geoItem.enName && _.extend(geoInfo, {enName: geoItem.enName});
-
-    return geoInfo;
-  },
-
   // 添加商品动作
   handleAddCommodity(){
     if (_.isString(this.state.commodityId)){
@@ -316,6 +308,26 @@ export const ColumnEdit = React.createClass({
     swal('添加失败!', '请输入正确的商品编号', 'error')
   },
 
+  // 获取 geo 信息
+  getGeoInfo(zhName, geoType){
+    const geoItem = BraavosCore.Database.Braavos[geoType].findOne({zhName});
+    const geoInfo = {
+      zhName,
+      _id: geoItem._id,
+      className: `com.lvxingpai.model.geo.${geoType}`
+    };
+    geoItem && geoItem.enName && _.extend(geoInfo, {enName: geoItem.enName});
+
+    return geoInfo;
+  },
+
+  // 从 DOM 中获取 locality 的值
+  getLocalityFromSelect(){
+    const localityIndex = $('select.locality-select').val();
+    const localityZh = $($('select.locality-select>option')[parseInt(localityIndex)]).text();
+    return localityZh;
+  },
+
   // 保存专区内容
   saveColumnInfo(){
     // 判断是否为 城市专区
@@ -340,7 +352,9 @@ export const ColumnEdit = React.createClass({
     if (isLocalitySpecial){
       _.extend(columnInfo, {
         country: this.getGeoInfo(this.state.country, 'Country'),
-        locality: this.getGeoInfo(this.state.locality, 'Locality')
+
+        // 注意: 此处不能只从 state 获取 locality 数据;因为切换国家的时候, locality 也会切换,然而 state 中的 locality 并没有改变,其实相当于"状态和表现分离"了
+        locality: this.getGeoInfo((this.state.locality !== '') ? this.state.locality : this.getLocalityFromSelect(), 'Locality')
       })
     }
 
@@ -429,12 +443,20 @@ export const ColumnEdit = React.createClass({
 
   // 修改国家的 state
   _handleCountryChange(country){
-    this.setState({country})
+    this.setState({
+      country,
+      locality: ''
+    })
   },
 
   // 修改城市的 state
   _handleLocalityChange(locality){
     this.setState({locality})
+  },
+
+  // 判断当前选择是否为城市专区
+  _isLocalitySpecial(){
+    return (this.state.isLocalitySpecial || this.state.isLocalitySpecial == null && this.props.columnType == 'locality')
   },
 
   render (){
@@ -445,7 +467,7 @@ export const ColumnEdit = React.createClass({
         </div>
       : <div />;
 
-    const geoContents = this.state.isLocalitySpecial ?
+    const geoContents = this._isLocalitySpecial() ?
       <div style={this.styles.inputWrap}>
         <div style={{marginRight: 20, display: 'inline-block'}}>
           <GeoSelect data = {this.data.countries}
@@ -460,7 +482,7 @@ export const ColumnEdit = React.createClass({
                    geoType="locality"
                    geoTypeName="城市"
                    onOptionChange = {this._handleLocalityChange}/>
-      </div> : <div/>;
+      </div> : null;// 注意: 此处使用null, 是因为没有内容的 div 会导致有一个 chosen 生成的 DOM 不会被清除! 比如: <div/> 或者 <div><div/>
 
     return (
       <div className="column-edit-wrap">
@@ -496,7 +518,7 @@ export const ColumnEdit = React.createClass({
               选择专区位置
             </label>
             <label className="">
-              <input type="checkbox" defaultChecked={(this.state.isLocalitySpecial || this.props.columnType == 'locality') ? "checked" : ""} onChange={this._handleTypeChange}/> 在"城市专区"
+              <input type="checkbox" defaultChecked={this._isLocalitySpecial() ? "checked" : ""} onChange={this._handleTypeChange}/> 在"城市专区"
             </label>
             {geoContents}
           </div>
